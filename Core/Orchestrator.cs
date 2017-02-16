@@ -5,8 +5,11 @@
     using System.Linq.Dynamic;
     using Abp;
     using Abp.Dependency;
+    using Abp.Timing;
     using Common;
     using Common.Client;
+    using Common.Extensions;
+    using Common.Portal.License.User;
     using Newtonsoft.Json;
     using Settings;
     using Users;
@@ -34,49 +37,57 @@
                     Users();
                     break;
                 default:
-                    Logger.Error("No monitors selected. Please check the Settings.json file.");
-                    Environment.Exit(1);
+                    Logger.Error("No monitors selected. Please check the settings.json file.");
                     break;
             }
         }
 
         private void Users()
         {
-            var localUsers = _userManager.GetUsersAndGroups();
-            if (localUsers.Count == 0)
+            var status = _portalClient.GetStatus(SettingManager.DeviceId);
+
+            if (status == Common.Portal.Common.Enums.CallInStatus.CalledIn)
             {
-                Logger.Error("Failed to retrieve any users from the local system.");
+                Logger.Info("Upload status is set to: CalledIn.");
+                Logger.Info("Will try again later.");
                 return;
             }
 
-            var remoteUsers = _portalClient.GetAllUsers();
-            if (remoteUsers.Count == 0)
-            {
-                Logger.Error("Failed to retrieve any users from the API.");
-                return;
-            }
+            Logger.Info("Upload status is set to: NotCalledIn.");
+            Logger.Info("CheckIn required.");
 
-            // create new users
-            var newUsers = localUsers.Where(l => remoteUsers.Any(r => l.Id != r.Id)).ToList();
-            Logger.InfoFormat("Users that require creating: {0}", newUsers.Count);
-            foreach (var user in newUsers)
+            var uploadId = _portalClient.GetId(SettingManager.DeviceId);
+            if (uploadId == 0)
             {
-                _portalClient.CreateUser(user);
+                var upload = CreateLicenseUserUpload(uploadId);
+                _portalClient.Post(upload);
             }
+            else
+            {
+                var upload = _portalClient.Get(uploadId);
+                upload = UpdateLicenseUserUpload(upload);
+                _portalClient.Put(upload.Id,upload);
+            }
+        }
 
-            var updateUsers = localUsers.Where(l => newUsers.Any(n => l.Id == n.Id)).ToList();
-            Logger.InfoFormat("Users that require updating: {0}", updateUsers.Count);
-            foreach (var user in updateUsers)
+        private LicenseUserUpload CreateLicenseUserUpload(int uploadId)
+        {
+            return new LicenseUserUpload
             {
-                _portalClient.UpdateUser(user);
-            }
+                CheckInTime = Clock.Now,
+                DeviceId = SettingManager.DeviceId,
+                TenantId = SettingManager.AccountId,
+                Users = _userManager.GetUsersAndGroups().Convert(),
+                UploadId = uploadId
+            };
+        }
 
-            var deleteUsers = remoteUsers.Where(r => localUsers.Any(l => r.Id != l.Id)).ToList();
-            Logger.InfoFormat("Users that require deleting: {0}", deleteUsers.Count);
-            foreach (var user in deleteUsers)
-            {
-                _portalClient.DeleteUser(user.Id);
-            }
-        }       
+        private LicenseUserUpload UpdateLicenseUserUpload(LicenseUserUpload upload)
+        {
+            upload.CheckInTime = Clock.Now;
+            upload.Users = _userManager.GetUsersAndGroups().Convert();
+
+            return upload;
+        }
     }
 }

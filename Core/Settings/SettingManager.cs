@@ -9,18 +9,23 @@
     using Abp;
     using Abp.Dependency;
     using Abp.Extensions;
-    using Castle.Core.Logging;
+    using Common.Client;
     using Common.Extensions;
     using Newtonsoft.Json;
     using NLog;
     using NLog.Config;
     using ILogger = Castle.Core.Logging.ILogger;
+    using NullLogger = Castle.Core.Logging.NullLogger;
 
     public class SettingManager : ISettingManager, ISingletonDependency, IShouldInitialize
     {
         private readonly string _settingFileName = "Settings.json";
         private Setting _settingFile;
         private string _settingFilePath;
+
+        public Guid DeviceId { get; set; }
+        public int AccountId { get; set; }
+
 
         public SettingManager()
         {
@@ -31,12 +36,11 @@
 
         public ILogger Logger { get; set; }
 
-        public void Create(long accoundId = 0)
+        public void Create(int accoundId = 0)
         {
             // guard
             if (Exists())
             {
-                Logger.Debug("Settings file already exists");
                 return;
             }
 
@@ -54,17 +58,15 @@
                 Logger.Debug("Creating the Settings file.");
                 File.WriteAllText(_settingFilePath, settings);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
                 Logger.Error("You do not have the required permissions to create the Settings file.");
-                Logger.Debug("Exception: ", ex);
-                Environment.Exit(ex.HResult);
+                throw;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Logger.Error("A general error occurred while trying to create the Settings file.");
-                Logger.Debug("Exception: ", ex);
-                Environment.Exit(ex.HResult);
+                throw;
             }
 
             Logger.Debug("Success.");
@@ -72,93 +74,127 @@
 
         public bool Exists()
         {
-            return File.Exists(_settingFilePath);
+            var exists = File.Exists(_settingFilePath);
+            Logger.Debug(exists ? "Settings.json file found" : "Settings.json file not found");
+
+            return exists;
         }
-
-        //public string GetSettingValue(string property)
-        //{
-        //    if (!Exists())
-        //    {
-        //        Logger.Warn("The Settings file does not exist.");
-        //        Create();
-        //        Logger.Warn("Please enter the correct Settings in settings.json file before running this application again.");
-        //        Logger.Warn("The application will now quit.");
-        //        Environment.Exit(1);
-        //    }
-
-        //    try
-        //    {
-        //        _settingFile = JsonConvert.DeserializeObject<Setting>(File.ReadAllText(_settingFilePath));
-        //    }
-        //    catch (Exception)
-        //    {
-        //        Logger.Fatal("There was an error reading the Settings file.");
-        //        throw;
-        //    }
-
-        //    return (string) _settingFile[property];
-        //}
 
         public void SetDebug(bool value)
         {
-            Logger.Info("Setting log level to Debug.");
+            Logger.Info(value ? "Turning on Debug" : "Turning off Debug");
 
             Debug = value;
 
-            SetLogLevel(LogLevel.Debug, "file");
+            SetLogLevel(value ? LogLevel.Debug : LogLevel.Error, "file");
         }
 
-        public Guid GetDeviceId()
+        private Guid? GetDeviceIdFromSettingFile()
         {
             Logger.Debug("Attempting to read the CentraStage DeviceID from the Settings file.");
-            var id = _settingFile.DeviceId;
+            var id = _settingFile?.DeviceId;
+
             if (id != null)
             {
-                Logger.DebugFormat("CentraStage DeviceId is currently set to: {0}", id);
-                return (Guid) id;
+                Logger.DebugFormat("CentraStage device id is currently set to: {0}", id);
+            }
+            else
+            {
+                Logger.Debug("CentraStage device id is not currently set");
             }
 
-            Logger.Debug("The CentraStage DeviceID is not stored in the Settings file.");
-            Logger.Debug("Attempting to read the CentraStage DeviceID from the registry.");
-
-            var deviceId = GetDeviceIdFromRegistry();
-
-            Logger.Debug("CentraStage DeviceID has been found!");
-            Logger.Debug("Attempting to set the CentraStage DeviceID in the Settings file.");
-
-            SetDeviceId(deviceId);
-
-            Logger.DebugFormat("CentraStage DeviceId is currently set to: {0}", deviceId);
-            return deviceId;
+            return id;
         }
 
-        public long GetAccountId()
+        public int? GetAccountId(Guid deviceId)
         {
-            var id = _settingFile.AccountId;
-            try
+            var acctId = _settingFile?.AccountId;
+            if (acctId != null)
             {
-                if (id == 0)
-                {
-                    throw new Exception("Autotask AccountID is currently set to 0. Please update this in the Settings.json file.");
-                }
-                if (id == null)
-                {
-                    throw new NullReferenceException("Autotask AccountID is not currently set. Please update this in the Settings.json file");
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.Message);
-                Logger.DebugFormat("Exception: ", ex);
-                Environment.Exit(ex.HResult);
+                return acctId;
             }
 
-            return (long)id;
+            using (var client = IocManager.Instance.ResolveAsDisposable<PortalClient>())
+            {
+                return client.Object.GetAccountId(deviceId);
+            }
         }
 
         public string GetServiceUrl()
         {
-            return _settingFile.ServiceUrl;
+            return _settingFile?.ServiceUrl;
+        }
+
+        public void SetAccountId(int accountId)
+        {
+            GetSettings();
+
+            _settingFile.AccountId = accountId;
+
+            UpdateSettings();
+        }
+
+        public void FirstRun()
+        {
+            // check settings file is present
+            var exists = Exists();
+
+            if (!exists)
+            {
+                Create();
+            }
+
+            if (!_settingFile.ResetOnStartUp)
+            {
+                return;
+            }
+
+            // gets/sets device id
+            var deviceId = GetDeviceId(true);
+
+            if (deviceId == null)
+            {
+                throw new AbpException("Unable to obtain the centrastage device id. Execution cannot continue. Please update the settings.json file with the correct centrastage device id.");
+            }
+
+            SetDeviceId(deviceId);
+
+            // gets/sets account id
+            var accountId = GetAccountId((Guid)deviceId);
+
+            if (accountId == null)
+            {
+                throw new AbpException("Unable to obtain the autotask account id. Execution cannot continue. Please update the settings.json file with the correct autotask acccount id.");
+            }
+
+            SetAccountId((int)accountId);
+
+            ResetOnStartUp(false);
+        }
+
+        public int? GetAccountId()
+        {
+            return _settingFile?.AccountId;
+        }
+
+        public Guid GetDeviceId(bool registry)
+        {
+            Guid deviceId;
+            if (registry)
+            {
+                deviceId = GetDeviceIdFromRegistry();
+            }
+            else
+            {
+                var id = GetDeviceIdFromSettingFile();
+                var valid = Guid.TryParse(id.ToString(), out deviceId);
+                if (!valid)
+                {
+                    throw new AbpException("Invalid centrastage device id.");
+                }
+            }
+
+            return deviceId;
         }
 
         public void Initialize()
@@ -168,13 +204,13 @@
 
         private Guid GetDeviceIdFromRegistry()
         {
-            byte[] id = (byte[]) RegistryExtentions.GetRegistryValue(Setting.DeviceIdKeyPath, Setting.DeviceIdKeyName);
+            byte[] id = Encoding.UTF8.GetBytes(RegistryExtentions.GetRegistryValue(Setting.DeviceIdKeyPath, Setting.DeviceIdKeyName).ToString());
             if (id == null)
             {
-                throw new NullReferenceException("Unable to obtain the CentraStage DeviceID from the registry. Please manually enter this in the Settings.json file before starting the service again.");
+                throw new AbpException("Unable to obtain the centrastage device id from the registry. Please manually enter this in the settings.json file.");
             }
 
-            string registryValue = Encoding.UTF8.GetString(id);
+            var registryValue = Encoding.UTF8.GetString(id);
             Guid deviceId;
             bool valid = Guid.TryParse(registryValue, out deviceId);
             if (valid)
@@ -182,7 +218,7 @@
                 return deviceId;
             }
 
-            throw new FormatException("Unable to validate the CentraStage DeviceID from the registry.");
+            throw new AbpException("Unable to validate the centrastage device id from the registry.");
         }
 
         public List<Monitor> GetMonitors()
@@ -201,23 +237,30 @@
             try
             {
                 Logger.Debug("Reading the Settings file.");
-                _settingFile = JsonConvert.DeserializeObject<Setting>(File.ReadAllText(_settingFilePath));
+
+                bool exists = Exists();
+                if (exists)
+                {
+                    _settingFile = JsonConvert.DeserializeObject<Setting>(File.ReadAllText(_settingFilePath));
+                }
+                else
+                {
+                    Create();
+                }
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
                 Logger.Error("You do not have the required permissions to read the Settings file.");
-                Logger.Debug("Exception: ", ex);
-                Environment.Exit(ex.HResult);
+                throw;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Logger.Error("A general error occurred while trying to read the Settings file.");
-                Logger.Debug("Exception: ", ex);
-                Environment.Exit(ex.HResult);
+                throw;
             }
         }
 
-        private void SetDeviceId(Guid deviceId)
+        public void SetDeviceId(Guid deviceId)
         {
             GetSettings();
 
@@ -240,7 +283,6 @@
             }
         }
 
-
         private void UpdateSettings()
         {
             string settings = JsonConvert.SerializeObject(_settingFile, Formatting.Indented);
@@ -250,20 +292,40 @@
                 Logger.Debug("Updating the Settings file...");
                 File.WriteAllText(_settingFilePath, settings);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
                 Logger.Error("You do not have the required permissions to update the Settings file.");
-                Logger.Debug("Exception: ", ex);
-                Environment.Exit(ex.HResult);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Logger.Error("A general error occurred while trying to update the Settings file.");
-                Logger.Debug("Exception: ", ex);
-                Environment.Exit(ex.HResult);
             }
 
             Logger.Debug("Success.");
+        }
+
+        public void ResetOnStartUp(bool value)
+        {
+            GetSettings();
+
+            _settingFile.ResetOnStartUp = value;
+
+            UpdateSettings();
+        }
+
+        public Guid? GetDeviceId()
+        {
+            return GetDeviceIdFromSettingFile();
+        }
+
+        public void ClearCache()
+        {
+            GetSettings();
+
+            _settingFile.AccountId = null;
+            _settingFile.DeviceId = null;
+
+            UpdateSettings();
         }
     }
 }

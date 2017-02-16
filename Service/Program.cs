@@ -2,16 +2,16 @@
 {
     using System;
     using System.ServiceProcess;
-    using System.Threading;
     using Abp;
     using Abp.Dependency;
+    using Castle.Core.Logging;
     using Castle.Facilities.Logging;
     using Core;
     using Core.Common.Client;
     using Core.Settings;
-    using Fclp;
+    using Menu;
 
-    static class Program
+    class Runner
     {
         public const string ServiceName = "LMS";
         private static readonly AbpBootstrapper Bootstrapper = AbpBootstrapper.Create<LicenseMonitoringModule>();
@@ -24,61 +24,75 @@
             Bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog("NLog.config"));
             Bootstrapper.Initialize();
 
+            var logger = Bootstrapper.IocManager.Resolve<ILogger>();
+
             if (Environment.UserInteractive)
             {
-                Start(args);
+                try
+                {
+                    new ClientProgram().Run();
+                }
+                catch (Exception ex)
+                {
+                    logger.DebugFormat("Exception: ", ex);
 
-                Console.WriteLine("Press any key to stop...");
-                Console.ReadKey(true);
-
-                Stop();
+                    Console.ReadKey(true);
+                    Environment.Exit(ex.HResult);
+                }
             }
             else
-            {
-                using (var service = new MonitoringService())
-                {
-                    ServiceBase.Run(service);
-                }
+            {               
+                    using (var service = new MonitoringService())
+                    {
+                    try
+                    {
+                        ServiceBase.Run(service);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.DebugFormat("Exception: ", ex);
+                        service.Stop();
+                    }
+                }               
             }
         }
 
-        private static void Start(object obj)
+        public class MonitoringService : ServiceBase
         {
-            Console.WriteLine("Starting...");
+            public MonitoringService()
+            {
+                Logger = NullLogger.Instance;
 
-            var args = (string[]) obj;
+                ServiceName = Runner.ServiceName;
+                CanStop = true;
+                CanPauseAndContinue = false;
+                AutoLog = true;
+            }
 
-            var parser = new FluentCommandLineParser<ApplicationArguments>();
+            public ILogger Logger { get; set; }
 
-            parser.Setup(arg => arg.Debug)
-                .As('d', "debug")
-                .SetDefault(false);
+            protected override void OnStart(string[] args)
+            {
+                Logger.Debug("Starting service");
 
-            var result = parser.Parse(args);
+                System.Timers.Timer timer = new System.Timers.Timer {Interval = 60000};
+                timer.Elapsed += OnTimer;
+                timer.Start();
+            }
 
-            if (!result.HasErrors)
+            protected override void OnStop()
+            {
+                Logger.Debug("Shutting down service");
+                Bootstrapper.Dispose();
+            }
+
+            public void OnTimer(object sender, System.Timers.ElapsedEventArgs args)
             {
                 using (var orchestrator = Bootstrapper.IocManager.ResolveAsDisposable<Orchestrator>())
                 {
                     using (var settingsManager = Bootstrapper.IocManager.ResolveAsDisposable<SettingManager>())
                     {
-                        // set log level
-                        settingsManager.Object.SetDebug(parser.Object.Debug);
-
-                        // check settings exist
-                        var settings = settingsManager.Object.Exists();
-                        if (!settings)
-                        {                                      
-                            // get the account id
-                            long accountId;
-                            using (var apiClient = Bootstrapper.IocManager.ResolveAsDisposable<PortalClient>())
-                            {
-                                accountId = apiClient.Object.GetAccountId(settingsManager.Object.GetDeviceId());
-                            }
-
-                            // create
-                            settingsManager.Object.Create(accountId);                            
-                        }
+                        settingsManager.Object.FirstRun();
 
                         foreach (var monitor in settingsManager.Object.GetMonitors())
                         {
@@ -86,38 +100,6 @@
                         }
                     }
                 }
-            }
-        }
-
-        private static void Stop()
-        {
-            Console.WriteLine("Stopping...");
-            Bootstrapper.Dispose();
-        }
-
-        public class MonitoringService : ServiceBase
-        {
-            private Timer _stateTimer;
-            private TimerCallback _timerDelegate;
-
-            public MonitoringService()
-            {
-                ServiceName = Program.ServiceName;
-                CanStop = true;
-                CanPauseAndContinue = false;
-                AutoLog = true;
-            }
-
-            protected override void OnStart(string[] args)
-            {
-                _timerDelegate = Start;
-                _stateTimer = new Timer(_timerDelegate, args, 30000, 30000);
-            }
-
-            protected override void OnStop()
-            {
-                Stop();
-                _stateTimer.Dispose();
             }
         }
     }

@@ -18,11 +18,13 @@
                 Settings.Monitor.Users.ToString()
             };
             ServiceUrl = DefaultServiceUrl;
+            ResetOnStartUp = true;
         }
 
-        public long? AccountId { get; set; }
+        public int? AccountId { get; set; }
 
         public Guid? DeviceId { get; set; }
+        public bool ResetOnStartUp { get; set; }
 
         public object this[string propertyName]
         {

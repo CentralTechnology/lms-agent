@@ -1,24 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LicenseMonitoringSystem.Core.Settings
+﻿namespace LicenseMonitoringSystem.Core.Settings
 {
+    using System;
+
     public interface ISettingManager
     {
+        bool Debug { get; }
+
         /// <summary>
-        /// Creates a default Settings file with an optional <param name="accountId">Autotask Account Id</param>.
+        ///     Creates a default Settings file with an optional
+        ///     <param name="accountId">Autotask Account Id</param>
         /// </summary>
         /// <param name="accountId">Autotask Account Id</param>
-        void Create(long accountId = 0);
+        void Create(int accountId = 0);
 
         /// <summary>
         ///     Simple check to see if the Settings file exists.
         /// </summary>
-        /// <returns>Returns True or False.</returns>
         bool Exists();
+
+        /// <summary>
+        ///     This metthod runs each time the service is started. It checks that the required details have been entered into the
+        ///     settings file.
+        /// </summary>
+        void FirstRun();
+
+        /// <summary>
+        ///     Gets the account id from the settings file, then fallsback to the api if it is not found.
+        /// </summary>
+        /// <param name="deviceId"></param>
+        int? GetAccountId(Guid deviceId);
+
+        /// <summary>
+        ///     Gets the account id from the settings file, then fallsback to the api if it is not found.
+        /// </summary>
+        int? GetAccountId();
+
+        /// <summary>
+        ///     If the <paramref name="registry" /> is false, then it will search in the settings file.
+        ///     If the <paramref name="registry" /> is true, then it will search in the registry, avoiding the settings file.
+        /// </summary>
+        /// <param name="registry"></param>
+        Guid GetDeviceId(bool registry);
+
+        Guid? GetDeviceId();
+
+        /// <summary>
+        ///     Gets the Service Url used for the API.
+        /// </summary>
+        string GetServiceUrl();
+
+        /// <summary>
+        /// </summary>
+        /// <param name="accountId"></param>
+        void SetAccountId(int accountId);
 
         /// <summary>
         ///     Sets the application to Debug mode.
@@ -27,21 +61,16 @@ namespace LicenseMonitoringSystem.Core.Settings
         void SetDebug(bool value);
 
         /// <summary>
-        ///  Gets the CentraStage DeviceID.
+        /// 
         /// </summary>
-        /// <returns><see cref="Guid">DeviceID</see></returns>
-        Guid GetDeviceId();
+        void ResetOnStartUp(bool value);
 
         /// <summary>
-        /// Gets the Autotask AccountID.
+        /// 
         /// </summary>
-        /// <returns><see cref="long">AccountID</see></returns>
-        long GetAccountId();
+        /// <param name="deviceId"></param>
+        void SetDeviceId(Guid deviceId);
 
-        /// <summary>
-        ///  Gets the Service Url used for the API.
-        /// </summary>
-        /// <returns>Returns the Service Url as a <see cref="string"/></returns>
-        string GetServiceUrl();
+        void ClearCache();
     }
 }
