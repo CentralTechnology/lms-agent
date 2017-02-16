@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension" xmlns:wix="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" Name="License Monitoring System" Language="1033" Version="1.0.0.0" Manufacturer="Central Technology Ltd" UpgradeCode="ADAC7706-188B-42E7-922B-50786779042A">
+        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" />
+        <MajorUpgrade DowngradeErrorMessage="A newer version of License Monitoring System is already installed." />
+        <MediaTemplate EmbedCab="yes" />
+        <Feature Id="LicenseMonitoringSystem" Title="License Monitoring System" Level="1">
+            <ComponentGroupRef Id="LicenseMonitoringSystem_ServiceComponents" />
+        </Feature>
+    </Product>
+    <Fragment>
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="LicenseMonitoringSystem_INSTALLFOLDER" Name="License Monitoring System" />
+            </Directory>
+        </Directory>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="LicenseMonitoringSystem_ServiceComponents">
+            <Component Id="LicenseMonitoringSystem_ServiceComponent" Directory="LicenseMonitoringSystem_INSTALLFOLDER" Guid="2158608F-0EA8-4AD0-9CE9-BBF95B20663F">
+                <CreateFolder />
+                <File Id="fil15C550EF61ABCC9FEA0FA4569C088F88" Source="$(var.SourceOutput)\Abp.dll" Vital="yes" />
+                <File Id="filCFF506FF09608700B50FE1A9C8D723DE" Source="$(var.SourceOutput)\Abp.Web.Api.dll" Vital="yes" />
+                <File Id="filB2D4450ABD10F2157F0ADA19FF838637" Source="$(var.SourceOutput)\Abp.Web.Common.dll" Vital="yes" />
+                <File Id="fil1F916926ADE3435F72847A7ECE5B69E1" Source="$(var.SourceOutput)\Abp.Web.dll" Vital="yes" />
+                <File Id="fil808D19806529ABA1617D818072819E54" Source="$(var.SourceOutput)\Castle.Core.dll" Vital="yes" />
+                <File Id="fil47AD170A8C6A671958BB9D3029706DD0" Source="$(var.SourceOutput)\Castle.Facilities.Logging.dll" Vital="yes" />
+                <File Id="fil3E34F1D6DFA795DCBEFFB8841ABB8E62" Source="$(var.SourceOutput)\Castle.Services.Logging.NLogIntegration.dll" Vital="yes" />
+                <File Id="fil151C8FBAEDA5D4BDEB438F301EAE7FA4" Source="$(var.SourceOutput)\Castle.Windsor.dll" Vital="yes" />
+                <File Id="fil28F7A78154ADBFEB37057F57CF40F0B1" Source="$(var.SourceOutput)\FluentCommandLineParser.dll" Vital="yes" />
+                <File Id="fil758B130838748D0B0DA0239586FE2832" Source="$(var.SourceOutput)\LMS.Core.dll" Vital="yes" />
+                <File Id="filC8C8F619E34532B2AB0E7B7C2C1E6949" KeyPath="yes" Source="$(var.SourceOutput)\LMS.exe" Vital="yes" />
+                <File Id="fil9C971DEC84DC4FAD2D69A46EB8B1360A" Source="$(var.SourceOutput)\LMS.exe.config" Vital="yes" />
+                <File Id="filAE55FE6A97E108F290D8AC77700ED4E8" Source="$(var.SourceOutput)\Microsoft.OData.Client.dll" Vital="yes" />
+                <File Id="filE7C7D40ABC41477E5A75627422FAA5F5" Source="$(var.SourceOutput)\Microsoft.OData.Core.dll" Vital="yes" />
+                <File Id="fil1EAF5F7CB1EEEA9A0C59AD5A961BB8B8" Source="$(var.SourceOutput)\Microsoft.OData.Edm.dll" Vital="yes" />
+                <File Id="filBA25AB939AE677980F3C909F3A20FD28" Source="$(var.SourceOutput)\Microsoft.Spatial.dll" Vital="yes" />
+                <File Id="fil7F15BA8094994ADAD04DA907E934B5BD" Source="$(var.SourceOutput)\Newtonsoft.Json.dll" Vital="yes" />
+                <File Id="filB790CCBA25C55410384AC34A5BE66271" Source="$(var.SourceOutput)\Nito.AsyncEx.Concurrent.dll" Vital="yes" />
+                <File Id="fil56B61A7537F98C61D176C2353EC5D243" Source="$(var.SourceOutput)\Nito.AsyncEx.dll" Vital="yes" />
+                <File Id="fil8F230572AE81163C6314A371FD4B61A4" Source="$(var.SourceOutput)\Nito.AsyncEx.Enlightenment.dll" Vital="yes" />
+                <File Id="fil49D7CB3EEC543B549EE3BE62A5F30A21" Source="$(var.SourceOutput)\NLog.config" Vital="yes" />
+                <File Id="filD99192F3EF926B0696A896924D4A93A9" Source="$(var.SourceOutput)\NLog.dll" Vital="yes" />
+                <File Id="fil842A10E0CCD8A41FE6AA8AC1D5A7E0AC" Source="$(var.SourceOutput)\System.Collections.Immutable.dll" Vital="yes" />
+                <File Id="fil7764FFC1C1ED142303E0353604FC6366" Source="$(var.SourceOutput)\System.Linq.Dynamic.dll" Vital="yes" />
+                <File Id="fil49C619BD9B416D16CB170A899D91A7BC" Source="$(var.SourceOutput)\System.Net.Http.Formatting.dll" Vital="yes" />
+                <File Id="fil4991BDE405145DC119397D3DA8E86418" Source="$(var.SourceOutput)\System.Web.Http.dll" Vital="yes" />
+                <File Id="fil6EA7AC1729284C27A17039FE94522C29" Source="$(var.SourceOutput)\System.Web.Http.WebHost.dll" Vital="yes" />
+                <ServiceInstall Id="LMSServiceInstaller" Type="ownProcess" Vital="yes" Name="License Monitoring System" DisplayName="License Monitoring System" Description="Automated license reporting solution." Start="auto" Account="LocalSystem" ErrorControl="ignore" Interactive="no" />
+                <ServiceControl Id="LicenseMonitoringSystemStartService" Start="install" Name="License Monitoring System" Wait="yes" />
+                <ServiceControl Id="LicenseMonitoringSystemStopService" Stop="both" Remove="uninstall" Name="License Monitoring System" Wait="yes" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

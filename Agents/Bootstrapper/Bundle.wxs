@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Bundle Name="License Monitoring System" Version="0.0.1" Manufacturer="Central Technology Ltd" UpgradeCode="dc9c2849-4c97-4f41-9174-d825ab335f9c">
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
+    </BootstrapperApplicationRef>
+
+    <PayloadGroup Id="NetFx452RedistPayload">
+      <Payload Name="redist\NDP452-KB2901907-x86-x64-AllOS-ENU.exe" SourceFile="..\..\..\..\Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe"/>
+    </PayloadGroup>
+		<Chain>
+      <PackageGroupRef Id="NetFx452Web"/>
+      <MsiPackage Id="LicenseMonitoringSystem" SourceFile="$(var.LicenseMonitoringSystem.Installer.TargetPath)" DisplayName="LMS"/>
+		</Chain>
+	</Bundle>
+</Wix>
