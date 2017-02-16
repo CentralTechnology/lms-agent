@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{771B5FBE-DFC4-4C36-8764-E1C5510CFEB3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BDBA0CC1-FAA2-4AC2-B063-DD36BCC32839}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LicenseMonitoringSystem.Service", "Service\LicenseMonitoringSystem.Service.csproj", "{3A4F5A4E-2119-459F-8EE5-B4BA19861B29}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,9 +17,12 @@ EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "LicenseMonitoringSystem.Bootstrapper", "Bootstrapper\LicenseMonitoringSystem.Bootstrapper.wixproj", "{DC9C2849-4C97-4F41-9174-D825AB335F9C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LicenseMonitoringSystem.Tests", "Tests\LicenseMonitoringSystem.Tests.csproj", "{5B90A615-D64E-41AC-B45F-7BA2FAE2351E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{34FD0A47-AD81-4816-9181-D0D0D9519659} = {34FD0A47-AD81-4816-9181-D0D0D9519659}
-		{3A4F5A4E-2119-459F-8EE5-B4BA19861B29} = {3A4F5A4E-2119-459F-8EE5-B4BA19861B29}
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{667E8B7D-FDF4-4D89-B244-9FBACD08E6BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotNetFramework", "DotNetFramework", "{595087EB-DBE4-4438-A0F6-3F47D1F417A1}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe = Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe
 	EndProjectSection
 EndProject
 Global
@@ -71,6 +74,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5B90A615-D64E-41AC-B45F-7BA2FAE2351E} = {771B5FBE-DFC4-4C36-8764-E1C5510CFEB3}
+		{5B90A615-D64E-41AC-B45F-7BA2FAE2351E} = {BDBA0CC1-FAA2-4AC2-B063-DD36BCC32839}
+		{595087EB-DBE4-4438-A0F6-3F47D1F417A1} = {667E8B7D-FDF4-4D89-B244-9FBACD08E6BD}
 	EndGlobalSection
 EndGlobal

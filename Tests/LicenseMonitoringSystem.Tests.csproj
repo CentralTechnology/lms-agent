@@ -134,6 +134,16 @@
   <ItemGroup>
     <Folder Include="Service\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\LicenseMonitoringSystem.Core.csproj">
+      <Project>{34fd0a47-ad81-4816-9181-d0d0d9519659}</Project>
+      <Name>LicenseMonitoringSystem.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Service\LicenseMonitoringSystem.Service.csproj">
+      <Project>{3a4f5a4e-2119-459f-8ee5-b4ba19861b29}</Project>
+      <Name>LicenseMonitoringSystem.Service</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
