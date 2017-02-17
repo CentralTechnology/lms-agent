@@ -1,2 +1,11 @@
-# agents
-A collection of remote agents that communicate with the Portal.
+# License Monitoring System - Agent
+The agents purpose is to collect information regarding various licenses.
+
+Supports
+- Users
+
+
+Roadmap
+- SQL Licenses
+- Exchange Licenses (SPLA)
+- Potentially merge with the Veeam Agent
