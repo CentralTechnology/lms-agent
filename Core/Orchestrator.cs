@@ -1,31 +1,38 @@
 ﻿namespace LicenseMonitoringSystem.Core
 {
-    using System;
-    using System.Linq;
-    using System.Linq.Dynamic;
-    using Abp;
     using Abp.Dependency;
     using Abp.Timing;
-    using Common;
     using Common.Client;
     using Common.Extensions;
     using Common.Portal.License.User;
-    using Newtonsoft.Json;
     using Settings;
     using Users;
 
     public class Orchestrator : LicenseMonitoringBase, ISingletonDependency
-    { 
-        private readonly IUserManager _userManager;
+    {
         private readonly IPortalClient _portalClient;
+        private readonly IUserManager _userManager;
+
         public Orchestrator(
-            IUserManager userManager, 
+            IUserManager userManager,
             IPortalClient portalClient,
-            SettingManager settingManager) 
+            SettingManager settingManager)
             : base(settingManager)
         {
             _userManager = userManager;
             _portalClient = portalClient;
+        }
+
+        private LicenseUserUpload CreateLicenseUserUpload(int uploadId)
+        {
+            return new LicenseUserUpload
+            {
+                CheckInTime = Clock.Now,
+                DeviceId = SettingManager.DeviceId,
+                TenantId = SettingManager.AccountId,
+                Users = _userManager.GetUsersAndGroups().Convert(),
+                UploadId = uploadId
+            };
         }
 
         public void Run(Monitor monitor)
@@ -35,11 +42,20 @@
                 case Monitor.Users:
                     Logger.Info("Monitoring Users");
                     Users();
+
                     break;
                 default:
                     Logger.Error("No monitors selected. Please check the settings.json file.");
                     break;
             }
+        }
+
+        private LicenseUserUpload UpdateLicenseUserUpload(LicenseUserUpload upload)
+        {
+            upload.CheckInTime = Clock.Now;
+            upload.Users = _userManager.GetUsersAndGroups().Convert();
+
+            return upload;
         }
 
         private void Users()
@@ -66,28 +82,8 @@
             {
                 var upload = _portalClient.Get(uploadId);
                 upload = UpdateLicenseUserUpload(upload);
-                _portalClient.Put(upload.Id,upload);
+                _portalClient.Put(upload.Id, upload);
             }
-        }
-
-        private LicenseUserUpload CreateLicenseUserUpload(int uploadId)
-        {
-            return new LicenseUserUpload
-            {
-                CheckInTime = Clock.Now,
-                DeviceId = SettingManager.DeviceId,
-                TenantId = SettingManager.AccountId,
-                Users = _userManager.GetUsersAndGroups().Convert(),
-                UploadId = uploadId
-            };
-        }
-
-        private LicenseUserUpload UpdateLicenseUserUpload(LicenseUserUpload upload)
-        {
-            upload.CheckInTime = Clock.Now;
-            upload.Users = _userManager.GetUsersAndGroups().Convert();
-
-            return upload;
         }
     }
 }

@@ -23,18 +23,18 @@
         private Setting _settingFile;
         private string _settingFilePath;
 
-        public Guid DeviceId { get; set; }
-        public int AccountId { get; set; }
-
-
         public SettingManager()
         {
             Logger = NullLogger.Instance;
         }
 
-        public bool Debug { get; private set; }
+        public int AccountId { get; set; }
+
+        public Guid DeviceId { get; set; }
 
         public ILogger Logger { get; set; }
+
+        public bool Debug { get; private set; }
 
         public void Create(int accoundId = 0)
         {
@@ -87,23 +87,6 @@
             Debug = value;
 
             SetLogLevel(value ? LogLevel.Debug : LogLevel.Error, "file");
-        }
-
-        private Guid? GetDeviceIdFromSettingFile()
-        {
-            Logger.Debug("Attempting to read the CentraStage DeviceID from the Settings file.");
-            var id = _settingFile?.DeviceId;
-
-            if (id != null)
-            {
-                Logger.DebugFormat("CentraStage device id is currently set to: {0}", id);
-            }
-            else
-            {
-                Logger.Debug("CentraStage device id is not currently set");
-            }
-
-            return id;
         }
 
         public int? GetAccountId(Guid deviceId)
@@ -160,14 +143,14 @@
             SetDeviceId(deviceId);
 
             // gets/sets account id
-            var accountId = GetAccountId((Guid)deviceId);
+            var accountId = GetAccountId((Guid) deviceId);
 
             if (accountId == null)
             {
                 throw new AbpException("Unable to obtain the autotask account id. Execution cannot continue. Please update the settings.json file with the correct autotask acccount id.");
             }
 
-            SetAccountId((int)accountId);
+            SetAccountId((int) accountId);
 
             ResetOnStartUp(false);
         }
@@ -197,6 +180,53 @@
             return deviceId;
         }
 
+        public List<Monitor> GetMonitors()
+        {
+            List<Monitor> monitors = new List<Monitor>();
+            if (_settingFile != null && _settingFile.Monitor.Any())
+            {
+                foreach (var monitor in _settingFile.Monitor)
+                {
+                    monitors.Add(monitor.ToEnum<Monitor>());
+                }
+            }
+
+            return monitors;
+        }
+
+        public void SetDeviceId(Guid deviceId)
+        {
+            GetSettings();
+
+            _settingFile.DeviceId = deviceId;
+
+            UpdateSettings();
+        }
+
+        public void ResetOnStartUp(bool value)
+        {
+            GetSettings();
+
+            _settingFile.ResetOnStartUp = value;
+
+            UpdateSettings();
+        }
+
+        public Guid? GetDeviceId()
+        {
+            return GetDeviceIdFromSettingFile();
+        }
+
+        public void ClearCache()
+        {
+            GetSettings();
+
+            _settingFile.AccountId = null;
+            _settingFile.DeviceId = null;
+
+            UpdateSettings();
+        }
+
         public void Initialize()
         {
             _settingFilePath = AppDomain.CurrentDomain.BaseDirectory + _settingFileName;
@@ -222,18 +252,21 @@
             throw new AbpException("Unable to validate the centrastage device id from the registry.");
         }
 
-        public List<Monitor> GetMonitors()
+        private Guid? GetDeviceIdFromSettingFile()
         {
-            List<Monitor> monitors = new List<Monitor>();
-            if (_settingFile != null && _settingFile.Monitor.Any())
+            Logger.Debug("Attempting to read the CentraStage DeviceID from the Settings file.");
+            var id = _settingFile?.DeviceId;
+
+            if (id != null)
             {
-                foreach (var monitor in _settingFile.Monitor)
-                {
-                    monitors.Add(monitor.ToEnum<Monitor>());
-                }
+                Logger.DebugFormat("CentraStage device id is currently set to: {0}", id);
+            }
+            else
+            {
+                Logger.Debug("CentraStage device id is not currently set");
             }
 
-            return monitors;
+            return id;
         }
 
         private void GetSettings()
@@ -262,15 +295,6 @@
                 Logger.Error("A general error occurred while trying to read the Settings file.");
                 throw;
             }
-        }
-
-        public void SetDeviceId(Guid deviceId)
-        {
-            GetSettings();
-
-            _settingFile.DeviceId = deviceId;
-
-            UpdateSettings();
         }
 
         private void SetLogLevel(LogLevel logLevel, string regex)
@@ -306,30 +330,6 @@
             }
 
             Logger.Debug("Success.");
-        }
-
-        public void ResetOnStartUp(bool value)
-        {
-            GetSettings();
-
-            _settingFile.ResetOnStartUp = value;
-
-            UpdateSettings();
-        }
-
-        public Guid? GetDeviceId()
-        {
-            return GetDeviceIdFromSettingFile();
-        }
-
-        public void ClearCache()
-        {
-            GetSettings();
-
-            _settingFile.AccountId = null;
-            _settingFile.DeviceId = null;
-
-            UpdateSettings();
         }
     }
 }

@@ -10,6 +10,7 @@
     class DevicePage : Page
     {
         private readonly ISettingManager _settingManager;
+
         public DevicePage(Program program)
             : base("Device", program)
         {

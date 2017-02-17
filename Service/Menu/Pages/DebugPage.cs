@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LicenseMonitoringSystem.Menu.Pages
+﻿namespace LicenseMonitoringSystem.Menu.Pages
 {
+    using System;
+    using System.Collections.Generic;
     using Abp.Dependency;
     using Core.Settings;
     using EasyConsole;
@@ -13,6 +9,7 @@ namespace LicenseMonitoringSystem.Menu.Pages
     class DebugPage : Page
     {
         private readonly ISettingManager _settingManager;
+
         public DebugPage(Program program)
             : base("Debug", program)
         {

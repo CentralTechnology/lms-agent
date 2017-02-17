@@ -74,10 +74,6 @@
       <HintPath>..\packages\Castle.Windsor.3.4.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EasyConsole, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\EasyConsole.1.1.0\lib\net452\EasyConsole.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
       <Private>True</Private>
@@ -135,7 +131,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationArguments.cs" />
     <Compile Include="LicenseMonitoringModule.cs" />
     <Compile Include="LicensingMonitoringInstaller.cs">
       <SubType>Component</SubType>
@@ -176,6 +171,10 @@
     <ProjectReference Include="..\Core\LicenseMonitoringSystem.Core.csproj">
       <Project>{34fd0a47-ad81-4816-9181-d0d0d9519659}</Project>
       <Name>LicenseMonitoringSystem.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EasyConsole\EasyConsole.csproj">
+      <Project>{da79ba94-fad6-462f-89c7-774fe822d594}</Project>
+      <Name>EasyConsole</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

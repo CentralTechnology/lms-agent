@@ -9,6 +9,7 @@
     class AccountPage : Page
     {
         private readonly ISettingManager _settingManager;
+
         public AccountPage(Program program)
             : base("Account", program)
         {

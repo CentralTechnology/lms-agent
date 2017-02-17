@@ -6,9 +6,7 @@
     using System.Linq;
     using Common;
     using Common.Extensions;
-    using Common.Portal.License;
     using Common.Portal.License.User;
-    using Microsoft.OData.Client;
     using Settings;
 
     public class UserManager : LicenseMonitoringBase, IUserManager

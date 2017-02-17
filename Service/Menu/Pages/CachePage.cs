@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LicenseMonitoringSystem.Menu.Pages
+﻿namespace LicenseMonitoringSystem.Menu.Pages
 {
+    using System;
+    using System.Collections.Generic;
     using Abp.Dependency;
     using Core.Settings;
     using EasyConsole;
@@ -24,7 +20,7 @@ namespace LicenseMonitoringSystem.Menu.Pages
                     settingManager.ClearCache();
 
                     Output.WriteLine(ConsoleColor.Green, "Cache successfully cleared!");
-                                        Input.ReadString("Press [Enter]");
+                    Input.ReadString("Press [Enter]");
                     Program.NavigateTo<CachePage>();
                 }),
                 new Option("Home", program.NavigateHome)

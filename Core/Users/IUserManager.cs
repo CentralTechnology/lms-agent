@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LicenseMonitoringSystem.Core.Users
+﻿namespace LicenseMonitoringSystem.Core.Users
 {
-    using Common.Portal.License;
+    using System.Collections.Generic;
     using Common.Portal.License.User;
 
     public interface IUserManager

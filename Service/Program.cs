@@ -7,7 +7,6 @@
     using Castle.Core.Logging;
     using Castle.Facilities.Logging;
     using Core;
-    using Core.Common.Client;
     using Core.Settings;
     using Menu;
 
@@ -34,6 +33,7 @@
                 }
                 catch (Exception ex)
                 {
+                    logger.Error(ex.Message);
                     logger.DebugFormat("Exception: ", ex);
 
                     Console.ReadKey(true);
@@ -41,9 +41,9 @@
                 }
             }
             else
-            {               
-                    using (var service = new MonitoringService())
-                    {
+            {
+                using (var service = new MonitoringService())
+                {
                     try
                     {
                         ServiceBase.Run(service);
@@ -53,7 +53,7 @@
                         logger.DebugFormat("Exception: ", ex);
                         service.Stop();
                     }
-                }               
+                }
             }
         }
 

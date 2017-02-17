@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LicenseMonitoringSystem.Menu.Pages
+﻿namespace LicenseMonitoringSystem.Menu.Pages
 {
+    using System;
+    using System.Collections.Generic;
     using Abp.Dependency;
+    using Castle.Core.Logging;
     using Core;
     using Core.Settings;
     using EasyConsole;
 
     class ExecutePage : Page
     {
-        private readonly ISettingManager _settingManager;
         private readonly Orchestrator _orchestrator;
-        public ExecutePage(Program program) 
+        private readonly ISettingManager _settingManager;
+
+        public ExecutePage(Program program)
             : base("Execute", program)
         {
+            Logger = IocManager.Instance.Resolve<ILogger>();
             _settingManager = IocManager.Instance.Resolve<ISettingManager>();
             _orchestrator = IocManager.Instance.Resolve<Orchestrator>();
 
@@ -29,7 +28,14 @@ namespace LicenseMonitoringSystem.Menu.Pages
             {
                 Options.Add(new Option(monitor.ToString(), () =>
                 {
-                    _orchestrator.Run(monitor);
+                    try
+                    {
+                        _orchestrator.Run(monitor);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex.Message);
+                    }
 
                     Input.ReadString("Press [Enter]");
                     Program.NavigateTo<ExecutePage>();
@@ -38,6 +44,8 @@ namespace LicenseMonitoringSystem.Menu.Pages
 
             Options.Add(new Option("Home", program.NavigateHome));
         }
+
+        public ILogger Logger { get; set; }
 
         private IList<Option> Options { get; set; }
 

@@ -8,6 +8,10 @@
         bool Debug { get; }
 
         /// <summary>
+        /// </summary>
+        void ClearCache();
+
+        /// <summary>
         ///     Creates a default Settings file with an optional
         ///     <param name="accountId">Autotask Account Id</param>
         /// </summary>
@@ -46,9 +50,18 @@
         Guid? GetDeviceId();
 
         /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        List<Monitor> GetMonitors();
+
+        /// <summary>
         ///     Gets the Service Url used for the API.
         /// </summary>
         string GetServiceUrl();
+
+        /// <summary>
+        /// </summary>
+        void ResetOnStartUp(bool value);
 
         /// <summary>
         /// </summary>
@@ -62,25 +75,8 @@
         void SetDebug(bool value);
 
         /// <summary>
-        /// 
-        /// </summary>
-        void ResetOnStartUp(bool value);
-
-        /// <summary>
-        /// 
         /// </summary>
         /// <param name="deviceId"></param>
         void SetDeviceId(Guid deviceId);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void ClearCache();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        List<Monitor> GetMonitors();
     }
 }

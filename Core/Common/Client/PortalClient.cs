@@ -21,6 +21,8 @@
                 antiForgeryManager
             )
         {
+            BaseUrl = settingManager.GetServiceUrl();
+            _container = new Container(new Uri(BaseUrl));
         }
 
         public LicenseUserUpload Get(int id)
@@ -57,15 +59,15 @@
             return _container.LicenseUser.Status(deviceId).GetValue();
         }
 
+        public int? GetAccountId(Guid deviceId)
+        {
+            return _container.DeviceProfile.AccountId(deviceId).GetValue();
+        }
+
         public void Initialize()
         {
             _serviceUrl = SettingManager.GetServiceUrl();
             _container = new Container(new Uri(_serviceUrl));
-        }
-
-        public int? GetAccountId(Guid deviceId)
-        {
-            return _container.DeviceProfile.AccountId(deviceId).GetValue();
         }
     }
 }
