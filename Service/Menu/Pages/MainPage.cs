@@ -16,7 +16,7 @@ namespace LicenseMonitoringSystem.Menu.Pages
                   new Option("Cache", () => program.NavigateTo<CachePage>()),
                   new Option("Device", () => program.NavigateTo<DevicePage>()),
                   new Option("Debug", () => program.NavigateTo<DebugPage>()),
-                  new Option("Execute", () => Console.WriteLine("Page 1")),
+                  new Option("Execute", () => program.NavigateTo<ExecutePage>()),
                   new Option("Exit", () => Environment.Exit(0))
                   )
         {

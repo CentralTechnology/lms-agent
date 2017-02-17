@@ -18,6 +18,7 @@ namespace LicenseMonitoringSystem.Menu
             AddPage(new AccountPage(this));
             AddPage(new CachePage(this));
             AddPage(new DevicePage(this));
+            AddPage(new ExecutePage(this));
 
             SetPage<MainPage>();
         }

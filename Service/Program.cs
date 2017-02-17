@@ -90,7 +90,7 @@
             {
                 using (var orchestrator = Bootstrapper.IocManager.ResolveAsDisposable<Orchestrator>())
                 {
-                    using (var settingsManager = Bootstrapper.IocManager.ResolveAsDisposable<SettingManager>())
+                    using (var settingsManager = Bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
                     {
                         settingsManager.Object.FirstRun();
 

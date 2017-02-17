@@ -200,6 +200,7 @@
         public void Initialize()
         {
             _settingFilePath = AppDomain.CurrentDomain.BaseDirectory + _settingFileName;
+            GetSettings();
         }
 
         private Guid GetDeviceIdFromRegistry()
@@ -224,9 +225,12 @@
         public List<Monitor> GetMonitors()
         {
             List<Monitor> monitors = new List<Monitor>();
-            foreach (var monitor in _settingFile.Monitor)
+            if (_settingFile != null && _settingFile.Monitor.Any())
             {
-                monitors.Add(monitor.ToEnum<Monitor>());
+                foreach (var monitor in _settingFile.Monitor)
+                {
+                    monitors.Add(monitor.ToEnum<Monitor>());
+                }
             }
 
             return monitors;

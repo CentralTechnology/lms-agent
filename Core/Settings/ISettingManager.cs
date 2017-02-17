@@ -1,6 +1,7 @@
 ﻿namespace LicenseMonitoringSystem.Core.Settings
 {
     using System;
+    using System.Collections.Generic;
 
     public interface ISettingManager
     {
@@ -71,6 +72,15 @@
         /// <param name="deviceId"></param>
         void SetDeviceId(Guid deviceId);
 
+        /// <summary>
+        /// 
+        /// </summary>
         void ClearCache();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        List<Monitor> GetMonitors();
     }
 }
