@@ -9,3 +9,4 @@ Roadmap
 - SQL Licenses
 - Exchange Licenses (SPLA)
 - Potentially merge with the Veeam Agent
+- Potentially merge with Veeam Cloud Connect
