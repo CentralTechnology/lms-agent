@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0-beta",
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "copyToOutput": [ "Nlog.config"]
+  },
+
+  "dependencies": {
+    "Abp": "1.4.2",
+    "Castle.Core-NLog": "3.3.3",
+    "Castle.Windsor-NLog": "3.4.0",
+    "Console": "1.0.0-*",
+    "Core": "1.0.0-beta",
+    "NLog": "4.4.3",
+    "NLog.Schema": "4.4.3"
+  },
+
+  "frameworks": {
+    "net452": {
+      "dependencies": {
+      },
+      "frameworkAssemblies": {
+        "System.Configuration.Install": "4.0.0.0",
+        "System.ServiceProcess": "4.0.0.0"
+      }
+    }
+  }
+}

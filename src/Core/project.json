@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0-beta",
+
+  "dependencies": {
+    "Newtonsoft.Json": "9.0.1",
+    "Abp.Web.Api": "1.4.2",
+    "Abp.AutoMapper": "1.4.2",
+    "ShellProgressBar": "3.0.0",
+    "Microsoft.OData.Client": "6.15.0",
+    "NLog": "4.4.3",
+    "NLog.Schema": "4.4.3",
+    "Abp": "1.4.2"
+  },
+
+  "frameworks": {
+    "net452": {
+      "dependencies": {
+
+      },
+      "frameworkAssemblies": {
+        "System.DirectoryServices": "4.0.0.0",
+        "System.DirectoryServices.AccountManagement": "4.0.0.0"
+      }
+    }
+  }
+}
