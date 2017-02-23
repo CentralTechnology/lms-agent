@@ -11,7 +11,7 @@
                 new Option("Cache", () => program.NavigateTo<CachePage>()),
                 new Option("Device", () => program.NavigateTo<DevicePage>()),
                 new Option("Debug", () => program.NavigateTo<DebugPage>()),
-                new Option("Execute", () => program.NavigateTo<ExecutePage>()),
+                new Option("Actions", () => program.NavigateTo<ActionsPage>()),
                 new Option("Exit", () => Environment.Exit(0))
             )
         {

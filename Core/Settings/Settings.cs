@@ -25,6 +25,7 @@
 
             ResetOnStartUp = true;
         }
+        public bool? Debug { get; set; }
 
         public int? AccountId { get; set; }
 

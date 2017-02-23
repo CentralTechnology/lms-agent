@@ -8,1536 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 16/02/2017 11:14:46
-namespace LicenseMonitoringSystem.Core.Common.Portal.License.User
-{
-    /// <summary>
-    /// There are no comments for LicenseUserUploadSingle in the schema.
-    /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserUploadSingle")]
-    public partial class LicenseUserUploadSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserUpload>
-    {
-        /// <summary>
-        /// Initialize a new LicenseUserUploadSingle object.
-        /// </summary>
-        public LicenseUserUploadSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
-            : base(context, path) {}
-
-        /// <summary>
-        /// Initialize a new LicenseUserUploadSingle object.
-        /// </summary>
-        public LicenseUserUploadSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
-            : base(context, path, isComposable) {}
-
-        /// <summary>
-        /// Initialize a new LicenseUserUploadSingle object.
-        /// </summary>
-        public LicenseUserUploadSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserUpload> query)
-            : base(query) {}
-
-        /// <summary>
-        /// There are no comments for Users in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Users")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> Users
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._Users == null))
-                {
-                    this._Users = Context.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser>(GetPath("Users"));
-                }
-                return this._Users;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> _Users;
-    }
-    /// <summary>
-    /// There are no comments for LicenseUserUpload in the schema.
-    /// </summary>
-    /// <KeyProperties>
-    /// Id
-    /// </KeyProperties>
-    [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserUpload")]
-    public partial class LicenseUserUpload : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Create a new LicenseUserUpload object.
-        /// </summary>
-        /// <param name="checkInTime">Initial value of CheckInTime.</param>
-        /// <param name="deviceId">Initial value of DeviceId.</param>
-        /// <param name="status">Initial value of Status.</param>
-        /// <param name="uploadId">Initial value of UploadId.</param>
-        /// <param name="creationTime">Initial value of CreationTime.</param>
-        /// <param name="tenantId">Initial value of TenantId.</param>
-        /// <param name="isActive">Initial value of IsActive.</param>
-        /// <param name="ID">Initial value of Id.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static LicenseUserUpload CreateLicenseUserUpload(global::System.DateTimeOffset checkInTime, 
-                    global::System.Guid deviceId, 
-                    global::LicenseMonitoringSystem.Core.Common.Portal.Common.Enums.CallInStatus status, 
-                    int uploadId, 
-                    global::System.DateTimeOffset creationTime, 
-                    int tenantId, 
-                    bool isActive, 
-                    int ID)
-        {
-            LicenseUserUpload licenseUserUpload = new LicenseUserUpload();
-            licenseUserUpload.CheckInTime = checkInTime;
-            licenseUserUpload.DeviceId = deviceId;
-            licenseUserUpload.Status = status;
-            licenseUserUpload.UploadId = uploadId;
-            licenseUserUpload.CreationTime = creationTime;
-            licenseUserUpload.TenantId = tenantId;
-            licenseUserUpload.IsActive = isActive;
-            licenseUserUpload.Id = ID;
-            return licenseUserUpload;
-        }
-        /// <summary>
-        /// There are no comments for Property CheckInTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("CheckInTime")]
-        public global::System.DateTimeOffset CheckInTime
-        {
-            get
-            {
-                return this._CheckInTime;
-            }
-            set
-            {
-                this.OnCheckInTimeChanging(value);
-                this._CheckInTime = value;
-                this.OnCheckInTimeChanged();
-                this.OnPropertyChanged("CheckInTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _CheckInTime;
-        partial void OnCheckInTimeChanging(global::System.DateTimeOffset value);
-        partial void OnCheckInTimeChanged();
-        /// <summary>
-        /// There are no comments for Property DeviceId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("DeviceId")]
-        public global::System.Guid DeviceId
-        {
-            get
-            {
-                return this._DeviceId;
-            }
-            set
-            {
-                this.OnDeviceIdChanging(value);
-                this._DeviceId = value;
-                this.OnDeviceIdChanged();
-                this.OnPropertyChanged("DeviceId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Guid _DeviceId;
-        partial void OnDeviceIdChanging(global::System.Guid value);
-        partial void OnDeviceIdChanged();
-        /// <summary>
-        /// There are no comments for Property Hostname in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Hostname")]
-        public string Hostname
-        {
-            get
-            {
-                return this._Hostname;
-            }
-            set
-            {
-                this.OnHostnameChanging(value);
-                this._Hostname = value;
-                this.OnHostnameChanged();
-                this.OnPropertyChanged("Hostname");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Hostname;
-        partial void OnHostnameChanging(string value);
-        partial void OnHostnameChanged();
-        /// <summary>
-        /// There are no comments for Property IpAddress in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IpAddress")]
-        public string IpAddress
-        {
-            get
-            {
-                return this._IpAddress;
-            }
-            set
-            {
-                this.OnIpAddressChanging(value);
-                this._IpAddress = value;
-                this.OnIpAddressChanged();
-                this.OnPropertyChanged("IpAddress");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _IpAddress;
-        partial void OnIpAddressChanging(string value);
-        partial void OnIpAddressChanged();
-        /// <summary>
-        /// There are no comments for Property Status in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Status")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.Common.Enums.CallInStatus Status
-        {
-            get
-            {
-                return this._Status;
-            }
-            set
-            {
-                this.OnStatusChanging(value);
-                this._Status = value;
-                this.OnStatusChanged();
-                this.OnPropertyChanged("Status");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.Common.Enums.CallInStatus _Status;
-        partial void OnStatusChanging(global::LicenseMonitoringSystem.Core.Common.Portal.Common.Enums.CallInStatus value);
-        partial void OnStatusChanged();
-        /// <summary>
-        /// There are no comments for Property Threshold in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Threshold")]
-        public global::System.Nullable<double> Threshold
-        {
-            get
-            {
-                return this._Threshold;
-            }
-            set
-            {
-                this.OnThresholdChanging(value);
-                this._Threshold = value;
-                this.OnThresholdChanged();
-                this.OnPropertyChanged("Threshold");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<double> _Threshold;
-        partial void OnThresholdChanging(global::System.Nullable<double> value);
-        partial void OnThresholdChanged();
-        /// <summary>
-        /// There are no comments for Property UploadId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("UploadId")]
-        public int UploadId
-        {
-            get
-            {
-                return this._UploadId;
-            }
-            set
-            {
-                this.OnUploadIdChanging(value);
-                this._UploadId = value;
-                this.OnUploadIdChanged();
-                this.OnPropertyChanged("UploadId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _UploadId;
-        partial void OnUploadIdChanging(int value);
-        partial void OnUploadIdChanged();
-        /// <summary>
-        /// There are no comments for Property ContractId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ContractId")]
-        public global::System.Nullable<int> ContractId
-        {
-            get
-            {
-                return this._ContractId;
-            }
-            set
-            {
-                this.OnContractIdChanging(value);
-                this._ContractId = value;
-                this.OnContractIdChanged();
-                this.OnPropertyChanged("ContractId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<int> _ContractId;
-        partial void OnContractIdChanging(global::System.Nullable<int> value);
-        partial void OnContractIdChanged();
-        /// <summary>
-        /// There are no comments for Property CreationTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("CreationTime")]
-        public global::System.DateTimeOffset CreationTime
-        {
-            get
-            {
-                return this._CreationTime;
-            }
-            set
-            {
-                this.OnCreationTimeChanging(value);
-                this._CreationTime = value;
-                this.OnCreationTimeChanged();
-                this.OnPropertyChanged("CreationTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _CreationTime;
-        partial void OnCreationTimeChanging(global::System.DateTimeOffset value);
-        partial void OnCreationTimeChanged();
-        /// <summary>
-        /// There are no comments for Property TenantId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("TenantId")]
-        public int TenantId
-        {
-            get
-            {
-                return this._TenantId;
-            }
-            set
-            {
-                this.OnTenantIdChanging(value);
-                this._TenantId = value;
-                this.OnTenantIdChanged();
-                this.OnPropertyChanged("TenantId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _TenantId;
-        partial void OnTenantIdChanging(int value);
-        partial void OnTenantIdChanged();
-        /// <summary>
-        /// There are no comments for Property IsActive in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsActive")]
-        public bool IsActive
-        {
-            get
-            {
-                return this._IsActive;
-            }
-            set
-            {
-                this.OnIsActiveChanging(value);
-                this._IsActive = value;
-                this.OnIsActiveChanged();
-                this.OnPropertyChanged("IsActive");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsActive;
-        partial void OnIsActiveChanging(bool value);
-        partial void OnIsActiveChanged();
-        /// <summary>
-        /// There are no comments for Property Id in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
-        public int Id
-        {
-            get
-            {
-                return this._Id;
-            }
-            set
-            {
-                this.OnIdChanging(value);
-                this._Id = value;
-                this.OnIdChanged();
-                this.OnPropertyChanged("Id");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _Id;
-        partial void OnIdChanging(int value);
-        partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property Users in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Users")]
-        public global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> Users
-        {
-            get
-            {
-                return this._Users;
-            }
-            set
-            {
-                this.OnUsersChanging(value);
-                this._Users = value;
-                this.OnUsersChanged();
-                this.OnPropertyChanged("Users");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> _Users = new global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser>(null, global::Microsoft.OData.Client.TrackingMode.None);
-        partial void OnUsersChanging(global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> value);
-        partial void OnUsersChanged();
-        /// <summary>
-        /// This event is raised when the value of the property is changed
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The value of the property is changed
-        /// </summary>
-        /// <param name="property">property name</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        protected virtual void OnPropertyChanged(string property)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
-            }
-        }
-    }
-    /// <summary>
-    /// There are no comments for LicenseUserSingle in the schema.
-    /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserSingle")]
-    public partial class LicenseUserSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUser>
-    {
-        /// <summary>
-        /// Initialize a new LicenseUserSingle object.
-        /// </summary>
-        public LicenseUserSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
-            : base(context, path) {}
-
-        /// <summary>
-        /// Initialize a new LicenseUserSingle object.
-        /// </summary>
-        public LicenseUserSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
-            : base(context, path, isComposable) {}
-
-        /// <summary>
-        /// Initialize a new LicenseUserSingle object.
-        /// </summary>
-        public LicenseUserSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUser> query)
-            : base(query) {}
-
-        /// <summary>
-        /// There are no comments for Exclusion in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Exclusion")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusionSingle Exclusion
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._Exclusion == null))
-                {
-                    this._Exclusion = new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusionSingle(this.Context, GetPath("Exclusion"));
-                }
-                return this._Exclusion;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusionSingle _Exclusion;
-        /// <summary>
-        /// There are no comments for Groups in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Groups")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> Groups
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._Groups == null))
-                {
-                    this._Groups = Context.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup>(GetPath("Groups"));
-                }
-                return this._Groups;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> _Groups;
-        /// <summary>
-        /// There are no comments for Upload in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Upload")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle Upload
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._Upload == null))
-                {
-                    this._Upload = new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle(this.Context, GetPath("Upload"));
-                }
-                return this._Upload;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle _Upload;
-    }
-    /// <summary>
-    /// There are no comments for LicenseUser in the schema.
-    /// </summary>
-    /// <KeyProperties>
-    /// Id
-    /// </KeyProperties>
-    [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUser")]
-    public partial class LicenseUser : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Create a new LicenseUser object.
-        /// </summary>
-        /// <param name="enabled">Initial value of Enabled.</param>
-        /// <param name="whenCreated">Initial value of WhenCreated.</param>
-        /// <param name="creationTime">Initial value of CreationTime.</param>
-        /// <param name="isDeleted">Initial value of IsDeleted.</param>
-        /// <param name="ID">Initial value of Id.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static LicenseUser CreateLicenseUser(bool enabled, global::System.DateTimeOffset whenCreated, global::System.DateTimeOffset creationTime, bool isDeleted, global::System.Guid ID)
-        {
-            LicenseUser licenseUser = new LicenseUser();
-            licenseUser.Enabled = enabled;
-            licenseUser.WhenCreated = whenCreated;
-            licenseUser.CreationTime = creationTime;
-            licenseUser.IsDeleted = isDeleted;
-            licenseUser.Id = ID;
-            return licenseUser;
-        }
-        /// <summary>
-        /// There are no comments for Property DisplayName in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("DisplayName")]
-        public string DisplayName
-        {
-            get
-            {
-                return this._DisplayName;
-            }
-            set
-            {
-                this.OnDisplayNameChanging(value);
-                this._DisplayName = value;
-                this.OnDisplayNameChanged();
-                this.OnPropertyChanged("DisplayName");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _DisplayName;
-        partial void OnDisplayNameChanging(string value);
-        partial void OnDisplayNameChanged();
-        /// <summary>
-        /// There are no comments for Property Email in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Email")]
-        public string Email
-        {
-            get
-            {
-                return this._Email;
-            }
-            set
-            {
-                this.OnEmailChanging(value);
-                this._Email = value;
-                this.OnEmailChanged();
-                this.OnPropertyChanged("Email");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Email;
-        partial void OnEmailChanging(string value);
-        partial void OnEmailChanged();
-        /// <summary>
-        /// There are no comments for Property Enabled in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Enabled")]
-        public bool Enabled
-        {
-            get
-            {
-                return this._Enabled;
-            }
-            set
-            {
-                this.OnEnabledChanging(value);
-                this._Enabled = value;
-                this.OnEnabledChanged();
-                this.OnPropertyChanged("Enabled");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _Enabled;
-        partial void OnEnabledChanging(bool value);
-        partial void OnEnabledChanged();
-        /// <summary>
-        /// There are no comments for Property FirstName in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("FirstName")]
-        public string FirstName
-        {
-            get
-            {
-                return this._FirstName;
-            }
-            set
-            {
-                this.OnFirstNameChanging(value);
-                this._FirstName = value;
-                this.OnFirstNameChanged();
-                this.OnPropertyChanged("FirstName");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _FirstName;
-        partial void OnFirstNameChanging(string value);
-        partial void OnFirstNameChanged();
-        /// <summary>
-        /// There are no comments for Property Surname in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Surname")]
-        public string Surname
-        {
-            get
-            {
-                return this._Surname;
-            }
-            set
-            {
-                this.OnSurnameChanging(value);
-                this._Surname = value;
-                this.OnSurnameChanged();
-                this.OnPropertyChanged("Surname");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Surname;
-        partial void OnSurnameChanging(string value);
-        partial void OnSurnameChanged();
-        /// <summary>
-        /// There are no comments for Property WhenCreated in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("WhenCreated")]
-        public global::System.DateTimeOffset WhenCreated
-        {
-            get
-            {
-                return this._WhenCreated;
-            }
-            set
-            {
-                this.OnWhenCreatedChanging(value);
-                this._WhenCreated = value;
-                this.OnWhenCreatedChanged();
-                this.OnPropertyChanged("WhenCreated");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _WhenCreated;
-        partial void OnWhenCreatedChanging(global::System.DateTimeOffset value);
-        partial void OnWhenCreatedChanged();
-        /// <summary>
-        /// There are no comments for Property CreationTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("CreationTime")]
-        public global::System.DateTimeOffset CreationTime
-        {
-            get
-            {
-                return this._CreationTime;
-            }
-            set
-            {
-                this.OnCreationTimeChanging(value);
-                this._CreationTime = value;
-                this.OnCreationTimeChanged();
-                this.OnPropertyChanged("CreationTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _CreationTime;
-        partial void OnCreationTimeChanging(global::System.DateTimeOffset value);
-        partial void OnCreationTimeChanged();
-        /// <summary>
-        /// There are no comments for Property IsDeleted in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsDeleted")]
-        public bool IsDeleted
-        {
-            get
-            {
-                return this._IsDeleted;
-            }
-            set
-            {
-                this.OnIsDeletedChanging(value);
-                this._IsDeleted = value;
-                this.OnIsDeletedChanged();
-                this.OnPropertyChanged("IsDeleted");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsDeleted;
-        partial void OnIsDeletedChanging(bool value);
-        partial void OnIsDeletedChanged();
-        /// <summary>
-        /// There are no comments for Property DeletionTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("DeletionTime")]
-        public global::System.Nullable<global::System.DateTimeOffset> DeletionTime
-        {
-            get
-            {
-                return this._DeletionTime;
-            }
-            set
-            {
-                this.OnDeletionTimeChanging(value);
-                this._DeletionTime = value;
-                this.OnDeletionTimeChanged();
-                this.OnPropertyChanged("DeletionTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<global::System.DateTimeOffset> _DeletionTime;
-        partial void OnDeletionTimeChanging(global::System.Nullable<global::System.DateTimeOffset> value);
-        partial void OnDeletionTimeChanged();
-        /// <summary>
-        /// There are no comments for Property Id in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
-        public global::System.Guid Id
-        {
-            get
-            {
-                return this._Id;
-            }
-            set
-            {
-                this.OnIdChanging(value);
-                this._Id = value;
-                this.OnIdChanged();
-                this.OnPropertyChanged("Id");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Guid _Id;
-        partial void OnIdChanging(global::System.Guid value);
-        partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property Exclusion in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Exclusion")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusion Exclusion
-        {
-            get
-            {
-                return this._Exclusion;
-            }
-            set
-            {
-                this.OnExclusionChanging(value);
-                this._Exclusion = value;
-                this.OnExclusionChanged();
-                this.OnPropertyChanged("Exclusion");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusion _Exclusion;
-        partial void OnExclusionChanging(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusion value);
-        partial void OnExclusionChanged();
-        /// <summary>
-        /// There are no comments for Property Groups in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Groups")]
-        public global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> Groups
-        {
-            get
-            {
-                return this._Groups;
-            }
-            set
-            {
-                this.OnGroupsChanging(value);
-                this._Groups = value;
-                this.OnGroupsChanged();
-                this.OnPropertyChanged("Groups");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> _Groups = new global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup>(null, global::Microsoft.OData.Client.TrackingMode.None);
-        partial void OnGroupsChanging(global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> value);
-        partial void OnGroupsChanged();
-        /// <summary>
-        /// There are no comments for Property Upload in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Upload")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload Upload
-        {
-            get
-            {
-                return this._Upload;
-            }
-            set
-            {
-                this.OnUploadChanging(value);
-                this._Upload = value;
-                this.OnUploadChanged();
-                this.OnPropertyChanged("Upload");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload _Upload;
-        partial void OnUploadChanging(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload value);
-        partial void OnUploadChanged();
-        /// <summary>
-        /// This event is raised when the value of the property is changed
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The value of the property is changed
-        /// </summary>
-        /// <param name="property">property name</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        protected virtual void OnPropertyChanged(string property)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
-            }
-        }
-    }
-    /// <summary>
-    /// There are no comments for LicenseUserExclusionSingle in the schema.
-    /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserExclusionSingle")]
-    public partial class LicenseUserExclusionSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserExclusion>
-    {
-        /// <summary>
-        /// Initialize a new LicenseUserExclusionSingle object.
-        /// </summary>
-        public LicenseUserExclusionSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
-            : base(context, path) {}
-
-        /// <summary>
-        /// Initialize a new LicenseUserExclusionSingle object.
-        /// </summary>
-        public LicenseUserExclusionSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
-            : base(context, path, isComposable) {}
-
-        /// <summary>
-        /// Initialize a new LicenseUserExclusionSingle object.
-        /// </summary>
-        public LicenseUserExclusionSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserExclusion> query)
-            : base(query) {}
-
-        /// <summary>
-        /// There are no comments for User in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("User")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle User
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._User == null))
-                {
-                    this._User = new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle(this.Context, GetPath("User"));
-                }
-                return this._User;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle _User;
-    }
-    /// <summary>
-    /// There are no comments for LicenseUserExclusion in the schema.
-    /// </summary>
-    /// <KeyProperties>
-    /// Id
-    /// </KeyProperties>
-    [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserExclusion")]
-    public partial class LicenseUserExclusion : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Create a new LicenseUserExclusion object.
-        /// </summary>
-        /// <param name="reason">Initial value of Reason.</param>
-        /// <param name="exclusionTime">Initial value of ExclusionTime.</param>
-        /// <param name="isDeleted">Initial value of IsDeleted.</param>
-        /// <param name="creationTime">Initial value of CreationTime.</param>
-        /// <param name="ID">Initial value of Id.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static LicenseUserExclusion CreateLicenseUserExclusion(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.Exclusion reason, global::System.DateTimeOffset exclusionTime, bool isDeleted, global::System.DateTimeOffset creationTime, int ID)
-        {
-            LicenseUserExclusion licenseUserExclusion = new LicenseUserExclusion();
-            licenseUserExclusion.Reason = reason;
-            licenseUserExclusion.ExclusionTime = exclusionTime;
-            licenseUserExclusion.IsDeleted = isDeleted;
-            licenseUserExclusion.CreationTime = creationTime;
-            licenseUserExclusion.Id = ID;
-            return licenseUserExclusion;
-        }
-        /// <summary>
-        /// There are no comments for Property Reason in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Reason")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.Exclusion Reason
-        {
-            get
-            {
-                return this._Reason;
-            }
-            set
-            {
-                this.OnReasonChanging(value);
-                this._Reason = value;
-                this.OnReasonChanged();
-                this.OnPropertyChanged("Reason");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.Exclusion _Reason;
-        partial void OnReasonChanging(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.Exclusion value);
-        partial void OnReasonChanged();
-        /// <summary>
-        /// There are no comments for Property ExclusionTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ExclusionTime")]
-        public global::System.DateTimeOffset ExclusionTime
-        {
-            get
-            {
-                return this._ExclusionTime;
-            }
-            set
-            {
-                this.OnExclusionTimeChanging(value);
-                this._ExclusionTime = value;
-                this.OnExclusionTimeChanged();
-                this.OnPropertyChanged("ExclusionTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _ExclusionTime;
-        partial void OnExclusionTimeChanging(global::System.DateTimeOffset value);
-        partial void OnExclusionTimeChanged();
-        /// <summary>
-        /// There are no comments for Property IsDeleted in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsDeleted")]
-        public bool IsDeleted
-        {
-            get
-            {
-                return this._IsDeleted;
-            }
-            set
-            {
-                this.OnIsDeletedChanging(value);
-                this._IsDeleted = value;
-                this.OnIsDeletedChanged();
-                this.OnPropertyChanged("IsDeleted");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsDeleted;
-        partial void OnIsDeletedChanging(bool value);
-        partial void OnIsDeletedChanged();
-        /// <summary>
-        /// There are no comments for Property DeleterUserId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("DeleterUserId")]
-        public global::System.Nullable<long> DeleterUserId
-        {
-            get
-            {
-                return this._DeleterUserId;
-            }
-            set
-            {
-                this.OnDeleterUserIdChanging(value);
-                this._DeleterUserId = value;
-                this.OnDeleterUserIdChanged();
-                this.OnPropertyChanged("DeleterUserId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<long> _DeleterUserId;
-        partial void OnDeleterUserIdChanging(global::System.Nullable<long> value);
-        partial void OnDeleterUserIdChanged();
-        /// <summary>
-        /// There are no comments for Property DeletionTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("DeletionTime")]
-        public global::System.Nullable<global::System.DateTimeOffset> DeletionTime
-        {
-            get
-            {
-                return this._DeletionTime;
-            }
-            set
-            {
-                this.OnDeletionTimeChanging(value);
-                this._DeletionTime = value;
-                this.OnDeletionTimeChanged();
-                this.OnPropertyChanged("DeletionTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<global::System.DateTimeOffset> _DeletionTime;
-        partial void OnDeletionTimeChanging(global::System.Nullable<global::System.DateTimeOffset> value);
-        partial void OnDeletionTimeChanged();
-        /// <summary>
-        /// There are no comments for Property LastModificationTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("LastModificationTime")]
-        public global::System.Nullable<global::System.DateTimeOffset> LastModificationTime
-        {
-            get
-            {
-                return this._LastModificationTime;
-            }
-            set
-            {
-                this.OnLastModificationTimeChanging(value);
-                this._LastModificationTime = value;
-                this.OnLastModificationTimeChanged();
-                this.OnPropertyChanged("LastModificationTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<global::System.DateTimeOffset> _LastModificationTime;
-        partial void OnLastModificationTimeChanging(global::System.Nullable<global::System.DateTimeOffset> value);
-        partial void OnLastModificationTimeChanged();
-        /// <summary>
-        /// There are no comments for Property LastModifierUserId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("LastModifierUserId")]
-        public global::System.Nullable<long> LastModifierUserId
-        {
-            get
-            {
-                return this._LastModifierUserId;
-            }
-            set
-            {
-                this.OnLastModifierUserIdChanging(value);
-                this._LastModifierUserId = value;
-                this.OnLastModifierUserIdChanged();
-                this.OnPropertyChanged("LastModifierUserId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<long> _LastModifierUserId;
-        partial void OnLastModifierUserIdChanging(global::System.Nullable<long> value);
-        partial void OnLastModifierUserIdChanged();
-        /// <summary>
-        /// There are no comments for Property CreationTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("CreationTime")]
-        public global::System.DateTimeOffset CreationTime
-        {
-            get
-            {
-                return this._CreationTime;
-            }
-            set
-            {
-                this.OnCreationTimeChanging(value);
-                this._CreationTime = value;
-                this.OnCreationTimeChanged();
-                this.OnPropertyChanged("CreationTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _CreationTime;
-        partial void OnCreationTimeChanging(global::System.DateTimeOffset value);
-        partial void OnCreationTimeChanged();
-        /// <summary>
-        /// There are no comments for Property CreatorUserId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("CreatorUserId")]
-        public global::System.Nullable<long> CreatorUserId
-        {
-            get
-            {
-                return this._CreatorUserId;
-            }
-            set
-            {
-                this.OnCreatorUserIdChanging(value);
-                this._CreatorUserId = value;
-                this.OnCreatorUserIdChanged();
-                this.OnPropertyChanged("CreatorUserId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<long> _CreatorUserId;
-        partial void OnCreatorUserIdChanging(global::System.Nullable<long> value);
-        partial void OnCreatorUserIdChanged();
-        /// <summary>
-        /// There are no comments for Property Id in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
-        public int Id
-        {
-            get
-            {
-                return this._Id;
-            }
-            set
-            {
-                this.OnIdChanging(value);
-                this._Id = value;
-                this.OnIdChanged();
-                this.OnPropertyChanged("Id");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _Id;
-        partial void OnIdChanging(int value);
-        partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property User in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("User")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser User
-        {
-            get
-            {
-                return this._User;
-            }
-            set
-            {
-                this.OnUserChanging(value);
-                this._User = value;
-                this.OnUserChanged();
-                this.OnPropertyChanged("User");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser _User;
-        partial void OnUserChanging(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser value);
-        partial void OnUserChanged();
-        /// <summary>
-        /// This event is raised when the value of the property is changed
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The value of the property is changed
-        /// </summary>
-        /// <param name="property">property name</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        protected virtual void OnPropertyChanged(string property)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
-            }
-        }
-    }
-    /// <summary>
-    /// There are no comments for LicenseUserGroupSingle in the schema.
-    /// </summary>
-    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserGroupSingle")]
-    public partial class LicenseUserGroupSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserGroup>
-    {
-        /// <summary>
-        /// Initialize a new LicenseUserGroupSingle object.
-        /// </summary>
-        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
-            : base(context, path) {}
-
-        /// <summary>
-        /// Initialize a new LicenseUserGroupSingle object.
-        /// </summary>
-        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
-            : base(context, path, isComposable) {}
-
-        /// <summary>
-        /// Initialize a new LicenseUserGroupSingle object.
-        /// </summary>
-        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserGroup> query)
-            : base(query) {}
-
-        /// <summary>
-        /// There are no comments for User in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("User")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle User
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._User == null))
-                {
-                    this._User = new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle(this.Context, GetPath("User"));
-                }
-                return this._User;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle _User;
-    }
-    /// <summary>
-    /// There are no comments for LicenseUserGroup in the schema.
-    /// </summary>
-    /// <KeyProperties>
-    /// Id
-    /// </KeyProperties>
-    [global::Microsoft.OData.Client.Key("Id")]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserGroup")]
-    public partial class LicenseUserGroup : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Create a new LicenseUserGroup object.
-        /// </summary>
-        /// <param name="whenCreated">Initial value of WhenCreated.</param>
-        /// <param name="isDeleted">Initial value of IsDeleted.</param>
-        /// <param name="ID">Initial value of Id.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static LicenseUserGroup CreateLicenseUserGroup(global::System.DateTimeOffset whenCreated, bool isDeleted, global::System.Guid ID)
-        {
-            LicenseUserGroup licenseUserGroup = new LicenseUserGroup();
-            licenseUserGroup.WhenCreated = whenCreated;
-            licenseUserGroup.IsDeleted = isDeleted;
-            licenseUserGroup.Id = ID;
-            return licenseUserGroup;
-        }
-        /// <summary>
-        /// There are no comments for Property Name in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Name")]
-        public string Name
-        {
-            get
-            {
-                return this._Name;
-            }
-            set
-            {
-                this.OnNameChanging(value);
-                this._Name = value;
-                this.OnNameChanged();
-                this.OnPropertyChanged("Name");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Name;
-        partial void OnNameChanging(string value);
-        partial void OnNameChanged();
-        /// <summary>
-        /// There are no comments for Property WhenCreated in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("WhenCreated")]
-        public global::System.DateTimeOffset WhenCreated
-        {
-            get
-            {
-                return this._WhenCreated;
-            }
-            set
-            {
-                this.OnWhenCreatedChanging(value);
-                this._WhenCreated = value;
-                this.OnWhenCreatedChanged();
-                this.OnPropertyChanged("WhenCreated");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _WhenCreated;
-        partial void OnWhenCreatedChanging(global::System.DateTimeOffset value);
-        partial void OnWhenCreatedChanged();
-        /// <summary>
-        /// There are no comments for Property IsDeleted in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("IsDeleted")]
-        public bool IsDeleted
-        {
-            get
-            {
-                return this._IsDeleted;
-            }
-            set
-            {
-                this.OnIsDeletedChanging(value);
-                this._IsDeleted = value;
-                this.OnIsDeletedChanged();
-                this.OnPropertyChanged("IsDeleted");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsDeleted;
-        partial void OnIsDeletedChanging(bool value);
-        partial void OnIsDeletedChanged();
-        /// <summary>
-        /// There are no comments for Property DeletionTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("DeletionTime")]
-        public global::System.Nullable<global::System.DateTimeOffset> DeletionTime
-        {
-            get
-            {
-                return this._DeletionTime;
-            }
-            set
-            {
-                this.OnDeletionTimeChanging(value);
-                this._DeletionTime = value;
-                this.OnDeletionTimeChanged();
-                this.OnPropertyChanged("DeletionTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<global::System.DateTimeOffset> _DeletionTime;
-        partial void OnDeletionTimeChanging(global::System.Nullable<global::System.DateTimeOffset> value);
-        partial void OnDeletionTimeChanged();
-        /// <summary>
-        /// There are no comments for Property Id in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
-        public global::System.Guid Id
-        {
-            get
-            {
-                return this._Id;
-            }
-            set
-            {
-                this.OnIdChanging(value);
-                this._Id = value;
-                this.OnIdChanged();
-                this.OnPropertyChanged("Id");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Guid _Id;
-        partial void OnIdChanging(global::System.Guid value);
-        partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property User in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("User")]
-        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser User
-        {
-            get
-            {
-                return this._User;
-            }
-            set
-            {
-                this.OnUserChanging(value);
-                this._User = value;
-                this.OnUserChanged();
-                this.OnPropertyChanged("User");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser _User;
-        partial void OnUserChanging(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser value);
-        partial void OnUserChanged();
-        /// <summary>
-        /// This event is raised when the value of the property is changed
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The value of the property is changed
-        /// </summary>
-        /// <param name="property">property name</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        protected virtual void OnPropertyChanged(string property)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
-            }
-        }
-    }
-    /// <summary>
-    /// There are no comments for Exclusion in the schema.
-    /// </summary>
-    [global::System.Flags]
-    [global::Microsoft.OData.Client.OriginalNameAttribute("Exclusion")]
-    public enum Exclusion
-    {
-        [global::Microsoft.OData.Client.OriginalNameAttribute("ServiceAccount")]
-        ServiceAccount = 0
-    }
-    /// <summary>
-    /// Class containing all extension methods
-    /// </summary>
-    public static class ExtensionMethods
-    {
-        /// <summary>
-        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload> source, global::System.Collections.Generic.Dictionary<string, object> keys)
-        {
-            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="id">The value of id</param>
-        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload> source,
-            int id)
-        {
-            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
-            {
-                { "Id", id }
-            };
-            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> source, global::System.Collections.Generic.Dictionary<string, object> keys)
-        {
-            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="id">The value of id</param>
-        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> source,
-            global::System.Guid id)
-        {
-            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
-            {
-                { "Id", id }
-            };
-            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusion as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusionSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusionSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusion> source, global::System.Collections.Generic.Dictionary<string, object> keys)
-        {
-            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusionSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusion as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusionSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="id">The value of id</param>
-        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusionSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusion> source,
-            int id)
-        {
-            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
-            {
-                { "Id", id }
-            };
-            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserExclusionSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> source, global::System.Collections.Generic.Dictionary<string, object> keys)
-        {
-            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="id">The value of id</param>
-        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> source,
-            global::System.Guid id)
-        {
-            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
-            {
-                { "Id", id }
-            };
-            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-    }
-}
+// Generation date: 21/02/2017 14:02:30
 namespace LicenseMonitoringSystem.Core.Common.Portal.CentraStage
 {
     /// <summary>
@@ -3232,6 +1703,1039 @@ namespace LicenseMonitoringSystem.Core.Common.Portal.CentraStage
         }
     }
 }
+namespace LicenseMonitoringSystem.Core.Common.Portal.License.User
+{
+    /// <summary>
+    /// There are no comments for LicenseUserSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserSingle")]
+    public partial class LicenseUserSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUser>
+    {
+        /// <summary>
+        /// Initialize a new LicenseUserSingle object.
+        /// </summary>
+        public LicenseUserSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserSingle object.
+        /// </summary>
+        public LicenseUserSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserSingle object.
+        /// </summary>
+        public LicenseUserSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUser> query)
+            : base(query) {}
+
+        /// <summary>
+        /// There are no comments for Groups in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Groups")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> Groups
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Groups == null))
+                {
+                    this._Groups = Context.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup>(GetPath("Groups"));
+                }
+                return this._Groups;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> _Groups;
+        /// <summary>
+        /// There are no comments for Upload in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Upload")]
+        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle Upload
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Upload == null))
+                {
+                    this._Upload = new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle(this.Context, GetPath("Upload"));
+                }
+                return this._Upload;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle _Upload;
+    }
+    /// <summary>
+    /// There are no comments for LicenseUser in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUser")]
+    public partial class LicenseUser : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new LicenseUser object.
+        /// </summary>
+        /// <param name="enabled">Initial value of Enabled.</param>
+        /// <param name="uploadId">Initial value of UploadId.</param>
+        /// <param name="whenCreated">Initial value of WhenCreated.</param>
+        /// <param name="ID">Initial value of Id.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static LicenseUser CreateLicenseUser(bool enabled, int uploadId, global::System.DateTimeOffset whenCreated, global::System.Guid ID)
+        {
+            LicenseUser licenseUser = new LicenseUser();
+            licenseUser.Enabled = enabled;
+            licenseUser.UploadId = uploadId;
+            licenseUser.WhenCreated = whenCreated;
+            licenseUser.Id = ID;
+            return licenseUser;
+        }
+        /// <summary>
+        /// There are no comments for Property DisplayName in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("DisplayName")]
+        public string DisplayName
+        {
+            get
+            {
+                return this._DisplayName;
+            }
+            set
+            {
+                this.OnDisplayNameChanging(value);
+                this._DisplayName = value;
+                this.OnDisplayNameChanged();
+                this.OnPropertyChanged("DisplayName");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _DisplayName;
+        partial void OnDisplayNameChanging(string value);
+        partial void OnDisplayNameChanged();
+        /// <summary>
+        /// There are no comments for Property Email in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Email")]
+        public string Email
+        {
+            get
+            {
+                return this._Email;
+            }
+            set
+            {
+                this.OnEmailChanging(value);
+                this._Email = value;
+                this.OnEmailChanged();
+                this.OnPropertyChanged("Email");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Email;
+        partial void OnEmailChanging(string value);
+        partial void OnEmailChanged();
+        /// <summary>
+        /// There are no comments for Property Enabled in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Enabled")]
+        public bool Enabled
+        {
+            get
+            {
+                return this._Enabled;
+            }
+            set
+            {
+                this.OnEnabledChanging(value);
+                this._Enabled = value;
+                this.OnEnabledChanged();
+                this.OnPropertyChanged("Enabled");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _Enabled;
+        partial void OnEnabledChanging(bool value);
+        partial void OnEnabledChanged();
+        /// <summary>
+        /// There are no comments for Property FirstName in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("FirstName")]
+        public string FirstName
+        {
+            get
+            {
+                return this._FirstName;
+            }
+            set
+            {
+                this.OnFirstNameChanging(value);
+                this._FirstName = value;
+                this.OnFirstNameChanged();
+                this.OnPropertyChanged("FirstName");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _FirstName;
+        partial void OnFirstNameChanging(string value);
+        partial void OnFirstNameChanged();
+        /// <summary>
+        /// There are no comments for Property Surname in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Surname")]
+        public string Surname
+        {
+            get
+            {
+                return this._Surname;
+            }
+            set
+            {
+                this.OnSurnameChanging(value);
+                this._Surname = value;
+                this.OnSurnameChanged();
+                this.OnPropertyChanged("Surname");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Surname;
+        partial void OnSurnameChanging(string value);
+        partial void OnSurnameChanged();
+        /// <summary>
+        /// There are no comments for Property UploadId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("UploadId")]
+        public int UploadId
+        {
+            get
+            {
+                return this._UploadId;
+            }
+            set
+            {
+                this.OnUploadIdChanging(value);
+                this._UploadId = value;
+                this.OnUploadIdChanged();
+                this.OnPropertyChanged("UploadId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _UploadId;
+        partial void OnUploadIdChanging(int value);
+        partial void OnUploadIdChanged();
+        /// <summary>
+        /// There are no comments for Property WhenCreated in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("WhenCreated")]
+        public global::System.DateTimeOffset WhenCreated
+        {
+            get
+            {
+                return this._WhenCreated;
+            }
+            set
+            {
+                this.OnWhenCreatedChanging(value);
+                this._WhenCreated = value;
+                this.OnWhenCreatedChanged();
+                this.OnPropertyChanged("WhenCreated");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _WhenCreated;
+        partial void OnWhenCreatedChanging(global::System.DateTimeOffset value);
+        partial void OnWhenCreatedChanged();
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
+        public global::System.Guid Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+                this.OnPropertyChanged("Id");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _Id;
+        partial void OnIdChanging(global::System.Guid value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property Groups in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Groups")]
+        public global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> Groups
+        {
+            get
+            {
+                return this._Groups;
+            }
+            set
+            {
+                this.OnGroupsChanging(value);
+                this._Groups = value;
+                this.OnGroupsChanged();
+                this.OnPropertyChanged("Groups");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> _Groups = new global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup>(null, global::Microsoft.OData.Client.TrackingMode.None);
+        partial void OnGroupsChanging(global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> value);
+        partial void OnGroupsChanged();
+        /// <summary>
+        /// There are no comments for Property Upload in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Upload")]
+        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload Upload
+        {
+            get
+            {
+                return this._Upload;
+            }
+            set
+            {
+                this.OnUploadChanging(value);
+                this._Upload = value;
+                this.OnUploadChanged();
+                this.OnPropertyChanged("Upload");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload _Upload;
+        partial void OnUploadChanging(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload value);
+        partial void OnUploadChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
+    /// There are no comments for LicenseUserGroupSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserGroupSingle")]
+    public partial class LicenseUserGroupSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserGroup>
+    {
+        /// <summary>
+        /// Initialize a new LicenseUserGroupSingle object.
+        /// </summary>
+        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserGroupSingle object.
+        /// </summary>
+        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserGroupSingle object.
+        /// </summary>
+        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserGroup> query)
+            : base(query) {}
+
+        /// <summary>
+        /// There are no comments for User in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("User")]
+        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle User
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._User == null))
+                {
+                    this._User = new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle(this.Context, GetPath("User"));
+                }
+                return this._User;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle _User;
+    }
+    /// <summary>
+    /// There are no comments for LicenseUserGroup in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserGroup")]
+    public partial class LicenseUserGroup : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new LicenseUserGroup object.
+        /// </summary>
+        /// <param name="userId">Initial value of UserId.</param>
+        /// <param name="whenCreated">Initial value of WhenCreated.</param>
+        /// <param name="ID">Initial value of Id.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static LicenseUserGroup CreateLicenseUserGroup(global::System.Guid userId, global::System.DateTimeOffset whenCreated, global::System.Guid ID)
+        {
+            LicenseUserGroup licenseUserGroup = new LicenseUserGroup();
+            licenseUserGroup.UserId = userId;
+            licenseUserGroup.WhenCreated = whenCreated;
+            licenseUserGroup.Id = ID;
+            return licenseUserGroup;
+        }
+        /// <summary>
+        /// There are no comments for Property Name in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Name")]
+        public string Name
+        {
+            get
+            {
+                return this._Name;
+            }
+            set
+            {
+                this.OnNameChanging(value);
+                this._Name = value;
+                this.OnNameChanged();
+                this.OnPropertyChanged("Name");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Name;
+        partial void OnNameChanging(string value);
+        partial void OnNameChanged();
+        /// <summary>
+        /// There are no comments for Property UserId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("UserId")]
+        public global::System.Guid UserId
+        {
+            get
+            {
+                return this._UserId;
+            }
+            set
+            {
+                this.OnUserIdChanging(value);
+                this._UserId = value;
+                this.OnUserIdChanged();
+                this.OnPropertyChanged("UserId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _UserId;
+        partial void OnUserIdChanging(global::System.Guid value);
+        partial void OnUserIdChanged();
+        /// <summary>
+        /// There are no comments for Property WhenCreated in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("WhenCreated")]
+        public global::System.DateTimeOffset WhenCreated
+        {
+            get
+            {
+                return this._WhenCreated;
+            }
+            set
+            {
+                this.OnWhenCreatedChanging(value);
+                this._WhenCreated = value;
+                this.OnWhenCreatedChanged();
+                this.OnPropertyChanged("WhenCreated");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _WhenCreated;
+        partial void OnWhenCreatedChanging(global::System.DateTimeOffset value);
+        partial void OnWhenCreatedChanged();
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
+        public global::System.Guid Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+                this.OnPropertyChanged("Id");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _Id;
+        partial void OnIdChanging(global::System.Guid value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property User in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("User")]
+        public global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser User
+        {
+            get
+            {
+                return this._User;
+            }
+            set
+            {
+                this.OnUserChanging(value);
+                this._User = value;
+                this.OnUserChanged();
+                this.OnPropertyChanged("User");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser _User;
+        partial void OnUserChanging(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser value);
+        partial void OnUserChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
+    /// There are no comments for LicenseUserUploadSingle in the schema.
+    /// </summary>
+    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserUploadSingle")]
+    public partial class LicenseUserUploadSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserUpload>
+    {
+        /// <summary>
+        /// Initialize a new LicenseUserUploadSingle object.
+        /// </summary>
+        public LicenseUserUploadSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserUploadSingle object.
+        /// </summary>
+        public LicenseUserUploadSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserUploadSingle object.
+        /// </summary>
+        public LicenseUserUploadSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserUpload> query)
+            : base(query) {}
+
+        /// <summary>
+        /// There are no comments for Users in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Users")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> Users
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Users == null))
+                {
+                    this._Users = Context.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser>(GetPath("Users"));
+                }
+                return this._Users;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> _Users;
+    }
+    /// <summary>
+    /// There are no comments for LicenseUserUpload in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUserUpload")]
+    public partial class LicenseUserUpload : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new LicenseUserUpload object.
+        /// </summary>
+        /// <param name="checkInTime">Initial value of CheckInTime.</param>
+        /// <param name="deviceId">Initial value of DeviceId.</param>
+        /// <param name="status">Initial value of Status.</param>
+        /// <param name="uploadId">Initial value of UploadId.</param>
+        /// <param name="creationTime">Initial value of CreationTime.</param>
+        /// <param name="tenantId">Initial value of TenantId.</param>
+        /// <param name="isActive">Initial value of IsActive.</param>
+        /// <param name="ID">Initial value of Id.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static LicenseUserUpload CreateLicenseUserUpload(global::System.DateTimeOffset checkInTime, 
+                    global::System.Guid deviceId, 
+                    global::LicenseMonitoringSystem.Core.Common.Portal.Common.Enums.CallInStatus status, 
+                    int uploadId, 
+                    global::System.DateTimeOffset creationTime, 
+                    int tenantId, 
+                    bool isActive, 
+                    int ID)
+        {
+            LicenseUserUpload licenseUserUpload = new LicenseUserUpload();
+            licenseUserUpload.CheckInTime = checkInTime;
+            licenseUserUpload.DeviceId = deviceId;
+            licenseUserUpload.Status = status;
+            licenseUserUpload.UploadId = uploadId;
+            licenseUserUpload.CreationTime = creationTime;
+            licenseUserUpload.TenantId = tenantId;
+            licenseUserUpload.IsActive = isActive;
+            licenseUserUpload.Id = ID;
+            return licenseUserUpload;
+        }
+        /// <summary>
+        /// There are no comments for Property CheckInTime in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("CheckInTime")]
+        public global::System.DateTimeOffset CheckInTime
+        {
+            get
+            {
+                return this._CheckInTime;
+            }
+            set
+            {
+                this.OnCheckInTimeChanging(value);
+                this._CheckInTime = value;
+                this.OnCheckInTimeChanged();
+                this.OnPropertyChanged("CheckInTime");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _CheckInTime;
+        partial void OnCheckInTimeChanging(global::System.DateTimeOffset value);
+        partial void OnCheckInTimeChanged();
+        /// <summary>
+        /// There are no comments for Property DeviceId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("DeviceId")]
+        public global::System.Guid DeviceId
+        {
+            get
+            {
+                return this._DeviceId;
+            }
+            set
+            {
+                this.OnDeviceIdChanging(value);
+                this._DeviceId = value;
+                this.OnDeviceIdChanged();
+                this.OnPropertyChanged("DeviceId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _DeviceId;
+        partial void OnDeviceIdChanging(global::System.Guid value);
+        partial void OnDeviceIdChanged();
+        /// <summary>
+        /// There are no comments for Property Hostname in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Hostname")]
+        public string Hostname
+        {
+            get
+            {
+                return this._Hostname;
+            }
+            set
+            {
+                this.OnHostnameChanging(value);
+                this._Hostname = value;
+                this.OnHostnameChanged();
+                this.OnPropertyChanged("Hostname");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Hostname;
+        partial void OnHostnameChanging(string value);
+        partial void OnHostnameChanged();
+        /// <summary>
+        /// There are no comments for Property IpAddress in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IpAddress")]
+        public string IpAddress
+        {
+            get
+            {
+                return this._IpAddress;
+            }
+            set
+            {
+                this.OnIpAddressChanging(value);
+                this._IpAddress = value;
+                this.OnIpAddressChanged();
+                this.OnPropertyChanged("IpAddress");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _IpAddress;
+        partial void OnIpAddressChanging(string value);
+        partial void OnIpAddressChanged();
+        /// <summary>
+        /// There are no comments for Property Status in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Status")]
+        public global::LicenseMonitoringSystem.Core.Common.Portal.Common.Enums.CallInStatus Status
+        {
+            get
+            {
+                return this._Status;
+            }
+            set
+            {
+                this.OnStatusChanging(value);
+                this._Status = value;
+                this.OnStatusChanged();
+                this.OnPropertyChanged("Status");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::LicenseMonitoringSystem.Core.Common.Portal.Common.Enums.CallInStatus _Status;
+        partial void OnStatusChanging(global::LicenseMonitoringSystem.Core.Common.Portal.Common.Enums.CallInStatus value);
+        partial void OnStatusChanged();
+        /// <summary>
+        /// There are no comments for Property Threshold in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Threshold")]
+        public global::System.Nullable<double> Threshold
+        {
+            get
+            {
+                return this._Threshold;
+            }
+            set
+            {
+                this.OnThresholdChanging(value);
+                this._Threshold = value;
+                this.OnThresholdChanged();
+                this.OnPropertyChanged("Threshold");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<double> _Threshold;
+        partial void OnThresholdChanging(global::System.Nullable<double> value);
+        partial void OnThresholdChanged();
+        /// <summary>
+        /// There are no comments for Property UploadId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("UploadId")]
+        public int UploadId
+        {
+            get
+            {
+                return this._UploadId;
+            }
+            set
+            {
+                this.OnUploadIdChanging(value);
+                this._UploadId = value;
+                this.OnUploadIdChanged();
+                this.OnPropertyChanged("UploadId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _UploadId;
+        partial void OnUploadIdChanging(int value);
+        partial void OnUploadIdChanged();
+        /// <summary>
+        /// There are no comments for Property ContractId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("ContractId")]
+        public global::System.Nullable<int> ContractId
+        {
+            get
+            {
+                return this._ContractId;
+            }
+            set
+            {
+                this.OnContractIdChanging(value);
+                this._ContractId = value;
+                this.OnContractIdChanged();
+                this.OnPropertyChanged("ContractId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Nullable<int> _ContractId;
+        partial void OnContractIdChanging(global::System.Nullable<int> value);
+        partial void OnContractIdChanged();
+        /// <summary>
+        /// There are no comments for Property CreationTime in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("CreationTime")]
+        public global::System.DateTimeOffset CreationTime
+        {
+            get
+            {
+                return this._CreationTime;
+            }
+            set
+            {
+                this.OnCreationTimeChanging(value);
+                this._CreationTime = value;
+                this.OnCreationTimeChanged();
+                this.OnPropertyChanged("CreationTime");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _CreationTime;
+        partial void OnCreationTimeChanging(global::System.DateTimeOffset value);
+        partial void OnCreationTimeChanged();
+        /// <summary>
+        /// There are no comments for Property TenantId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("TenantId")]
+        public int TenantId
+        {
+            get
+            {
+                return this._TenantId;
+            }
+            set
+            {
+                this.OnTenantIdChanging(value);
+                this._TenantId = value;
+                this.OnTenantIdChanged();
+                this.OnPropertyChanged("TenantId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _TenantId;
+        partial void OnTenantIdChanging(int value);
+        partial void OnTenantIdChanged();
+        /// <summary>
+        /// There are no comments for Property IsActive in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("IsActive")]
+        public bool IsActive
+        {
+            get
+            {
+                return this._IsActive;
+            }
+            set
+            {
+                this.OnIsActiveChanging(value);
+                this._IsActive = value;
+                this.OnIsActiveChanged();
+                this.OnPropertyChanged("IsActive");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsActive;
+        partial void OnIsActiveChanging(bool value);
+        partial void OnIsActiveChanged();
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Id")]
+        public int Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+                this.OnPropertyChanged("Id");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _Id;
+        partial void OnIdChanging(int value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property Users in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Users")]
+        public global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> Users
+        {
+            get
+            {
+                return this._Users;
+            }
+            set
+            {
+                this.OnUsersChanging(value);
+                this._Users = value;
+                this.OnUsersChanged();
+                this.OnPropertyChanged("Users");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> _Users = new global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser>(null, global::Microsoft.OData.Client.TrackingMode.None);
+        partial void OnUsersChanging(global::Microsoft.OData.Client.DataServiceCollection<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> value);
+        partial void OnUsersChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
+    /// Class containing all extension methods
+    /// </summary>
+    public static class ExtensionMethods
+    {
+        /// <summary>
+        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> source,
+            global::System.Guid id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> source,
+            global::System.Guid id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload as global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload> source,
+            int id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUploadSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+    }
+}
 namespace LicenseMonitoringSystem.Core.Common.Portal.Common.Enums
 {
     /// <summary>
@@ -3356,56 +2860,108 @@ namespace LicenseMonitoringSystem.Core.Common.Actions
             return null;
         }
         /// <summary>
-        /// There are no comments for LicenseUser in the schema.
+        /// There are no comments for Profiles in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("LicenseUser")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload> LicenseUser
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Profiles")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile> Profiles
         {
             get
             {
-                if ((this._LicenseUser == null))
+                if ((this._Profiles == null))
                 {
-                    this._LicenseUser = base.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload>("LicenseUser");
+                    this._Profiles = base.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile>("Profiles");
                 }
-                return this._LicenseUser;
+                return this._Profiles;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload> _LicenseUser;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile> _Profiles;
         /// <summary>
-        /// There are no comments for DeviceProfile in the schema.
+        /// There are no comments for Users in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        [global::Microsoft.OData.Client.OriginalNameAttribute("DeviceProfile")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile> DeviceProfile
+        [global::Microsoft.OData.Client.OriginalNameAttribute("Users")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> Users
         {
             get
             {
-                if ((this._DeviceProfile == null))
+                if ((this._Users == null))
                 {
-                    this._DeviceProfile = base.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile>("DeviceProfile");
+                    this._Users = base.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser>("Users");
                 }
-                return this._DeviceProfile;
+                return this._Users;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile> _DeviceProfile;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser> _Users;
         /// <summary>
-        /// There are no comments for LicenseUser in the schema.
+        /// There are no comments for UserGroups in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToLicenseUser(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload licenseUserUpload)
+        [global::Microsoft.OData.Client.OriginalNameAttribute("UserGroups")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> UserGroups
         {
-            base.AddObject("LicenseUser", licenseUserUpload);
+            get
+            {
+                if ((this._UserGroups == null))
+                {
+                    this._UserGroups = base.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup>("UserGroups");
+                }
+                return this._UserGroups;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup> _UserGroups;
+        /// <summary>
+        /// There are no comments for UserUploads in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        [global::Microsoft.OData.Client.OriginalNameAttribute("UserUploads")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload> UserUploads
+        {
+            get
+            {
+                if ((this._UserUploads == null))
+                {
+                    this._UserUploads = base.CreateQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload>("UserUploads");
+                }
+                return this._UserUploads;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload> _UserUploads;
+        /// <summary>
+        /// There are no comments for Profiles in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToProfiles(global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile centraStageProfile)
+        {
+            base.AddObject("Profiles", centraStageProfile);
         }
         /// <summary>
-        /// There are no comments for DeviceProfile in the schema.
+        /// There are no comments for Users in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToDeviceProfile(global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile centraStageProfile)
+        public void AddToUsers(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUser licenseUser)
         {
-            base.AddObject("DeviceProfile", centraStageProfile);
+            base.AddObject("Users", licenseUser);
+        }
+        /// <summary>
+        /// There are no comments for UserGroups in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToUserGroups(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserGroup licenseUserGroup)
+        {
+            base.AddObject("UserGroups", licenseUserGroup);
+        }
+        /// <summary>
+        /// There are no comments for UserUploads in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToUserUploads(global::LicenseMonitoringSystem.Core.Common.Portal.License.User.LicenseUserUpload licenseUserUpload)
+        {
+            base.AddObject("UserUploads", licenseUserUpload);
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private abstract class GeneratedEdmModel
@@ -3415,74 +2971,6 @@ namespace LicenseMonitoringSystem.Core.Common.Actions
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
             private const string Edmx = @"<edmx:Edmx Version=""4.0"" xmlns:edmx=""http://docs.oasis-open.org/odata/ns/edmx"">
   <edmx:DataServices>
-    <Schema Namespace=""Portal.License.User"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
-      <EntityType Name=""LicenseUserUpload"">
-        <Key>
-          <PropertyRef Name=""Id"" />
-        </Key>
-        <Property Name=""CheckInTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""DeviceId"" Type=""Edm.Guid"" Nullable=""false"" />
-        <Property Name=""Hostname"" Type=""Edm.String"" />
-        <Property Name=""IpAddress"" Type=""Edm.String"" />
-        <Property Name=""Status"" Type=""Portal.Common.Enums.CallInStatus"" Nullable=""false"" />
-        <Property Name=""Threshold"" Type=""Edm.Double"" />
-        <Property Name=""UploadId"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""ContractId"" Type=""Edm.Int32"" />
-        <Property Name=""CreationTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <NavigationProperty Name=""Users"" Type=""Collection(Portal.License.User.LicenseUser)"" />
-      </EntityType>
-      <EntityType Name=""LicenseUser"">
-        <Key>
-          <PropertyRef Name=""Id"" />
-        </Key>
-        <Property Name=""DisplayName"" Type=""Edm.String"" />
-        <Property Name=""Email"" Type=""Edm.String"" />
-        <Property Name=""Enabled"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""FirstName"" Type=""Edm.String"" />
-        <Property Name=""Surname"" Type=""Edm.String"" />
-        <Property Name=""WhenCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""CreationTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
-        <NavigationProperty Name=""Exclusion"" Type=""Portal.License.User.LicenseUserExclusion"" />
-        <NavigationProperty Name=""Groups"" Type=""Collection(Portal.License.User.LicenseUserGroup)"" />
-        <NavigationProperty Name=""Upload"" Type=""Portal.License.User.LicenseUserUpload"" />
-      </EntityType>
-      <EntityType Name=""LicenseUserExclusion"">
-        <Key>
-          <PropertyRef Name=""Id"" />
-        </Key>
-        <Property Name=""Reason"" Type=""Portal.License.User.Exclusion"" Nullable=""false"" />
-        <Property Name=""ExclusionTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""DeleterUserId"" Type=""Edm.Int64"" />
-        <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""LastModificationTime"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""LastModifierUserId"" Type=""Edm.Int64"" />
-        <Property Name=""CreationTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""CreatorUserId"" Type=""Edm.Int64"" />
-        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <NavigationProperty Name=""User"" Type=""Portal.License.User.LicenseUser"" />
-      </EntityType>
-      <EntityType Name=""LicenseUserGroup"">
-        <Key>
-          <PropertyRef Name=""Id"" />
-        </Key>
-        <Property Name=""Name"" Type=""Edm.String"" />
-        <Property Name=""WhenCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
-        <NavigationProperty Name=""User"" Type=""Portal.License.User.LicenseUser"" />
-      </EntityType>
-      <EnumType Name=""Exclusion"" IsFlags=""true"">
-        <Member Name=""ServiceAccount"" Value=""0"" />
-      </EnumType>
-    </Schema>
     <Schema Namespace=""Portal.CentraStage"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <EntityType Name=""CentraStageProfile"">
         <Key>
@@ -3560,6 +3048,51 @@ namespace LicenseMonitoringSystem.Core.Common.Actions
         <Property Name=""TotalPhysicalMemory"" Type=""Edm.Int64"" Nullable=""false"" />
       </ComplexType>
     </Schema>
+    <Schema Namespace=""Portal.License.User"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
+      <EntityType Name=""LicenseUser"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""DisplayName"" Type=""Edm.String"" />
+        <Property Name=""Email"" Type=""Edm.String"" />
+        <Property Name=""Enabled"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""FirstName"" Type=""Edm.String"" />
+        <Property Name=""Surname"" Type=""Edm.String"" />
+        <Property Name=""UploadId"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""WhenCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
+        <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
+        <NavigationProperty Name=""Groups"" Type=""Collection(Portal.License.User.LicenseUserGroup)"" />
+        <NavigationProperty Name=""Upload"" Type=""Portal.License.User.LicenseUserUpload"" />
+      </EntityType>
+      <EntityType Name=""LicenseUserGroup"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""Name"" Type=""Edm.String"" />
+        <Property Name=""UserId"" Type=""Edm.Guid"" Nullable=""false"" />
+        <Property Name=""WhenCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
+        <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
+        <NavigationProperty Name=""User"" Type=""Portal.License.User.LicenseUser"" />
+      </EntityType>
+      <EntityType Name=""LicenseUserUpload"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""CheckInTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
+        <Property Name=""DeviceId"" Type=""Edm.Guid"" Nullable=""false"" />
+        <Property Name=""Hostname"" Type=""Edm.String"" />
+        <Property Name=""IpAddress"" Type=""Edm.String"" />
+        <Property Name=""Status"" Type=""Portal.Common.Enums.CallInStatus"" Nullable=""false"" />
+        <Property Name=""Threshold"" Type=""Edm.Double"" />
+        <Property Name=""UploadId"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""ContractId"" Type=""Edm.Int32"" />
+        <Property Name=""CreationTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
+        <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <NavigationProperty Name=""Users"" Type=""Collection(Portal.License.User.LicenseUser)"" />
+      </EntityType>
+    </Schema>
     <Schema Namespace=""Portal.Common.Enums"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <EnumType Name=""CallInStatus"" IsFlags=""true"">
         <Member Name=""CalledIn"" Value=""0"" />
@@ -3578,8 +3111,17 @@ namespace LicenseMonitoringSystem.Core.Common.Actions
         <ReturnType Type=""Edm.Int32"" Nullable=""false"" />
       </Function>
       <EntityContainer Name=""Container"">
-        <EntitySet Name=""LicenseUser"" EntityType=""Portal.License.User.LicenseUserUpload"" />
-        <EntitySet Name=""DeviceProfile"" EntityType=""Portal.CentraStage.CentraStageProfile"" />
+        <EntitySet Name=""Profiles"" EntityType=""Portal.CentraStage.CentraStageProfile"" />
+        <EntitySet Name=""Users"" EntityType=""Portal.License.User.LicenseUser"">
+          <NavigationPropertyBinding Path=""Groups"" Target=""UserGroups"" />
+          <NavigationPropertyBinding Path=""Upload"" Target=""UserUploads"" />
+        </EntitySet>
+        <EntitySet Name=""UserGroups"" EntityType=""Portal.License.User.LicenseUserGroup"">
+          <NavigationPropertyBinding Path=""User"" Target=""Users"" />
+        </EntitySet>
+        <EntitySet Name=""UserUploads"" EntityType=""Portal.License.User.LicenseUserUpload"">
+          <NavigationPropertyBinding Path=""Users"" Target=""Users"" />
+        </EntitySet>
       </EntityContainer>
     </Schema>
     <Schema Namespace=""Tools"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
@@ -3591,7 +3133,7 @@ namespace LicenseMonitoringSystem.Core.Common.Actions
       <Function Name=""AccountId"" IsBound=""true"">
         <Parameter Name=""bindingParameter"" Type=""Collection(Portal.CentraStage.CentraStageProfile)"" />
         <Parameter Name=""deviceId"" Type=""Edm.Guid"" Nullable=""false"" />
-        <ReturnType Type=""Edm.Int32"" />
+        <ReturnType Type=""Edm.Int32"" Nullable=""false"" />
       </Function>
     </Schema>
   </edmx:DataServices>
@@ -3678,14 +3220,14 @@ namespace LicenseMonitoringSystem.Core.Common.Tools
         /// There are no comments for AccountId in the schema.
         /// </summary>
         [global::Microsoft.OData.Client.OriginalNameAttribute("AccountId")]
-        public static global::Microsoft.OData.Client.DataServiceQuerySingle<global::System.Nullable<int>> AccountId(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile> source, global::System.Guid deviceId)
+        public static global::Microsoft.OData.Client.DataServiceQuerySingle<int> AccountId(this global::Microsoft.OData.Client.DataServiceQuery<global::LicenseMonitoringSystem.Core.Common.Portal.CentraStage.CentraStageProfile> source, global::System.Guid deviceId)
         {
             if (!source.IsComposable)
             {
                 throw new global::System.NotSupportedException("The previous function is not composable.");
             }
 
-            return source.CreateFunctionQuerySingle<global::System.Nullable<int>>("Tools.AccountId", false, new global::Microsoft.OData.Client.UriOperationParameter("deviceId", deviceId));
+            return source.CreateFunctionQuerySingle<int>("Tools.AccountId", false, new global::Microsoft.OData.Client.UriOperationParameter("deviceId", deviceId));
         }
     }
 }

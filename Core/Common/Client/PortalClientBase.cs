@@ -1,34 +1,38 @@
 ﻿namespace LicenseMonitoringSystem.Core.Common.Client
 {
     using System.Net;
-    using Abp.Web.Security.AntiForgery;
+    using Abp.Dependency;
     using Abp.WebApi.Client;
     using Castle.Core.Logging;
     using Microsoft.OData.Client;
+    using Service;
     using Settings;
 
     public abstract class PortalClientBase : AbpWebApiClient
     {
-        protected PortalClientBase(SettingManager settingManager, IAbpAntiForgeryManager antiForgeryManager)
+        protected PortalContainer Container;
+        protected string ServiceUrl;
+
+        protected PortalClientBase()
         {
             Logger = NullLogger.Instance;
-            SettingManager = settingManager;
+            SettingManager = IocManager.Instance.Resolve<ISettingManager>();
 
-            RequestHeaders.Add(new Abp.NameValue
-            {
-                Name = "X-XSRF-TOKEN",
-                Value = antiForgeryManager.GenerateToken()
-            });
-
-            RequestHeaders.Add(new Abp.NameValue
-            {
-                Name = "Authorization",
-                Value = "Device" + SettingManager.GetDeviceId()
-            });
+            ServiceUrl = SettingManager.GetServiceUrl();
+            Container = new PortalContainer(new System.Uri(ServiceUrl));
         }
 
         public ILogger Logger { get; set; }
-        public SettingManager SettingManager { get; set; }
+        public ISettingManager SettingManager { get; set; }
+
+        protected void AddAccountIdHeader()
+        {
+            Container.BuildingRequest += (sender, e) => Container.OnBuildingRequest(sender, e, new Abp.NameValue
+            {
+                Name = "AccountId",
+                Value = SettingManager.GetAccountId().ToString()
+            });
+        }
 
         public void HandleResponse(DataServiceResponse response)
         {

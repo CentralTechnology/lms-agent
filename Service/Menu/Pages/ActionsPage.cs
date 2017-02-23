@@ -8,19 +8,16 @@
     using Core.Settings;
     using EasyConsole;
 
-    class ExecutePage : Page
+    class ActionsPage : Page
     {
-        private readonly Orchestrator _orchestrator;
-        private readonly ISettingManager _settingManager;
-
-        public ExecutePage(Program program)
-            : base("Execute", program)
+        public ActionsPage(Program program)
+            : base("Actions", program)
         {
             Logger = IocManager.Instance.Resolve<ILogger>();
-            _settingManager = IocManager.Instance.Resolve<ISettingManager>();
-            _orchestrator = IocManager.Instance.Resolve<Orchestrator>();
+            ISettingManager settingManager = IocManager.Instance.Resolve<ISettingManager>();
+            Orchestrator orchestrator = IocManager.Instance.Resolve<Orchestrator>();
 
-            var monitors = _settingManager.GetMonitors();
+            var monitors = settingManager.GetMonitors();
 
             Options = new List<Option>();
 
@@ -30,7 +27,7 @@
                 {
                     try
                     {
-                        _orchestrator.Run(monitor);
+                        orchestrator.Run(monitor);
                     }
                     catch (Exception ex)
                     {
@@ -38,7 +35,7 @@
                     }
 
                     Input.ReadString("Press [Enter]");
-                    Program.NavigateTo<ExecutePage>();
+                    Program.NavigateTo<ActionsPage>();
                 }));
             }
 
@@ -58,8 +55,8 @@
                 Console.WriteLine("{0}. {1}", i + 1, Options[i].Name);
             }
 
-            int choice = Input.ReadInt("Choose and option:", 1, Options.Count);
-
+            int choice = Input.ReadInt("Option:", 1, Options.Count);
+            Output.WriteLine(ConsoleColor.White, $"{Environment.NewLine}Output");
             Options[choice - 1].Callback();
         }
     }

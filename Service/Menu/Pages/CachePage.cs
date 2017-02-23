@@ -38,8 +38,8 @@
                 Console.WriteLine("{0}. {1}", i + 1, Options[i].Name);
             }
 
-            int choice = Input.ReadInt("Choose and option:", 1, Options.Count);
-
+            int choice = Input.ReadInt("Option:", 1, Options.Count);
+            Output.WriteLine(ConsoleColor.White, $"{Environment.NewLine}Output");
             Options[choice - 1].Callback();
         }
     }

@@ -8,6 +8,6 @@
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        List<LicenseUser> GetUsersAndGroups();
+        List<User> GetUsersAndGroups();
     }
 }

@@ -19,7 +19,7 @@
             {
                 new Option("Toggle", () =>
                 {
-                    _settingManager.SetDebug(!_settingManager.Debug);
+                    _settingManager.SetDebug(!_settingManager.GetDebug());
 
                     Input.ReadString("Press [Enter]");
                     Program.NavigateTo<DebugPage>();
@@ -34,7 +34,7 @@
         {
             base.Display();
 
-            var debug = _settingManager.Debug;
+            var debug = _settingManager.GetDebug();
 
             Console.WriteLine(debug ? "Debugging is currently enabled." : "Debugging is currently disabled.");
 
@@ -43,8 +43,8 @@
                 Console.WriteLine("{0}. {1}", i + 1, Options[i].Name);
             }
 
-            int choice = Input.ReadInt("Choose and option:", 1, Options.Count);
-
+            int choice = Input.ReadInt("Option:", 1, Options.Count);
+            Output.WriteLine(ConsoleColor.White, $"{Environment.NewLine}Output");
             Options[choice - 1].Callback();
         }
     }

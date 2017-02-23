@@ -140,7 +140,7 @@
     <Compile Include="Menu\Pages\CachePage.cs" />
     <Compile Include="Menu\Pages\DebugPage.cs" />
     <Compile Include="Menu\Pages\DevicePage.cs" />
-    <Compile Include="Menu\Pages\ExecutePage.cs" />
+    <Compile Include="Menu\Pages\ActionsPage.cs" />
     <Compile Include="Menu\Pages\MainPage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

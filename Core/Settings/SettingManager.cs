@@ -28,13 +28,7 @@
             Logger = NullLogger.Instance;
         }
 
-        public int AccountId { get; set; }
-
-        public Guid DeviceId { get; set; }
-
         public ILogger Logger { get; set; }
-
-        public bool Debug { get; private set; }
 
         public void Create(int accoundId = 0)
         {
@@ -83,24 +77,53 @@
         public void SetDebug(bool value)
         {
             Logger.Info(value ? "Turning on Debug" : "Turning off Debug");
+            GetSettings();
 
-            Debug = value;
+            _settingFile.Debug = value;
 
             SetLogLevel(value ? LogLevel.Debug : LogLevel.Error, "file");
+
+            UpdateSettings();
         }
 
-        public int? GetAccountId(Guid deviceId)
+        public int GetAccountId()
         {
-            var acctId = _settingFile?.AccountId;
-            if (acctId != null)
+            var id = GetAccountIdFromSettingFile();
+            if (id != null)
             {
-                return acctId;
+                return Convert.ToInt32(id);
+            }
+            else
+            {
+                var deviceId = GetDeviceId();
+                return GetAccountIdFromApi(deviceId);
+            }
+        }
+
+        private int GetAccountIdFromApi(Guid deviceId)
+        {
+            using (var client = IocManager.Instance.ResolveAsDisposable<ProfileClient>())
+            {
+                return client.Object.GetAccountByDeviceId(deviceId);
+            }
+        }
+
+        private int? GetAccountIdFromSettingFile()
+        {
+            Logger.Debug("Attempting to read the autotask account id from the settings file.");
+            GetSettings();
+            var id = _settingFile?.AccountId;
+
+            if (id != null)
+            {
+                Logger.DebugFormat("Autotask account id is currently set to: {0}", id);
+            }
+            else
+            {
+                Logger.Debug("Autotask account id is not currently set");
             }
 
-            using (var client = IocManager.Instance.ResolveAsDisposable<PortalClient>())
-            {
-                return client.Object.GetAccountId(deviceId);
-            }
+            return id;
         }
 
         public string GetServiceUrl()
@@ -133,7 +156,7 @@
             }
 
             // gets/sets device id
-            var deviceId = GetDeviceId(true);
+            var deviceId = GetDeviceId();
 
             if (deviceId == null)
             {
@@ -143,41 +166,16 @@
             SetDeviceId(deviceId);
 
             // gets/sets account id
-            var accountId = GetAccountId((Guid) deviceId);
+            var accountId = GetAccountId();
 
             if (accountId == null)
             {
                 throw new AbpException("Unable to obtain the autotask account id. Execution cannot continue. Please update the settings.json file with the correct autotask acccount id.");
             }
 
-            SetAccountId((int) accountId);
+            SetAccountId(accountId);
 
             ResetOnStartUp(false);
-        }
-
-        public int? GetAccountId()
-        {
-            return _settingFile?.AccountId;
-        }
-
-        public Guid GetDeviceId(bool registry)
-        {
-            Guid deviceId;
-            if (registry)
-            {
-                deviceId = GetDeviceIdFromRegistry();
-            }
-            else
-            {
-                var id = GetDeviceIdFromSettingFile();
-                var valid = Guid.TryParse(id.ToString(), out deviceId);
-                if (!valid)
-                {
-                    throw new AbpException("Invalid centrastage device id.");
-                }
-            }
-
-            return deviceId;
         }
 
         public List<Monitor> GetMonitors()
@@ -212,9 +210,11 @@
             UpdateSettings();
         }
 
-        public Guid? GetDeviceId()
+        public Guid GetDeviceId()
         {
-            return GetDeviceIdFromSettingFile();
+            GetSettings();
+            var id = GetDeviceIdFromSettingFile();
+            return id ?? GetDeviceIdFromRegistry();
         }
 
         public void ClearCache()
@@ -330,6 +330,13 @@
             }
 
             Logger.Debug("Success.");
+        }
+
+        public bool GetDebug()
+        {
+            GetSettings();
+            var debug = _settingFile?.Debug;
+            return debug != null && Convert.ToBoolean(debug);
         }
     }
 }

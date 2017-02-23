@@ -1,40 +1,232 @@
 ﻿namespace LicenseMonitoringSystem.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Abp.AutoMapper;
     using Abp.Dependency;
     using Abp.Timing;
     using Common.Client;
     using Common.Extensions;
+    using Common.Portal.Common.Enums;
     using Common.Portal.License.User;
     using Settings;
     using Users;
 
     public class Orchestrator : LicenseMonitoringBase, ISingletonDependency
     {
-        private readonly IPortalClient _portalClient;
+        private readonly IUserClient _userClient;
         private readonly IUserManager _userManager;
+        private readonly IUserGroupClient _userGroupClient;
+        private readonly IUserUploadClient _userUploadClient;
 
         public Orchestrator(
             IUserManager userManager,
-            IPortalClient portalClient,
+            IUserClient userClient,
+            IUserGroupClient userGroupClient,
+            IUserUploadClient userUploadClient,
             SettingManager settingManager)
             : base(settingManager)
         {
             _userManager = userManager;
-            _portalClient = portalClient;
+            _userClient = userClient;
+            _userGroupClient = userGroupClient;
+            _userUploadClient = userUploadClient;
         }
 
-        private LicenseUserUpload CreateLicenseUserUpload(int uploadId)
+        /// <summary>
+        /// </summary>
+        /// <param name="uploadId"></param>
+        /// <returns></returns>
+        protected LicenseUserUpload CreateLicenseUserUpload(int uploadId)
         {
-            return new LicenseUserUpload
+            var upload = new LicenseUserUpload
             {
                 CheckInTime = Clock.Now,
-                DeviceId = SettingManager.DeviceId,
-                TenantId = SettingManager.AccountId,
-                Users = _userManager.GetUsersAndGroups().Convert(),
+                DeviceId = SettingManager.GetDeviceId(),
+                TenantId = SettingManager.GetAccountId(),
                 UploadId = uploadId
             };
+
+            return upload;
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="newUsers"></param>
+        /// <param name="originalUsers"></param>
+        /// <returns></returns>
+        private List<LicenseUser> FilterExistingUsers(List<User> newUsers, List<LicenseUser> originalUsers)
+        {
+            // need to map to different type for comparison
+            var oUsers = originalUsers.MapTo<List<User>>();
+
+            // compare
+            var usersToUpdate = oUsers.FilterExisting<User, Guid>(newUsers).Select(u => u.Id);
+
+            // return as the correct type needed for the api
+            return newUsers.Where(u => usersToUpdate.Contains(u.Id)).ToList().MapTo<List<LicenseUser>>();           
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="newGroups"></param>
+        /// <param name="originalGroups"></param>
+        /// <returns></returns>
+        protected List<LicenseUserGroup> FilterNewGroups(List<UserGroup> newGroups, List<LicenseUserGroup> originalGroups)
+        {
+            // need to map to different type for comparison
+            var oGroups = originalGroups.MapTo<List<UserGroup>>();
+
+            // compare
+            var groupsToCreate = newGroups.FilterMissing<UserGroup, Guid>(oGroups);
+
+            // return as the correct type needed for the api
+            return groupsToCreate.MapTo<List<LicenseUserGroup>>();
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="newUsers"></param>
+        /// <param name="originalUsers"></param>
+        /// <returns></returns>
+        protected List<LicenseUser> FilterNewUsers(List<User> newUsers, List<LicenseUser> originalUsers)
+        {
+            // need to map to different type for comparison
+            var oUsers = originalUsers.MapTo<List<User>>();
+
+            // compare
+            var usersToCreate = newUsers.FilterMissing<User, Guid>(oUsers);
+
+            // return as the correct type needed for the api
+            return usersToCreate.MapTo<List<LicenseUser>>();
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="newUsers"></param>
+        /// <param name="originalUsers"></param>
+        /// <returns></returns>
+        protected List<LicenseUser> FilterStaleUsers(List<User> newUsers, List<LicenseUser> originalUsers)
+        {
+            // need to map to different type for comparison
+            var oUsers = originalUsers.MapTo<List<User>>();
+
+            // compare
+            var usersToDelete = oUsers.FilterMissing<User, Guid>(newUsers);
+
+            // return as the correct type needed for the api
+            return usersToDelete.MapTo<List<LicenseUser>>();
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="users"></param>
+        /// <param name="apiUsers"></param>
+        protected void ProcessGroups(List<User> users, List<LicenseUser> apiUsers)
+        {
+            var groups = users.SelectMany(u => u.Groups).ToList();
+            var apiGroups = apiUsers.SelectMany(u => u.Groups).ToList();
+
+            // create
+            var groupsToCreate = FilterNewGroups(groups, apiGroups);
+
+            Logger.InfoFormat("There are {0} user groups that need creating.", groupsToCreate.Count);
+
+            if (groupsToCreate.Count > 0)
+            {
+                _userGroupClient.Add(groupsToCreate);
+            }            
+
+            // update
+            var groupsToUpdate = FilterExistingGroups(groups, apiGroups);
+
+            Logger.InfoFormat("There are {0} user groups that need updating.", groupsToUpdate.Count);
+
+            if (groupsToUpdate.Count > 0)
+            {
+                _userGroupClient.Update(groupsToUpdate);
+            }           
+
+            // delete
+            var groupsToDelete = FilterStaleGroups(groups, apiGroups);
+
+            Logger.InfoFormat("There are {0} user groups that need deleting.", groupsToUpdate.Count);
+
+            if (groupsToDelete.Count > 0)
+            {
+                _userGroupClient.Remove(groupsToDelete);
+            }            
+        }
+
+        protected List<LicenseUserGroup> FilterExistingGroups(List<UserGroup> newGroups, List<LicenseUserGroup> originalGroups)
+        {
+            // need to map to difference type for comparison
+            var oGroups = originalGroups.MapTo<List<UserGroup>>();
+
+            // compare
+            var groupsToUpdate = oGroups.FilterExisting<UserGroup, Guid>(newGroups).Select(ug => ug.Id);
+
+            // return the correct type needed for the api
+            return newGroups.Where(ug => groupsToUpdate.Contains(ug.Id)).ToList().MapTo<List<LicenseUserGroup>>();
+        }
+
+        protected List<LicenseUserGroup> FilterStaleGroups(List<UserGroup> newGroups, List<LicenseUserGroup> originalGroups)
+        {
+            // need to map to different type for comparison
+            var oGroups = originalGroups.MapTo<List<UserGroup>>();
+
+            // compare
+            var groupsToDelete = oGroups.FilterMissing<UserGroup, Guid>(newGroups);
+
+            // return as the correct type needed for the api
+            return groupsToDelete.MapTo<List<LicenseUserGroup>>();
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="users"></param>
+        /// <param name="apiUsers"></param>
+        /// <param name="uploadId"></param>
+        protected void ProcessUsers(List<User> users, List<LicenseUser> apiUsers, int uploadId)
+        {
+            // create
+            var usersToCreate = FilterNewUsers(users, apiUsers);
+            usersToCreate.ApplyUploadId(uploadId);
+
+            Logger.InfoFormat("There are {0} users that need creating.", usersToCreate.Count);
+
+            if (usersToCreate.Count > 0)
+            {
+                _userClient.Add(usersToCreate);
+            }
+
+            // update
+            var usersToUpdate = FilterExistingUsers(users, apiUsers);
+            usersToUpdate.ApplyUploadId(uploadId);
+
+            Logger.InfoFormat("There are {0} users that need updating.", usersToUpdate.Count);
+
+            if (usersToUpdate.Count > 0)
+            {
+                _userClient.Update(usersToUpdate);
+            }          
+
+            // delete
+            var usersToDelete = FilterStaleUsers(users, apiUsers);
+
+            Logger.InfoFormat("There are {0} users that need deleting", usersToDelete.Count);
+
+            if (usersToDelete.Count > 0)
+            {
+                _userClient.Remove(usersToDelete);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="monitor"></param>
         public void Run(Monitor monitor)
         {
             switch (monitor)
@@ -50,19 +242,14 @@
             }
         }
 
-        private LicenseUserUpload UpdateLicenseUserUpload(LicenseUserUpload upload)
+        /// <summary>
+        /// </summary>
+        protected void Users()
         {
-            upload.CheckInTime = Clock.Now;
-            upload.Users = _userManager.GetUsersAndGroups().Convert();
+            var deviceId = SettingManager.GetDeviceId();
+            var status = _userUploadClient.GetStatusByDeviceId(deviceId);
 
-            return upload;
-        }
-
-        private void Users()
-        {
-            var status = _portalClient.GetStatus(SettingManager.DeviceId);
-
-            if (status == Common.Portal.Common.Enums.CallInStatus.CalledIn)
+            if (status == CallInStatus.CalledIn)
             {
                 Logger.Info("Upload status is set to: CalledIn.");
                 Logger.Info("Will try again later.");
@@ -72,18 +259,29 @@
             Logger.Info("Upload status is set to: NotCalledIn.");
             Logger.Info("CheckIn required.");
 
-            var uploadId = _portalClient.GetId(SettingManager.DeviceId);
+            var uploadId = _userUploadClient.GetUploadIdByDeviceId(deviceId);
+            LicenseUserUpload upload;
             if (uploadId == 0)
             {
-                var upload = CreateLicenseUserUpload(uploadId);
-                _portalClient.Post(upload);
+                upload = CreateLicenseUserUpload(uploadId);
+                _userUploadClient.Add(upload);
             }
             else
             {
-                var upload = _portalClient.Get(uploadId);
-                upload = UpdateLicenseUserUpload(upload);
-                _portalClient.Put(upload.Id, upload);
+                upload = _userUploadClient.Get(uploadId);
+
+                upload.CheckInTime = Clock.Now;
+                upload.Status = CallInStatus.CalledIn;
+                upload.Hostname = Environment.MachineName;
             }
+
+            var users = _userManager.GetUsersAndGroups();
+
+            ProcessUsers(users, upload.Users.ToList(), upload.Id);
+
+            ProcessGroups(users, upload.Users.ToList());
+
+            Logger.Info("Complete!");
         }
     }
 }

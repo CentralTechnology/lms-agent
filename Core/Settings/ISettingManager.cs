@@ -5,7 +5,6 @@
 
     public interface ISettingManager
     {
-        bool Debug { get; }
 
         /// <summary>
         /// </summary>
@@ -33,21 +32,21 @@
         ///     Gets the account id from the settings file, then fallsback to the api if it is not found.
         /// </summary>
         /// <param name="deviceId"></param>
-        int? GetAccountId(Guid deviceId);
+        int GetAccountId();
 
         /// <summary>
         ///     Gets the account id from the settings file, then fallsback to the api if it is not found.
         /// </summary>
-        int? GetAccountId();
+       // int GetAccountId();
 
         /// <summary>
         ///     If the <paramref name="registry" /> is false, then it will search in the settings file.
         ///     If the <paramref name="registry" /> is true, then it will search in the registry, avoiding the settings file.
         /// </summary>
         /// <param name="registry"></param>
-        Guid GetDeviceId(bool registry);
+     //   Guid GetDeviceId(bool registry);
 
-        Guid? GetDeviceId();
+        Guid GetDeviceId();
 
         /// <summary>
         /// </summary>
@@ -78,5 +77,7 @@
         /// </summary>
         /// <param name="deviceId"></param>
         void SetDeviceId(Guid deviceId);
+
+        bool GetDebug();
     }
 }
