@@ -9,6 +9,7 @@
     using Abp;
     using Abp.Dependency;
     using Abp.Extensions;
+    using Abp.Threading;
     using Common.Client;
     using Common.Extensions;
     using Newtonsoft.Json;
@@ -216,9 +217,10 @@
 
         private int GetAccountIdFromApi(Guid deviceId)
         {
-            using (var client = IocManager.Instance.ResolveAsDisposable<ProfileLicenseClient>())
+            using (var client = IocManager.Instance.ResolveAsDisposable<ProfileClient>())
             {
-                return client.Object.GetAccountByDeviceId(deviceId);
+                // ReSharper disable once AccessToDisposedClosure
+                return AsyncHelper.RunSync(() => client.Object.GetAccountByDeviceId(deviceId));
             }
         }
 
@@ -242,7 +244,19 @@
 
         private Guid GetDeviceIdFromRegistry()
         {
-            byte[] id = Encoding.UTF8.GetBytes(RegistryExtentions.GetRegistryValue(Setting.DeviceIdKeyPath, Setting.DeviceIdKeyName).ToString());
+            byte[] id;
+
+            try
+            {
+                id = Encoding.UTF8.GetBytes(RegistryExtentions.GetRegistryValue(Setting.DeviceIdKeyPath, Setting.DeviceIdKeyName).ToString());
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Unable to obtain the centrastage device id from the registry. Please manually enter this in the settings.json file.");
+                Logger.DebugFormat("Exception: ", ex);
+                throw;
+            }
+
             if (id == null)
             {
                 throw new AbpException("Unable to obtain the centrastage device id from the registry. Please manually enter this in the settings.json file.");

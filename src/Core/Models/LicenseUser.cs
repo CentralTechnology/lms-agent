@@ -59,7 +59,7 @@
         [Required]
         public virtual int UploadId { get; set; }
 
-        public virtual ICollection<LicenseUser> Users { get; set; }
+        public virtual List<LicenseUser> Users { get; set; }
     }
 
     [Flags]

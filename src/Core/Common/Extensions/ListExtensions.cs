@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Abp.Domain.Entities;
-    using LicenseMonitoringSystem.Core.Common.Portal.License.User;
+    using Models;
 
     public static class ListExtensions
     {
@@ -11,15 +11,14 @@
         {
             return source.Select(u =>
             {
-                u.UploadId = uploadId;
+                u.SupportUploadId = uploadId;
                 return u;
             }).ToList();
         }
 
-        public static List<TEntity> FilterExisting<TEntity, TPrimaryKey>(this List<TEntity> source, List<TEntity> comparison)
-            where TEntity : class, IEntity<TPrimaryKey>, new()
+        public static List<LicenseUser> FilterExisting(this List<LicenseUser> source, List<LicenseUser> comparison)
         {
-            var destination = new List<TEntity>(source);
+            var destination = new List<LicenseUser>(source);
 
             if (comparison == null || comparison.Count == 0)
             {
@@ -31,16 +30,9 @@
             return destination;
         }
 
-        public static List<TEntity> FilterExisting<TEntity>(this List<TEntity> source, List<TEntity> comparison)
-            where TEntity : class, IEntity<int>, new()
+        public static List<LicenseUser> FilterMissing(this List<LicenseUser> source, List<LicenseUser> comparison)
         {
-            return FilterMissing<TEntity, int>(source, comparison);
-        }
-
-        public static List<TEntity> FilterMissing<TEntity, TPrimaryKey>(this List<TEntity> source, List<TEntity> comparison)
-            where TEntity : class, IEntity<TPrimaryKey>, new()
-        {
-            var destination = new List<TEntity>(source);
+            var destination = new List<LicenseUser>(source);
 
             if (comparison == null || comparison.Count == 0)
             {
@@ -50,12 +42,6 @@
             destination.RemoveAll(d => comparison.Any(c => c.Id.Equals(d.Id)));
 
             return destination;
-        }
-
-        public static List<TEntity> FilterMissing<TEntity>(this List<TEntity> source, List<TEntity> comparison)
-            where TEntity : class, IEntity<int>, new()
-        {
-            return FilterMissing<TEntity, int>(source, comparison);
         }
     }
 }

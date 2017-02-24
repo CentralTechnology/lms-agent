@@ -6,7 +6,7 @@
     using Abp.Dependency;
     using Models;
 
-    public interface IUserClient : ITransientDependency
+    public interface ILicenseUserClient : ITransientDependency
     {
         Task Add(List<LicenseUser> users);
         Task Remove(List<LicenseUser> users);
@@ -18,22 +18,18 @@
     {
         Task Add(SupportUpload upload);
         Task<SupportUpload> Get(int id);
-        CallInStatus GetStatusByDeviceId(Guid deviceId);
+        Task<CallInStatus> GetStatusByDeviceId(Guid deviceId);
         Task<int> GetUploadIdByDeviceId(Guid deviceId);
 
         Task Update(SupportUpload upload);
+
+        Task<List<LicenseUser>> GetUsers(int uploadId);
     }
 
     public interface IProfileClient : ITransientDependency
     {
-        int GetAccountByDeviceId(Guid deviceId);
+        Task<int> GetAccountByDeviceId(Guid deviceId);
     }
 
-    public interface IUserGroupClient : ITransientDependency
-    {
-        void Add(IList<LicenseUserGroup> groups);
-        void Remove(IList<LicenseUserGroup> groups);
 
-        void Update(IList<LicenseUserGroup> groups);
-    }
 }

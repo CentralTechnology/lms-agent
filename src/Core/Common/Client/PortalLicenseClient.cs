@@ -1,5 +1,6 @@
 ﻿namespace Core.Common.Client
 {
+    using System;
     using Abp;
     using Abp.Dependency;
     using Castle.Core.Logging;
@@ -23,13 +24,16 @@
     {
         public DefaultLicenseClientSettings()
         {
-            ISettingManager settingManager = IocManager.Instance.Resolve<ISettingManager>();
-
-            BeforeRequest += br => { br.Headers.Add("Authorization", $"Device {settingManager.GetDeviceId()}"); };
-
-            if (settingManager.GetDebug())
+            using (var settingManager = IocManager.Instance.ResolveAsDisposable<ISettingManager>())
             {
-                OnTrace += (x, y) => { Logger.Debug($"{x} {y}"); };
+                BaseUri = new Uri(settingManager.Object.GetServiceUrl());
+                // ReSharper disable once AccessToDisposedClosure
+                BeforeRequest += br => { br.Headers.Add("Authorization", $"Device {settingManager.Object.GetDeviceId()}"); };
+
+                if (settingManager.Object.GetDebug())
+                {
+                    OnTrace += (x, y) => { Logger.Debug($"{x} {y}"); };
+                }
             }
         }
 

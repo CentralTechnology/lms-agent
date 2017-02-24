@@ -6,17 +6,11 @@
     using System.Linq;
     using Common;
     using Core;
-    using LicenseMonitoringSystem.Core.Common;
     using Models;
     using Settings;
 
     public class UserManager : LicenseMonitoringBase, IUserManager
     {
-        public UserManager(SettingManager settingManager)
-            : base(settingManager)
-        {
-        }
-
         public List<LicenseUser> GetUsersAndGroups()
         {
             Logger.Info("Collecting user information");
