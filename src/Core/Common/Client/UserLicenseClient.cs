@@ -2,17 +2,22 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using LicenseMonitoringSystem.Core.Common.Actions;
-    using LicenseMonitoringSystem.Core.Common.Portal.Common.Enums;
-    using LicenseMonitoringSystem.Core.Common.Portal.License.User;
-    using LicenseMonitoringSystem.Core.Common.Tools;
+    using System.ComponentModel;
+    using System.Threading.Tasks;
+    using Models;
     using Newtonsoft.Json;
     using ShellProgressBar;
 
-    public class UserClient : PortalClientBase, IUserClient
+    public class UserLicenseClient : LicenseMonitoringBase, IUserClient
     {
-        public void Add(IList<LicenseUser> users)
+        private readonly PortalLicenseClient _client;
+
+        public UserLicenseClient(PortalLicenseClient client)
+        {
+            _client = client;
+        }
+
+        public async Task Add(List<LicenseUser> users)
         {
             using (var progressBar = new ProgressBar(users.Count, "Adding users", ConsoleColor.White))
             {
@@ -22,28 +27,21 @@
 
                     progressBar.Tick($"Processing: {user.DisplayName} \t #{index}");
 
-                    Container.AddToUsers(user);
-
                     try
                     {
-                        var response = Container.SaveChanges();
-                        HandleResponse(response);
+                        await _client.For<LicenseUser>().Set(user).InsertEntryAsync();
                     }
                     catch (Exception ex)
                     {
-                        Logger.ErrorFormat(ex.Message);
+                        Logger.Error($"Failed to add: {user.DisplayName}");
+                        Logger.Error($"Execution will continue");
                         Logger.DebugFormat("Exception: ", ex);
-                    }
-                    finally
-                    {
-                        Logger.DebugFormat("Created: {0}", JsonConvert.SerializeObject(user));
-                        Container.Detach(user);
                     }
                 }
             }
         }
 
-        public void Remove(IList<LicenseUser> users)
+        public Task Remove(List<LicenseUser> users)
         {
             using (var progressBar = new ProgressBar(users.Count, "Deleting users", ConsoleColor.White))
             {
@@ -74,7 +72,7 @@
             }
         }
 
-        public void Update(IList<LicenseUser> users)
+        public Task Update(List<LicenseUser> users)
         {
             using (var progressBar = new ProgressBar(users.Count, "Updating users", ConsoleColor.White))
             {
@@ -107,8 +105,15 @@
         }
     }
 
-    public class UserUploadClient : PortalClientBase, IUserUploadClient
+    public class SupportUploadLicenseClient : PortalLicenseClient, ISupportUploadClient
     {
+        private readonly PortalLicenseClient _client;
+
+        public SupportUploadLicenseClient(PortalLicenseClient client)
+        {
+            _client = client;
+        }
+
         public void Add(LicenseUserUpload entity)
         {
             Container.AddToUserUploads(entity);
@@ -125,12 +130,6 @@
             }
         }
 
-        public LicenseUserUpload Get(int id)
-        {
-            // ReSharper disable once ReplaceWithSingleCallToSingleOrDefault
-            return Container.UserUploads.Expand(u => u.Users).Where(u => u.Id.Equals(id)).SingleOrDefault();
-        }
-
         public CallInStatus GetStatusByDeviceId(Guid deviceId)
         {
             AddAccountIdHeader();
@@ -138,20 +137,70 @@
             return Container.UserUploads.Status(deviceId).GetValue();
         }
 
-        public int GetUploadIdByDeviceId(Guid deviceId)
+        public async Task<int> GetUploadIdByDeviceId(Guid deviceId)
         {
-            return Container.UserUploads.Id(deviceId).GetValue();
+            try
+            {
+                return await _client.Unbound<SupportUpload>().Function("GetUploadId").ExecuteAsScalarAsync<int>();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Failed to get the upload id for device: {deviceId}");
+                Logger.DebugFormat("Exception: ", ex);
+
+                // default return from the api
+                return 0;
+            }
         }
 
-        public void Update(int id, LicenseUserUpload userUpload)
+        public async Task Update(SupportUpload upload)
         {
-            Container.UpdateObject(userUpload);
-            var response = Container.SaveChanges();
-            HandleResponse(response);
+            try
+            {
+                upload = await _client.For<SupportUpload>().Key(upload.Id).Set(new SupportUpload
+                {
+                    CheckInTime = DateTime.Now,
+                    Hostname = Environment.MachineName,
+                    Status = CallInStatus.CalledIn                    
+                }).UpdateEntryAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Failed to update upload: {upload.Id}");
+                Logger.DebugFormat("Exception: ", ex);
+            }
+        }
+
+        public async Task Add(SupportUpload upload)
+        {
+            try
+            {
+                await _client.For<SupportUpload>().Set(upload).InsertEntryAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Failed to add upload");
+                Logger.DebugFormat("Exception: ", ex);
+            }
+        }
+
+        public async Task<SupportUpload> Get(int id)
+        {
+            try
+            {
+                var upload = await _client.For<SupportUpload>().Key(id).Expand(s => s.Users).FindEntryAsync();
+                return upload;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Failed to find upload: {id}");
+                Logger.DebugFormat("Exception: ", ex);
+                return null;
+            }
         }
     }
 
-    public class ProfileClient : PortalClientBase, IProfileClient
+    public class ProfileLicenseClient : PortalLicenseClient, IProfileClient
     {
         public int GetAccountByDeviceId(Guid deviceId)
         {
@@ -159,7 +208,7 @@
         }
     }
 
-    public class UserGroupClient : PortalClientBase, IUserGroupClient
+    public class UserGroupLicenseClient : PortalLicenseClient, IUserGroupClient
     {
         public void Add(IList<LicenseUserGroup> groups)
         {

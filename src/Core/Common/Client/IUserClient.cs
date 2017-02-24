@@ -2,26 +2,26 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Abp.Dependency;
-    using LicenseMonitoringSystem.Core.Common.Portal.Common.Enums;
-    using LicenseMonitoringSystem.Core.Common.Portal.License.User;
+    using Models;
 
     public interface IUserClient : ITransientDependency
     {
-        void Add(IList<LicenseUser> users);
-        void Remove(IList<LicenseUser> users);
+        Task Add(List<LicenseUser> users);
+        Task Remove(List<LicenseUser> users);
 
-        void Update(IList<LicenseUser> users);
+        Task Update(List<LicenseUser> users);
     }
 
-    public interface IUserUploadClient : ITransientDependency
+    public interface ISupportUploadClient : ITransientDependency
     {
-        void Add(LicenseUserUpload entity);
-        LicenseUserUpload Get(int id);
+        Task Add(SupportUpload upload);
+        Task<SupportUpload> Get(int id);
         CallInStatus GetStatusByDeviceId(Guid deviceId);
-        int GetUploadIdByDeviceId(Guid deviceId);
+        Task<int> GetUploadIdByDeviceId(Guid deviceId);
 
-        void Update(int id, LicenseUserUpload userUpload);
+        Task Update(SupportUpload upload);
     }
 
     public interface IProfileClient : ITransientDependency

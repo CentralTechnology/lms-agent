@@ -216,7 +216,7 @@
 
         private int GetAccountIdFromApi(Guid deviceId)
         {
-            using (var client = IocManager.Instance.ResolveAsDisposable<ProfileClient>())
+            using (var client = IocManager.Instance.ResolveAsDisposable<ProfileLicenseClient>())
             {
                 return client.Object.GetAccountByDeviceId(deviceId);
             }

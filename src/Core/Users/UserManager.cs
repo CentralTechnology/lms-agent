@@ -7,6 +7,7 @@
     using Common;
     using Core;
     using LicenseMonitoringSystem.Core.Common;
+    using Models;
     using Settings;
 
     public class UserManager : LicenseMonitoringBase, IUserManager
@@ -16,7 +17,7 @@
         {
         }
 
-        public List<User> GetUsersAndGroups()
+        public List<LicenseUser> GetUsersAndGroups()
         {
             Logger.Info("Collecting user information");
             return AllUsers();
@@ -26,9 +27,9 @@
         ///     Returns a list of all the users from Active Directory.
         /// </summary>
         /// <returns></returns>
-        private List<User> AllUsers()
+        private List<LicenseUser> AllUsers()
         {
-            List<User> users = new List<User>();
+            List<LicenseUser> users = new List<LicenseUser>();
 
             using (var context = new PrincipalContext(ContextType.Domain))
             {
@@ -37,17 +38,16 @@
                     var allUsers = search.FindAll().Cast<UserPrincipal>().ToList();
                     Logger.DebugFormat("{0} users found", allUsers.Count);
 
-                    users.AddRange(allUsers.Select(u => new User
+                    users.AddRange(allUsers.Select(u => new LicenseUser
                     {
                         DisplayName = u.DisplayName,
                         Email = u.EmailAddress,
                         Enabled = u.Enabled ?? false,
                         FirstName = u.GivenName,
-                        Groups = u.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new UserGroup
+                        Groups = u.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new LicenseGroup
                         {
                             Id = Guid.Parse(g.Guid.ToString()),
                             Name = g.Name,
-                            UserId = Guid.Parse(u.Guid.ToString()),
                             WhenCreated = DateTime.Parse(g.GetProperty("whenCreated"))
                         }).ToList(),
                         Id = Guid.Parse(u.Guid.ToString()),
@@ -63,7 +63,7 @@
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        private List<User> GetActiveUsers()
+        private List<LicenseUser> GetActiveUsers()
         {
             var activeUsers = AllUsers().Where(u => u.Enabled).ToList();
 

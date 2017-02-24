@@ -3,13 +3,13 @@
 
   "dependencies": {
     "Newtonsoft.Json": "9.0.1",
-    "Abp.Web.Api": "1.4.2",
     "Abp.AutoMapper": "1.4.2",
     "ShellProgressBar": "3.0.0",
     "Microsoft.OData.Client": "6.15.0",
     "NLog": "4.4.3",
     "NLog.Schema": "4.4.3",
-    "Abp": "1.4.2"
+    "Abp": "1.4.2",
+    "Simple.OData.Client": "4.25.4"
   },
 
   "frameworks": {

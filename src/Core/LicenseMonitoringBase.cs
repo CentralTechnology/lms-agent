@@ -6,13 +6,13 @@
 
     public abstract class LicenseMonitoringBase : ITransientDependency
     {
-        protected LicenseMonitoringBase(SettingManager settingManager)
+        protected LicenseMonitoringBase()
         {
             Logger = NullLogger.Instance;
-            SettingManager = settingManager;
+            SettingManager = IocManager.Instance.Resolve<ISettingManager>();
         }
 
         public ILogger Logger { get; set; }
-        public SettingManager SettingManager { get; set; }
+        public ISettingManager SettingManager { get; set; }
     }
 }
