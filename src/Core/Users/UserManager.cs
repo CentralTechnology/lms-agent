@@ -13,7 +13,7 @@
     {
         public List<LicenseUser> GetUsersAndGroups()
         {
-            Logger.Info("Collecting user information");
+            Logger.Info("Collecting user information. (this may take some time)");
             return AllUsers();
         }
 

@@ -14,6 +14,16 @@
         Task Update(List<LicenseUser> users);
     }
 
+    public interface ILicenseGroupClient : ITransientDependency
+    {
+        Task Add(List<LicenseGroup> groups);
+        Task Remove(List<LicenseGroup> groups);
+
+        Task Update(List<LicenseGroup> groups);
+
+        Task<List<LicenseGroup>> GetAll();
+    }
+
     public interface ISupportUploadClient : ITransientDependency
     {
         Task<SupportUpload> Add(SupportUpload upload);

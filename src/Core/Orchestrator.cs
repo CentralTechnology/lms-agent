@@ -43,7 +43,29 @@
                     return;
                 }
 
+                Console.WriteLine("########################################");
+                Console.WriteLine("#              USERS BEGIN             #");
+                Console.WriteLine("########################################");
+                Console.WriteLine(Environment.NewLine);
+
                 var users = await userOrchestrator.Object.ProcessUsers(uploadId);
+
+                Console.WriteLine("########################################");
+                Console.WriteLine("#               USERS END              #");
+                Console.WriteLine("########################################");
+                Console.WriteLine(Environment.NewLine);
+
+                Console.WriteLine("########################################");
+                Console.WriteLine("#             GROUPS BEGIN             #");
+                Console.WriteLine("########################################");
+                Console.WriteLine(Environment.NewLine);
+
+                await userOrchestrator.Object.ProcessGroups(users);
+
+                Console.WriteLine("########################################");
+                Console.WriteLine("#              GROUPS END              #");
+                Console.WriteLine("########################################");
+                Console.WriteLine(Environment.NewLine);
 
                 await userOrchestrator.Object.CallIn(uploadId);
             }

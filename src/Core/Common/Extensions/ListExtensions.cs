@@ -16,25 +16,46 @@
             }).ToList();
         }
 
-        public static List<LicenseUser> FilterUpdate(this List<LicenseUser> source, List<LicenseUser> comparison)
+        public static List<TEntity> FilterCreate<TEntity>(this List<TEntity> source, List<TEntity> comparison)
+            where TEntity : class, IEntity
         {
-            List<LicenseUser> newSource = new List<LicenseUser>(source);
-
-            return comparison.Where(c => newSource.Any(s => s.Id.Equals(c.Id))).ToList();
+            return source.FilterCreate<TEntity, int>(comparison);
         }
 
-        public static List<LicenseUser> FilterCreate(this List<LicenseUser> source, List<LicenseUser> comparison)
+        public static List<TEntity> FilterCreate<TEntity, TPrimaryKey>(this List<TEntity> source, List<TEntity> comparison)
+            where TEntity : class, IEntity<TPrimaryKey>
         {
-            List<LicenseUser> newSource = new List<LicenseUser>(source);
+            List<TEntity> newSource = new List<TEntity>(source);
 
             return comparison.Where(s => !newSource.Any(c => c.Id.Equals(s.Id))).ToList();
         }
 
-        public static List<LicenseUser> FilterDelete(this List<LicenseUser> source, List<LicenseUser> comparison)
+        public static List<TEntity> FilterDelete<TEntity, TPrimaryKey>(this List<TEntity> source, List<TEntity> comparison)
+            where TEntity : class, IEntity<TPrimaryKey>
         {
-            List<LicenseUser> newSource = new List<LicenseUser>(source);
+            List<TEntity> newSource = new List<TEntity>(source);
 
             return newSource.Where(s => !comparison.Any(c => c.Id.Equals(s.Id))).ToList();
+        }
+
+        public static List<TEntity> FilterDelete<TEntity>(this List<TEntity> source, List<TEntity> comparison)
+            where TEntity : class, IEntity
+        {
+            return source.FilterDelete<TEntity, int>(comparison);
+        }
+
+        public static List<TEntity> FilterUpdate<TEntity, TPrimaryKey>(this List<TEntity> source, List<TEntity> comparison)
+            where TEntity : class, IEntity<TPrimaryKey>
+        {
+            List<TEntity> newSource = new List<TEntity>(source);
+
+            return comparison.Where(c => newSource.Any(s => s.Id.Equals(c.Id))).ToList();
+        }
+
+        public static List<TEntity> FilterUpdate<TEntity>(this List<TEntity> source, List<TEntity> comparison)
+            where TEntity : class, IEntity
+        {
+            return source.FilterUpdate<TEntity, int>(comparison);
         }
     }
 }

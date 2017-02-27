@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Models;
     using ShellProgressBar;
@@ -56,7 +57,7 @@
 
         public async Task Remove(List<LicenseUser> users)
         {
-            using (var progressBar = new ProgressBar(users.Count, "Deleting users", ConsoleColor.White))
+            using (var progressBar = new ProgressBar(users.Count, "Removing users", ConsoleColor.White))
             {
                 for (int index = 0; index < users.Count; index++)
                 {
@@ -110,7 +111,7 @@
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error($"Failed to delete: {user.DisplayName}");
+                        Logger.Error($"Failed to update: {user.DisplayName}");
                         Logger.Error($"Execution will continue");
                         Logger.DebugFormat("Exception: ", ex);
                     }
@@ -281,6 +282,129 @@
                 Logger.DebugFormat("Exception: ", ex);
 
                 throw;
+            }
+        }
+    }
+
+    public class LicenseGroupClient : PortalLicenseClient,ILicenseGroupClient
+    {
+        private readonly PortalLicenseClient _client;
+
+        public LicenseGroupClient(PortalLicenseClient client)
+        {
+            _client = client;
+        }
+
+        public async Task Add(List<LicenseGroup> groups)
+        {
+            using (var progressBar = new ProgressBar(groups.Count, "Adding groups", ConsoleColor.White))
+            {
+                for (int index = 0; index < groups.Count; index++)
+                {
+                    var group = groups[index];
+
+                    progressBar.Tick($"Processing: {group.Name} \t #{index}");
+
+                    try
+                    {
+                        await _client.For<LicenseGroup>().Set(new
+                        {
+                            group.Id,
+                            group.Name,
+                            group.WhenCreated
+                        }).InsertEntryAsync();
+                    }
+                    catch (WebRequestException ex)
+                    {
+                        FormatWebRequestException(ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Failed to add: {group.Name}");
+                        Logger.Error("Execution will continue");
+                        Logger.DebugFormat("Exception: ", ex);
+                    }
+                }
+            }
+        }
+
+        public async Task Remove(List<LicenseGroup> groups)
+        {
+            using (var progressBar = new ProgressBar(groups.Count, "Removing groups", ConsoleColor.White))
+            {
+                for (int index = 0; index < groups.Count; index++)
+                {
+                    var group = groups[index];
+
+                    progressBar.Tick($"Processing: {group.Name} \t #{index}");
+
+                    try
+                    {
+                        await _client.For<LicenseGroup>().Key(group.Id).DeleteEntryAsync();
+                    }
+                    catch (WebRequestException ex)
+                    {
+                        FormatWebRequestException(ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Failed to delete: {group.Name}");
+                        Logger.Error("Execution will continue");
+                        Logger.DebugFormat("Exception: ", ex);
+                    }
+                }
+            }
+        }
+
+        public async Task Update(List<LicenseGroup> groups)
+        {
+            using (var progressBar = new ProgressBar(groups.Count, "Updating groups", ConsoleColor.White))
+            {
+                for (int index = 0; index < groups.Count; index++)
+                {
+                    var group = groups[index];
+
+                    progressBar.Tick($"Processing: {group.Name} \t #{index}");
+
+                    try
+                    {
+                        await _client.For<LicenseGroup>().Key(group.Id).Set(new
+                        {
+                            group.Name,
+                            group.WhenCreated
+                        }).InsertEntryAsync();
+                    }
+                    catch (WebRequestException ex)
+                    {
+                        FormatWebRequestException(ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Failed to update: {group.Name}");
+                        Logger.Error("Execution will continue");
+                        Logger.DebugFormat("Exception: ", ex);
+                    }
+                }
+            }
+        }
+
+        public async Task<List<LicenseGroup>> GetAll()
+        {
+            try
+            {
+                var groups =  await _client.For<LicenseGroup>().FindEntriesAsync();
+                return groups.ToList();
+            }
+            catch (WebRequestException ex)
+            {
+                FormatWebRequestException(ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to obatin a list of groups from the api.");
+                Logger.DebugFormat("Exception: ", ex);
+                return null;
             }
         }
     }

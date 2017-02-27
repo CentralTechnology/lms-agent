@@ -13,11 +13,17 @@ namespace Core.Users
     {
         private readonly ISupportUploadClient _uploadClient;
         private readonly ILicenseUserClient _licenseUserClient;
+        private readonly ILicenseGroupClient _licenseGroupClient;
         private readonly IUserManager _userManager;
-        public UserOrchestrator(ISupportUploadClient uploadClient, ILicenseUserClient licenseUserClient, IUserManager userManager)
+        public UserOrchestrator(
+            ISupportUploadClient uploadClient, 
+            ILicenseUserClient licenseUserClient, 
+            ILicenseGroupClient licenseGroupClient, 
+            IUserManager userManager)
         {
             _uploadClient = uploadClient;
             _licenseUserClient = licenseUserClient;
+            _licenseGroupClient = licenseGroupClient;
             _userManager = userManager;
         }
         public async Task<int> ProcessUpload()
@@ -30,9 +36,11 @@ namespace Core.Users
             {
                 case CallInStatus.CalledIn:
                     Logger.Info("You are currently called in. Nothing to process");
+                    Console.WriteLine(Environment.NewLine);
                     return 0;
                 case CallInStatus.NotCalledIn:
                     Logger.Error("You are not currently called in.");
+                    Console.WriteLine(Environment.NewLine);
                     break;
                 case CallInStatus.NeverCalledIn:
                     Logger.Error("You have never called in");
@@ -62,7 +70,7 @@ namespace Core.Users
             var remoteUsers = await _uploadClient.GetUsers(uploadId);
             Logger.Info($"{remoteUsers.Count} users from the api have been found.");
 
-            var usersToCreate = remoteUsers.FilterCreate(localUsers);
+            var usersToCreate = remoteUsers.FilterCreate<LicenseUser,Guid>(localUsers);
             Logger.Info($"{usersToCreate.Count} users need creating.");
             if (usersToCreate.Count > 0)
             {
@@ -72,14 +80,14 @@ namespace Core.Users
                 await _licenseUserClient.Add(usersToCreate);
             }
 
-            var usersToUpdate = remoteUsers.FilterUpdate(localUsers);
+            var usersToUpdate = remoteUsers.FilterUpdate<LicenseUser,Guid>(localUsers);
             Logger.Info($"{usersToUpdate.Count} users need updating.");
             if (usersToUpdate.Count > 0)
             {
                 await _licenseUserClient.Update(usersToUpdate);
             }
 
-            var usersToDelete = remoteUsers.FilterDelete(localUsers);
+            var usersToDelete = remoteUsers.FilterDelete<LicenseUser,Guid>(localUsers);
             Logger.Info($"{usersToDelete.Count} users need deleting.");
             if (usersToDelete.Count > 0)
             {
@@ -91,7 +99,18 @@ namespace Core.Users
 
         public async Task ProcessGroups(List<LicenseUser> users)
         {
-            throw new NotImplementedException();
+            var localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
+            Logger.Info($"{localGroups.Count} local groups have been found.");
+
+            var remoteGroups = await _licenseGroupClient.GetAll();
+            Logger.Info($"{remoteGroups.Count} groups from the api have been found.");
+
+            var groupsToCreate = remoteGroups.FilterCreate<LicenseGroup,Guid>(localGroups);
+            Logger.Info($"{groupsToCreate.Count} groups need creating.");
+            if (groupsToCreate.Count > 0)
+            {
+                await _licenseGroupClient.Add(groupsToCreate);
+            }
         }
 
         public async Task ProcessUserGroups(List<LicenseUser> users)
