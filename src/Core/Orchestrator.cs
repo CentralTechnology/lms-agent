@@ -44,6 +44,8 @@
                 }
 
                 var users = await userOrchestrator.Object.ProcessUsers(uploadId);
+
+                await userOrchestrator.Object.CallIn(uploadId);
             }
         }
     }

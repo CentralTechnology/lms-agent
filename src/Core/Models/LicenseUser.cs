@@ -66,6 +66,7 @@
     public enum CallInStatus
     {
         CalledIn = 0,
-        NotCalledIn = 1
+        NotCalledIn = 1,
+        NeverCalledIn = 2
     }
 }

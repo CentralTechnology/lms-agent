@@ -9,7 +9,8 @@
     "NLog": "4.4.3",
     "NLog.Schema": "4.4.3",
     "Abp": "1.4.2",
-    "Simple.OData.Client": "4.25.4"
+    "Simple.OData.Client": "4.25.4",
+    "Abp.Web.Api": "1.4.2"
   },
 
   "frameworks": {

@@ -16,32 +16,25 @@
             }).ToList();
         }
 
-        public static List<LicenseUser> FilterExisting(this List<LicenseUser> source, List<LicenseUser> comparison)
+        public static List<LicenseUser> FilterUpdate(this List<LicenseUser> source, List<LicenseUser> comparison)
         {
-            var destination = new List<LicenseUser>(source);
+            List<LicenseUser> newSource = new List<LicenseUser>(source);
 
-            if (comparison == null || comparison.Count == 0)
-            {
-                return destination;
-            }
-
-            destination.RemoveAll(d => !comparison.Any(c => c.Id.Equals(d.Id)));
-
-            return destination;
+            return comparison.Where(c => newSource.Any(s => s.Id.Equals(c.Id))).ToList();
         }
 
-        public static List<LicenseUser> FilterMissing(this List<LicenseUser> source, List<LicenseUser> comparison)
+        public static List<LicenseUser> FilterCreate(this List<LicenseUser> source, List<LicenseUser> comparison)
         {
-            var destination = new List<LicenseUser>(source);
+            List<LicenseUser> newSource = new List<LicenseUser>(source);
 
-            if (comparison == null || comparison.Count == 0)
-            {
-                return destination;
-            }
+            return comparison.Where(s => !newSource.Any(c => c.Id.Equals(s.Id))).ToList();
+        }
 
-            destination.RemoveAll(d => comparison.Any(c => c.Id.Equals(d.Id)));
+        public static List<LicenseUser> FilterDelete(this List<LicenseUser> source, List<LicenseUser> comparison)
+        {
+            List<LicenseUser> newSource = new List<LicenseUser>(source);
 
-            return destination;
+            return newSource.Where(s => !comparison.Any(c => c.Id.Equals(s.Id))).ToList();
         }
     }
 }

@@ -26,32 +26,67 @@ namespace Core.Users
 
             var status = await _uploadClient.GetStatusByDeviceId(deviceId);
 
-            if (status.HasFlag(CallInStatus.CalledIn))
+            switch (status)
             {
-                return 0;
+                case CallInStatus.CalledIn:
+                    Logger.Info("You are currently called in. Nothing to process");
+                    return 0;
+                case CallInStatus.NotCalledIn:
+                    Logger.Error("You are not currently called in.");
+                    break;
+                case CallInStatus.NeverCalledIn:
+                    Logger.Error("You have never called in");
+                    Logger.Info("Calling in...");
+                    var upload = await _uploadClient.Add(new SupportUpload
+                    {
+                        CheckInTime = DateTime.Now,
+                        DeviceId = deviceId,
+                        Hostname = Environment.MachineName,
+                        IsActive = true,
+                        Status = CallInStatus.CalledIn
+                    });
+                    Logger.Info($"Call in successfull: {upload.Id}");
+                    return upload.Id;
             }
 
             var id = await _uploadClient.GetUploadIdByDeviceId(deviceId);
+            Logger.Debug($"Upload id: {id}");
             return id;
         }
 
         public async Task<List<LicenseUser>> ProcessUsers(int uploadId)
         {
             var localUsers = _userManager.GetUsersAndGroups();
+            Logger.Info($"{localUsers.Count} local users have been found.");
+
             var remoteUsers = await _uploadClient.GetUsers(uploadId);
+            Logger.Info($"{remoteUsers.Count} users from the api have been found.");
 
-            var usersToCreate = localUsers.FilterMissing(remoteUsers);
-            usersToCreate = usersToCreate.ApplyUploadId(uploadId);
-            await _licenseUserClient.Add(usersToCreate);
+            var usersToCreate = remoteUsers.FilterCreate(localUsers);
+            Logger.Info($"{usersToCreate.Count} users need creating.");
+            if (usersToCreate.Count > 0)
+            {
+                usersToCreate = usersToCreate.ApplyUploadId(uploadId);
+                Logger.Debug($"Applying the upload id to the users.");
 
-            var usersToUpdate = remoteUsers.FilterExisting(localUsers);
-            await _licenseUserClient.Update(usersToUpdate);
+                await _licenseUserClient.Add(usersToCreate);
+            }
 
-            var usersToDelete = remoteUsers.FilterMissing(localUsers);
-            await _licenseUserClient.Remove(usersToDelete);
+            var usersToUpdate = remoteUsers.FilterUpdate(localUsers);
+            Logger.Info($"{usersToUpdate.Count} users need updating.");
+            if (usersToUpdate.Count > 0)
+            {
+                await _licenseUserClient.Update(usersToUpdate);
+            }
+
+            var usersToDelete = remoteUsers.FilterDelete(localUsers);
+            Logger.Info($"{usersToDelete.Count} users need deleting.");
+            if (usersToDelete.Count > 0)
+            {
+                await _licenseUserClient.Remove(usersToDelete);
+            }
 
             return localUsers;
-
         }
 
         public async Task ProcessGroups(List<LicenseUser> users)
@@ -62,6 +97,13 @@ namespace Core.Users
         public async Task ProcessUserGroups(List<LicenseUser> users)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task CallIn(int uploadId)
+        {
+            await _uploadClient.Update(uploadId);
+
+            Logger.Info($"You are now called in.");
         }
     }
 }

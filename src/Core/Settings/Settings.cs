@@ -4,7 +4,11 @@
 
     public class Setting
     {
+#if DEBUG
+        public const string BaseServiceUrl = "http://localhost:61814/";
+#else
         public const string BaseServiceUrl = "https://portal.ct.co.uk";
+#endif
         public const string DefaultServiceUrl = "https://portal.ct.co.uk/odata/v1";
         public const string ServiceUrlProperty = "ServiceUrl";
         public const string DeviceIdKeyPath = @"SOFTWARE\CentraStage";

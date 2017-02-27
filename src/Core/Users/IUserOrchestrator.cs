@@ -11,6 +11,13 @@ namespace Core.Users
     public interface IUserOrchestrator : ITransientDependency
     {
         /// <summary>
+        /// Updates the uploads status to be CalledIn.
+        /// </summary>
+        /// <param name="uploadId"></param>
+        /// <returns></returns>
+        Task CallIn(int uploadId);
+
+        /// <summary>
         ///  Determines whether this client needs to check in or not. If a check in is required then the upload id will be returned or else a 0 will be.
         /// </summary>
         /// <returns></returns>

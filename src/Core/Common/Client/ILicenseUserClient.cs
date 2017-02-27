@@ -16,12 +16,12 @@
 
     public interface ISupportUploadClient : ITransientDependency
     {
-        Task Add(SupportUpload upload);
+        Task<SupportUpload> Add(SupportUpload upload);
         Task<SupportUpload> Get(int id);
         Task<CallInStatus> GetStatusByDeviceId(Guid deviceId);
         Task<int> GetUploadIdByDeviceId(Guid deviceId);
 
-        Task Update(SupportUpload upload);
+        Task Update(int uploadId);
 
         Task<List<LicenseUser>> GetUsers(int uploadId);
     }

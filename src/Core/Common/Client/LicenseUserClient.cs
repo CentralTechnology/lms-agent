@@ -2,18 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Linq;
     using System.Threading.Tasks;
     using Models;
-    using Newtonsoft.Json;
     using ShellProgressBar;
+    using Simple.OData.Client;
 
-    public class LicenseLicenseUserClient : LicenseMonitoringBase, ILicenseUserClient
+    public class LicenseUserClient : PortalLicenseClient, ILicenseUserClient
     {
         private readonly PortalLicenseClient _client;
 
-        public LicenseLicenseUserClient(PortalLicenseClient client)
+        public LicenseUserClient(PortalLicenseClient client)
         {
             _client = client;
         }
@@ -30,7 +28,21 @@
 
                     try
                     {
-                        await _client.For<LicenseUser>().Set(user).InsertEntryAsync();
+                        await _client.For<LicenseUser>().Set(new 
+                        {
+                            user.DisplayName,
+                            user.Email,
+                            user.Enabled,
+                            user.FirstName,
+                            user.Id,
+                            user.SupportUploadId,
+                            user.Surname,
+                            user.WhenCreated
+                        }).InsertEntryAsync();
+                    }
+                    catch (WebRequestException ex)
+                    {
+                        FormatWebRequestException(ex);
                     }
                     catch (Exception ex)
                     {
@@ -56,6 +68,10 @@
                     {
                         await _client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
                     }
+                    catch (WebRequestException ex)
+                    {
+                        FormatWebRequestException(ex);
+                    }
                     catch (Exception ex)
                     {
                         Logger.Error($"Failed to delete: {user.DisplayName}");
@@ -78,15 +94,19 @@
 
                     try
                     {
-                        await _client.For<LicenseUser>().Key(user.Id).Set(new LicenseUser
+                        await _client.For<LicenseUser>().Key(user.Id).Set(new
                         {
-                            DisplayName = user.DisplayName,
-                            Email = user.Email,
-                            Enabled = user.Enabled,
-                            FirstName = user.FirstName,
-                            Surname = user.Surname,
-                            WhenCreated = user.WhenCreated
+                            user.DisplayName,
+                            user.Email,
+                            user.Enabled,
+                            user.FirstName,
+                            user.Surname,
+                            user.WhenCreated
                         }).UpdateEntryAsync();
+                    }
+                    catch (WebRequestException ex)
+                    {
+                        FormatWebRequestException(ex);
                     }
                     catch (Exception ex)
                     {
@@ -112,23 +132,35 @@
         {
             try
             {
-                return await _client.For<SupportUpload>().Function("GetCallInStatus").ExecuteAsScalarAsync<CallInStatus>();
+                return await _client.For<SupportUpload>().Function("GetCallInStatus").Set(new {deviceId}).ExecuteAsScalarAsync<CallInStatus>();
+            }
+            catch (WebRequestException ex)
+            {
+                FormatWebRequestException(ex);
+                return CallInStatus.NotCalledIn;
             }
             catch (Exception ex)
             {
+                Logger.Error($"Status: {ex.Message}");
                 Logger.Error($"Failed to get the call in status for device: {deviceId}");
                 Logger.DebugFormat("Exception: ", ex);
 
                 // by default return not called in, its not the end of the world if they call in twice
                 return CallInStatus.NotCalledIn;
             }
+           
         }
 
         public async Task<int> GetUploadIdByDeviceId(Guid deviceId)
         {
             try
             {
-                return await _client.Unbound<SupportUpload>().Function("GetUploadId").ExecuteAsScalarAsync<int>();
+                return await _client.For<SupportUpload>().Function("GetUploadId").Set(new { deviceId}).ExecuteAsScalarAsync<int>();
+            }
+            catch (WebRequestException ex)
+            {
+                FormatWebRequestException(ex);
+                return 0;
             }
             catch (Exception ex)
             {
@@ -140,34 +172,44 @@
             }
         }
 
-        public async Task Update(SupportUpload upload)
+        public async Task Update(int uploadId)
         {
             try
             {
-                upload = await _client.For<SupportUpload>().Key(upload.Id).Set(new SupportUpload
+                await _client.For<SupportUpload>().Key(uploadId).Set(new
                 {
                     CheckInTime = DateTime.Now,
                     Hostname = Environment.MachineName,
                     Status = CallInStatus.CalledIn                    
                 }).UpdateEntryAsync();
             }
+            catch (WebRequestException ex)
+            {
+                FormatWebRequestException(ex);
+            }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to update upload: {upload.Id}");
+                Logger.Error($"Failed to update upload: {uploadId}");
                 Logger.DebugFormat("Exception: ", ex);
             }
         }
 
-        public async Task Add(SupportUpload upload)
+        public async Task<SupportUpload> Add(SupportUpload upload)
         {
             try
             {
-                await _client.For<SupportUpload>().Set(upload).InsertEntryAsync();
+                return await _client.For<SupportUpload>().Set(upload).InsertEntryAsync();
+            }
+            catch (WebRequestException ex)
+            {
+                FormatWebRequestException(ex);
+                return null;
             }
             catch (Exception ex)
             {
                 Logger.Error($"Failed to add upload");
                 Logger.DebugFormat("Exception: ", ex);
+                return null;
             }
         }
 
@@ -177,6 +219,11 @@
             {
                 var upload = await _client.For<SupportUpload>().Key(id).Expand(s => s.Users).FindEntryAsync();
                 return upload;
+            }
+            catch (WebRequestException ex)
+            {
+                FormatWebRequestException(ex);
+                return null;
             }
             catch (Exception ex)
             {
@@ -190,8 +237,15 @@
         {
             try
             {
-                var users = await _client.For<SupportUpload>().Key(uploadId).NavigateTo(x => x.Users).FindEntryAsync();
-                return users;
+                var upload = await _client.For<SupportUpload>().Key(uploadId).Expand(x => x.Users).FindEntryAsync();
+
+                // return a new list if null, could just be the first check in
+                return upload.Users ?? new List<LicenseUser>();
+            }
+            catch (WebRequestException ex)
+            {
+                FormatWebRequestException(ex);
+                return null;
             }
             catch (Exception ex)
             {
@@ -214,8 +268,12 @@
         {
             try
             {
-                return await _client.Unbound().Function("GetAccountId").ExecuteAsScalarAsync<int>();
-
+                return await _client.Unbound().Function("GetAccountId").Set(new { deviceId }).ExecuteAsScalarAsync<int>();
+            }
+            catch (WebRequestException ex)
+            {
+                FormatWebRequestException(ex);
+                throw;
             }
             catch (Exception ex)
             {
