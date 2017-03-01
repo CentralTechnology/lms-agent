@@ -7,6 +7,7 @@ namespace Core.Users
 {
     using Abp.Dependency;
     using Models;
+    using ShellProgressBar;
 
     public interface IUserOrchestrator : ITransientDependency
     {
@@ -27,21 +28,24 @@ namespace Core.Users
         /// Applies the upload id to all the users then performs the CRUD operations via the api
         /// </summary>
         /// <param name="uploadId"></param>
+        /// <param name="pbar"></param>
         /// <returns></returns>
-        Task<List<LicenseUser>> ProcessUsers(int uploadId);
+        Task<List<LicenseUser>> ProcessUsers(int uploadId, ProgressBar pbar);
 
         /// <summary>
         /// Performs CRUD operations via the api on the groups
         /// </summary>
         /// <param name="users"></param>
+        /// <param name="pbar"></param>
         /// <returns></returns>
-        Task ProcessGroups(List<LicenseUser> users);
+        Task ProcessGroups(List<LicenseUser> users, ProgressBar pbar);
 
         /// <summary>
         /// Determines the relationship between the users and groups then performs CRUD operations via the api.
         /// </summary>
         /// <param name="users"></param>
+        /// <param name="pbar"></param>
         /// <returns></returns>
-        Task ProcessUserGroups(List<LicenseUser> users);
+        Task ProcessUserGroups(List<LicenseUser> users, ProgressBar pbar);
     }
 }

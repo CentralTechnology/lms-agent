@@ -8,33 +8,36 @@
     using Abp.Dependency;
     using Abp.Threading;
     using Abp.Timing;
+    using Castle.Core.Logging;
     using Common.Client;
     using Common.Extensions;
     using Models;
     using Settings;
+    using ShellProgressBar;
     using Users;
 
     public class Orchestrator : LicenseMonitoringBase, ISingletonDependency
     {
-        public Orchestrator()
-        {
-        }
-
         public void Run(Monitor monitor)
         {
-            switch (monitor)
+            using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingManager>())
             {
-                case Monitor.Users:
-                    AsyncHelper.RunSync(() => UserMonitor());
-                    break;
-                default:
-                    Logger.Info("No licenses are set to be monitored");
-                    break;
+                switch (monitor)
+                {
+                    case Monitor.Users:
+                        
+                        AsyncHelper.RunSync(UserMonitor);
+                        break;
+                    default:
+                        Logger.Info("No licenses are set to be monitored");
+                        break;
+                }
             }
         }
 
         private async Task UserMonitor()
         {
+            ConsoleExtensions.WriteLineBottom("Logs \n", LoggerLevel.Info);
             using (var userOrchestrator = IocManager.Instance.ResolveAsDisposable<IUserOrchestrator>())
             {
                 int uploadId = await userOrchestrator.Object.ProcessUpload();
@@ -43,31 +46,16 @@
                     return;
                 }
 
-                Console.WriteLine("########################################");
-                Console.WriteLine("#              USERS BEGIN             #");
-                Console.WriteLine("########################################");
-                Console.WriteLine(Environment.NewLine);
+                using (var pbar = new ProgressBar(4, "overall progress", ConsoleColor.DarkGray))
+                {
+                    var users = await userOrchestrator.Object.ProcessUsers(uploadId, pbar);
 
-                var users = await userOrchestrator.Object.ProcessUsers(uploadId);
+                    await userOrchestrator.Object.ProcessGroups(users, pbar);
 
-                Console.WriteLine("########################################");
-                Console.WriteLine("#               USERS END              #");
-                Console.WriteLine("########################################");
-                Console.WriteLine(Environment.NewLine);
+                    await userOrchestrator.Object.ProcessUserGroups(users, pbar);
 
-                Console.WriteLine("########################################");
-                Console.WriteLine("#             GROUPS BEGIN             #");
-                Console.WriteLine("########################################");
-                Console.WriteLine(Environment.NewLine);
-
-                await userOrchestrator.Object.ProcessGroups(users);
-
-                Console.WriteLine("########################################");
-                Console.WriteLine("#              GROUPS END              #");
-                Console.WriteLine("########################################");
-                Console.WriteLine(Environment.NewLine);
-
-                await userOrchestrator.Object.CallIn(uploadId);
+                    await userOrchestrator.Object.CallIn(uploadId);
+                }
             }
         }
     }

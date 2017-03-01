@@ -10,6 +10,7 @@
     using Abp.Dependency;
     using Abp.Extensions;
     using Abp.Threading;
+    using Castle.Core.Logging;
     using Common.Client;
     using Common.Extensions;
     using Newtonsoft.Json;
@@ -75,16 +76,29 @@
             return exists;
         }
 
-        public void SetDebug(bool value)
+        public void SetLogLevel(LoggerLevel loggerLevel, string target)
         {
-            Logger.Info(value ? "Turning on Debug" : "Turning off Debug");
-            GetSettings();
-
-            _settingFile.Debug = value;
-
-            SetLogLevel(value ? LogLevel.Debug : LogLevel.Error, "file");
-
-            UpdateSettings();
+            switch (loggerLevel)
+            {
+                case LoggerLevel.Off:
+                    SetLogLevel(LogLevel.Off, target);
+                    break;
+                case LoggerLevel.Fatal:
+                    SetLogLevel(LogLevel.Fatal, target);
+                    break;
+                case LoggerLevel.Error:
+                    SetLogLevel(LogLevel.Error, target);
+                    break;
+                case LoggerLevel.Warn:
+                    SetLogLevel(LogLevel.Warn, target);
+                    break;
+                case LoggerLevel.Info:
+                    SetLogLevel(LogLevel.Info, target);
+                    break;
+                case LoggerLevel.Debug:
+                    SetLogLevel(LogLevel.Debug, target);
+                    break;
+            }
         }
 
         public int GetAccountId()
@@ -202,11 +216,40 @@
             UpdateSettings();
         }
 
-        public bool GetDebug()
+        public LoggerLevel GetLogLevel(string target)
         {
-            GetSettings();
-            var debug = _settingFile?.Debug;
-            return debug != null && Convert.ToBoolean(debug);
+            IList<LoggingRule> rules = LogManager.Configuration.LoggingRules;
+            Regex validator = new Regex(target);
+
+            foreach (var rule in rules.Where(r => validator.IsMatch(r.Targets[0].Name)))
+            {
+                if (rule.IsLoggingEnabledForLevel(LogLevel.Debug))
+                {
+                    return LoggerLevel.Debug;
+                }
+
+                if (rule.IsLoggingEnabledForLevel(LogLevel.Info))
+                {
+                    return LoggerLevel.Info;
+                }
+
+                if (rule.IsLoggingEnabledForLevel(LogLevel.Warn))
+                {
+                    return LoggerLevel.Warn;
+                }
+
+                if (rule.IsLoggingEnabledForLevel(LogLevel.Error))
+                {
+                    return LoggerLevel.Error;
+                }
+
+                if (rule.IsLoggingEnabledForLevel(LogLevel.Fatal))
+                {
+                    return LoggerLevel.Fatal;
+                }
+            }
+
+            return LoggerLevel.Info;
         }
 
         public void Initialize()

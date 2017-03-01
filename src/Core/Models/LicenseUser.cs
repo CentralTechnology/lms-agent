@@ -18,7 +18,7 @@
         [MaxLength(64)]
         public string FirstName { get; set; }
 
-        public List<LicenseGroup> Groups { get; set; }
+        public virtual List<LicenseGroup> Groups { get; set; }
 
         public int SupportUploadId { get; set; }
 

@@ -56,7 +56,7 @@
             }
 
             int choice = Input.ReadInt("Option:", 1, Options.Count);
-            Output.WriteLine(ConsoleColor.White, $"{Environment.NewLine}Output{Environment.NewLine}");
+            Console.Clear();
             Options[choice - 1].Callback();
         }
     }

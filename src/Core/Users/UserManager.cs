@@ -4,65 +4,74 @@
     using System.Collections.Generic;
     using System.DirectoryServices.AccountManagement;
     using System.Linq;
+    using System.Threading.Tasks;
+    using Castle.Core.Logging;
     using Common;
-    using Core;
+    using Common.Extensions;
     using Models;
-    using Settings;
+    using ShellProgressBar;
 
     public class UserManager : LicenseMonitoringBase, IUserManager
     {
-        public List<LicenseUser> GetUsersAndGroups()
+        private readonly object _listOperationLock = new object();
+
+        public List<LicenseUser> GetUsersAndGroups(ChildProgressBar childProgressBar)
         {
-            Logger.Info("Collecting user information. (this may take some time)");
-            return AllUsers();
+            ConsoleExtensions.WriteLineBottom("Collecting user information. (this may take some time)", LoggerLevel.Info);
+            return AllUsers(childProgressBar);
         }
 
         /// <summary>
         ///     Returns a list of all the users from Active Directory.
         /// </summary>
+        /// <param name="childProgressBar"></param>
         /// <returns></returns>
-        private List<LicenseUser> AllUsers()
-        {
-            List<LicenseUser> users = new List<LicenseUser>();
-
+        private List<LicenseUser> AllUsers(ChildProgressBar childProgressBar)
+        {            
             using (var context = new PrincipalContext(ContextType.Domain))
             {
                 using (var search = new PrincipalSearcher(new UserPrincipal(context)))
-                {
+                {                   
                     var allUsers = search.FindAll().Cast<UserPrincipal>().ToList();
-                    Logger.DebugFormat("{0} users found", allUsers.Count);
+                    List<LicenseUser> users = new List<LicenseUser>(allUsers.Count);
 
-                    users.AddRange(allUsers.Select(u => new LicenseUser
+                    using (var pbar = childProgressBar.Spawn(allUsers.Count, "getting users", new ProgressBarOptions
                     {
-                        DisplayName = u.DisplayName,
-                        Email = u.EmailAddress,
-                        Enabled = u.Enabled ?? false,
-                        FirstName = u.GivenName,
-                        Groups = u.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new LicenseGroup
+                        ForeGroundColor = ConsoleColor.Yellow,
+                        ProgressCharacter = '─',
+                        BackgroundColor = ConsoleColor.DarkGray,
+                    }))
+                    {
+                        Parallel.ForEach(allUsers, user =>
                         {
-                            Id = Guid.Parse(g.Guid.ToString()),
-                            Name = g.Name,
-                            WhenCreated = DateTime.Parse(g.GetProperty("whenCreated"))
-                        }).ToList(),
-                        Id = Guid.Parse(u.Guid.ToString()),
-                        Surname = u.Surname,
-                        WhenCreated = DateTime.Parse(u.GetProperty("whenCreated"))
-                    }).ToList());
+                            lock (_listOperationLock)
+                            {
+                                users.Add(new LicenseUser
+                                {
+                                    DisplayName = user.DisplayName,
+                                    Email = user.EmailAddress,
+                                    Enabled = user.Enabled ?? false,
+                                    FirstName = user.GivenName,
+                                    Groups = user.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new LicenseGroup
+                                    {
+                                        Id = Guid.Parse(g.Guid.ToString()),
+                                        Name = g.Name,
+                                        WhenCreated = DateTime.Parse(g.GetProperty("whenCreated"))
+                                    }).ToList(),
+                                    Id = Guid.Parse(user.Guid.ToString()),
+                                    Surname = user.Surname,
+                                    WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
+                                });
+
+                                ConsoleExtensions.WriteLineBottom($"found: {user.DisplayName}", LoggerLevel.Debug);
+                                pbar.Tick($"found: {user.DisplayName}");
+                            }
+                        });
+                    }
+                    childProgressBar.Tick();
+                    return users;
                 }
-            }
-
-            return users;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <returns></returns>
-        private List<LicenseUser> GetActiveUsers()
-        {
-            var activeUsers = AllUsers().Where(u => u.Enabled).ToList();
-
-            Logger.DebugFormat("{0} active users found", activeUsers.Count);
-            return activeUsers;
+            }                        
         }
     }
 }

@@ -8,8 +8,8 @@
     using Castle.Facilities.Logging;
     using Core;
     using Core.Settings;
-    using LicenseMonitoringSystem;
     using Menu;
+    using ShellProgressBar;
 
     class Runner
     {
@@ -28,6 +28,9 @@
 
             if (Environment.UserInteractive)
             {
+                Console.WindowWidth = Console.LargestWindowWidth / 2;
+                Console.WindowHeight = Console.LargestWindowHeight / 3;
+
                 try
                 {
                     new ClientProgram().Run();
@@ -76,7 +79,7 @@
             {
                 Logger.Debug("Starting service");
 
-                System.Timers.Timer timer = new System.Timers.Timer {Interval = 60000};
+                System.Timers.Timer timer = new System.Timers.Timer { Interval = 60000 };
                 timer.Elapsed += OnTimer;
                 timer.Start();
             }
@@ -95,7 +98,9 @@
                     {
                         settingsManager.Object.FirstRun();
 
-                        foreach (var monitor in settingsManager.Object.GetMonitors())
+                        var monitors = settingsManager.Object.GetMonitors();
+
+                        foreach (var monitor in monitors)
                         {
                             orchestrator.Object.Run(monitor);
                         }

@@ -19,7 +19,7 @@
             {
                 new Option("Toggle", () =>
                 {
-                    _settingManager.SetDebug(!_settingManager.GetDebug());
+                   // _settingManager.SetLogLevel(TODO, TODO);
 
                     Input.ReadString("Press [Enter]");
                     Program.NavigateTo<DebugPage>();
@@ -34,9 +34,9 @@
         {
             base.Display();
 
-            var debug = _settingManager.GetDebug();
+         //   var debug = _settingManager.GetLogLevel(TODO);
 
-            Console.WriteLine(debug ? "Debugging is currently enabled." : "Debugging is currently disabled.");
+          //  Console.WriteLine(debug ? "Debugging is currently enabled." : "Debugging is currently disabled.");
 
             for (int i = 0; i < Options.Count; i++)
             {

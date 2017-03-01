@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Castle.Core.Logging;
 
     public interface ISettingManager
     {
@@ -33,7 +34,7 @@
         /// <param name="deviceId"></param>
         int GetAccountId();
 
-        bool GetDebug();
+        LoggerLevel GetLogLevel(string target);
 
         /// <summary>
         ///     Gets the account id from the settings file, then fallsback to the api if it is not found.
@@ -69,8 +70,9 @@
         /// <summary>
         ///     Sets the application to Debug mode.
         /// </summary>
-        /// <param name="value">True or False.</param>
-        void SetDebug(bool value);
+        /// <param name="loggerLevel"></param>
+        /// <param name="target"></param>
+        void SetLogLevel(LoggerLevel loggerLevel, string target);
 
         /// <summary>
         /// </summary>

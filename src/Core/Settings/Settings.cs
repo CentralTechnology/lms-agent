@@ -31,7 +31,6 @@
         }
 
         public int? AccountId { get; set; }
-        public bool? Debug { get; set; }
 
         public Guid? DeviceId { get; set; }
 

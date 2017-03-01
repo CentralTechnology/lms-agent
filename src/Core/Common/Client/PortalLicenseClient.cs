@@ -32,6 +32,11 @@
             {
                 Logger.Error($"Status: { response.Error.Code }");
                 Logger.Error($"Message: {response.Error.Message}");
+
+                if (response.Error.InnerError != null)
+                {
+                    Logger.Error($"Inner Message: {response.Error.InnerError.Message}");
+                }
             }
 
             Logger.Debug($"Exception: {ex}");
@@ -44,8 +49,16 @@
     }
     public class ODataResponse
     {
-        public HttpStatusCode Code { get; set; }
+        public string Code { get; set; }
         public string Message { get; set; }
+        public InnerError InnerError { get; set; }
+    }
+
+    public class InnerError
+    {
+        public string Message { get; set; }
+        public string Type { get; set; }
+        public string Stacktrace { get; set; }
     }
 
     public class DefaultLicenseClientSettings : ODataClientSettings, ITransientDependency
@@ -98,10 +111,10 @@
                         br.Headers.Add("Authorization", $"Device {settingManager.Object.GetDeviceId()}");
                     };
 
-                    if (settingManager.Object.GetDebug())
-                    {
-                        OnTrace += (x, y) => { Logger.Debug($"{x} {y}"); };
-                    }
+                    //if (settingManager.Object.GetLogLevel(TODO))
+                    //{
+                    //    OnTrace += (x, y) => { Logger.Debug($"{x} {y}"); };
+                    //}
                 }
             }
         }
