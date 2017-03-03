@@ -19,7 +19,7 @@
     using ILogger = Castle.Core.Logging.ILogger;
     using NullLogger = Castle.Core.Logging.NullLogger;
 
-    public class SettingManager : ISettingManager, ISingletonDependency, IShouldInitialize
+    public class SettingManager : ISettingManager, IShouldInitialize
     {
         private readonly string _settingFileName = "Settings.json";
         private Setting _settingFile;
@@ -394,6 +394,22 @@
             }
 
             Logger.Debug("Success.");
+        }
+
+        public void LoadSettings()
+        {
+            Logger.Info("Loading the settings file.");
+            bool settingsFileExists = Exists();
+
+            if (!settingsFileExists)
+            {
+                Logger.Warn("Settings file missing.");
+                Logger.Warn("Setting up a new file");
+                Create();
+            }
+
+            GetSettings();
+            Logger.Info("done.");
         }
     }
 }

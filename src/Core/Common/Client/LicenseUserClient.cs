@@ -4,11 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Castle.Core.Logging;
     using Models;
     using ShellProgressBar;
     using Simple.OData.Client;
-    using Extensions;
 
     public class LicenseUserClient : PortalLicenseClient, ILicenseUserClient
     {
@@ -21,19 +19,19 @@
 
         public async Task Add(List<LicenseUser> users, ChildProgressBar childProgressBar)
         {
-            childProgressBar.UpdateMessage("adding users");
+            childProgressBar?.UpdateMessage("adding users");
 
-            using (var pbar = childProgressBar.Spawn(users.Count, "adding users", new ProgressBarOptions
+            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "adding users", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
-            }))
+            }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
                     var user = users[index];
-                   
+
                     try
                     {
                         await _client.For<LicenseUser>().Set(new
@@ -48,7 +46,7 @@
                             user.WhenCreated
                         }).InsertEntryAsync();
 
-                        pbar.Tick($"adding: {user.DisplayName}", LoggerLevel.Debug);
+                        pbar?.Tick($"adding: {user.DisplayName}");
                     }
                     catch (WebRequestException ex)
                     {
@@ -63,29 +61,29 @@
                 }
             }
 
-            childProgressBar.Tick();
+            childProgressBar?.Tick();
         }
 
         public async Task Remove(List<LicenseUser> users, ChildProgressBar childProgressBar)
         {
-            childProgressBar.UpdateMessage("removing users");
+            childProgressBar?.UpdateMessage("removing users");
 
-            using (var pbar = childProgressBar.Spawn(users.Count, "removing users", new ProgressBarOptions
+            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "removing users", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
-            }))
+            }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
                     var user = users[index];
-                    
+
                     try
                     {
                         await _client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
 
-                        pbar.Tick($"removing: {user.DisplayName}", LoggerLevel.Debug);
+                        pbar?.Tick($"removing: {user.DisplayName}");
                     }
                     catch (WebRequestException ex)
                     {
@@ -100,24 +98,24 @@
                 }
             }
 
-            childProgressBar.Tick();
+            childProgressBar?.Tick();
         }
 
         public async Task Update(List<LicenseUser> users, ChildProgressBar childProgressBar)
         {
-            childProgressBar.UpdateMessage("updating users");
+            childProgressBar?.UpdateMessage("updating users");
 
-            using (var pbar = childProgressBar.Spawn(users.Count, "updating users", new ProgressBarOptions
+            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "updating users", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
-            }))
+            }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
                     var user = users[index];
-                  
+
                     try
                     {
                         await _client.For<LicenseUser>().Key(user.Id).Set(new
@@ -130,7 +128,7 @@
                             user.WhenCreated
                         }).UpdateEntryAsync();
 
-                        pbar.Tick($"updating: {user.DisplayName}", LoggerLevel.Debug);
+                        pbar?.Tick($"updating: {user.DisplayName}");
                     }
                     catch (WebRequestException ex)
                     {
@@ -145,7 +143,7 @@
                 }
             }
 
-            childProgressBar.Tick();
+            childProgressBar?.Tick();
         }
 
         public async Task<List<LicenseUser>> GetAll()
@@ -373,19 +371,19 @@
 
         public async Task Add(List<LicenseGroup> groups, ChildProgressBar childProgressBar)
         {
-            childProgressBar.UpdateMessage("adding groups");
+            childProgressBar?.UpdateMessage("adding groups");
 
-            using (var pbar = childProgressBar.Spawn(groups.Count, "adding groups", new ProgressBarOptions
+            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "adding groups", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
-            }))
+            }) : null)
             {
                 for (int index = 0; index < groups.Count; index++)
                 {
                     var group = groups[index];
-                   
+
                     try
                     {
                         await _client.For<LicenseGroup>().Set(new
@@ -395,7 +393,7 @@
                             group.WhenCreated
                         }).InsertEntryAsync();
 
-                        pbar.Tick($"adding: {group.Name}", LoggerLevel.Debug);
+                        pbar?.Tick($"adding: {group.Name}");
                     }
                     catch (WebRequestException ex)
                     {
@@ -410,29 +408,29 @@
                 }
             }
 
-            childProgressBar.Tick();
+            childProgressBar?.Tick();
         }
 
         public async Task Remove(List<LicenseGroup> groups, ChildProgressBar childProgressBar)
         {
-            childProgressBar.UpdateMessage("removing groups");
+            childProgressBar?.UpdateMessage("removing groups");
 
-            using (var pbar = childProgressBar.Spawn(groups.Count, "removing groups", new ProgressBarOptions
+            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "removing groups", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
-            }))
+            }) : null)
             {
                 for (int index = 0; index < groups.Count; index++)
                 {
                     var group = groups[index];
-                   
+
                     try
                     {
                         await _client.For<LicenseGroup>().Key(group.Id).DeleteEntryAsync();
 
-                        pbar.Tick($"removing: {group.Name}", LoggerLevel.Debug);
+                        pbar?.Tick($"removing: {group.Name}");
                     }
                     catch (WebRequestException ex)
                     {
@@ -447,19 +445,19 @@
                 }
             }
 
-            childProgressBar.Tick();
+            childProgressBar?.Tick();
         }
 
         public async Task Update(List<LicenseGroup> groups, ChildProgressBar childProgressBar)
         {
-            childProgressBar.UpdateMessage("updating groups");
+            childProgressBar?.UpdateMessage("updating groups");
 
-            using (var pbar = childProgressBar.Spawn(groups.Count, "updating groups", new ProgressBarOptions
+            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "updating groups", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
-            }))
+            }) : null)
             {
                 for (int index = 0; index < groups.Count; index++)
                 {
@@ -473,7 +471,7 @@
                             group.WhenCreated
                         }).UpdateEntryAsync();
 
-                        pbar.Tick($"updating: {group.Name}", LoggerLevel.Debug);
+                        pbar?.Tick($"updating: {group.Name}");
                     }
                     catch (WebRequestException ex)
                     {
@@ -488,7 +486,7 @@
                 }
             }
 
-            childProgressBar.Tick();
+            childProgressBar?.Tick();
         }
 
         public async Task<List<LicenseGroup>> GetAll()
@@ -523,14 +521,14 @@
 
         public async Task Add(List<LicenseUser> users, LicenseGroup group, ChildProgressBar childProgressBar)
         {
-            childProgressBar.UpdateMessage("updating group membership");
+            childProgressBar?.UpdateMessage("updating group membership");
 
-            using (var pbar = childProgressBar.Spawn(users.Count, $"adding users to group: {group.Name}", new ProgressBarOptions
+            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, $"adding users to group: {group.Name}", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
-            }))
+            }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
@@ -538,9 +536,9 @@
 
                     try
                     {
-                        await _client.For<LicenseUser>().Key(user.Id).LinkEntryAsync(group,"Groups");
+                        await _client.For<LicenseUser>().Key(user.Id).LinkEntryAsync(group, "Groups");
 
-                        pbar.Tick($"adding: {user.DisplayName}", LoggerLevel.Debug);
+                        pbar?.Tick($"adding: {user.DisplayName}");
                     }
                     catch (WebRequestException ex)
                     {
@@ -558,14 +556,14 @@
 
         public async Task Remove(List<LicenseUser> users, LicenseGroup group, ChildProgressBar childProgressBar)
         {
-            childProgressBar.UpdateMessage("updating group membership");
+            childProgressBar?.UpdateMessage("updating group membership");
 
-            using (var pbar = childProgressBar.Spawn(users.Count, $"removing users from group: {group.Name}", new ProgressBarOptions
+            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, $"removing users from group: {group.Name}", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
-            }))
+            }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
@@ -575,7 +573,7 @@
                     {
                         await _client.For<LicenseUser>().Key(user.Id).UnlinkEntryAsync(group, "Groups");
 
-                        pbar.Tick($"removing: {user.DisplayName}", LoggerLevel.Debug);
+                        pbar?.Tick($"removing: {user.DisplayName}");
                     }
                     catch (WebRequestException ex)
                     {

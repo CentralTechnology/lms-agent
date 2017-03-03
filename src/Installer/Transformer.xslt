@@ -79,7 +79,20 @@
 
   <xsl:template name="Component1_ReferencesTemplate" match="@*|node()">
     <xsl:copy>
-      <xsl:for-each select="wix:Wix/wix:Fragment/wix:ComponentGroup/wix:Component/wix:File[@Source and not (contains(@Source, '.pdb')) and not (contains(@Source, '.vshost.')) and not (contains(@Source, '.xml'))]">
+      <xsl:for-each select="wix:Wix/wix:Fragment/wix:ComponentGroup/wix:Component/wix:File[@Source and not (contains(@Source, '.pdb')) 
+                    and not (contains(@Source, '.vshost.')) 
+                    and not (contains(@Source, '.xml')) 
+                    and not (contains(@Source, '.log'))
+                    and not (contains(@Source, 'net452\LMS.exe'))
+                    and not (contains(@Source, 'net452\win7-x64\de'))
+                    and not (contains(@Source, 'net452\win7-x64\es'))
+                    and not (contains(@Source, 'net452\win7-x64\fr'))
+                    and not (contains(@Source, 'net452\win7-x64\it'))
+                    and not (contains(@Source, 'net452\win7-x64\ja'))
+                    and not (contains(@Source, 'net452\win7-x64\ko'))
+                    and not (contains(@Source, 'net452\win7-x64\ru'))
+                    and not (contains(@Source, 'net452\win7-x64\zh-Hans'))
+                    and not (contains(@Source, 'net452\win7-x64\zh-Hant'))]">
         <xsl:apply-templates select="."/>
       </xsl:for-each>
     </xsl:copy>

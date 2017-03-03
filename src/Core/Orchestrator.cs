@@ -37,24 +37,35 @@
 
         private async Task UserMonitor()
         {
-            ConsoleExtensions.WriteLineBottom("Logs \n", LoggerLevel.Info);
+            int initialProgress = 1;
             using (var userOrchestrator = IocManager.Instance.ResolveAsDisposable<IUserOrchestrator>())
             {
-                int uploadId = await userOrchestrator.Object.ProcessUpload();
-                if (uploadId == 0)
+                using (var pbar = Environment.UserInteractive ? new ProgressBar(initialProgress, "overall progress", ConsoleColor.DarkGray) : null)
                 {
-                    return;
-                }
+                    try
+                    {
+                        int uploadId = await userOrchestrator.Object.ProcessUpload(pbar);
 
-                using (var pbar = new ProgressBar(4, "overall progress", ConsoleColor.DarkGray))
-                {
-                    var users = await userOrchestrator.Object.ProcessUsers(uploadId, pbar);
+                        if (uploadId == 0)
+                        {
+                            return;
+                        }
 
-                    await userOrchestrator.Object.ProcessGroups(users, pbar);
+                        pbar?.UpdateMaxTicks(initialProgress + 4);
 
-                    await userOrchestrator.Object.ProcessUserGroups(users, pbar);
+                        var users = await userOrchestrator.Object.ProcessUsers(uploadId, pbar);
 
-                    await userOrchestrator.Object.CallIn(uploadId);
+                        await userOrchestrator.Object.ProcessGroups(users, pbar);
+
+                        await userOrchestrator.Object.ProcessUserGroups(users, pbar);
+
+                        await userOrchestrator.Object.CallIn(uploadId, pbar);
+                    }
+                    catch (Exception ex)
+                    {
+                        pbar?.UpdateMessage(ex.Message);
+                        throw;
+                    }
                 }
             }
         }

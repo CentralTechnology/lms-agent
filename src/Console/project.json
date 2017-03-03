@@ -1,6 +1,8 @@
 ﻿{
   "version": "1.0.0-*",
-
+  "buildOptions": {
+    "outputName": "LMS.Console"
+  },
   "dependencies": {
   
   },

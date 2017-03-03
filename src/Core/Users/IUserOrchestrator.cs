@@ -15,14 +15,16 @@ namespace Core.Users
         /// Updates the uploads status to be CalledIn.
         /// </summary>
         /// <param name="uploadId"></param>
+        /// <param name="pbar"></param>
         /// <returns></returns>
-        Task CallIn(int uploadId);
+        Task CallIn(int uploadId, ProgressBar pbar);
 
         /// <summary>
         ///  Determines whether this client needs to check in or not. If a check in is required then the upload id will be returned or else a 0 will be.
         /// </summary>
+        /// <param name="pbar"></param>
         /// <returns></returns>
-        Task<int> ProcessUpload();
+        Task<int> ProcessUpload(ProgressBar pbar);
 
         /// <summary>
         /// Applies the upload id to all the users then performs the CRUD operations via the api

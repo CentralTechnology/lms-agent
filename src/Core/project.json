@@ -1,6 +1,8 @@
 {
   "version": "1.0.0-beta",
-
+  "buildOptions": {
+    "outputName": "LMS.Core"
+  },
   "dependencies": {
     "Newtonsoft.Json": "9.0.1",
     "Abp.AutoMapper": "1.4.2",
@@ -10,8 +12,7 @@
     "NLog.Schema": "4.4.3",
     "Abp": "1.4.2",
     "Simple.OData.Client": "4.25.4",
-    "Abp.Web.Api": "1.4.2",
-    "System.Linq": "4.3.0"
+    "Abp.Web.Api": "1.4.2"
   },
 
   "frameworks": {

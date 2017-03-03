@@ -1,7 +1,9 @@
 ﻿namespace Service
 {
     using System;
+    using System.Diagnostics;
     using System.ServiceProcess;
+    using System.Threading;
     using Abp;
     using Abp.Dependency;
     using Castle.Core.Logging;
@@ -9,59 +11,66 @@
     using Core;
     using Core.Settings;
     using Menu;
-    using ShellProgressBar;
 
     class Runner
     {
         public const string ServiceName = "LMS";
-        private static readonly AbpBootstrapper Bootstrapper = AbpBootstrapper.Create<LicenseMonitoringModule>();
 
         /// <summary>
         ///     The main entry point for the application.
         /// </summary>
         static void Main(string[] args)
         {
-            Bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog("NLog.config"));
-            Bootstrapper.Initialize();
-
-            var logger = Bootstrapper.IocManager.Resolve<ILogger>();
-
-            if (Environment.UserInteractive)
+            using (var bootstrapper = AbpBootstrapper.Create<LicenseMonitoringModule>())
             {
-                Console.WindowWidth = Console.LargestWindowWidth / 2;
-                Console.WindowHeight = Console.LargestWindowHeight / 3;
+                bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog("NLog.config"));
+                bootstrapper.Initialize();
 
-                try
+                using (var logger = bootstrapper.IocManager.ResolveAsDisposable<ILogger>())
                 {
-                    new ClientProgram().Run();
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex.Message);
-                    logger.DebugFormat("Exception: ", ex);
-
-                    Console.ReadKey(true);
-                    Environment.Exit(ex.HResult);
-                }
-            }
-            else
-            {
-                using (var service = new MonitoringService())
-                {
-                    try
+                    if (Environment.UserInteractive)
                     {
-                        ServiceBase.Run(service);
+                        Console.WindowWidth = Console.LargestWindowWidth / 2;
+                        Console.WindowHeight = Console.LargestWindowHeight / 3;
+
+                        try
+                        {
+                            using (var settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
+                            {
+                                settingsManager.Object.LoadSettings();
+                            }
+                            Console.Clear();
+                            new ClientProgram().Run();
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Object.Error(ex.Message);
+                            logger.Object.DebugFormat("Exception: ", ex);
+
+                            Console.ReadKey(true);
+                            Environment.Exit(ex.HResult);
+                        }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        logger.DebugFormat("Exception: ", ex);
-                        service.Stop();
+                        using (var service = new MonitoringService())
+                        {
+                            try
+                            {
+                                ServiceBase.Run(service);
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Object.DebugFormat("Exception: ", ex);
+                                service.Stop();
+                            }
+                        }
                     }
                 }
             }
         }
 
-        public class MonitoringService : ServiceBase
+        public class MonitoringService : ServiceBase, ITransientDependency
         {
             public MonitoringService()
             {
@@ -77,31 +86,33 @@
 
             protected override void OnStart(string[] args)
             {
-                Logger.Debug("Starting service");
+                Logger.Info("Starting service");
+                using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingManager>())
+                {
+                    settingsManager.Object.LoadSettings();
+                }
 
-                System.Timers.Timer timer = new System.Timers.Timer { Interval = 60000 };
+                System.Timers.Timer timer = new System.Timers.Timer {Interval = 90000 };
                 timer.Elapsed += OnTimer;
                 timer.Start();
             }
 
             protected override void OnStop()
             {
-                Logger.Debug("Shutting down service");
-                Bootstrapper.Dispose();
+                Logger.Info("Shutting down service");
             }
 
             public void OnTimer(object sender, System.Timers.ElapsedEventArgs args)
             {
-                using (var orchestrator = Bootstrapper.IocManager.ResolveAsDisposable<Orchestrator>())
+                using (var orchestrator = IocManager.Instance.ResolveAsDisposable<Orchestrator>())
                 {
-                    using (var settingsManager = Bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
-                    {
-                        settingsManager.Object.FirstRun();
-
+                    using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingManager>())
+                    {                       
                         var monitors = settingsManager.Object.GetMonitors();
 
                         foreach (var monitor in monitors)
                         {
+                            Logger.Info($"running monitor: {monitor}");
                             orchestrator.Object.Run(monitor);
                         }
                     }

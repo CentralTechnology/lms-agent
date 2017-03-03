@@ -2,10 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
+    using Abp.Dependency;
     using Castle.Core.Logging;
 
-    public interface ISettingManager
+    public interface ISettingManager : ISingletonDependency
     {
+        /// <summary>
+        /// Loads the settings file into memory.
+        /// </summary>
+        void LoadSettings();
+
         /// <summary>
         /// </summary>
         void ClearCache();

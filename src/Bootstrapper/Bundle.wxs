@@ -5,7 +5,7 @@
     </BootstrapperApplicationRef>
 
     <PayloadGroup Id="NetFx452RedistPayload">
-      <Payload Name="redist\NDP452-KB2901907-x86-x64-AllOS-ENU.exe" SourceFile="..\..\..\..\Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe"/>
+      <Payload Name="redist\NDP452-KB2901907-x86-x64-AllOS-ENU.exe" SourceFile="..\Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe"/>
     </PayloadGroup>
 		<Chain>
       <PackageGroupRef Id="NetFx452Web"/>

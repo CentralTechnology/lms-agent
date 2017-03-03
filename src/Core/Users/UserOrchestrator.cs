@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
-    using Castle.Core.Logging;
     using Common.Client;
     using Common.Extensions;
     using Models;
@@ -32,136 +32,152 @@
             _userManager = userManager;
         }
 
-        public async Task<int> ProcessUpload()
+        public async Task<int> ProcessUpload(ProgressBar pbar)
         {
-            var deviceId = SettingManager.GetDeviceId();
-
-            var status = await _uploadClient.GetStatusByDeviceId(deviceId);
-
-            switch (status)
-            {
-                case CallInStatus.CalledIn:
-
-                    ConsoleExtensions.WriteLineBottom("You are currently called in. Nothing to process", LoggerLevel.Info);
-                    return 0;
-
-                case CallInStatus.NotCalledIn:
-
-                    ConsoleExtensions.WriteLineBottom("You are not currently called in.", LoggerLevel.Error);
-                    break;
-
-                case CallInStatus.NeverCalledIn:
-
-                    ConsoleExtensions.WriteLineBottom("You have never called in", LoggerLevel.Warn);
-                    ConsoleExtensions.WriteLineBottom("Calling in...", LoggerLevel.Info);
-
-                    var uploadId = await _uploadClient.GetNewUploadId();
-
-                    if (uploadId == 0)
-                    {
-                        break;
-                    }
-
-                    var upload = await _uploadClient.Add(new SupportUpload
-                    {
-                        CheckInTime = DateTime.Now,
-                        DeviceId = deviceId,
-                        Hostname = Environment.MachineName,
-                        IsActive = true,
-                        Status = CallInStatus.CalledIn,
-                        UploadId = uploadId
-                    });
-
-                    if (upload == null)
-                    {
-                        ConsoleExtensions.WriteLineBottom("Failed to call in.", LoggerLevel.Error);
-                        break;
-                    }
-
-                    ConsoleExtensions.WriteLineBottom($"Call in successfull: {upload.Id}", LoggerLevel.Info);
-                    return upload.Id;
-            }
-
-            var id = await _uploadClient.GetUploadIdByDeviceId(deviceId);
-            ConsoleExtensions.WriteLineBottom($"Upload id: {id}", LoggerLevel.Debug);
-            return id;
-        }
-
-        public async Task<List<LicenseUser>> ProcessUsers(int uploadId, ProgressBar pbar)
-        {
-            // progress bar configuration
-            var operationCount = 3;
-            using (var childProgress = pbar.Spawn(operationCount, "processing users", new ProgressBarOptions
+            int initialProgress = 2;
+            using (var childProgress = Environment.UserInteractive && pbar != null ? pbar.Spawn(initialProgress, "obtaining device information", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Cyan,
                 ForeGroundColorDone = ConsoleColor.DarkGreen,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
                 CollapseWhenFinished = false,
-            }))
+            }) : null)
+            {
+                var deviceId = SettingManager.GetDeviceId();
+                childProgress?.Tick($"device id: {deviceId}");
+
+                var status = await _uploadClient.GetStatusByDeviceId(deviceId);
+
+                switch (status)
+                {
+                    case CallInStatus.CalledIn:
+                        childProgress?.Tick();
+                        pbar?.Tick("this device is called in. nothing to process.");
+                        return 0;
+
+                    case CallInStatus.NotCalledIn:
+                        initialProgress++;
+                        childProgress?.UpdateMaxTicks(initialProgress);
+                        childProgress?.Tick();
+                        pbar?.UpdateMessage("this device is not called in.");
+                        break;
+
+                    case CallInStatus.NeverCalledIn:
+                        initialProgress++;
+                        childProgress?.UpdateMaxTicks(initialProgress);
+                        childProgress?.Tick();
+                        pbar?.UpdateMessage("this device has never called in.");
+                        Thread.Sleep(1000);
+                        pbar?.UpdateMessage("attemting to call in...");
+
+                        var uploadId = await _uploadClient.GetNewUploadId();
+
+                        if (uploadId == 0)
+                        {
+                            break;
+                        }
+
+                        var upload = await _uploadClient.Add(new SupportUpload
+                        {
+                            CheckInTime = DateTime.Now,
+                            DeviceId = deviceId,
+                            Hostname = Environment.MachineName,
+                            IsActive = true,
+                            Status = CallInStatus.CalledIn,
+                            UploadId = uploadId
+                        });
+
+                        if (upload == null)
+                        {
+                            pbar?.Tick("this deviced failed to call in.");
+                            break;
+                        }
+
+                        childProgress?.Tick($"this device called in ok: {upload.Id}");
+                        pbar?.Tick();
+                        return upload.Id;
+                }
+
+                var id = await _uploadClient.GetUploadIdByDeviceId(deviceId);
+                childProgress?.Tick($"upload id: {id}");
+                pbar?.Tick();
+                return id;
+            }
+        }
+
+        public async Task<List<LicenseUser>> ProcessUsers(int uploadId, ProgressBar pbar)
+        {
+            // progress bar configuration
+            var initialProgress = 3;
+            using (var childProgress = Environment.UserInteractive && pbar != null ? pbar.Spawn(initialProgress, "processing users", new ProgressBarOptions
+            {
+                ForeGroundColor = ConsoleColor.Cyan,
+                ForeGroundColorDone = ConsoleColor.DarkGreen,
+                ProgressCharacter = '─',
+                BackgroundColor = ConsoleColor.DarkGray,
+                CollapseWhenFinished = false,
+            }) : null)
             {
                 // get the local users 
-                Console.WriteLine("getting local users.");
-                //childProgress.UpdateMessage("getting local users.", LoggerLevel.Info);
+                childProgress?.UpdateMessage("getting local users.");
                 var localUsers = _userManager.GetUsersAndGroups(childProgress);
 
                 // update progress bar
-                Console.WriteLine($"local users found: {localUsers.Count}.");
-              //  childProgress.UpdateMessage($"local users found: {localUsers.Count}.", LoggerLevel.Info);
+                childProgress?.UpdateMessage($"local users found: {localUsers.Count}.");
 
                 // get the api users
-                Console.WriteLine("getting api users.");
-              //  childProgress.UpdateMessage("getting api users.", LoggerLevel.Info);
+                childProgress?.UpdateMessage("getting api users.");
                 var remoteUsers = await _uploadClient.GetUsers(uploadId);
 
                 // update progress bar
-                childProgress.Tick($"api users found: {remoteUsers.Count}.", LoggerLevel.Info);
+                childProgress?.Tick($"api users found: {remoteUsers.Count}.");
 
                 // return a list of users that need adding to the api
                 var usersToCreate = remoteUsers.FilterCreate<LicenseUser, Guid>(localUsers);
-                ConsoleExtensions.WriteLineBottom($"users that need adding: {usersToCreate.Count}.", LoggerLevel.Debug);
+                childProgress?.UpdateMessage($"users that need adding: {usersToCreate.Count}.");
 
                 if (usersToCreate.Count > 0)
                 {
                     // update progress bar with new tick count
-                    operationCount++;
-                    childProgress.UpdateMaxTicks(operationCount);
+                    initialProgress++;
+                    childProgress?.UpdateMaxTicks(initialProgress);
 
                     usersToCreate = usersToCreate.ApplyUploadId(uploadId);
-                    ConsoleExtensions.WriteLineBottom("Applying the upload id to the users.", LoggerLevel.Debug);
+                    childProgress?.UpdateMessage("Applying the upload id to the users.");
 
-                    childProgress.UpdateMessage("adding users.");
+                    childProgress?.UpdateMessage("adding users.");
                     await _licenseUserClient.Add(usersToCreate, childProgress);
                 }
 
                 var usersToUpdate = remoteUsers.FilterUpdate<LicenseUser, Guid>(localUsers);
-                ConsoleExtensions.WriteLineBottom($"users that need updating: {usersToUpdate.Count}.", LoggerLevel.Debug);
+                childProgress?.UpdateMessage($"users that need updating: {usersToUpdate.Count}.");
 
                 if (usersToUpdate.Count > 0)
                 {
                     // update progress bar with new tick count
-                    operationCount++;
-                    childProgress.UpdateMaxTicks(operationCount);
+                    initialProgress++;
+                    childProgress?.UpdateMaxTicks(initialProgress);
 
-                    childProgress.UpdateMessage("updating users.", LoggerLevel.Info);
+                    childProgress?.UpdateMessage("updating users.");
                     await _licenseUserClient.Update(usersToUpdate, childProgress);
                 }
 
                 var usersToDelete = remoteUsers.FilterDelete<LicenseUser, Guid>(localUsers);
-                ConsoleExtensions.WriteLineBottom($"users that need removing: {usersToDelete.Count}.", LoggerLevel.Debug);
+                childProgress?.UpdateMessage($"users that need removing: {usersToDelete.Count}.");
 
                 if (usersToDelete.Count > 0)
                 {
                     // update progress bar with new tick count
-                    operationCount++;
-                    childProgress.UpdateMaxTicks(operationCount);
+                    initialProgress++;
+                    childProgress?.UpdateMaxTicks(initialProgress);
 
-                    childProgress.UpdateMessage("removing users.");
+                    childProgress?.UpdateMessage("removing users.");
                     await _licenseUserClient.Remove(usersToDelete, childProgress);
                 }
 
-                childProgress.Tick();
-                pbar.Tick();
+                childProgress?.Tick($"users created: {usersToCreate.Count}\t users updated: {usersToUpdate.Count} \t users removed: {usersToDelete.Count}");
+                pbar?.Tick();
                 return localUsers;
             }
         }
@@ -169,88 +185,100 @@
         public async Task ProcessGroups(List<LicenseUser> users, ProgressBar pbar)
         {
             // progress bar configuration
-            var operationCount = 3;
-            using (var childProgress = pbar.Spawn(operationCount, "processing groups", new ProgressBarOptions
+            var initialProgress = 2;
+            using (var childProgress = Environment.UserInteractive && pbar != null ? pbar.Spawn(initialProgress, "processing groups", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Cyan,
                 ForeGroundColorDone = ConsoleColor.DarkGreen,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
                 CollapseWhenFinished = false
-            }))
+            }) : null)
             {
                 // get the local groups
-                childProgress.UpdateMessage("getting local groups");
+                childProgress?.UpdateMessage("getting local groups");
                 var localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
 
                 // update progress bar
-                childProgress.Tick($"local groups found: {localGroups.Count}.");
-                Logger.Info($"local groups found: {localGroups.Count}.");
+                childProgress?.UpdateMessage($"local groups found: {localGroups.Count}.");
 
-                // get the remote groups
-                childProgress.UpdateMessage("getting api groups.");
+                // get the api groups
+                childProgress?.UpdateMessage("getting api groups.");
                 var remoteGroups = await _licenseGroupClient.GetAll();
 
                 // update progress bar
-                childProgress.Tick($"api groups found: {remoteGroups.Count}.");
-                Logger.Info($"api groups found: {remoteGroups.Count}.");
+                childProgress?.Tick($"api groups found: {remoteGroups.Count}.");
 
                 // return a list of groups that need adding to the api
                 var groupsToCreate = remoteGroups.FilterCreate<LicenseGroup, Guid>(localGroups);
-                Logger.Info($"groups that need adding: {groupsToCreate.Count}.");
+                childProgress?.UpdateMessage($"groups that need adding: {groupsToCreate.Count}.");
 
                 if (groupsToCreate.Count > 0)
                 {
                     // update progress bar with new tick count
-                    operationCount++;
-                    childProgress.UpdateMaxTicks(operationCount);
+                    initialProgress++;
+                    childProgress?.UpdateMaxTicks(initialProgress);
 
+                    childProgress?.UpdateMessage("adding groups.");
                     await _licenseGroupClient.Add(groupsToCreate, childProgress);
                 }
 
                 var groupsToUpdate = remoteGroups.FilterUpdate<LicenseGroup, Guid>(localGroups);
-                Logger.Info($"{groupsToUpdate.Count} groups need updating.");
+                childProgress?.UpdateMessage($"groups that need updating: {groupsToUpdate.Count}.");
+
                 if (groupsToUpdate.Count > 0)
                 {
+                    // update progress bar with new tick count
+                    initialProgress++;
+                    childProgress?.UpdateMaxTicks(initialProgress);
+
+                    childProgress?.UpdateMessage("updating groups.");
+
                     await _licenseGroupClient.Update(groupsToUpdate, childProgress);
                 }
 
                 var groupsToDelete = remoteGroups.FilterDelete<LicenseGroup, Guid>(localGroups);
-                Logger.Info($"{groupsToDelete.Count} groups need removing.");
+                childProgress?.UpdateMessage($"groups that need removing: {groupsToDelete.Count}.");
+
                 if (groupsToDelete.Count > 0)
                 {
+                    // update progress bar with new tick count
+                    initialProgress++;
+                    childProgress?.UpdateMaxTicks(initialProgress);
+
+                    childProgress?.UpdateMessage("removing groups.");
+
                     await _licenseGroupClient.Remove(groupsToDelete, childProgress);
                 }
 
-                childProgress.Tick();
+                childProgress?.Tick($"groups created: {groupsToCreate.Count}\t groups updated: {groupsToUpdate.Count} \t groups removed: {groupsToDelete.Count}");
             }
 
-            pbar.Tick();
+            pbar?.Tick();
         }
 
         public async Task ProcessUserGroups(List<LicenseUser> users, ProgressBar pbar)
         {
             // progress bar configuration
-            var operationCount = 3;
-            using (var childProgress = pbar.Spawn(operationCount, "user groups progress", new ProgressBarOptions
+            var initialProgress = 2;
+            using (var childProgress = Environment.UserInteractive && pbar != null ? pbar.Spawn(initialProgress, "processing user groups", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Cyan,
                 ForeGroundColorDone = ConsoleColor.DarkGreen,
                 ProgressCharacter = '─',
                 BackgroundColor = ConsoleColor.DarkGray,
                 CollapseWhenFinished = false,
-            }))
+            }) : null)
             {
                 // get the local groups
-                childProgress.UpdateMessage("getting local group definitions.");
+                childProgress?.UpdateMessage("getting local groups.");
                 var localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
 
                 // update progress bar
-                childProgress.Tick($"local group definitions found: {localGroups.Count}.");
-                Logger.Info($"local group defintions found: {localGroups.Count}.");
+                childProgress?.UpdateMessage($"local groups found: {localGroups.Count}.");
 
                 // get the remote users and groups
-                childProgress.UpdateMessage("getting api users with groups.");
+                childProgress?.UpdateMessage("getting api users with groups.");
                 var apiUsers = await _licenseUserClient.GetAll();
 
                 // if groups are null then create a new list of groups
@@ -260,55 +288,43 @@
                     return u;
                 }).ToList();
 
-                childProgress.Tick($"api users and groups found: {remoteUsers.Count}.");
-                Logger.Info($"api users and groups found: {remoteUsers.Count}.");
+                // update progress bar
+                childProgress?.Tick($"api users and groups found: {remoteUsers.Count}.");
+                childProgress?.UpdateMaxTicks(initialProgress + localGroups.Count);
+                foreach (var localGroup in localGroups)
+                {
+                    // update progress bar
+                    childProgress?.UpdateMessage($"processing: {localGroup.Name}");
 
-                using (var innerChildProgress = childProgress.Spawn(localGroups.Count, "processing group membership", new ProgressBarOptions
-                {
-                    ForeGroundColor = ConsoleColor.Magenta,
-                    ProgressCharacter = '-',
-                    BackgroundColor = ConsoleColor.DarkGray
-                }))
-                {
-                    foreach (var localGroup in localGroups)
+                    var usersThatWereMembers = remoteUsers.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
+                    var usersThatAreMembers = users.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
+
+                    var usersToBeAdded = usersThatWereMembers.FilterCreate<LicenseUser, Guid>(usersThatAreMembers);
+                    childProgress?.UpdateMessage($"{usersToBeAdded.Count} users need adding to the group {localGroup.Name}");
+                    if (usersToBeAdded.Count > 0)
                     {
-                        // update progress bar
-                        childProgress.UpdateMessage("processing group membership");
-                        innerChildProgress.UpdateMessage($"processing: {localGroup.Name}");
-                        Logger.Info($"processing: {localGroup.Name}");
-
-                        var usersThatWereMembers = remoteUsers.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
-                        var usersThatAreMembers = users.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
-
-                        var usersToBeAdded = usersThatWereMembers.FilterCreate<LicenseUser, Guid>(usersThatAreMembers);
-                        Logger.Info($"{usersToBeAdded.Count} users need adding to the group {localGroup.Name}");
-                        if (usersToBeAdded.Count > 0)
-                        {
-                            await _licenseUserGroupClient.Add(usersToBeAdded, localGroup, innerChildProgress);
-                        }
-
-                        var usersToBeRemoved = usersThatWereMembers.FilterDelete<LicenseUser, Guid>(usersThatAreMembers);
-                        Logger.Info($"{usersToBeRemoved.Count} users need removing from the group {localGroup.Name}");
-                        if (usersToBeRemoved.Count > 0)
-                        {
-                            await _licenseUserGroupClient.Remove(usersToBeRemoved, localGroup, innerChildProgress);
-                        }
-
-                        innerChildProgress.Tick();
+                        await _licenseUserGroupClient.Add(usersToBeAdded, localGroup, childProgress);
                     }
+
+                    var usersToBeRemoved = usersThatWereMembers.FilterDelete<LicenseUser, Guid>(usersThatAreMembers);
+                    childProgress?.UpdateMessage($"{usersToBeRemoved.Count} users need removing from the group {localGroup.Name}");
+                    if (usersToBeRemoved.Count > 0)
+                    {
+                        await _licenseUserGroupClient.Remove(usersToBeRemoved, localGroup, childProgress);
+                    }
+                    childProgress?.Tick();
                 }
 
-                childProgress.Tick();
+                childProgress?.Tick();
             }
 
-            pbar.Tick();
+            pbar?.Tick();
         }
 
-        public async Task CallIn(int uploadId)
+        public async Task CallIn(int uploadId, ProgressBar pbar)
         {
             await _uploadClient.Update(uploadId);
-
-            Logger.Info($"You are now called in.");
+            pbar?.Tick("call in complete.");
         }
     }
 }

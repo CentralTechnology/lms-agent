@@ -6,11 +6,11 @@
     <ProductVersion>3.10</ProductVersion>
     <ProjectGuid>f67157c2-9193-44ee-8b67-be1ccf987d9d</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>LicenseMonitoringSystem.Installer</OutputName>
+    <OutputName>LMS.Installer</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
-    <SourceOutput>$(SolutionDir)\src\LMS\Service\bin\$(Configuration)</SourceOutput>
+    <SourceOutput>$(SolutionDir)\src\Service\bin\$(Configuration)</SourceOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>

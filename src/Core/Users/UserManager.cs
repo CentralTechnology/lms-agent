@@ -17,7 +17,7 @@
 
         public List<LicenseUser> GetUsersAndGroups(ChildProgressBar childProgressBar)
         {
-            ConsoleExtensions.WriteLineBottom("Collecting user information. (this may take some time)", LoggerLevel.Info);
+            childProgressBar?.UpdateMessage("collecting user information from active directory (this process can take some time).");
             return AllUsers(childProgressBar);
         }
 
@@ -35,12 +35,12 @@
                     var allUsers = search.FindAll().Cast<UserPrincipal>().ToList();
                     List<LicenseUser> users = new List<LicenseUser>(allUsers.Count);
 
-                    using (var pbar = childProgressBar.Spawn(allUsers.Count, "getting users", new ProgressBarOptions
+                    using (var pbar = Environment.UserInteractive ? childProgressBar.Spawn(allUsers.Count, "getting users", new ProgressBarOptions
                     {
                         ForeGroundColor = ConsoleColor.Yellow,
                         ProgressCharacter = '─',
                         BackgroundColor = ConsoleColor.DarkGray,
-                    }))
+                    }) : null)
                     {
                         Parallel.ForEach(allUsers, user =>
                         {
@@ -63,12 +63,11 @@
                                     WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
                                 });
 
-                                ConsoleExtensions.WriteLineBottom($"found: {user.DisplayName}", LoggerLevel.Debug);
-                                pbar.Tick($"found: {user.DisplayName}");
+                                pbar?.Tick($"found: {user.DisplayName}");
                             }
                         });
                     }
-                    childProgressBar.Tick();
+                    childProgressBar?.Tick();
                     return users;
                 }
             }                        
