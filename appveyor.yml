@@ -1,0 +1,51 @@
+#---------------------------------#
+#           master branch         #
+#---------------------------------#
+
+-
+    branches:
+        only:
+            - master
+
+# Start builds on tags only (GitHub and BitBucket)
+    skip_non_tags: true
+
+# Do not build feature branch with open Pull Requests
+    skip_branch_with_pr: true
+
+    # Build worker image (VM template)
+    image: Visual Studio 2015
+
+# build cache to preserve files/folders between builds
+    cache:
+        - packages -> **\packages.config
+        - '%LocalAppData%\NuGet\Cache'
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+    platform: x64
+
+# build Configuration, i.e. Debug, Release, etc.
+    configuration: Release
+
+    build:
+        parallel: true                  # enable MSBuild parallel builds
+        project: LicenseMonitoringSystem.sln      # path to Visual Studio solution or project
+
+        # MSBuild verbosity level
+        verbosity: minimal
+
+    test:
+        assemblies:
+            - LicenseMonitoringSystem.Tests.dll
+
+    artifacts:
+
+        -path: LicenseMonitoringSystem.Bootstrapper\bin\$(configuration)\*.exe
+
+# Deploy to GitHub Releases
+    deploy:
+        - provider: GitHub
+        release: 
+        artifact: LicenseMonitoringSystem.Bootstrapper\bin\$(configuration)\*.exe
+
+
