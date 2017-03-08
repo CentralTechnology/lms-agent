@@ -1,9 +1,20 @@
+image: Visual Studio 2015
+
 install:
   - choco install gitversion.portable -pre -y
+
+platform: x64
+
+build:
+    parallel: true
+    project: LicenseMonitoringSystem.sln
+
+    verbosity: minimal
 
 before_build:
   - nuget restore
   - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
-build:
-  project: LicenseMonitoringSystem.sln
+test:
+    assemblies:
+        - LicenseMonitoringSystem.Tests
