@@ -4,6 +4,7 @@
     "debugType": "portable"
   },
   "dependencies": {
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Shouldly": "2.8.2",
     "xunit": "2.2.0"
   },
