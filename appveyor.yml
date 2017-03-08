@@ -15,6 +15,7 @@ build:
 before_build:
   - nuget restore
   - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+  - cmd: dotnet.exe restore
 
 test:
     assemblies:
