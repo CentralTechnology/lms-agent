@@ -1,7 +1,6 @@
 {
   "version": "1.0.0-beta",
   "buildOptions": {
-    "emitEntryPoint": true,
     "copyToOutput": [ "Nlog.config" ],
     "outputName": "LMS"
   },
