@@ -18,7 +18,7 @@
 
     before_build:
         - ps: dotnet restore
-        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+#        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test:
         assemblies: LicenseMonitoringSystem.Tests.dll
@@ -46,7 +46,7 @@
 
     before_build:
         - ps: dotnet restore
-        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+#        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test:
         assemblies: LicenseMonitoringSystem.Tests.dll
@@ -70,7 +70,7 @@
 
     before_build:
         - ps: dotnet restore
-        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+#        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test:
         assemblies: LicenseMonitoringSystem.Tests.dll
