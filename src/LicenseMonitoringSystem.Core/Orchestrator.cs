@@ -1,17 +1,9 @@
 ﻿namespace Core
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using Abp.AutoMapper;
     using Abp.Dependency;
     using Abp.Threading;
-    using Abp.Timing;
-    using Castle.Core.Logging;
-    using Common.Client;
-    using Common.Extensions;
-    using Models;
     using Settings;
     using ShellProgressBar;
     using Users;
@@ -25,7 +17,7 @@
                 switch (monitor)
                 {
                     case Monitor.Users:
-                        
+
                         AsyncHelper.RunSync(UserMonitor);
                         break;
                     default:
