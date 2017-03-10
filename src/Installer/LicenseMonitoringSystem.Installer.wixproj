@@ -18,11 +18,13 @@
     <DefineConstants>Debug;SourceOutput=$(SourceOutput);</DefineConstants>
     <WixVariables>
     </WixVariables>
-    <Cultures>en-US;</Cultures>
+    <Cultures>
+    </Cultures>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>SourceOutput=$(SourceOutput);</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <WixExtension Include="WixUtilExtension">
