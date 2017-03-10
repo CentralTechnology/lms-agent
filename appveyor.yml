@@ -1,4 +1,16 @@
 -
+    install:
+        - choco install gitversion.portable -y
+
+-
+    before_build:
+        - ps: nuget restore
+        - ps: gitversion /l console /output buildserver /updateassemblyinfo /b (get-item env:APPVEYOR_REPO_BRANCH).Value
+
+-
+    build:
+        project: LicenseMonitoringSystem.sln
+-
     branches:
         only:
             - master
@@ -14,14 +26,3 @@
         only:
             - /.*/merge/
     configuration: Release
-
-
-    install:
-        - choco install gitversion.portable -y
-
-    before_build:
-        - ps: nuget restore
-        - ps: gitversion /l console /output buildserver /updateassemblyinfo /b (get-item env:APPVEYOR_REPO_BRANCH).Value
-
-    build:
-        project: LicenseMonitoringSystem.sln
