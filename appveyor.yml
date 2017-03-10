@@ -7,7 +7,7 @@
     platform: win7-x64
 
     build_script:
-        - dotnet build "src\Service\" -c %CONFIGURATION% -r %PLATFORM%
+        - ps: dotnet build "src\Service\" -c %CONFIGURATION% -r %PLATFORM%
     
     install:
         - choco install gitversion.portable -pre -y
@@ -17,7 +17,7 @@
         - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test_script:
-        - dotnet test "tests\LicenseMonitoringSystem.Tests" -c %CONFIGURATION%
+        - ps: dotnet test "tests\LicenseMonitoringSystem.Tests" -c %CONFIGURATION%
             
 
 - 
@@ -28,7 +28,7 @@
     platform: win7-x64
 
     build_script:
-        - dotnet build "src\Service\" -c %CONFIGURATION% -r %PLATFORM%
+        - ps: dotnet build "src\Service\" -c %CONFIGURATION% -r %PLATFORM%
     
     install:
         - choco install gitversion.portable -pre -y
@@ -38,7 +38,7 @@
         - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test_script:
-        - dotnet test "tests\LicenseMonitoringSystem.Tests" -c %CONFIGURATION%
+        - ps : dotnet test "tests\LicenseMonitoringSystem.Tests" -c %CONFIGURATION%
 
 -
     branches:
@@ -48,7 +48,7 @@
     platform: win7-x64
 
     build_script:
-        - dotnet build "src\Service\" -c %CONFIGURATION% -r %PLATFORM%
+        - ps: dotnet build "src\Service\" -c %CONFIGURATION% -r %PLATFORM%
 
     install:
         - choco install gitversion.portable -pre -y
@@ -58,4 +58,4 @@
         - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test_script:
-        - dotnet test "tests\LicenseMonitoringSystem.Tests" -c %CONFIGURATION%
+        - ps: dotnet test "tests\LicenseMonitoringSystem.Tests" -c %CONFIGURATION%
