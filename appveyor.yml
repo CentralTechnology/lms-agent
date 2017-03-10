@@ -1,22 +1,27 @@
-image: Visual Studio 2015
+-
+  branches:
+    only:
+      - master
+      - dev
+  configuration: Release
+- 
+  branches:
+    only:
+      - /feature/.*/
+  configuration: Release
+-
+  branches:
+    only:
+      - /.*/merge/
+  configuration: Release
+ 
 
-install:
-  - choco install gitversion.portable -pre -y
-
-platform: x64
-configuration: Release
-
-build:
-    parallel: true
-    project: LicenseMonitoringSystem.sln
-
-    verbosity: minimal
+ install:
+    - choco install gitversion.portable -y
 
 before_build:
-  - nuget restore
-  - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
-  - cmd: dotnet.exe restore
+    - ps: nuget restore
+    - ps: gitversion /l console /output buildserver /updateassemblyinfo /b (get-item env:APPVEYOR_REPO_BRANCH).Value
 
-test:
-    assemblies:
-        - LicenseMonitoringSystem.Tests
+build:
+    project: LicenseMonitoringSystem.sln
