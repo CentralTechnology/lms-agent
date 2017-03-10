@@ -7,9 +7,9 @@
     image: Visual Studio 2015
 
     configuration: Release
-    platform: win7-x64
 
     build:
+        parallel: true
         project: LicenseMonitoringSystem.sln
     
     install:
@@ -37,9 +37,9 @@
     image: Visual Studio 2015
 
     configuration: Release
-    platform: win7-x64
 
     build:
+        parallel: true
         project: LicenseMonitoringSystem.sln
     
     install:
@@ -63,9 +63,9 @@
     image: Visual Studio 2015
 
     configuration: Release
-    platform: win7-x64
 
     build:
+        parallel: true
         project: LicenseMonitoringSystem.sln
 
     install:
