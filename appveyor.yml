@@ -1,31 +1,39 @@
 -
-    build:
-        project: LicenseMonitoringSystem.sln
--
     branches:
         only:
             - master
             - dev
     configuration: Release
+
+    build:
+        parallel: true
+        project: LicenseMonitoringSystem.sln
     
     install:
         - choco install gitversion.portable -pre -y
 
     before_build:
         - ps: nuget restore
-        - ps: gitversion /l console /output buildserver /updateassemblyinfo /b (get-item env:APPVEYOR_REPO_BRANCH).Value
+        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+
+
 - 
     branches:
         only:
             - /feature/.*/
     configuration: Release
+
+    build:
+        parallel: true
+        project: LicenseMonitoringSystem.sln
     
     install:
         - choco install gitversion.portable -pre -y
 
     before_build:
         - ps: nuget restore
-        - ps: gitversion /l console /output buildserver /updateassemblyinfo /b (get-item env:APPVEYOR_REPO_BRANCH).Value
+        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+
 
 -
     branches:
@@ -33,9 +41,13 @@
             - /.*/merge/
     configuration: Release
 
+    build:
+        parallel: true
+        project: LicenseMonitoringSystem.sln
+
     install:
         - choco install gitversion.portable -pre -y
 
     before_build:
         - ps: nuget restore
-        - ps: gitversion /l console /output buildserver /updateassemblyinfo /b (get-item env:APPVEYOR_REPO_BRANCH).Value
+        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
