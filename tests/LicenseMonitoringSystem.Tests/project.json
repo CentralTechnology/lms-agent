@@ -15,8 +15,9 @@
   "frameworks": {
     "net452": {
       "dependencies": {
-        "Core": "1.0.0-beta",
-        "Service": "1.0.0-beta"
+        "Service": {
+          "target": "project"
+        }
       }
     }
   }
