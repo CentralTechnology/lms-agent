@@ -1,24 +1,25 @@
 {
   "buildOptions": {
-    "debugType": "portable"
+    "debugType": "portable",
+    "outputName": "LMS.Tests"
   },
   "runtimes": {
-    "win7-x64": {} 
-  },
-  "dependencies": {
-
+    "win7-x64": {}
   },
   "testRunner": "xunit",
   "frameworks": {
     "net452": {
       "dependencies": {
-        "dotnet-test-xunit": "2.2.0-preview2-build1029",
-        "LicenseMonitoringSystem.Core": "1.0.0-*",
-        "LicenseMonitoringSystem.Service": "1.0.0-*",
-        "Shouldly": "2.8.2",
-        "xunit": "2.2.0",
-        "xunit.extensibility.execution": "2.2.0"
+
       }
     }
+  },
+  "dependencies": {
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "LicenseMonitoringSystem.Core": "1.0.0-*",
+    "LicenseMonitoringSystem.Service": "1.0.0-*",
+    "Shouldly": "2.8.2",
+    "xunit": "2.2.0",
+    "xunit.extensibility.execution": "2.2.0"
   }
 }
