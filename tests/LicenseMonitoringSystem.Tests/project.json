@@ -7,6 +7,8 @@
   },
   "dependencies": {
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "LicenseMonitoringSystem.Core": "1.0.0-*",
+    "LicenseMonitoringSystem.Service": "1.0.0-*",
     "Shouldly": "2.8.2",
     "xunit": "2.2.0"
   },
@@ -14,9 +16,6 @@
   "frameworks": {
     "net452": {
       "dependencies": {
-        "Service": {
-          "target": "project"
-        }
       }
     }
   }
