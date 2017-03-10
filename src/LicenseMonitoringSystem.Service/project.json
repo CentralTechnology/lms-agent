@@ -12,9 +12,6 @@
         "Abp": "1.5.0",
         "Castle.Core-NLog": "3.3.3",
         "Castle.Windsor-NLog": "3.4.0",
-        "LicenseMonitoringSystem.Core": {
-          "target": "project"
-        },
         "NLog": "4.4.3",
         "NLog.Schema": "4.4.3"
       },
@@ -26,6 +23,7 @@
   },
   "dependencies": {
     "GitVersion": "3.6.5",
-    "LicenseMonitoringSystem.Console": "1.0.0-*"
+    "LicenseMonitoringSystem.Console": "1.0.0-*",
+    "LicenseMonitoringSystem.Core": "1.0.0-*"
   }
 }

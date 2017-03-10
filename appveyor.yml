@@ -16,8 +16,9 @@
         - choco install gitversion.portable -pre -y       
 
     before_build:
+        - ps: nuget restore
         - ps: dotnet restore
-#        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test:
         assemblies: LicenseMonitoringSystem.Tests.dll
@@ -43,8 +44,9 @@
         - choco install gitversion.portable -pre -y
 
     before_build:
+        - ps: nuget restore
         - ps: dotnet restore
-#        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test:
         assemblies: LicenseMonitoringSystem.Tests.dll
@@ -66,8 +68,9 @@
         - choco install gitversion.portable -pre -y
 
     before_build:
+        - ps: nuget restore
         - ps: dotnet restore
-#        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test:
         assemblies: LicenseMonitoringSystem.Tests.dll
