@@ -5,6 +5,9 @@
     "copyToOutput": [ "Nlog.config" ],
     "outputName": "LMS"
   },
+  "runtimes": {
+    "win7-x64": {}
+  },
   "frameworks": {
     "net452": {
       "dependencies": {

@@ -3,6 +3,9 @@
   "buildOptions": {
     "debugType": "portable"
   },
+  "runtimes": {
+    "win7-x64": {} 
+  },
   "dependencies": {
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Shouldly": "2.8.2",

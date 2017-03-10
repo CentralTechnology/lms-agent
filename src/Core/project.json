@@ -3,6 +3,9 @@
   "buildOptions": {
     "outputName": "LMS.Core"
   },
+  "runtimes": {
+    "win7-x64": {}
+  },
   "dependencies": {
     "Newtonsoft.Json": "9.0.1",
     "ShellProgressBar": "3.0.0",
