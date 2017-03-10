@@ -11,6 +11,7 @@
     build:
         parallel: true
         project: LicenseMonitoringSystem.sln
+        verbosity: minimal
     
     install:
         - choco install gitversion.portable -pre -y
@@ -40,7 +41,8 @@
 
     build:
         parallel: true
-        project: LicenseMonitoringSystem.sln
+        project: LicenseMonitoringSystem.sln.
+        verbosity: minimal
     
     install:
         - choco install gitversion.portable -pre -y
@@ -67,6 +69,7 @@
     build:
         parallel: true
         project: LicenseMonitoringSystem.sln
+        verbosity: minimal
 
     install:
         - choco install gitversion.portable -pre -y
