@@ -3,59 +3,80 @@
         only:
             - master
             - dev
+
+    image: Visual Studio 2015
+
     configuration: Release
     platform: win7-x64
 
-    build_script:
-        - ps: dotnet build "src\Service\" -c %CONFIGURATION% -r %PLATFORM%
+    build:
+        project: LicenseMonitoringSystem.sln
     
     install:
         - choco install gitversion.portable -pre -y
+        
+    assembly_info:
+        patch: true
 
     before_build:
         - ps: dotnet restore
         - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
-    test_script:
-        - ps: dotnet test "tests\LicenseMonitoringSystem.Tests" -c %CONFIGURATION%
+    test:
+        assemblies: LicenseMonitoringSystem.Tests.dll
+
+    artifacts: 
+        - path: src\Bootstrapper\bin\$(configuration)\*.exe
             
 
 - 
     branches:
         only:
             - /feature/.*/
+
+    image: Visual Studio 2015
+
     configuration: Release
     platform: win7-x64
 
-    build_script:
-        - ps: dotnet build "src\Service\" -c %CONFIGURATION% -r %PLATFORM%
+    build:
+        project: LicenseMonitoringSystem.sln
     
     install:
         - choco install gitversion.portable -pre -y
+
+    assembly_info:
+        patch: true
 
     before_build:
         - ps: dotnet restore
         - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
-    test_script:
-        - ps : dotnet test "tests\LicenseMonitoringSystem.Tests" -c %CONFIGURATION%
+    test:
+        assemblies: LicenseMonitoringSystem.Tests.dll
 
 -
     branches:
         only:
             - /.*/merge/
+
+    image: Visual Studio 2015
+
     configuration: Release
     platform: win7-x64
 
-    build_script:
-        - ps: dotnet build "src\Service\" -c %CONFIGURATION% -r %PLATFORM%
+    build:
+        project: LicenseMonitoringSystem.sln
 
     install:
         - choco install gitversion.portable -pre -y
+
+    assembly_info:
+        patch: true
 
     before_build:
         - ps: dotnet restore
         - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
-    test_script:
-        - ps: dotnet test "tests\LicenseMonitoringSystem.Tests" -c %CONFIGURATION%
+    test:
+        assemblies: LicenseMonitoringSystem.Tests.dll

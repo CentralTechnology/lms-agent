@@ -30,6 +30,8 @@
                 <File Id="fil8718D61DAD4848FCFEB8F641AC76C602" Source="$(var.SourceOutput)\net452\win7-x64\Castle.Services.Logging.NLogIntegration.dll" Vital="yes" />
                 <File Id="fil7B3B33CABD3175BA6CE58EDFACAFBE78" Source="$(var.SourceOutput)\net452\win7-x64\Castle.Windsor.dll" Vital="yes" />
                 <File Id="filF5F126D1969C6207EBEB085F1AB23C03" Source="$(var.SourceOutput)\net452\win7-x64\Console.dll" Vital="yes" />
+                <File Id="fil938521E532831E89E9F63BBC76E25F1F" Source="$(var.SourceOutput)\net452\win7-x64\GitVersionCore.dll" Vital="yes" />
+                <File Id="filE07DD96CAA663C5F32B25AC25702363C" Source="$(var.SourceOutput)\net452\win7-x64\JetBrains.Annotations.dll" Vital="yes" />
                 <File Id="filEFFEBEC89257BB80BA7C83190D133A91" Source="$(var.SourceOutput)\net452\win7-x64\LMS.Console.dll" Vital="yes" />
                 <File Id="filA656A08665D55B06604414D1A7831A5F" Source="$(var.SourceOutput)\net452\win7-x64\LMS.Core.dll" Vital="yes" />
                 <File Id="filE65308DEAE6DA90EE8C2C58F9C1CCC7F" KeyPath="yes" Source="$(var.SourceOutput)\net452\win7-x64\LMS.exe" Vital="yes" />
