@@ -9,7 +9,6 @@
     configuration: Release
 
     build:
-        parallel: true
         project: LicenseMonitoringSystem.sln
         verbosity: minimal
     
@@ -37,7 +36,6 @@
     configuration: Release
 
     build:
-        parallel: true
         project: LicenseMonitoringSystem.sln.
         verbosity: minimal
     
@@ -61,7 +59,6 @@
     configuration: Release
 
     build:
-        parallel: true
         project: LicenseMonitoringSystem.sln
         verbosity: minimal
 
