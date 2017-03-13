@@ -83,16 +83,16 @@
                     and not (contains(@Source, '.vshost.')) 
                     and not (contains(@Source, '.xml')) 
                     and not (contains(@Source, '.log'))
-                    and not (contains(@Source, 'net452\LMS.exe'))
-                    and not (contains(@Source, 'net452\de'))
-                    and not (contains(@Source, 'net452\es'))
-                    and not (contains(@Source, 'net452\fr'))
-                    and not (contains(@Source, 'net452\it'))
-                    and not (contains(@Source, 'net452\ja'))
-                    and not (contains(@Source, 'net452\ko'))
-                    and not (contains(@Source, 'net452\ru'))
-                    and not (contains(@Source, 'net452\zh-Hans'))
-                    and not (contains(@Source, 'net452\zh-Hant'))]">
+                    and not (contains(@Source, 'de'))
+                    and not (contains(@Source, 'es'))
+                    and not (contains(@Source, 'fr'))
+                    and not (contains(@Source, 'it'))
+                    and not (contains(@Source, 'ja'))
+                    and not (contains(@Source, 'ko'))
+                    and not (contains(@Source, 'logs'))
+                    and not (contains(@Source, 'ru'))
+                    and not (contains(@Source, 'za-Hans'))
+                    and not (contains(@Source, 'zh-Hant'))]">
         <xsl:apply-templates select="."/>
       </xsl:for-each>
     </xsl:copy>
