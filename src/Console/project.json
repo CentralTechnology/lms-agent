@@ -1,16 +1,16 @@
 ﻿{
-  "version": "1.0.0-*",
   "buildOptions": {
     "outputName": "LMS.Console"
   },
-  "dependencies": {
-  
+
+  "runtimes": {
+    "win7-x64": {}
   },
 
   "frameworks": {
     "net452": {
       "dependencies": {
-      
+
       }
     }
   }

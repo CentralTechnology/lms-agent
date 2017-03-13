@@ -10,19 +10,21 @@
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
-    <SourceOutput>$(SolutionDir)\src\Service\bin\$(Configuration)</SourceOutput>
+    <SourceOutput>$(SolutionDir)\src\Service\bin\$(Configuration)\net452\win7-x64</SourceOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug;SourceOutput=$(SourceOutput);</DefineConstants>
+    <DefineConstants>Debug;SourceOutput=$(SourceOutput)</DefineConstants>
     <WixVariables>
     </WixVariables>
-    <Cultures>en-US;</Cultures>
+    <Cultures>
+    </Cultures>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>SourceOutput=$(SourceOutput)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <WixExtension Include="WixUtilExtension">
@@ -45,9 +47,6 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
-  <PropertyGroup>
-    <PreBuildEvent>"$(WIX)bin\heat.exe" dir "$(SourceOutput)." -cg References -srd -o "$(ProjectDir)Product.wxs" -nologo -gg -g1 -scom -sreg -t "$(ProjectDir)Transformer.xslt" -var var.SourceOutput</PreBuildEvent>
-  </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
 	Other similar extension points exist, see Wix.targets.
@@ -56,4 +55,7 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+  <PropertyGroup>
+    <PreBuildEvent>"$(WIX)bin\heat.exe" dir $(SourceOutput) -cg References -srd -o $(ProjectDir)Product.wxs -nologo -gg -g1 -scom -sreg -t $(ProjectDir)Transformer.xslt -var var.SourceOutput</PreBuildEvent>
+  </PropertyGroup>
 </Project>

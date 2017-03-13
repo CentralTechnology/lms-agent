@@ -52,4 +52,13 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+
+  <Target Name="BeforeBuild">
+    <GetAssemblyIdentity AssemblyFiles="..\Service\bin\$(Configuration)\net452\win7-x64\LMS.exe">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <DefineConstants>BuildVersion=%(AssemblyVersion.Version)</DefineConstants>
+    </PropertyGroup>
+  </Target>
 </Project>

@@ -1,51 +1,91 @@
-#---------------------------------#
-#           master branch         #
-#---------------------------------#
-
 -
     branches:
         only:
             - master
+            - dev
 
-# Start builds on tags only (GitHub and BitBucket)
-    skip_non_tags: true
-
-# Do not build feature branch with open Pull Requests
-    skip_branch_with_pr: true
-
-    # Build worker image (VM template)
     image: Visual Studio 2015
 
-# build cache to preserve files/folders between builds
-    cache:
-        - packages -> **\packages.config
-        - '%LocalAppData%\NuGet\Cache'
-
-# build platform, i.e. x86, x64, Any CPU. This setting is optional.
-    platform: x64
-
-# build Configuration, i.e. Debug, Release, etc.
     configuration: Release
 
     build:
-        parallel: true                  # enable MSBuild parallel builds
-        project: LicenseMonitoringSystem.sln      # path to Visual Studio solution or project
-
-        # MSBuild verbosity level
+        project: LicenseMonitoringSystem.sln
         verbosity: minimal
+    
+    install:
+        - choco install gitversion.portable -pre -y       
+
+    before_build:
+        - ps: nuget restore
+        - ps: dotnet restore
+        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
     test:
-        assemblies:
-            - LicenseMonitoringSystem.Tests.dll
+        assemblies: 
+            - '**\$(configuration)\win7-x64\LicenseMonitoringSystem.Tests.dll'
 
-    artifacts:
+    artifacts: 
+        - path: src\Bootstrapper\bin\$(configuration)\*.exe
 
-        -path: LicenseMonitoringSystem.Bootstrapper\bin\$(configuration)\*.exe
-
-# Deploy to GitHub Releases
     deploy:
-        - provider: GitHub
-        release: 
-        artifact: LicenseMonitoringSystem.Bootstrapper\bin\$(configuration)\*.exe
+        release: v$(APPVEYOR_BUILD_VERSION)
+        description: insert description
+        provider: GitHub
+        auth_token:
+            secure: iAL0fibu0a8mOfti5EphBezFTZ1j1QDS439gkSJgRTEyGe8Smr1maQYwNMrOZosA
+        artifact: src\Bootstrapper\bin\$(configuration)\*.exe
+        draft: false
+        prerelease: false
+        on:
+            branch: master
+            appveyor_repo_tag : true            
 
+- 
+    branches:
+        only:
+            - /feature/.*/
 
+    image: Visual Studio 2015
+
+    configuration: Release
+
+    build:
+        project: LicenseMonitoringSystem.sln.
+        verbosity: minimal
+    
+    install:
+        - choco install gitversion.portable -pre -y
+
+    before_build:
+        - ps: nuget restore
+        - ps: dotnet restore
+        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+
+    test:
+        assemblies: 
+            - '**\$(configuration)\win7-x64\LicenseMonitoringSystem.Tests.dll'
+
+-
+    branches:
+        only:
+            - /.*/merge/
+
+    image: Visual Studio 2015
+
+    configuration: Release
+
+    build:
+        project: LicenseMonitoringSystem.sln
+        verbosity: minimal
+
+    install:
+        - choco install gitversion.portable -pre -y
+
+    before_build:
+        - ps: nuget restore
+        - ps: dotnet restore
+        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
+
+    test:
+        assemblies: 
+            - '**\$(configuration)\win7-x64\LicenseMonitoringSystem.Tests.dll'

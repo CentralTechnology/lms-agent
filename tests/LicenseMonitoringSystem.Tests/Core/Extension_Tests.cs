@@ -1,140 +1,142 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LicenseMonitoringSystem.Tests.Core
+﻿namespace Tests.Core
 {
+    using System;
+    using System.Collections.Generic;
     using global::Core.Common.Extensions;
-    using global::Core.Users;
+    using global::Core.Models;
     using Shouldly;
     using Xunit;
 
     public class Extension_Tests
     {
         [Fact]
-        public void FilterMissing_ShouldReturnFilteredList_WhenSourceIsNotEmpty()
+        public void ApplyUploadId_ShouldSetUploadId()
         {
-            // Arrange
-            var existingUsers = new List<User>
+            // arrange
+            var users = new DefaultUserList();
+            var uploadId = 123456;
+
+            // act
+            users.ApplyUploadId(uploadId);
+
+            // assert
+            users.ShouldAllBe(x => x.SupportUploadId.Equals(uploadId));
+        }
+
+        [Fact]
+        public void FilterCreate_ShouldReturnNoUsers()
+        {
+            // arrange
+            var remoteUsers = new DefaultUserList();
+            var localUsers = new ComparisonUserList();
+
+            // act
+            var usersToCreate = remoteUsers.FilterCreate<LicenseUser, Guid>(localUsers);
+
+            // assert
+            usersToCreate.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void FilterCreate_ShouldReturnOnlyUsersToBeCreated()
+        {
+            // arrange
+            var remoteUsers = new ComparisonUserList();
+            var localUsers = new DefaultUserList();
+
+            // act
+            var usersToCreate = remoteUsers.FilterCreate<LicenseUser, Guid>(localUsers);
+
+            // assert
+            usersToCreate.Count.ShouldBe(3);
+            usersToCreate.ShouldContain(DefaultUserList.User1);
+            usersToCreate.ShouldContain(DefaultUserList.User2);
+            usersToCreate.ShouldContain(DefaultUserList.User3);
+        }
+
+        [Fact]
+        public void FilterDelete_ShouldReturnOnlyUsersToBeDelete()
+        {
+            // arrange
+            var remoteUsers = new DefaultUserList();
+            var localUsers = new ComparisonUserList();
+
+            // act
+            var usersToDelete = remoteUsers.FilterDelete<LicenseUser, Guid>(localUsers);
+
+            // assert
+            usersToDelete.Count.ShouldBe(3);
+            usersToDelete.ShouldContain(DefaultUserList.User1);
+            usersToDelete.ShouldContain(DefaultUserList.User2);
+            usersToDelete.ShouldContain(DefaultUserList.User3);
+        }
+
+        [Fact]
+        public void FilterUpdate_ShouldReturnOnlyUsersToBeUpdated()
+        {
+            // arrange
+            var remoteUsers = new DefaultUserList();
+            var localUsers = new ComparisonUserList();
+
+            // act
+            var usersToUpdate = remoteUsers.FilterUpdate<LicenseUser, Guid>(localUsers);
+
+            // assert
+            usersToUpdate.Count.ShouldBe(2);
+            usersToUpdate.ShouldContain(DefaultUserList.User4);
+            usersToUpdate.ShouldContain(DefaultUserList.User5);
+        }
+    }
+
+    public class DefaultUserList : List<LicenseUser>
+    {
+        public static LicenseUser User1 = new LicenseUser
+        {
+            Id = Guid.Parse("e4779953-59ae-4507-9112-d734ce032a8f"),
+            DisplayName = "Thomas Adams"
+        };
+
+        public static LicenseUser User2 = new LicenseUser
+        {
+            Id = Guid.Parse("3a167b14-21fb-4408-a968-ad0f0b5b9879"),
+            DisplayName = "Andy Summerfield"
+        };
+
+        public static LicenseUser User3 = new LicenseUser
+        {
+            Id = Guid.Parse("e01db876-a8ab-4d78-9865-19cb542889b6"),
+            DisplayName = "Adam Jacques"
+        };
+
+        public static LicenseUser User4 = new LicenseUser
+        {
+            Id = Guid.Parse("a15e0e50-529a-4028-8ba7-771019ca2fb7"),
+            DisplayName = "Chris Barr"
+        };
+
+        public static LicenseUser User5 = new LicenseUser
+        {
+            Id = Guid.Parse("161dfdf5-e624-4d1f-8226-a0e456f92f16"),
+            DisplayName = "Adam Collin"
+        };
+
+        public DefaultUserList()
+        {
+            AddRange(new List<LicenseUser>
             {
-                new User {Id = Guid.Parse("1f14172a-0869-41c3-823f-28f605c83d8c"), DisplayName = "Thomas Adams"},
-                new User {Id = Guid.Parse("762e1f40-2a78-4912-a01d-fdc2c12fb6d6"), DisplayName = "Adam Jacques"},
-            };
-
-
-            var allUsers = new List<User>
-            {
-                new User {Id = Guid.Parse("1f14172a-0869-41c3-823f-28f605c83d8c"), DisplayName = "Thomas Adams"},
-                new User {Id = Guid.Parse("762e1f40-2a78-4912-a01d-fdc2c12fb6d6"), DisplayName = "Adam Jacques"},
-                new User {Id = Guid.Parse("3886b206-902a-49b2-aa65-8bce88b3b23b"), DisplayName = "Andy Summerfield"},
-                new User {Id = Guid.Parse("f25b3a1f-cedc-4ba2-be56-733aab5bf51b"), DisplayName = "Adam Collin"},
-                new User {Id = Guid.Parse("8b4567f5-d782-48eb-aa5e-01199bce606a"), DisplayName = "Chris Barr"},
-            };
-
-
-
-            // Act
-            var createUsers = allUsers.FilterMissing<User,Guid>(existingUsers);
-
-            // Assert
-            createUsers.Count.ShouldBe(3);
-
-            createUsers.ShouldBe(new List<User>
-            {
-                                new User {Id = Guid.Parse("3886b206-902a-49b2-aa65-8bce88b3b23b"), DisplayName = "Andy Summerfield"},
-                new User {Id = Guid.Parse("f25b3a1f-cedc-4ba2-be56-733aab5bf51b"), DisplayName = "Adam Collin"},
-                new User {Id = Guid.Parse("8b4567f5-d782-48eb-aa5e-01199bce606a"), DisplayName = "Chris Barr"}
+                User1, User2, User3, User4, User5
             });
-
-
         }
+    }
 
-        [Fact]
-        public void FilterExisting_ShouldReturnFilteredList_WhenSourceIsNotEmpty()
+    public class ComparisonUserList : List<LicenseUser>
+    {
+        public ComparisonUserList()
         {
-            // Arrange
-            var existingUsers = new List<User>
+            AddRange(new List<LicenseUser>
             {
-                new User {Id = Guid.Parse("1f14172a-0869-41c3-823f-28f605c83d8c"), DisplayName = "Thomas Adams"},
-                new User {Id = Guid.Parse("762e1f40-2a78-4912-a01d-fdc2c12fb6d6"), DisplayName = "Adam Jacques"},
-            };
-
-
-            var allUsers = new List<User>
-            {
-                new User {Id = Guid.Parse("1f14172a-0869-41c3-823f-28f605c83d8c"), DisplayName = "Thomas Adams"},
-                new User {Id = Guid.Parse("762e1f40-2a78-4912-a01d-fdc2c12fb6d6"), DisplayName = "Adam Jacques"},
-                new User {Id = Guid.Parse("3886b206-902a-49b2-aa65-8bce88b3b23b"), DisplayName = "Andy Summerfield"},
-                new User {Id = Guid.Parse("f25b3a1f-cedc-4ba2-be56-733aab5bf51b"), DisplayName = "Adam Collin"},
-                new User {Id = Guid.Parse("8b4567f5-d782-48eb-aa5e-01199bce606a"), DisplayName = "Chris Barr"},
-            };
-
-
-
-            // Act
-            var createUsers = allUsers.FilterExisting<User, Guid>(existingUsers);
-
-            // Assert
-            createUsers.Count.ShouldBe(2);
-
-            createUsers.ShouldBe(new List<User>
-            {
-                new User {Id = Guid.Parse("1f14172a-0869-41c3-823f-28f605c83d8c"), DisplayName = "Thomas Adams"},
-                new User {Id = Guid.Parse("762e1f40-2a78-4912-a01d-fdc2c12fb6d6"), DisplayName = "Adam Jacques"},
+                DefaultUserList.User4, DefaultUserList.User5
             });
-
-
         }
-
-        [Fact]
-        public void FilterMissing_ShouldReturnEmptyList_WhenSourceIsEmpty()
-        {
-            // Arrange
-            var existingUsers = new List<User>
-            {
-                new User {Id = Guid.Parse("1f14172a-0869-41c3-823f-28f605c83d8c"), DisplayName = "Thomas Adams"},
-                new User {Id = Guid.Parse("762e1f40-2a78-4912-a01d-fdc2c12fb6d6"), DisplayName = "Adam Jacques"},
-            };
-
-
-            var allUsers = new List<User>
-            {
-
-            };
-
-
-            // Act
-            var createUsers = allUsers.FilterMissing<User, Guid>(existingUsers);
-
-            // Assert
-            createUsers.Count.ShouldBe(0);
-        }
-
-        [Fact]
-        public void FilterExisting_ShouldReturnEmptyList_WhenSourceIsEmpty()
-        {
-            // Arrange
-            var existingUsers = new List<User>
-            {
-                new User {Id = Guid.Parse("1f14172a-0869-41c3-823f-28f605c83d8c"), DisplayName = "Thomas Adams"},
-                new User {Id = Guid.Parse("762e1f40-2a78-4912-a01d-fdc2c12fb6d6"), DisplayName = "Adam Jacques"},
-            };
-
-
-            var allUsers = new List<User>
-            {
-
-            };
-
-
-            // Act
-            var createUsers = allUsers.FilterExisting<User, Guid>(existingUsers);
-
-            // Assert
-            createUsers.Count.ShouldBe(0);
-        }
-
     }
 }

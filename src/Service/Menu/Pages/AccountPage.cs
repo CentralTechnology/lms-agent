@@ -39,14 +39,7 @@
             base.Display();
 
             var acctId = _settingManager.GetAccountId();
-            if (acctId == null)
-            {
-                Output.WriteLine(ConsoleColor.Red, "Account id is not currently set");
-            }
-            else
-            {
-                Output.WriteLine($"Account id is currently set to {acctId}");
-            }
+            Output.WriteLine($"Account id is currently set to {acctId}");
 
             for (int i = 0; i < Options.Count; i++)
             {

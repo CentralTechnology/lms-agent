@@ -157,11 +157,6 @@
             // gets/sets account id
             var accountId = GetAccountId();
 
-            if (accountId == null)
-            {
-                throw new AbpException("Unable to obtain the autotask account id. Execution cannot continue. Please update the settings.json file with the correct autotask acccount id.");
-            }
-
             SetAccountId(accountId);
 
             ResetOnStartUp(false);
