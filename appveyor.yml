@@ -89,6 +89,9 @@
         assemblies: 
             - '**\$(configuration)\win7-x64\LicenseMonitoringSystem.Tests.dll'
 
+    artifacts: 
+        - path: src\Bootstrapper\bin\$(configuration)\*.exe
+
     deploy:
         release: v$(APPVEYOR_BUILD_VERSION)
         description: insert description
