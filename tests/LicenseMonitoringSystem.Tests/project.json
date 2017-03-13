@@ -15,9 +15,9 @@
     }
   },
   "dependencies": {
+    "Core": "1.0.0-*",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
-    "LicenseMonitoringSystem.Core": "1.0.0-*",
-    "LicenseMonitoringSystem.Service": "1.0.0-*",
+    "Service": "1.0.0-*",
     "Shouldly": "2.8.2",
     "xunit": "2.2.0",
     "xunit.extensibility.execution": "2.2.0"

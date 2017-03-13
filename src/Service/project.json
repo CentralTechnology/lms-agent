@@ -22,8 +22,8 @@
     }
   },
   "dependencies": {
-    "GitVersion": "3.6.5",
-    "LicenseMonitoringSystem.Console": "1.0.0-*",
-    "LicenseMonitoringSystem.Core": "1.0.0-*"
+    "Console": "1.0.0-*",
+    "Core": "1.0.0-*",
+    "GitVersion": "3.6.5"
   }
 }
