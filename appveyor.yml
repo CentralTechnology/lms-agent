@@ -8,13 +8,6 @@
 
     configuration: Release
 
-    assembly_info:
-        patch: true
-        file: '**\AssemblyInfo.*'
-        assembly_version: '{version}'
-        assembly_file_version: '{version}'
-        assembly_informational_version: '{version}'
-
     build:
         project: LicenseMonitoringSystem.sln
         verbosity: minimal
@@ -44,13 +37,6 @@
 
     configuration: Release
 
-    assembly_info:
-        patch: true
-        file: '**\AssemblyInfo.*'
-        assembly_version: '{version}'
-        assembly_file_version: '{version}'
-        assembly_informational_version: '{version}'
-
     build:
         project: LicenseMonitoringSystem.sln.
         verbosity: minimal
@@ -75,13 +61,6 @@
     image: Visual Studio 2015
 
     configuration: Release
-
-    assembly_info:
-        patch: true
-        file: '**\AssemblyInfo.*'
-        assembly_version: '{version}'
-        assembly_file_version: '{version}'
-        assembly_informational_version: '{version}'
 
     build:
         project: LicenseMonitoringSystem.sln
