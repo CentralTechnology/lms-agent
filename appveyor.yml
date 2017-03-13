@@ -28,7 +28,7 @@
         - path: src\Bootstrapper\bin\$(configuration)\*.exe
 
     deploy:
-        release: v$(APPVEYOR_BUILD_VERSION)
+        release: v$(GitVersion_InformationalVersion)
         description: insert description
         provider: GitHub
         auth_token:
