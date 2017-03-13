@@ -16,6 +16,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{43F09060-A65A-4B48-B7E0-18CD8429A236}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "LicenseMonitoringSystem.Installer", "src\Installer\LicenseMonitoringSystem.Installer.wixproj", "{F67157C2-9193-44EE-8B67-BE1CCF987D9D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D4788119-2ECD-44A8-92B3-45C3441334E4} = {D4788119-2ECD-44A8-92B3-45C3441334E4}
+		{1ABF7DAE-0C38-4B8F-B372-40223E7FEA11} = {1ABF7DAE-0C38-4B8F-B372-40223E7FEA11}
+		{9FE5D2BA-A040-47AF-AEC9-446AD47D11FF} = {9FE5D2BA-A040-47AF-AEC9-446AD47D11FF}
+	EndProjectSection
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "LicenseMonitoringSystem.Bootstrapper", "src\Bootstrapper\LicenseMonitoringSystem.Bootstrapper.wixproj", "{DC9C2849-4C97-4F41-9174-D825AB335F9C}"
 EndProject

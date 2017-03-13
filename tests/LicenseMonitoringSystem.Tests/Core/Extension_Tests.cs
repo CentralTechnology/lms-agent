@@ -1,4 +1,4 @@
-﻿namespace LicenseMonitoringSystem.Tests.Core
+﻿namespace Tests.Core
 {
     using System;
     using System.Collections.Generic;

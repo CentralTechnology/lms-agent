@@ -13,12 +13,12 @@
         "Newtonsoft.Json": "9.0.1",
         "ShellProgressBar": "3.0.0",
         "Microsoft.OData.Client": "6.15.0",
-        "NLog": "4.4.3",
-        "NLog.Schema": "4.4.3",
         "Abp": "1.5.0",
         "Abp.AutoMapper": "1.5.0",
         "Abp.Web.Api": "1.5.0",
-        "Simple.OData.Client": "4.25.5"
+        "Simple.OData.Client": "4.25.5",
+        "NLog": "4.4.4",
+        "NLog.Schema": "4.4.4"
       },
       "frameworkAssemblies": {
         "System.DirectoryServices": "4.0.0.0",
