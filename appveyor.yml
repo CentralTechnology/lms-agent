@@ -26,6 +26,7 @@
 
     artifacts: 
         - path: src\Bootstrapper\bin\$(configuration)\*.exe
+        - name: setup
 
     deploy:
         release: v$(GitVersion_FullSemVer)
@@ -33,7 +34,7 @@
         provider: GitHub
         auth_token:
             secure: iAL0fibu0a8mOfti5EphBezFTZ1j1QDS439gkSJgRTEyGe8Smr1maQYwNMrOZosA
-        artifact: LMS.exe
+        artifact: setup
         draft: false
         prerelease: false
         on:
