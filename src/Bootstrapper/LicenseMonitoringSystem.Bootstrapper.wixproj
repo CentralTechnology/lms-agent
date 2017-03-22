@@ -54,7 +54,7 @@
 	-->
 
   <Target Name="BeforeBuild">
-    <GetAssemblyIdentity AssemblyFiles="..\Service\bin\$(Configuration)\net452\win7-x64\LMS.exe">
+    <GetAssemblyIdentity AssemblyFiles="..\Service\bin\$(Configuration)\net452\LMS.exe">
       <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
     </GetAssemblyIdentity>
     <PropertyGroup>
