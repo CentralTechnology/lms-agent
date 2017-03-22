@@ -6,9 +6,11 @@
     <OutputType>Exe</OutputType>
     <PackageId>Service</PackageId>
     <RuntimeIdentifiers>win7-x64</RuntimeIdentifiers>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
     <PostBuildEvent>RD /S /Q "$(TargetDir)de\"
 RD /S /Q "$(TargetDir)es\"
 RD /S /Q "$(TargetDir)fr\"
