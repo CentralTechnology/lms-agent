@@ -26,7 +26,7 @@
 
     artifacts: 
         - path: src\Bootstrapper\bin\$(configuration)\*.exe
-        - name: setup
+          name: setup
 
     deploy:
         release: v$(GitVersion_FullSemVer)
