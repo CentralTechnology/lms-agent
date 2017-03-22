@@ -28,12 +28,12 @@
         - path: src\Bootstrapper\bin\$(configuration)\*.exe
 
     deploy:
-        release: v$(GitVersion_InformationalVersion)
+        release: v$(GitVersion_FullSemVer)
         description: insert description
         provider: GitHub
         auth_token:
             secure: iAL0fibu0a8mOfti5EphBezFTZ1j1QDS439gkSJgRTEyGe8Smr1maQYwNMrOZosA
-        artifact: src\Bootstrapper\bin\$(configuration)\*.exe
+        artifact: LMS.exe
         draft: false
         prerelease: false
         on:
