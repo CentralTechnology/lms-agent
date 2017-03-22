@@ -82,21 +82,11 @@
       <xsl:for-each select="wix:Wix/wix:Fragment/wix:ComponentGroup/wix:Component/wix:File[@Source and not (contains(@Source, '.pdb')) 
                     and not (contains(@Source, '.vshost.')) 
                     and not (contains(@Source, '.xml')) 
-                    and not (contains(@Source, '.log'))
-                    and not (contains(@Source, 'de'))
-                    and not (contains(@Source, 'es'))
-                    and not (contains(@Source, 'fr'))
-                    and not (contains(@Source, 'it'))
-                    and not (contains(@Source, 'ja'))
-                    and not (contains(@Source, 'ko'))
-                    and not (contains(@Source, 'logs'))
-                    and not (contains(@Source, 'ru'))
-                    and not (contains(@Source, 'za-Hans'))
-                    and not (contains(@Source, 'zh-Hant'))]">
+                    and not (contains(@Source, '.log'))]">
         <xsl:apply-templates select="."/>
       </xsl:for-each>
     </xsl:copy>
-  </xsl:template>
+  </xsl:template>  
 
   <xsl:template match="wix:Wix/wix:Fragment/wix:ComponentGroup/wix:Component/wix:File">
     <xsl:copy>

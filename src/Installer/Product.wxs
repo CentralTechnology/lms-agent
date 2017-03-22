@@ -19,39 +19,56 @@
         <ComponentGroup Id="LicenseMonitoringSystem_ServiceComponents">
             <Component Id="LicenseMonitoringSystem_ServiceComponent" Directory="LicenseMonitoringSystem_INSTALLFOLDER" Guid="2158608F-0EA8-4AD0-9CE9-BBF95B20663F">
                 <CreateFolder />
-                <File Id="fil9D1FAF86BA9D2CC52156D57F9B2DD94D" Source="$(var.SourceOutput)\Abp.AutoMapper.dll" Vital="yes" />
-                <File Id="fil15C550EF61ABCC9FEA0FA4569C088F88" Source="$(var.SourceOutput)\Abp.dll" Vital="yes" />
-                <File Id="filCFF506FF09608700B50FE1A9C8D723DE" Source="$(var.SourceOutput)\Abp.Web.Api.dll" Vital="yes" />
-                <File Id="filB2D4450ABD10F2157F0ADA19FF838637" Source="$(var.SourceOutput)\Abp.Web.Common.dll" Vital="yes" />
-                <File Id="fil1F916926ADE3435F72847A7ECE5B69E1" Source="$(var.SourceOutput)\Abp.Web.dll" Vital="yes" />
-                <File Id="fil0E08AFE36874E533E30F13384112EFA1" Source="$(var.SourceOutput)\AutoMapper.dll" Vital="yes" />
-                <File Id="fil808D19806529ABA1617D818072819E54" Source="$(var.SourceOutput)\Castle.Core.dll" Vital="yes" />
-                <File Id="fil151C8FBAEDA5D4BDEB438F301EAE7FA4" Source="$(var.SourceOutput)\Castle.Windsor.dll" Vital="yes" />
-                <File Id="fil09F513E173711D438D33C523D7425EA4" Source="$(var.SourceOutput)\JetBrains.Annotations.dll" Vital="yes" />
-                <File Id="fil3524461E25898F9DA566B097187BD2A5" Source="$(var.SourceOutput)\LMS.Console.dll" Vital="yes" />
-                <File Id="fil758B130838748D0B0DA0239586FE2832" Source="$(var.SourceOutput)\LMS.Core.dll" Vital="yes" />
-                <File Id="filC8C8F619E34532B2AB0E7B7C2C1E6949" KeyPath="yes" Source="$(var.SourceOutput)\LMS.exe" Vital="yes" />
-                <File Id="fil9C971DEC84DC4FAD2D69A46EB8B1360A" Source="$(var.SourceOutput)\LMS.exe.config" Vital="yes" />
-                <File Id="fil2C5E478F95281B4C3074488DAA102F8E" Source="$(var.SourceOutput)\Microsoft.Data.Edm.dll" Vital="yes" />
-                <File Id="fil9B5E0AF5DF97E6875086ECA1D410C37A" Source="$(var.SourceOutput)\Microsoft.Data.OData.dll" Vital="yes" />
-                <File Id="filAE55FE6A97E108F290D8AC77700ED4E8" Source="$(var.SourceOutput)\Microsoft.OData.Client.dll" Vital="yes" />
-                <File Id="filE7C7D40ABC41477E5A75627422FAA5F5" Source="$(var.SourceOutput)\Microsoft.OData.Core.dll" Vital="yes" />
-                <File Id="fil1EAF5F7CB1EEEA9A0C59AD5A961BB8B8" Source="$(var.SourceOutput)\Microsoft.OData.Edm.dll" Vital="yes" />
-                <File Id="filBA25AB939AE677980F3C909F3A20FD28" Source="$(var.SourceOutput)\Microsoft.Spatial.dll" Vital="yes" />
-                <File Id="filD630E3B86AECDFD0D22D7145F74AC0EF" Source="$(var.SourceOutput)\Microsoft.Threading.Tasks.dll" Vital="yes" />
-                <File Id="fil9DB2769EF75FC4140A1AA7D51327FE1B" Source="$(var.SourceOutput)\Microsoft.Threading.Tasks.Extensions.dll" Vital="yes" />
-                <File Id="fil7F15BA8094994ADAD04DA907E934B5BD" Source="$(var.SourceOutput)\Newtonsoft.Json.dll" Vital="yes" />
-                <File Id="fil49D7CB3EEC543B549EE3BE62A5F30A21" Source="$(var.SourceOutput)\NLog.config" Vital="yes" />
-                <File Id="filD99192F3EF926B0696A896924D4A93A9" Source="$(var.SourceOutput)\NLog.dll" Vital="yes" />
-                <File Id="filCADE934641242449D93D0C7196383D5B" Source="$(var.SourceOutput)\Settings.json" Vital="yes" />
-                <File Id="filE285F0D236E655AD7D7DD6AB7B0AE9B5" Source="$(var.SourceOutput)\Simple.OData.Client.Net40.dll" Vital="yes" />
-                <File Id="fil842A10E0CCD8A41FE6AA8AC1D5A7E0AC" Source="$(var.SourceOutput)\System.Collections.Immutable.dll" Vital="yes" />
-                <File Id="fil7764FFC1C1ED142303E0353604FC6366" Source="$(var.SourceOutput)\System.Linq.Dynamic.dll" Vital="yes" />
-                <File Id="filAD660CB2A40064A1E1274799E08C84C8" Source="$(var.SourceOutput)\System.Net.Http.Extensions.dll" Vital="yes" />
-                <File Id="fil49C619BD9B416D16CB170A899D91A7BC" Source="$(var.SourceOutput)\System.Net.Http.Formatting.dll" Vital="yes" />
-                <File Id="filC7E93F066E20E4B7AC9ED0A797C6A44E" Source="$(var.SourceOutput)\System.Spatial.dll" Vital="yes" />
-                <File Id="fil4991BDE405145DC119397D3DA8E86418" Source="$(var.SourceOutput)\System.Web.Http.dll" Vital="yes" />
-                <File Id="fil6EA7AC1729284C27A17039FE94522C29" Source="$(var.SourceOutput)\System.Web.Http.WebHost.dll" Vital="yes" />
+                <File Id="filD02783D59F12D83D7B556545071BFF66" Source="$(var.SourceOutput)\net452\Abp.AutoMapper.dll" Vital="yes" />
+                <File Id="filE4B76DAC81D07FA12D7B6B5D2EFEBF7B" Source="$(var.SourceOutput)\net452\Abp.dll" Vital="yes" />
+                <File Id="fil62DBF59475D553D4A85A21DE95CE8841" Source="$(var.SourceOutput)\net452\Abp.Web.Api.dll" Vital="yes" />
+                <File Id="fil4825007B46388DFC3EAE6975B375F9D0" Source="$(var.SourceOutput)\net452\Abp.Web.Common.dll" Vital="yes" />
+                <File Id="fil16F7C9219E57C75079D80C803F4C2427" Source="$(var.SourceOutput)\net452\Abp.Web.dll" Vital="yes" />
+                <File Id="fil3D0F4698D89F75A045041C7B52D1D689" Source="$(var.SourceOutput)\net452\AutoMapper.dll" Vital="yes" />
+                <File Id="fil8BAD07B078ED4EF514BD46456807AB54" Source="$(var.SourceOutput)\net452\Castle.Core.dll" Vital="yes" />
+                <File Id="fil6C78B875FFCEB50B0666262C66206B72" Source="$(var.SourceOutput)\net452\Castle.Facilities.Logging.dll" Vital="yes" />
+                <File Id="fil0864BD32BACF7A82629A597CFFA69FF0" Source="$(var.SourceOutput)\net452\Castle.Services.Logging.NLogIntegration.dll" Vital="yes" />
+                <File Id="fil5E06519D836B96AFC9D7F8792879C0F9" Source="$(var.SourceOutput)\net452\Castle.Windsor.dll" Vital="yes" />
+                <File Id="fil3D2A9A919E66C31A8EE02B97693AF8C1" Source="$(var.SourceOutput)\net452\GitVersionCore.dll" Vital="yes" />
+                <File Id="fil8E1350C44487F54C31FB6DC1BE3145ED" Source="$(var.SourceOutput)\net452\JetBrains.Annotations.dll" Vital="yes" />
+                <File Id="fil02ECD50E009A59AF4006160A6003C0A2" Source="$(var.SourceOutput)\net452\LMS.Console.dll" Vital="yes" />
+                <File Id="fil8E039FE1BBF4E441E6E51FEAF52854A7" Source="$(var.SourceOutput)\net452\LMS.Core.dll" Vital="yes" />
+                <File Id="fil64A72186B5ED099B849224717D738EF4" Source="$(var.SourceOutput)\net452\LMS.Core.dll.config" Vital="yes" />
+                <File Id="fil8AF100A2714238A27844C7F2E826D3C2" Source="$(var.SourceOutput)\net452\LMS.dll" Vital="yes" />
+                <File Id="fil6D736947507AE1D69D6B61DF943A4C4F" Source="$(var.SourceOutput)\net452\LMS.dll.config" Vital="yes" />
+                <File Id="fil14B64667DE295C70C77041756FB032FF" KeyPath="yes" Source="$(var.SourceOutput)\net452\LMS.exe" Vital="yes" />
+                <File Id="filCC1C32E2C6D7E402C150CA79E87E5E13" Source="$(var.SourceOutput)\net452\LMS.exe.config" Vital="yes" />
+                <File Id="fil15F81631F6280A16CC42BF3746A3211E" Source="$(var.SourceOutput)\net452\LMS.runtimeconfig.dev.json" Vital="yes" />
+                <File Id="fil2B53EFB0C95FFE41B6A0E02017547EAD" Source="$(var.SourceOutput)\net452\LMS.runtimeconfig.json" Vital="yes" />
+                <File Id="fil908BAA629B34971128717825B15A234C" Source="$(var.SourceOutput)\net452\Microsoft.Data.Edm.dll" Vital="yes" />
+                <File Id="filC911158D3D2D207C2B69960ED613A134" Source="$(var.SourceOutput)\net452\Microsoft.Data.OData.dll" Vital="yes" />
+                <File Id="fil4654FDEEFFEBBE5476CF182BC400E703" Source="$(var.SourceOutput)\net452\Microsoft.OData.Client.dll" Vital="yes" />
+                <File Id="fil18E85F2B06AB4220B9D120FBFA7C804E" Source="$(var.SourceOutput)\net452\Microsoft.OData.Client.resources.dll" Vital="yes" />
+                <File Id="filC771888BF06A6DB1BEF5DCD7B34AF461" Source="$(var.SourceOutput)\net452\Microsoft.OData.Core.dll" Vital="yes" />
+                <File Id="fil7EB6AEA439AB690982BF3C7793A25559" Source="$(var.SourceOutput)\net452\Microsoft.OData.Core.resources.dll" Vital="yes" />
+                <File Id="fil9AE0232B677C68575130B664F4499D37" Source="$(var.SourceOutput)\net452\Microsoft.OData.Edm.dll" Vital="yes" />
+                <File Id="filBA61F9AE352CF68AE862B5B3D0D116C2" Source="$(var.SourceOutput)\net452\Microsoft.OData.Edm.resources.dll" Vital="yes" />
+                <File Id="fil06F2EF8292BB3C37F2BAFF093220386C" Source="$(var.SourceOutput)\net452\Microsoft.Spatial.dll" Vital="yes" />
+                <File Id="fil595A15F4375B97CF4FA55E7D01CC1555" Source="$(var.SourceOutput)\net452\Microsoft.Spatial.resources.dll" Vital="yes" />
+                <File Id="fil8C0AB484EC2FDE85DBB83F7A3BC876AF" Source="$(var.SourceOutput)\net452\Microsoft.Threading.Tasks.dll" Vital="yes" />
+                <File Id="fil760F927D97EDC1031FC212A470D62525" Source="$(var.SourceOutput)\net452\Microsoft.Threading.Tasks.Extensions.Desktop.dll" Vital="yes" />
+                <File Id="fil6CBB1CEA5F776B8C90E9A1377CCF5B93" Source="$(var.SourceOutput)\net452\Microsoft.Threading.Tasks.Extensions.dll" Vital="yes" />
+                <File Id="fil9DE2A6DE7F1C210BE6F33AB060E454F7" Source="$(var.SourceOutput)\net452\Newtonsoft.Json.dll" Vital="yes" />
+                <File Id="fil28F8D92451C5F7AA6BD1C51AEF96060F" Source="$(var.SourceOutput)\net452\Nito.AsyncEx.Concurrent.dll" Vital="yes" />
+                <File Id="filCF4933F3899BBEA7753363BA9E18B641" Source="$(var.SourceOutput)\net452\Nito.AsyncEx.dll" Vital="yes" />
+                <File Id="filEA0F61F0D490BC66DD8967FBF45382BB" Source="$(var.SourceOutput)\net452\Nito.AsyncEx.Enlightenment.dll" Vital="yes" />
+                <File Id="fil0158824B282440713474EA343A891ED1" Source="$(var.SourceOutput)\net452\NLog.config" Vital="yes" />
+                <File Id="fil530BB6F10B183A87688C8F82FBC76797" Source="$(var.SourceOutput)\net452\NLog.dll" Vital="yes" />
+                <File Id="fil4A3372F5FF6CDA24F59DBA2DBDEFC958" Source="$(var.SourceOutput)\net452\ShellProgressBar.dll" Vital="yes" />
+                <File Id="fil288E33547774681F4A729DAA5ADA44F3" Source="$(var.SourceOutput)\net452\Simple.OData.Client.Net40.dll" Vital="yes" />
+                <File Id="fil5575C234C50246B60690069B565A4644" Source="$(var.SourceOutput)\net452\System.Collections.Immutable.dll" Vital="yes" />
+                <File Id="fil47C8FDC64ECB3BC407B5ADDF512FC5BF" Source="$(var.SourceOutput)\net452\System.Linq.Dynamic.dll" Vital="yes" />
+                <File Id="filA626FCABE43F7377F4F65309CBE7B90F" Source="$(var.SourceOutput)\net452\System.Net.Http.Extensions.dll" Vital="yes" />
+                <File Id="fil895AFD143D2BDDEF2B0D5BC18389C4C5" Source="$(var.SourceOutput)\net452\System.Net.Http.Formatting.dll" Vital="yes" />
+                <File Id="fil42CB264580E60C6291A231A671D91DC3" Source="$(var.SourceOutput)\net452\System.Net.Http.Primitives.dll" Vital="yes" />
+                <File Id="filD065DDCD5B5561080377EE0B7BC677D6" Source="$(var.SourceOutput)\net452\System.Spatial.dll" Vital="yes" />
+                <File Id="fil919A59B10E85C24C5990F5C475492E5E" Source="$(var.SourceOutput)\net452\System.Web.Http.dll" Vital="yes" />
+                <File Id="filCEBAA255CFFCC4DA15F62415B9CEFB00" Source="$(var.SourceOutput)\net452\System.Web.Http.WebHost.dll" Vital="yes" />
                 <ServiceInstall Id="LMSServiceInstaller" Type="ownProcess" Vital="yes" Name="License Monitoring System" DisplayName="License Monitoring System" Description="Automated license reporting solution." Start="auto" Account="LocalSystem" ErrorControl="ignore" Interactive="no" />
                 <ServiceControl Id="LicenseMonitoringSystemStartService" Start="install" Name="License Monitoring System" Wait="yes" />
                 <ServiceControl Id="LicenseMonitoringSystemStopService" Stop="both" Remove="uninstall" Name="License Monitoring System" Wait="yes" />
