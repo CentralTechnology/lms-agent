@@ -4,7 +4,7 @@
             - master
             - dev
 
-    image: Visual Studio 2015
+    image: Visual Studio 2017
 
     configuration: Release
 
@@ -45,7 +45,7 @@
         only:
             - /feature/.*/
 
-    image: Visual Studio 2015
+    image: Visual Studio 2017
 
     configuration: Release
 
@@ -70,7 +70,7 @@
         only:
             - /release/.*/
 
-    image: Visual Studio 2015
+    image: Visual Studio 2017
 
     configuration: Release
 
