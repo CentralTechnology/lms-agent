@@ -44,7 +44,7 @@
                 CollapseWhenFinished = false,
             }) : null)
             {
-                var deviceId = SettingManager.GetDeviceId();
+                var deviceId = SettingManager.Read().DeviceId;
                 childProgress?.Tick($"device id: {deviceId}");
 
                 var status = await _uploadClient.GetStatusByDeviceId(deviceId);

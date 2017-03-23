@@ -3,18 +3,18 @@
     using System;
     using System.Collections.Generic;
     using Abp.Dependency;
+    using Core.Administration;
     using Core.Common.Extensions;
-    using Core.Settings;
     using EasyConsole;
 
     class DevicePage : Page
     {
-        private readonly ISettingManager _settingManager;
+        private readonly ISettingsManager _settingManager;
 
         public DevicePage(Program program)
             : base("Device", program)
         {
-            _settingManager = IocManager.Instance.Resolve<ISettingManager>();
+            _settingManager = IocManager.Instance.Resolve<ISettingsManager>();
 
             Options = new List<Option>
             {
@@ -22,7 +22,9 @@
                 {
                     Guid deviceId = EasyConsoleExtensions.ReadGuid("Enter a new device id: ");
 
-                    _settingManager.SetDeviceId(deviceId);
+                    SettingsData settings = _settingManager.Read();
+                    settings.DeviceId = deviceId;
+                    _settingManager.Update(settings);
 
                     Output.WriteLine($"Device id is currently set to {deviceId}");
 
@@ -39,7 +41,7 @@
         {
             base.Display();
 
-            var deviceId = _settingManager.GetDeviceId();
+            Guid deviceId = _settingManager.Read().DeviceId;
 
             Output.WriteLine($"Device id is currently set to {deviceId}");
 

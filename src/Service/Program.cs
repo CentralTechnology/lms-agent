@@ -1,15 +1,17 @@
 ﻿namespace Service
 {
     using System;
-    using System.Diagnostics;
+    using System.Collections.Generic;
     using System.ServiceProcess;
-    using System.Threading;
     using Abp;
     using Abp.Dependency;
+    using Abp.Extensions;
     using Castle.Core.Logging;
     using Castle.Facilities.Logging;
     using Core;
-    using Core.Settings;
+    using Core.Administration;
+    using Core.Common.Enum;
+    using Core.Common.Extensions;
     using Menu;
 
     class Runner
@@ -21,12 +23,12 @@
         /// </summary>
         static void Main(string[] args)
         {
-            using (var bootstrapper = AbpBootstrapper.Create<LicenseMonitoringModule>())
+            using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<LicenseMonitoringModule>())
             {
                 bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog("NLog.config"));
                 bootstrapper.Initialize();
 
-                using (var logger = bootstrapper.IocManager.ResolveAsDisposable<ILogger>())
+                using (IDisposableDependencyObjectWrapper<ILogger> logger = bootstrapper.IocManager.ResolveAsDisposable<ILogger>())
                 {
                     if (Environment.UserInteractive)
                     {
@@ -35,9 +37,9 @@
 
                         try
                         {
-                            using (var settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
+                            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingsManager>())
                             {
-                                settingsManager.Object.LoadSettings();
+                                settingsManager.Object.Validate();
                             }
                             Console.Clear();
                             new ClientProgram().Run();
@@ -53,7 +55,7 @@
                     }
                     else
                     {
-                        using (var service = new MonitoringService())
+                        using (MonitoringService service = new MonitoringService())
                         {
                             try
                             {
@@ -87,12 +89,8 @@
             protected override void OnStart(string[] args)
             {
                 Logger.Info("Starting service");
-                using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingManager>())
-                {
-                    settingsManager.Object.LoadSettings();
-                }
 
-                System.Timers.Timer timer = new System.Timers.Timer {Interval = 90000 };
+                System.Timers.Timer timer = new System.Timers.Timer {Interval = 90000};
                 timer.Elapsed += OnTimer;
                 timer.Start();
             }
@@ -104,13 +102,15 @@
 
             public void OnTimer(object sender, System.Timers.ElapsedEventArgs args)
             {
-                using (var orchestrator = IocManager.Instance.ResolveAsDisposable<Orchestrator>())
+                using (IDisposableDependencyObjectWrapper<Orchestrator> orchestrator = IocManager.Instance.ResolveAsDisposable<Orchestrator>())
                 {
-                    using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingManager>())
-                    {                       
-                        var monitors = settingsManager.Object.GetMonitors();
+                    using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
+                    {
+                        settingsManager.Object.Validate();
 
-                        foreach (var monitor in monitors)
+                        List<Monitor> monitors = settingsManager.Object.Read().Monitors.GetFlags().As<List<Monitor>>();
+
+                        foreach (Monitor monitor in monitors)
                         {
                             Logger.Info($"running monitor: {monitor}");
                             orchestrator.Object.Run(monitor);

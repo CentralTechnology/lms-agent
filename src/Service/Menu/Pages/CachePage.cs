@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using Abp.Dependency;
-    using Core.Settings;
+    using Core.Administration;
     using EasyConsole;
 
     public class CachePage : Page
@@ -11,13 +11,13 @@
         public CachePage(Program program)
             : base("Cache", program)
         {
-            ISettingManager settingManager = IocManager.Instance.Resolve<ISettingManager>();
+            ISettingsManager settingManager = IocManager.Instance.Resolve<ISettingsManager>();
 
             Options = new List<Option>
             {
                 new Option("Clear", () =>
                 {
-                    settingManager.ClearCache();
+                    //settingManager.ClearCache();
 
                     Output.WriteLine(ConsoleColor.Green, "Cache successfully cleared!");
                     Input.ReadString("Press [Enter]");

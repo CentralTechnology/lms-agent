@@ -3,9 +3,12 @@
     using System;
     using System.Collections.Generic;
     using Abp.Dependency;
+    using Abp.Extensions;
     using Castle.Core.Logging;
     using Core;
-    using Core.Settings;
+    using Core.Administration;
+    using Core.Common.Enum;
+    using Core.Common.Extensions;
     using EasyConsole;
 
     class ActionsPage : Page
@@ -14,14 +17,14 @@
             : base("Actions", program)
         {
             Logger = IocManager.Instance.Resolve<ILogger>();
-            ISettingManager settingManager = IocManager.Instance.Resolve<ISettingManager>();
+            ISettingsManager settingManager = IocManager.Instance.Resolve<ISettingsManager>();
             Orchestrator orchestrator = IocManager.Instance.Resolve<Orchestrator>();
 
-            var monitors = settingManager.GetMonitors();
+            List<Monitor> monitors = settingManager.Read().Monitors.GetFlags().As<List<Monitor>>();
 
             Options = new List<Option>();
 
-            foreach (var monitor in monitors)
+            foreach (Monitor monitor in monitors)
             {
                 Options.Add(new Option(monitor.ToString(), () =>
                 {

@@ -4,7 +4,8 @@
     using System.Threading.Tasks;
     using Abp.Dependency;
     using Abp.Threading;
-    using Settings;
+    using Administration;
+    using Common.Enum;
     using ShellProgressBar;
     using Users;
 
@@ -12,7 +13,7 @@
     {
         public void Run(Monitor monitor)
         {
-            using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingManager>())
+            using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
             {
                 switch (monitor)
                 {

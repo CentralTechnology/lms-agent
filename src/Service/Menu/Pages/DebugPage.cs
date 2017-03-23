@@ -3,23 +3,23 @@
     using System;
     using System.Collections.Generic;
     using Abp.Dependency;
-    using Core.Settings;
+    using Core.Administration;
     using EasyConsole;
 
     class DebugPage : Page
     {
-        private readonly ISettingManager _settingManager;
+        private readonly ISettingsManager _settingManager;
 
         public DebugPage(Program program)
             : base("Debug", program)
         {
-            _settingManager = IocManager.Instance.Resolve<ISettingManager>();
+            _settingManager = IocManager.Instance.Resolve<ISettingsManager>();
 
             Options = new List<Option>
             {
                 new Option("Toggle", () =>
                 {
-                   // _settingManager.SetLogLevel(TODO, TODO);
+                    // _settingManager.SetLogLevel(TODO, TODO);
 
                     Input.ReadString("Press [Enter]");
                     Program.NavigateTo<DebugPage>();
@@ -34,9 +34,9 @@
         {
             base.Display();
 
-         //   var debug = _settingManager.GetLogLevel(TODO);
+            //   var debug = _settingManager.GetLogLevel(TODO);
 
-          //  Console.WriteLine(debug ? "Debugging is currently enabled." : "Debugging is currently disabled.");
+            //  Console.WriteLine(debug ? "Debugging is currently enabled." : "Debugging is currently disabled.");
 
             for (int i = 0; i < Options.Count; i++)
             {

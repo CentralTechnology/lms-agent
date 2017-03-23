@@ -1,18 +1,18 @@
 ﻿namespace Core
 {
     using Abp.Dependency;
+    using Administration;
     using Castle.Core.Logging;
-    using Settings;
 
     public abstract class LicenseMonitoringBase : ITransientDependency
     {
         protected LicenseMonitoringBase()
         {
             Logger = NullLogger.Instance;
-            SettingManager = IocManager.Instance.Resolve<ISettingManager>();
+            SettingManager = IocManager.Instance.Resolve<ISettingsManager>();
         }
 
         public ILogger Logger { get; set; }
-        public ISettingManager SettingManager { get; set; }
+        public ISettingsManager SettingManager { get; set; }
     }
 }

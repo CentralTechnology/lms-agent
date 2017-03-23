@@ -3,17 +3,17 @@
     using System;
     using System.Collections.Generic;
     using Abp.Dependency;
-    using Core.Settings;
+    using Core.Administration;
     using EasyConsole;
 
     class AccountPage : Page
     {
-        private readonly ISettingManager _settingManager;
+        private readonly ISettingsManager _settingManager;
 
         public AccountPage(Program program)
             : base("Account", program)
         {
-            _settingManager = IocManager.Instance.Resolve<ISettingManager>();
+            _settingManager = IocManager.Instance.Resolve<ISettingsManager>();
 
             Options = new List<Option>
             {
@@ -21,7 +21,9 @@
                 {
                     int acctId = Input.ReadInt("Enter a new account id: ", int.MinValue, int.MaxValue);
 
-                    _settingManager.SetAccountId(acctId);
+                    SettingsData settings = _settingManager.Read();
+                    settings.AccountId = acctId;
+                    _settingManager.Update(settings);
 
                     Output.WriteLine($"Account id has been updated to {acctId}");
 
@@ -38,7 +40,7 @@
         {
             base.Display();
 
-            var acctId = _settingManager.GetAccountId();
+            int acctId = _settingManager.Read().AccountId;
             Output.WriteLine($"Account id is currently set to {acctId}");
 
             for (int i = 0; i < Options.Count; i++)
