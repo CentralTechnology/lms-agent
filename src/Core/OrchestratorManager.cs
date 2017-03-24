@@ -3,13 +3,14 @@
     using System;
     using System.Threading.Tasks;
     using Abp.Dependency;
+    using Abp.Domain.Services;
     using Abp.Threading;
     using Administration;
     using Common.Enum;
     using ShellProgressBar;
     using Users;
 
-    public class Orchestrator : LicenseMonitoringBase, ISingletonDependency
+    public class OrchestratorManager : DomainService, IOrchestratorManager
     {
         public void Run(Monitor monitor)
         {
@@ -17,6 +18,9 @@
             {
                 switch (monitor)
                 {
+                    case Monitor.None:
+                        Logger.Info("No licenses are set to be monitored");
+                        break;
                     case Monitor.Users:
 
                         AsyncHelper.RunSync(UserMonitor);
@@ -28,7 +32,7 @@
             }
         }
 
-        private async Task UserMonitor()
+        public async Task UserMonitor()
         {
             int initialProgress = 1;
             using (var userOrchestrator = IocManager.Instance.ResolveAsDisposable<IUserOrchestrator>())

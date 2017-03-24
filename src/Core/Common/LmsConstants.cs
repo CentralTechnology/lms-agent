@@ -1,5 +1,7 @@
 ﻿namespace Core.Common
 {
+    using System;
+
     public class LmsConstants
     {
         /// <summary>
@@ -38,5 +40,10 @@
         /// 
         /// </summary>
         public const string DeviceIdKeyName = "DeviceID";
+
+        /// <summary>
+        ///  Doesn't actually provide any admin access. Its just used to hide menu items.
+        /// </summary>
+        public const string AdminAccess = "a490d701-b267-4d4a-87bc-fe0d0f4c9105";
     }
 }

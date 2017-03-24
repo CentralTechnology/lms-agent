@@ -42,7 +42,7 @@
                                 settingsManager.Object.Validate();
                             }
                             Console.Clear();
-                            new ClientProgram().Run();
+                            new ClientProgram(new Guid()).Run();
                         }
                         catch (Exception ex)
                         {
@@ -102,7 +102,7 @@
 
             public void OnTimer(object sender, System.Timers.ElapsedEventArgs args)
             {
-                using (IDisposableDependencyObjectWrapper<Orchestrator> orchestrator = IocManager.Instance.ResolveAsDisposable<Orchestrator>())
+                using (IDisposableDependencyObjectWrapper<OrchestratorManager> orchestrator = IocManager.Instance.ResolveAsDisposable<OrchestratorManager>())
                 {
                     using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
                     {

@@ -61,4 +61,8 @@ RD /S /Q "$(TargetDir)zh-Hant\"</PostBuildEvent>
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Menu\Pages\Admin\" />
+  </ItemGroup>
+
 </Project>

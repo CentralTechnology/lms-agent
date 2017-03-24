@@ -11,9 +11,9 @@ namespace Core.Common.Extensions
 
     public static class EnumExtensions
     {
-        public static IEnumerable<Enum> GetFlags(this Enum input)
+        public static IEnumerable<Monitor> GetFlags(this Monitor input)
         {
-            foreach (Enum item in Enum.GetValues(input.GetType()))
+            foreach (Monitor item in Enum.GetValues(input.GetType()))
             {
                 if (input.HasFlag(item))
                 {
