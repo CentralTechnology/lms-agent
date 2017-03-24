@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Service.Menu.Pages.Tools
+﻿namespace Service.Menu.Pages.Tools
 {
-    using Abp.Dependency;
     using Account;
-    using Core.Administration;
     using Debug;
     using Device;
     using EasyConsole;
 
-    public class ToolsPage: MenuPage
+    public class ToolsPage : MenuPage
     {
         public ToolsPage(Program program)
             : base("Tools", program)
         {
-                Menu.Add("Account", () => program.NavigateTo<AccountPage>());
+            Menu.Add("Account", () => program.NavigateTo<AccountPage>());
             Menu.Add("Device", () => program.NavigateTo<DevicePage>());
             Menu.Add("Debug", () => program.NavigateTo<DebugPage>());
         }

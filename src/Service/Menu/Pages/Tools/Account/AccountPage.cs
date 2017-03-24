@@ -11,7 +11,7 @@
         public AccountPage(Program program)
             : base("Account", program)
         {
-            using (var settingManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
+            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
             {
                 Menu.Add("Update", () =>
                 {
@@ -48,7 +48,7 @@
             }
             Console.WriteLine("---");
 
-            using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
+            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
             {
                 int acctId = settingsManager.Object.Read().AccountId;
 

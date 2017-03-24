@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Service.Menu.Pages.Tools.Device
+﻿namespace Service.Menu.Pages.Tools.Device
 {
+    using System;
+    using System.Linq;
     using Abp.Dependency;
-    using Account;
     using Core.Administration;
     using Core.Common.Extensions;
     using EasyConsole;
@@ -17,11 +12,11 @@ namespace Service.Menu.Pages.Tools.Device
         public DevicePage(Program program)
             : base("Device", program)
         {
-            using (var settingManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
+            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
             {
                 Menu.Add("Update", () =>
                 {
-                    var newDeviceId = EasyConsoleExtensions.ReadGuid("Enter a new device id: ");
+                    Guid newDeviceId = EasyConsoleExtensions.ReadGuid("Enter a new device id: ");
 
                     SettingsData settings = settingManager.Object.Read();
                     settingManager.Object.Update(new SettingsData
@@ -54,9 +49,9 @@ namespace Service.Menu.Pages.Tools.Device
             }
             Console.WriteLine("---");
 
-            using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
+            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
             {
-                var deviceId = settingsManager.Object.Read().DeviceId;
+                Guid deviceId = settingsManager.Object.Read().DeviceId;
 
                 Output.WriteLine($"Device Id: {deviceId}");
                 Output.WriteLine(Environment.NewLine);
