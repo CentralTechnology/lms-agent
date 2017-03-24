@@ -43,30 +43,27 @@
                         BackgroundColor = ConsoleColor.DarkGray,
                     }) : null)
                     {
-                        Parallel.ForEach(allUsers, user =>
+                        foreach (var user in allUsers)
                         {
-                            lock (_listOperationLock)
+                            users.Add(new LicenseUser
                             {
-                                users.Add(new LicenseUser
+                                DisplayName = user.DisplayName,
+                                Email = user.EmailAddress,
+                                Enabled = user.Enabled ?? false,
+                                FirstName = user.GivenName,
+                                Groups = user.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new LicenseGroup
                                 {
-                                    DisplayName = user.DisplayName,
-                                    Email = user.EmailAddress,
-                                    Enabled = user.Enabled ?? false,
-                                    FirstName = user.GivenName,
-                                    Groups = user.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new LicenseGroup
-                                    {
-                                        Id = Guid.Parse(g.Guid.ToString()),
-                                        Name = g.Name,
-                                        WhenCreated = DateTime.Parse(g.GetProperty("whenCreated"))
-                                    }).ToList(),
-                                    Id = Guid.Parse(user.Guid.ToString()),
-                                    Surname = user.Surname,
-                                    WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
-                                });
+                                    Id = Guid.Parse(g.Guid.ToString()),
+                                    Name = g.Name,
+                                    WhenCreated = DateTime.Parse(g.GetProperty("whenCreated"))
+                                }).ToList(),
+                                Id = Guid.Parse(user.Guid.ToString()),
+                                Surname = user.Surname,
+                                WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
+                            });
 
-                                pbar?.Tick($"found: {user.DisplayName}");
-                            }
-                        });
+                            pbar?.Tick($"found: {user.DisplayName}");
+                        }
                     }
                     childProgressBar?.Tick();
                     return users;
