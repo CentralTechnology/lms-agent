@@ -5,31 +5,36 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Abp.Domain.Services;
+    using Administration;
     using Common.Client;
     using Common.Extensions;
     using Models;
     using ShellProgressBar;
 
-    public class UserOrchestrator : LicenseMonitoringBase, IUserOrchestrator
+    public class UserOrchestrator : DomainService, IUserOrchestrator
     {
         private readonly ILicenseGroupClient _licenseGroupClient;
         private readonly ILicenseUserClient _licenseUserClient;
         private readonly ILicenseUserGroupClient _licenseUserGroupClient;
         private readonly ISupportUploadClient _uploadClient;
         private readonly IUserManager _userManager;
+        private readonly ISettingsManager _settingsManager;
 
         public UserOrchestrator(
             ISupportUploadClient uploadClient,
             ILicenseUserClient licenseUserClient,
             ILicenseGroupClient licenseGroupClient,
             ILicenseUserGroupClient licenseUserGroupClient,
-            IUserManager userManager)
+            IUserManager userManager,
+            ISettingsManager settingsManager)
         {
             _uploadClient = uploadClient;
             _licenseUserClient = licenseUserClient;
             _licenseGroupClient = licenseGroupClient;
             _licenseUserGroupClient = licenseUserGroupClient;
             _userManager = userManager;
+            _settingsManager = settingsManager;
         }
 
         public async Task<int> ProcessUpload(ProgressBar pbar)
@@ -44,7 +49,7 @@
                 CollapseWhenFinished = false,
             }) : null)
             {
-                var deviceId = SettingManager.Read().DeviceId;
+                var deviceId = _settingsManager.Read().DeviceId;
                 childProgress?.Tick($"device id: {deviceId}");
 
                 var status = await _uploadClient.GetStatusByDeviceId(deviceId);

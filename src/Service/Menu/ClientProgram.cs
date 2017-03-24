@@ -17,9 +17,7 @@
         {
             AddPage(new MainPage(this,adminAccess));
             AddPage(new AccountPage(this));
-            AddPage(new CachePage(this));
             AddPage(new DevicePage(this));
-            AddPage(new ActionsPage(this));
             AddPage(new DebugPage(this));
             AddPage(new ClientPage(this));
             AddPage(new ToolsPage(this));

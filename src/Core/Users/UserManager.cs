@@ -5,13 +5,14 @@
     using System.DirectoryServices.AccountManagement;
     using System.Linq;
     using System.Threading.Tasks;
+    using Abp.Domain.Services;
     using Castle.Core.Logging;
     using Common;
     using Common.Extensions;
     using Models;
     using ShellProgressBar;
 
-    public class UserManager : LicenseMonitoringBase, IUserManager
+    public class UserManager : DomainService, IUserManager
     {
         private readonly object _listOperationLock = new object();
 
