@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 namespace Core.Users
 {
     using Abp.Dependency;
+    using Abp.Domain.Services;
     using Models;
     using ShellProgressBar;
 
-    public interface IUserOrchestrator : ITransientDependency
+    public interface IUserOrchestrator : IDomainService
     {
         /// <summary>
         /// Updates the uploads status to be CalledIn.

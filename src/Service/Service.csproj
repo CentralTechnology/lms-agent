@@ -36,6 +36,7 @@ RD /S /Q "$(TargetDir)zh-Hant\"</PostBuildEvent>
     <PackageReference Include="Castle.Windsor-NLog" Version="3.4.0" />
     <PackageReference Include="NLog" Version="4.4.4" />
     <PackageReference Include="NLog.Schema" Version="4.4.4" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System" />
@@ -58,6 +59,10 @@ RD /S /Q "$(TargetDir)zh-Hant\"</PostBuildEvent>
     <Compile Update="LicensingMonitoringInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Menu\Pages\Admin\" />
   </ItemGroup>
 
 </Project>

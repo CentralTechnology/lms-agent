@@ -1,29 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Core.Common.Client
+﻿namespace Core.Common.Client
 {
-    using Abp;
+    using System.Threading.Tasks;
     using Abp.Dependency;
     using Abp.WebApi.Client;
-    using Settings;
 
     /// <summary>
-    ///  Class used for standard api calls
+    ///     Class used for standard api calls
     /// </summary>
     public class PortalClient : ITransientDependency
     {
-        public string BaseUrl { get; set; }
+        private readonly IAbpWebApiClient _abpWebApiClient;
 
         public PortalClient(IAbpWebApiClient abpWebApiClient)
         {
-            BaseUrl = Setting.BaseServiceUrl;
+            BaseUrl = LmsConstants.BaseServiceUrl;
             _abpWebApiClient = abpWebApiClient;
         }
 
-        private readonly IAbpWebApiClient _abpWebApiClient;
+        public string BaseUrl { get; set; }
 
         public async Task<string> GetTokenCookie()
         {
