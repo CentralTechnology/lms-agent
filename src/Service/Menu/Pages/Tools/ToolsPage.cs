@@ -1,7 +1,7 @@
 ﻿namespace Service.Menu.Pages.Tools
 {
     using Account;
-    using Debug;
+    using Service.Menu.Pages.Tools.Debug;
     using Device;
     using EasyConsole;
 
