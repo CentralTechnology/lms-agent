@@ -21,7 +21,7 @@
     public class SettingsManager : DomainService, ISettingsManager
     {
         /// <inheritdoc />
-        public void Update(SettingsData settings)
+        public SettingsData Update(SettingsData settings)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
@@ -30,18 +30,20 @@
 
             Logger.Debug("Updating config.");
             config.Sections.Add(LmsConstants.SettingsSection, settings);
-
+            
             Logger.Debug("Saving config.");
             config.Save();
 
             Logger.Debug("Config updated!");
+            return settings;
         }
 
         /// <inheritdoc />
         public SettingsData Read()
         {
             Logger.Debug("Reading config.");
-            SettingsData configData = ConfigurationManager.GetSection(LmsConstants.SettingsSection) as SettingsData;
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            SettingsData configData = (SettingsData)config.GetSection(LmsConstants.SettingsSection);
 
             return configData;
         }
@@ -101,28 +103,26 @@
             {
                 Logger.Warn("Centrastage device id is not set.");
                 var deviceId = GetDeviceId();
-                Update(new SettingsData
+
+                config = Update(new SettingsData
                 {
                     AccountId = config.AccountId,
                     DeviceId = deviceId,
                     Monitors = config.Monitors
                 });
-
-                config = Read();
             }
 
             if (config.AccountId == 0)
             {
                 Logger.Warn("Account id is not set.");
                 var accountId = GetAccountId(config.DeviceId);
-                Update(new SettingsData
+
+                config = Update(new SettingsData
                 {
                     AccountId = accountId,
                     DeviceId = config.DeviceId,
                     Monitors = config.Monitors
                 });
-
-                config = Read();
             }
 
             if (Monitor.None.HasFlag(config.Monitors))
@@ -130,14 +130,12 @@
                 Logger.Warn("No actions are set to be monitored.");
                 var defaultMonitor = Monitor.Users;
 
-                Update(new SettingsData
+                config = Update(new SettingsData
                 {
                     AccountId = config.AccountId,
                     DeviceId = config.DeviceId,
                     Monitors = defaultMonitor   
                 });
-
-                config = Read();
             }
 
             Logger.Debug("Configuration is valid.");

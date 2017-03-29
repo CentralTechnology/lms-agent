@@ -26,11 +26,18 @@
         public const string BaseServiceUrl = "https://portal.ct.co.uk";
 #endif
 
+#if DEBUG
         /// <summary>
-        ///     Default enpoint for OData
+        ///     Default endpoint for OData
+        /// </summary>
+        public const string DefaultServiceUrl = "http://localhost:61814/odata/v1";
+#else
+        /// <summary>
+        ///     Default endpoint for OData
         /// </summary>
         public const string DefaultServiceUrl = "https://portal.ct.co.uk/odata/v1";
 
+#endif
         /// <summary>
         /// 
         /// </summary>

@@ -12,10 +12,9 @@ namespace Core.Administration
     public interface ISettingsManager : IDomainService
     {
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="settings"></param>
-        void Update(SettingsData settings);
+        SettingsData Update(SettingsData settings);
 
         /// <summary>
         /// 

@@ -21,7 +21,7 @@
         public ILogger Logger { get; set; }
         public ISettingsManager SettingManager { get; set; }
 
-        public void FormatWebRequestException(WebRequestException ex)
+        public virtual void FormatWebRequestException(WebRequestException ex)
         {
             ODataResponseWrapper response = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
             if (response != null)
@@ -68,7 +68,8 @@
             {
                 using (IDisposableDependencyObjectWrapper<PortalClient> portalClient = IocManager.Instance.ResolveAsDisposable<PortalClient>())
                 {
-                    BaseUri = new Uri(LmsConstants.BaseServiceUrl);
+                    BaseUri = new Uri(LmsConstants.DefaultServiceUrl);
+                    var deviceId = settingManager.Object.Read().DeviceId;
                     BeforeRequest += br =>
                     {
                         br.ShouldIncludeErrorDetail();
@@ -79,7 +80,7 @@
                         // ReSharper disable once AccessToDisposedClosure
                         br.Headers.Add("XSRF-TOKEN", AsyncHelper.RunSync(() => portalClient.Object.GetTokenCookie()));
                         // ReSharper disable once AccessToDisposedClosure
-                        br.Headers.Add("Authorization", $"Device {settingManager.Object.Read().DeviceId.ToString()}");
+                        br.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Device", deviceId.ToString());
                     };
 
                     if (settingManager.Object.ReadLoggerLevel() == LoggerLevel.Debug)
