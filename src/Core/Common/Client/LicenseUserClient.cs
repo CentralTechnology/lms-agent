@@ -343,7 +343,7 @@
         {
             try
             {
-                return await _client.Unbound().Function("GetAccountId").Set(new {deviceId}).ExecuteAsScalarAsync<int>();
+                return await _client.For("Profiles").Function("GetAccountId").Set(new {deviceId}).ExecuteAsScalarAsync<int>();
             }
             catch (WebRequestException ex)
             {
