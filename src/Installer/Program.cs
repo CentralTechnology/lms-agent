@@ -47,7 +47,7 @@
             {
                 Actions = new Action[]
                 {
-                  new InstalledFileAction("LMS.exe","install", Return.check,When.After,Step.InstallFinalize,Condition.NOT_Installed),
+                  new InstalledFileAction("LMS.exe","install --autostart", Return.check,When.After,Step.InstallFinalize,Condition.NOT_Installed),
                   new InstalledFileAction("LMS.exe","uninstall",Return.check,When.Before,Step.InstallFinalize, Condition.Installed)
                 },
                 ControlPanelInfo = new ProductInfo

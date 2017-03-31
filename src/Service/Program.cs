@@ -24,7 +24,7 @@
                     serviceConfig.SetServiceName("LicenseMonitoringSystem");
                     serviceConfig.SetDisplayName("License Monitoring System");
                     serviceConfig.SetDescription("A tool used to monitor various licenses.");
-                    serviceConfig.StartAutomatically();
+                    serviceConfig.StartAutomaticallyDelayed();
 
                     serviceConfig.Service<LicenseMonitoringSystemService>(serviceInstance =>
                     {
