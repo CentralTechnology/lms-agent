@@ -1,11 +1,12 @@
-﻿namespace Service
+﻿namespace Core
 {
     using System.Reflection;
     using Abp.Modules;
-    using Core;
+    using Abp.WebApi;
+    using Common.Client;
 
-    [DependsOn(typeof(LicenseMonitoringCoreModule))]
-    public class LicenseMonitoringModule : AbpModule
+    [DependsOn(typeof(AbpWebApiModule))]
+    public class CoreModule : AbpModule
     {
         public override void Initialize()
         {

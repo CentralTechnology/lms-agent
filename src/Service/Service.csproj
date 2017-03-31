@@ -20,13 +20,18 @@ RD /S /Q "$(TargetDir)ko\"
 RD /S /Q "$(TargetDir)ru\"
 RD /S /Q "$(TargetDir)zh-Hans\"
 RD /S /Q "$(TargetDir)zh-Hant\"</PostBuildEvent>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\Debug\</OutputPath>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatSpecificWarningsAsErrors />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
 
@@ -34,8 +39,10 @@ RD /S /Q "$(TargetDir)zh-Hant\"</PostBuildEvent>
     <PackageReference Include="Abp" Version="1.5.1" />
     <PackageReference Include="Castle.Core-NLog" Version="3.3.3" />
     <PackageReference Include="Castle.Windsor-NLog" Version="3.4.0" />
-    <PackageReference Include="NLog" Version="4.4.4" />
-    <PackageReference Include="NLog.Schema" Version="4.4.4" />
+    <PackageReference Include="NLog" Version="4.4.5" />
+    <PackageReference Include="NLog.Schema" Version="4.4.5" />
+    <PackageReference Include="Topshelf" Version="4.0.3" />
+    <PackageReference Include="Topshelf.NLog" Version="4.0.3" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.ServiceProcess" />
@@ -45,6 +52,7 @@ RD /S /Q "$(TargetDir)zh-Hant\"</PostBuildEvent>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Abp.Topshelf\Abp.Topshelf.csproj" />
     <ProjectReference Include="..\Console\Console.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
@@ -53,12 +61,6 @@ RD /S /Q "$(TargetDir)zh-Hant\"</PostBuildEvent>
     <None Update="Nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="LicensingMonitoringInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

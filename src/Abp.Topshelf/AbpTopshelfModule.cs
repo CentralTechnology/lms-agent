@@ -1,12 +1,10 @@
-﻿namespace Core
+﻿namespace Abp.Topshelf
 {
     using System.Reflection;
-    using Abp.Modules;
-    using Abp.WebApi;
-    using Common.Client;
+    using Modules;
 
-    [DependsOn(typeof(AbpWebApiModule))]
-    public class LicenseMonitoringCoreModule : AbpModule
+    [DependsOn(typeof(AbpKernelModule))]
+    public class AbpTopshelfModule : AbpModule
     {
         public override void Initialize()
         {

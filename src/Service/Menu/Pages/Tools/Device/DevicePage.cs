@@ -54,7 +54,6 @@
                 Guid deviceId = settingsManager.Object.Read().DeviceId;
 
                 Output.WriteLine($"Device Id: {deviceId}");
-                Output.WriteLine(Environment.NewLine);
             }
 
             if (Program.NavigationEnabled && !Menu.Contains("Go back"))
