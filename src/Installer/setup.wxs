@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Bundle Name="License Monitoring System" UpgradeCode="dc9c2849-4c97-4f41-9174-d825ab335f9c" Version="1.0.0.0" >
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
+      <WixStandardBootstrapperApplication LicenseUrl="" xmlns="http://schemas.microsoft.com/wix/BalExtension" />
+    </BootstrapperApplicationRef>
+
+    <Chain>
+      <PackageGroupRef Id="NetFx452Web" />
+
+      <MsiPackage DisplayInternalUI="yes" SourceFile="LMS.msi">
+        <MsiProperty Name="WIXBUNDLEORIGINALSOURCE" Value="[WixBundleOriginalSource]" />
+      </MsiPackage>
+    </Chain>
+  </Bundle>
+</Wix>
+

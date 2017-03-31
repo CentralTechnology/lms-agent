@@ -53,7 +53,6 @@
                 int acctId = settingsManager.Object.Read().AccountId;
 
                 Output.WriteLine($"Account Id: {acctId}");
-                Output.WriteLine(Environment.NewLine);
             }
 
             if (Program.NavigationEnabled && !Menu.Contains("Go back"))

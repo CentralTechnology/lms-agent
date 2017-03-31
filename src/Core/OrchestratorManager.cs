@@ -14,8 +14,6 @@
     {
         public void Run(Monitor monitor)
         {
-            using (var settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
-            {
                 switch (monitor)
                 {
                     case Monitor.None:
@@ -29,7 +27,7 @@
                         Logger.Info("No licenses are set to be monitored");
                         break;
                 }
-            }
+            
         }
 
         public async Task UserMonitor()

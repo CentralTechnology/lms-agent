@@ -25,7 +25,7 @@
             - '**\*.Tests.dll'
 
     artifacts: 
-        - path: src\Bootstrapper\bin\$(configuration)\*.exe
+        - path: src\Installer\bin\$(configuration)\LMS.exe
           name: setup
 
     deploy:

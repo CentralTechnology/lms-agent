@@ -1,122 +1,41 @@
 ﻿namespace Service
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ServiceProcess;
     using Abp;
-    using Abp.Dependency;
-    using Abp.Extensions;
-    using Castle.Core.Logging;
+    using Abp.Topshelf;
     using Castle.Facilities.Logging;
-    using Core;
-    using Core.Administration;
-    using Core.Common.Enum;
-    using Core.Common.Extensions;
-    using Menu;
+    using Topshelf;
 
     class Runner
     {
-        public const string ServiceName = "LMS";
-
         /// <summary>
         ///     The main entry point for the application.
         /// </summary>
         static void Main(string[] args)
         {
-            using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<LicenseMonitoringModule>())
+            using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<ServiceModule>())
             {
-                bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog("NLog.config"));
+                bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog().WithConfig("NLog.config"));
                 bootstrapper.Initialize();
 
-                using (IDisposableDependencyObjectWrapper<ILogger> logger = bootstrapper.IocManager.ResolveAsDisposable<ILogger>())
+                HostFactory.Run(serviceConfig =>
                 {
-                    if (Environment.UserInteractive)
+                    serviceConfig.UseAbp(bootstrapper);
+                    serviceConfig.RunAsLocalSystem();
+                    serviceConfig.SetServiceName("LicenseMonitoringSystem");
+                    serviceConfig.SetDisplayName("License Monitoring System");
+                    serviceConfig.SetDescription("A tool used to monitor various licenses.");
+                    serviceConfig.StartAutomatically();
+
+                    serviceConfig.Service<LicenseMonitoringSystemService>(serviceInstance =>
                     {
-                        Console.WindowWidth = Console.LargestWindowWidth / 2;
-                        Console.WindowHeight = Console.LargestWindowHeight / 3;
+                        serviceInstance.ConstructUsingAbp();
 
-                        try
-                        {
-                            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingsManager>())
-                            {
-                                settingsManager.Object.Validate();
-                            }
-                            Console.Clear();
-                            new ClientProgram(new Guid()).Run();
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Object.Error(ex.Message);
-                            logger.Object.DebugFormat("Exception: ", ex);
+                        serviceInstance.WhenStarted(execute => execute.Start());
 
-                            Console.ReadKey(true);
-                            Environment.Exit(ex.HResult);
-                        }
-                    }
-                    else
-                    {
-                        using (MonitoringService service = new MonitoringService())
-                        {
-                            try
-                            {
-                                ServiceBase.Run(service);
-                            }
-                            catch (Exception ex)
-                            {
-                                logger.Object.DebugFormat("Exception: ", ex);
-                                service.Stop();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public class MonitoringService : ServiceBase, ITransientDependency
-        {
-            public MonitoringService()
-            {
-                Logger = NullLogger.Instance;
-
-                ServiceName = Runner.ServiceName;
-                CanStop = true;
-                CanPauseAndContinue = false;
-                AutoLog = true;
-            }
-
-            public ILogger Logger { get; set; }
-
-            protected override void OnStart(string[] args)
-            {
-                Logger.Info("Starting service");
-
-                System.Timers.Timer timer = new System.Timers.Timer {Interval = 90000};
-                timer.Elapsed += OnTimer;
-                timer.Start();
-            }
-
-            protected override void OnStop()
-            {
-                Logger.Info("Shutting down service");
-            }
-
-            public void OnTimer(object sender, System.Timers.ElapsedEventArgs args)
-            {
-                using (IDisposableDependencyObjectWrapper<OrchestratorManager> orchestrator = IocManager.Instance.ResolveAsDisposable<OrchestratorManager>())
-                {
-                    using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
-                    {
-                        settingsManager.Object.Validate();
-
-                        List<Monitor> monitors = settingsManager.Object.Read().Monitors.GetFlags().As<List<Monitor>>();
-
-                        foreach (Monitor monitor in monitors)
-                        {
-                            Logger.Info($"running monitor: {monitor}");
-                            orchestrator.Object.Run(monitor);
-                        }
-                    }
-                }
+                        serviceInstance.WhenStopped(execute => execute.Stop());
+                    });
+                                        
+                });
             }
         }
     }
