@@ -22,7 +22,7 @@
                     Id = "NetFx452FullExe",
                     Compressed = true,
                     PerMachine = true,
-                    Permanent = true,
+                    Permanent = false,
                     InstallCommand = "/q /norestart /ChainingPackage FullX64Bootstrapper",
                     DetectCondition = "WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED"
                 },
