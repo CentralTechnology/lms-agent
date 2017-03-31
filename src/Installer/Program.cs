@@ -47,7 +47,7 @@
                 Actions = new Action[]
                 {
                   new InstalledFileAction("LMS.exe","install", Return.check,When.After,Step.InstallFinalize,Condition.NOT_Installed),
-                   new ElevatedManagedAction(CustomActions.StartService, Return.check, When.After, Step.InstallFiles, Condition.NOT_Installed),
+                  new ManagedAction(CustomActions.StartService,Return.check,When.After,Step.InstallFinalize,Condition.NOT_Installed),
                   new InstalledFileAction("LMS.exe","uninstall",Return.check,When.Before,Step.InstallFinalize, Condition.Installed)
                 },
                 ControlPanelInfo = new ProductInfo
@@ -58,11 +58,6 @@
                     NoRepair = true
                 },
                 InstallScope = InstallScope.perMachine,
-                MajorUpgrade = new MajorUpgrade
-                {
-                  Schedule = UpgradeSchedule.afterInstallInitialize,
-                  DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
-                },
                 Name = "License Monitoring System",
                 OutDir = "bin/%Configuration%",
                 Platform = Platform.x64,
