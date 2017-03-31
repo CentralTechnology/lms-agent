@@ -67,7 +67,6 @@
 
             project.SetVersionFrom("LMS.exe");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
-            project.MajorUpgradeStrategy.RemoveExistingProductAfter = Step.InstallInitialize;
 
             return Compiler.BuildMsi(project);
         }
