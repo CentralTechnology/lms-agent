@@ -1,6 +1,7 @@
 ﻿namespace Installer
 {
     using System;
+    using Microsoft.Deployment.WindowsInstaller;
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;
@@ -32,9 +33,7 @@
                 OutFileName = "LMS",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
                 Version = new Version(version)          
-            };
-
-            
+            };            
 
             bootstrapper.Build();
         }
@@ -47,7 +46,8 @@
             {
                 Actions = new Action[]
                 {
-                  new InstalledFileAction("LMS.exe","install --autostart", Return.check,When.After,Step.InstallFinalize,Condition.NOT_Installed),
+                  new InstalledFileAction("LMS.exe","install", Return.check,When.After,Step.InstallFinalize,Condition.NOT_Installed),
+                   new ElevatedManagedAction(CustomActions.StartService, Return.check, When.After, Step.InstallFiles, Condition.NOT_Installed),
                   new InstalledFileAction("LMS.exe","uninstall",Return.check,When.Before,Step.InstallFinalize, Condition.Installed)
                 },
                 ControlPanelInfo = new ProductInfo
@@ -58,6 +58,11 @@
                     NoRepair = true
                 },
                 InstallScope = InstallScope.perMachine,
+                MajorUpgrade = new MajorUpgrade
+                {
+                  Schedule = UpgradeSchedule.afterInstallInitialize,
+                  DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
+                },
                 Name = "License Monitoring System",
                 OutDir = "bin/%Configuration%",
                 Platform = Platform.x64,
@@ -69,6 +74,18 @@
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
 
             return Compiler.BuildMsi(project);
+        }
+    }
+
+    public class CustomActions
+    {
+        [CustomAction]
+        public static ActionResult StartService(Session session)
+        {
+            return session.HandleErrors(() =>
+            {
+                Tasks.StartService("LicenseMonitoringSystem");
+            });
         }
     }
 }
