@@ -20,23 +20,6 @@
 
         public ILogger Logger { get; set; }
         public ISettingsManager SettingManager { get; set; }
-
-        public virtual void FormatWebRequestException(WebRequestException ex)
-        {
-            ODataResponseWrapper response = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
-            if (response != null)
-            {
-                Logger.Error($"Status: {response.Error.Code}");
-                Logger.Error($"Message: {response.Error.Message}");
-
-                if (response.Error.InnerError != null)
-                {
-                    Logger.Error($"Inner Message: {response.Error.InnerError.Message}");
-                }
-            }
-
-            Logger.Debug($"Exception: {ex}");
-        }
     }
 
     public class ODataResponseWrapper

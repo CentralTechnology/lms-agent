@@ -143,21 +143,28 @@
             {
                 // get the local users 
                 childProgress?.UpdateMessage("getting local users.");
-                var localUsers = _userManager.GetUsersAndGroups(childProgress);
+                Logger.Debug("getting local users.");
 
+                var localUsers = _userManager.GetUsersAndGroups(childProgress);
+               
                 // update progress bar
                 childProgress?.UpdateMessage($"local users found: {localUsers.Count}.");
+                Logger.Debug($"local users found: {localUsers.Count}.");
 
                 // get the api users
                 childProgress?.UpdateMessage("getting api users.");
-                var remoteUsers = await _uploadClient.GetUsers(uploadId);
+                Logger.Debug("getting api users");
 
+                var remoteUsers = await _uploadClient.GetUsers(uploadId);
+                
                 // update progress bar
                 childProgress?.Tick($"api users found: {remoteUsers.Count}.");
+                Logger.Debug($"api users found: {remoteUsers.Count}.");
 
                 // return a list of users that need adding to the api
                 var usersToCreate = remoteUsers.FilterCreate<LicenseUser, Guid>(localUsers);
                 childProgress?.UpdateMessage($"users that need adding: {usersToCreate.Count}.");
+                Logger.Debug($"users that need adding: {usersToCreate.Count}.");
 
                 if (usersToCreate.Count > 0)
                 {

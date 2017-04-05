@@ -4,10 +4,11 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Abp.Dependency;
+    using Abp.Domain.Services;
     using Models;
     using ShellProgressBar;
 
-    public interface ILicenseUserClient : ITransientDependency
+    public interface ILicenseUserClient : IDomainService
     {
         Task Add(List<LicenseUser> users, ChildProgressBar childProgressBar);
         Task Remove(List<LicenseUser> users, ChildProgressBar childProgressBar);
@@ -17,7 +18,7 @@
         Task<List<LicenseUser>> GetAll();
     }
 
-    public interface ILicenseGroupClient : ITransientDependency
+    public interface ILicenseGroupClient : IDomainService
     {
         Task Add(List<LicenseGroup> groups, ChildProgressBar childProgressBar);
         Task Remove(List<LicenseGroup> groups, ChildProgressBar childProgressBar);
@@ -27,13 +28,13 @@
         Task<List<LicenseGroup>> GetAll();
     }
 
-    public interface ILicenseUserGroupClient : ITransientDependency
+    public interface ILicenseUserGroupClient : IDomainService
     {
         Task Add(List<LicenseUser> users, LicenseGroup @group, ChildProgressBar childProgressBar);
         Task Remove(List<LicenseUser> users, LicenseGroup @group, ChildProgressBar childProgressBar);
     }
 
-    public interface ISupportUploadClient : ITransientDependency
+    public interface ISupportUploadClient : IDomainService
     {
         Task<SupportUpload> Add(SupportUpload upload);
         Task<SupportUpload> Get(int id);
@@ -47,7 +48,7 @@
         Task<List<LicenseUser>> GetUsers(int uploadId);
     }
 
-    public interface IProfileClient : ITransientDependency
+    public interface IProfileClient : IDomainService
     {
         Task<int> GetAccountByDeviceId(Guid deviceId);
     }
