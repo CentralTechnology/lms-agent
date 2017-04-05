@@ -7,6 +7,7 @@
     using Abp.Domain.Services;
     using Common;
     using Models;
+    using Newtonsoft.Json;
     using ShellProgressBar;
 
     public class UserManager : DomainService, IUserManager
@@ -44,24 +45,35 @@
                         {
                             foreach (UserPrincipal user in allUsers)
                             {
-                                users.Add(new LicenseUser
+                                try
                                 {
-                                    DisplayName = user.DisplayName,
-                                    Email = user.EmailAddress,
-                                    Enabled = user.Enabled ?? false,
-                                    FirstName = user.GivenName,
-                                    Groups = user.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new LicenseGroup
+                                    users.Add(new LicenseUser
                                     {
-                                        Id = Guid.Parse(g.Guid.ToString()),
-                                        Name = g.Name,
-                                        WhenCreated = DateTime.Parse(g.GetProperty("whenCreated"))
-                                    }).ToList(),
-                                    Id = Guid.Parse(user.Guid.ToString()),
-                                    Surname = user.Surname,
-                                    WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
-                                });
-
-                                pbar?.Tick($"found: {user.DisplayName}");
+                                        DisplayName = user.DisplayName,
+                                        Email = user.EmailAddress,
+                                        Enabled = user.Enabled ?? false,
+                                        FirstName = user.GivenName,
+                                        Groups = user.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new LicenseGroup
+                                        {
+                                            Id = Guid.Parse(g.Guid.ToString()),
+                                            Name = g.Name,
+                                            WhenCreated = DateTime.Parse(g.GetProperty("whenCreated"))
+                                        }).ToList(),
+                                        Id = Guid.Parse(user.Guid.ToString()),
+                                        Surname = user.Surname,
+                                        WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
+                                    });
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Error($"There was a problem processing {user.Name}. Skipping");
+                                    Logger.Debug($"Could not convert the following UserPrinciple into a User object {JsonConvert.SerializeObject(user, Formatting.Indented, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore})}");
+                                    Logger.Debug(ex.ToString());
+                                }
+                                finally
+                                {
+                                    pbar?.Tick($"found: {user.DisplayName}");
+                                }                              
                             }
                         }
                         childProgressBar?.Tick();
