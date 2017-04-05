@@ -15,6 +15,7 @@
     using Common.Client;
     using Common.Enum;
     using Common.Extensions;
+    using Newtonsoft.Json;
     using NLog;
     using NLog.Config;
 
@@ -35,6 +36,16 @@
             config.Save();
 
             Logger.Debug("Config updated!");
+
+            // added because SettingsData class cannot be serialized easily as it inherits from the Configuration
+            var settingViewModel = new
+            {
+                AccountId = settings.AccountId,
+                DeviceId = settings.DeviceId,
+                Monitors = settings.Monitors
+            };
+
+            Logger.Debug($"New config: {settingViewModel.Dump()}");
             return settings;
         }
 
@@ -188,11 +199,15 @@
 
             foreach (LoggingRule rule in rules.Where(r => validator.IsMatch(r.Targets[0].Name)))
             {
+                rule.DisableLoggingForLevel(LogLevel.Debug);
+
                 if (!rule.IsLoggingEnabledForLevel(logLevel))
                 {
                     rule.EnableLoggingForLevel(logLevel);
                 }
             }
+
+            LogManager.ReconfigExistingLoggers();
         }
     }
 }

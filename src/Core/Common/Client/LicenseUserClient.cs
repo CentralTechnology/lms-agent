@@ -46,7 +46,6 @@
                             user.WhenCreated
                         }).InsertEntryAsync();
 
-                        pbar?.Tick($"adding: {user.DisplayName}");
                     }
                     catch (WebRequestException ex)
                     {
@@ -57,6 +56,10 @@
                         Logger.Error($"Failed to add: {user.DisplayName}");
                         Logger.Error("Execution will continue");
                         Logger.DebugFormat("Exception: ", ex);
+                    }
+                    finally
+                    {
+                        pbar?.Tick($"adding: {user.DisplayName}");
                     }
                 }
             }
@@ -151,7 +154,9 @@
             try
             {
                 var users = await _client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
-                return users.ToList();
+                var licenseUsers = users.ToList();
+                Logger.Debug($"{licenseUsers.Count} users returned from the api.");
+                return licenseUsers;
             }
             catch (WebRequestException ex)
             {

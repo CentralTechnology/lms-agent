@@ -53,6 +53,7 @@
                 childProgress?.Tick($"device id: {deviceId}");
 
                 var status = await _uploadClient.GetStatusByDeviceId(deviceId);
+                Logger.Debug($"Current status: {status}");
 
                 switch (status)
                 {
@@ -66,22 +67,35 @@
                         childProgress?.UpdateMaxTicks(initialProgress);
                         childProgress?.Tick();
                         pbar?.UpdateMessage("this device is not called in.");
-                        break;
+
+
+                        var id = await _uploadClient.GetUploadIdByDeviceId(deviceId);
+                        childProgress?.Tick($"upload id: {id}");
+                        pbar?.Tick();
+                        return id;
 
                     case CallInStatus.NeverCalledIn:
                         initialProgress++;
                         childProgress?.UpdateMaxTicks(initialProgress);
                         childProgress?.Tick();
                         pbar?.UpdateMessage("this device has never called in.");
-                        Thread.Sleep(1000);
+                        Logger.Debug($"this device has never called in, therefore a new upload must be created");
+
+                        await Task.Delay(1000);
                         pbar?.UpdateMessage("attemting to call in...");
+                        Logger.Debug($"attempting to get a new upload id");
 
                         var uploadId = await _uploadClient.GetNewUploadId();
 
+                        Logger.Debug($"upload id return was {uploadId}");
+
                         if (uploadId == 0)
                         {
-                            break;
+                            Logger.Debug("upload id was 0 therefore the call in failed.");
+                            return 0;
                         }
+
+                        Logger.Debug("attempting to create a new upload");
 
                         var upload = await _uploadClient.Add(new SupportUpload
                         {
@@ -95,20 +109,23 @@
 
                         if (upload == null)
                         {
-                            pbar?.Tick("this deviced failed to call in.");
-                            break;
+                            pbar?.Tick("call in was unsuccessful");
+                            Logger.Debug("call in was unsuccessful");
+                            return 0;
                         }
 
-                        childProgress?.Tick($"this device called in ok: {upload.Id}");
+                        childProgress?.Tick($"call in was successfull: {upload.Id}");
+                        Logger.Debug("the device has successfully called in with the portal.");
+                        Logger.Debug($"the upload id returned was {upload.Id} ");
+
                         pbar?.Tick();
                         return upload.Id;
                 }
-
-                var id = await _uploadClient.GetUploadIdByDeviceId(deviceId);
-                childProgress?.Tick($"upload id: {id}");
-                pbar?.Tick();
-                return id;
             }
+
+            // should never hit this point as there are return statements in the switch statement
+            // this could possibly be refactored??
+            return 0;
         }
 
         public async Task<List<LicenseUser>> ProcessUsers(int uploadId, ProgressBar pbar)
