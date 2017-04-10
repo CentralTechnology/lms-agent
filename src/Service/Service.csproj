@@ -11,15 +11,7 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
-    <PostBuildEvent>RD /S /Q "$(TargetDir)de\"
-RD /S /Q "$(TargetDir)es\"
-RD /S /Q "$(TargetDir)fr\"
-RD /S /Q "$(TargetDir)it\"
-RD /S /Q "$(TargetDir)ja\"
-RD /S /Q "$(TargetDir)ko\"
-RD /S /Q "$(TargetDir)ru\"
-RD /S /Q "$(TargetDir)zh-Hans\"
-RD /S /Q "$(TargetDir)zh-Hant\"</PostBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 

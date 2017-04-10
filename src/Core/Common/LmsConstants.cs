@@ -10,7 +10,7 @@
 
         /// <summary>
         /// </summary>
-        public const string LoggerTarget = "file";
+        public const string LoggerTarget = "colouredConsole";
 
 #if DEBUG
 

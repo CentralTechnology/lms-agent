@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Abp.Domain.Services;
+    using Abp.Timing;
     using Administration;
     using Common.Client;
     using Common.Extensions;
@@ -37,77 +38,68 @@
             _settingsManager = settingsManager;
         }
 
-        public async Task<int> ProcessUpload(ProgressBar pbar)
+        public async Task<SupportUpload> ProcessUpload(ProgressBar pbar)
         {
             int initialProgress = 2;
-            using (var childProgress = Environment.UserInteractive && pbar != null ? pbar.Spawn(initialProgress, "obtaining device information", new ProgressBarOptions
-            {
-                ForeGroundColor = ConsoleColor.Cyan,
-                ForeGroundColorDone = ConsoleColor.DarkGreen,
-                ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray,
-                CollapseWhenFinished = false,
-            }) : null)
+            using (var childProgress = Environment.UserInteractive && pbar != null
+                ? pbar.Spawn(initialProgress, "obtaining device information", new ProgressBarOptions
+                {
+                    ForeGroundColor = ConsoleColor.Cyan,
+                    ForeGroundColorDone = ConsoleColor.DarkGreen,
+                    ProgressCharacter = '─',
+                    BackgroundColor = ConsoleColor.DarkGray,
+                    CollapseWhenFinished = false,
+                })
+                : null)
             {
                 var deviceId = _settingsManager.Read().DeviceId;
                 childProgress?.Tick($"device id: {deviceId}");
 
-                var status = await _uploadClient.GetStatusByDeviceId(deviceId);
+                var uploadId = await _uploadClient.GetUploadIdByDeviceId(deviceId);               
 
-                switch (status)
+                SupportUpload upload;
+                if (uploadId != 0)
                 {
-                    case CallInStatus.CalledIn:
-                        childProgress?.Tick();
-                        pbar?.Tick("this device is called in. nothing to process.");
-                        return 0;
+                    upload = await _uploadClient.Get(uploadId);
+                    childProgress?.Tick();
 
-                    case CallInStatus.NotCalledIn:
-                        initialProgress++;
-                        childProgress?.UpdateMaxTicks(initialProgress);
-                        childProgress?.Tick();
-                        pbar?.UpdateMessage("this device is not called in.");
-                        break;
+                    pbar?.Tick($"Status: {upload.Status.ToString()}\t Last Check In: {upload.CheckInTime}");
+                    Logger.Info($"Status: {upload.Status.ToString()}\t Last Check In: {upload.CheckInTime}");
+                    Logger.Info($"Upload Id: {uploadId}");
 
-                    case CallInStatus.NeverCalledIn:
-                        initialProgress++;
-                        childProgress?.UpdateMaxTicks(initialProgress);
-                        childProgress?.Tick();
-                        pbar?.UpdateMessage("this device has never called in.");
-                        Thread.Sleep(1000);
-                        pbar?.UpdateMessage("attemting to call in...");
-
-                        var uploadId = await _uploadClient.GetNewUploadId();
-
-                        if (uploadId == 0)
-                        {
-                            break;
-                        }
-
-                        var upload = await _uploadClient.Add(new SupportUpload
-                        {
-                            CheckInTime = DateTime.Now,
-                            DeviceId = deviceId,
-                            Hostname = Environment.MachineName,
-                            IsActive = true,
-                            Status = CallInStatus.CalledIn,
-                            UploadId = uploadId
-                        });
-
-                        if (upload == null)
-                        {
-                            pbar?.Tick("this deviced failed to call in.");
-                            break;
-                        }
-
-                        childProgress?.Tick($"this device called in ok: {upload.Id}");
-                        pbar?.Tick();
-                        return upload.Id;
+                    return upload;
                 }
 
-                var id = await _uploadClient.GetUploadIdByDeviceId(deviceId);
-                childProgress?.Tick($"upload id: {id}");
-                pbar?.Tick();
-                return id;
+                initialProgress++;
+                childProgress?.UpdateMaxTicks(initialProgress);
+
+                pbar?.UpdateMessage("This is the first time this device has called in.");
+                Logger.Info("This is the first time this device has called in.");
+                Logger.Debug("Creating a new upload");
+
+                upload = await _uploadClient.Add(new SupportUpload
+                {
+                    CheckInTime = Clock.Now,
+                    DeviceId = deviceId,
+                    Hostname = Environment.MachineName,
+                    IsActive = true,
+                    Status = CallInStatus.CalledIn,
+                    UploadId = uploadId
+                });
+
+                childProgress?.Tick();
+
+                if (upload == null)
+                {
+                    pbar?.Tick("There was an error creating the new upload.");
+                    Logger.Error("There was an error creating the new upload.");
+                    return null;
+                }
+
+                pbar?.Tick("Successfully created a new upload.");
+                Logger.Info("Successfully created a new upload.");
+                Logger.Info($"Upload Id: {uploadId}");
+                return upload;       
             }
         }
 
@@ -126,21 +118,28 @@
             {
                 // get the local users 
                 childProgress?.UpdateMessage("getting local users.");
-                var localUsers = _userManager.GetUsersAndGroups(childProgress);
+                Logger.Debug("getting local users.");
 
+                var localUsers = _userManager.GetUsersAndGroups(childProgress);
+               
                 // update progress bar
                 childProgress?.UpdateMessage($"local users found: {localUsers.Count}.");
+                Logger.Debug($"local users found: {localUsers.Count}.");
 
                 // get the api users
                 childProgress?.UpdateMessage("getting api users.");
-                var remoteUsers = await _uploadClient.GetUsers(uploadId);
+                Logger.Debug("getting api users");
 
+                var remoteUsers = await _uploadClient.GetUsers(uploadId);
+                
                 // update progress bar
                 childProgress?.Tick($"api users found: {remoteUsers.Count}.");
+                Logger.Debug($"api users found: {remoteUsers.Count}.");
 
                 // return a list of users that need adding to the api
                 var usersToCreate = remoteUsers.FilterCreate<LicenseUser, Guid>(localUsers);
                 childProgress?.UpdateMessage($"users that need adding: {usersToCreate.Count}.");
+                Logger.Debug($"users that need adding: {usersToCreate.Count}.");
 
                 if (usersToCreate.Count > 0)
                 {

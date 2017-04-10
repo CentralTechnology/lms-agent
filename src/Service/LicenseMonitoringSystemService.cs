@@ -1,7 +1,6 @@
 ﻿namespace Service
 {
     using System;
-    using System.Collections.Generic;
     using System.Timers;
     using Abp.Dependency;
     using Castle.Core.Logging;
@@ -9,14 +8,12 @@
     using Core.Administration;
     using Core.Common.Enum;
     using Menu;
-    using Core.Common.Extensions;
-    using Abp.Extensions;
 
-    public class LicenseMonitoringSystemService : ITransientDependency
+    public class LicenseMonitoringSystemService : ISingletonDependency
     {
+        private static Timer _timer;
         private readonly IOrchestratorManager _orchestratorManager;
         private readonly ISettingsManager _settingsManager;
-        private readonly Timer _timer;
 
         public LicenseMonitoringSystemService(ISettingsManager settingManager, IOrchestratorManager orchestratorManager)
         {
@@ -25,34 +22,35 @@
 
             Logger = NullLogger.Instance;
 
-            _timer = new Timer(TimeSpan.FromMinutes(10).TotalMilliseconds) {AutoReset = true};
-            _timer.Elapsed += TimerElapsed;
+            _timer = new Timer();
+            _timer.Elapsed += UserMonitor;
+            _timer.Interval = TimeSpan.FromMinutes(5).TotalMilliseconds;
         }
 
         public ILogger Logger { get; set; }
 
         public bool Start()
         {
-            try
-            {
-                _settingsManager.Validate();
+            Logger.Info("Service started");
 
-                if (Environment.UserInteractive)
+            if (Environment.UserInteractive)
+            {
+                try
                 {
                     Console.WindowWidth = Console.LargestWindowWidth / 2;
                     Console.WindowHeight = Console.LargestWindowHeight / 3;
                     Console.Clear();
                     new ClientProgram(new Guid()).Run();
                 }
-                else
+                catch (Exception ex)
                 {
-                    _timer.Start();
+                    Logger.Error(ex.Message);
+                    Logger.Debug(ex.ToString);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Logger.Error(ex.Message);
-                Logger.Debug(ex.ToString);
+                _timer.Start();
             }
 
             return true;
@@ -62,20 +60,32 @@
         {
             _timer.Stop();
             _timer.Dispose();
+            Logger.Info("Service stopped");
+
             return true;
         }
 
-        private void TimerElapsed(object sender, ElapsedEventArgs args)
+        private void UserMonitor(object sender, ElapsedEventArgs args)
         {
-           var monitors = _settingsManager.Read().Monitors.GetFlags().As<List<Monitor>>();
-
-            foreach (Monitor monitor in monitors)
+            try
             {
-                Logger.Info($"Started action: {monitor} \t {DateTime.UtcNow}");
+                var monitors = _settingsManager.Read().Monitors;
 
-                _orchestratorManager.Run(monitor);
+                if (!Monitor.Users.HasFlag(monitors))
+                {
+                    return;
+                }
 
-                Logger.Info($"Completed action: {monitor} \t {DateTime.UtcNow}");
+                Logger.Info("Users monitor begin.");
+
+                _orchestratorManager.Run(Monitor.Users);
+
+                Logger.Info("Users monitor end.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+                Logger.Debug(ex.ToString());
             }
         }
     }

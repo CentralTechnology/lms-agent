@@ -9,21 +9,22 @@
 
     public class DebugPage : MenuPage
     {
+        private readonly ISettingsManager _settingManager;
+
         public DebugPage(Program program)
             : base("Debug", program)
         {
-            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
-            {
-                bool debug = settingsManager.Object.ReadLoggerLevel() == LoggerLevel.Debug;
-                Menu.Add("Toggle", () =>
-                {
-                    settingsManager.Object.UpdateLoggerLevel(!debug);
+            _settingManager = IocManager.Instance.Resolve<ISettingsManager>();
 
-                    Output.WriteLine(Environment.NewLine);
-                    Input.ReadString("Press [Enter]");
-                    Program.NavigateTo<DebugPage>();
-                });
-            }
+            Menu.Add("Toggle", () =>
+            {
+                bool debug = _settingManager.ReadLoggerLevel() == LoggerLevel.Debug;
+                _settingManager.UpdateLoggerLevel(!debug);
+
+                Output.WriteLine(Environment.NewLine);
+                Input.ReadString("Press [Enter]");
+                Program.NavigateTo<DebugPage>();
+            });
         }
 
         public override void Display()
@@ -42,13 +43,10 @@
             }
             Console.WriteLine("---");
 
-            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
-            {
-                LoggerLevel debug = settingsManager.Object.ReadLoggerLevel();
+            LoggerLevel debug = _settingManager.ReadLoggerLevel();
 
-                Output.WriteLine(debug == LoggerLevel.Debug ? "Status: enabled" : "Status: disabled");
-                Output.WriteLine(Environment.NewLine);
-            }
+            Output.WriteLine(debug == LoggerLevel.Debug ? "Status: enabled" : "Status: disabled");
+            Output.WriteLine(Environment.NewLine);
 
             if (Program.NavigationEnabled && !Menu.Contains("Go back"))
                 Menu.Add("Go back", () => { Program.NavigateBack(); });
