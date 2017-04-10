@@ -4,11 +4,15 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Abp;
+    using Abp.Domain.Services;
+    using Abp.Timing;
+    using Extensions;
     using Models;
     using ShellProgressBar;
     using Simple.OData.Client;
 
-    public class LicenseUserClient : PortalLicenseClient, ILicenseUserClient
+    public class LicenseUserClient : DomainService, ILicenseUserClient
     {
         private readonly PortalLicenseClient _client;
 
@@ -21,19 +25,21 @@
         {
             childProgressBar?.UpdateMessage("adding users");
 
-            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "adding users", new ProgressBarOptions
+            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "adding users", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray,
+                BackgroundColor = ConsoleColor.DarkGray
             }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
-                    var user = users[index];
+                    LicenseUser user = users[index];
 
                     try
                     {
+                        Logger.Debug($"adding: {user.Dump()}");
+
                         await _client.For<LicenseUser>().Set(new
                         {
                             user.DisplayName,
@@ -45,18 +51,20 @@
                             user.Surname,
                             user.WhenCreated
                         }).InsertEntryAsync();
-
-                        pbar?.Tick($"adding: {user.DisplayName}");
                     }
                     catch (WebRequestException ex)
                     {
-                        FormatWebRequestException(ex);
+                        ex.FormatWebRequestException();
                     }
                     catch (Exception ex)
                     {
                         Logger.Error($"Failed to add: {user.DisplayName}");
                         Logger.Error("Execution will continue");
                         Logger.DebugFormat("Exception: ", ex);
+                    }
+                    finally
+                    {
+                        pbar?.Tick($"adding: {user.DisplayName}");
                     }
                 }
             }
@@ -68,16 +76,16 @@
         {
             childProgressBar?.UpdateMessage("removing users");
 
-            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "removing users", new ProgressBarOptions
+            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "removing users", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray,
+                BackgroundColor = ConsoleColor.DarkGray
             }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
-                    var user = users[index];
+                    LicenseUser user = users[index];
 
                     try
                     {
@@ -87,7 +95,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        FormatWebRequestException(ex);
+                        ex.FormatWebRequestException();
                     }
                     catch (Exception ex)
                     {
@@ -105,16 +113,16 @@
         {
             childProgressBar?.UpdateMessage("updating users");
 
-            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "updating users", new ProgressBarOptions
+            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "updating users", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray,
+                BackgroundColor = ConsoleColor.DarkGray
             }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
-                    var user = users[index];
+                    LicenseUser user = users[index];
 
                     try
                     {
@@ -132,7 +140,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        FormatWebRequestException(ex);
+                        ex.FormatWebRequestException();
                     }
                     catch (Exception ex)
                     {
@@ -150,12 +158,14 @@
         {
             try
             {
-                var users = await _client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
-                return users.ToList();
+                IEnumerable<LicenseUser> users = await _client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
+                List<LicenseUser> licenseUsers = users.ToList();
+                Logger.Debug($"{licenseUsers.Count} users returned from the api.");
+                return licenseUsers;
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
+                ex.FormatWebRequestException();
                 return null;
             }
             catch (Exception ex)
@@ -167,7 +177,7 @@
         }
     }
 
-    public class SupportUploadClient : PortalLicenseClient, ISupportUploadClient
+    public class SupportUploadClient : DomainService, ISupportUploadClient
     {
         private readonly PortalLicenseClient _client;
 
@@ -184,7 +194,7 @@
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
+                ex.FormatWebRequestException();
                 return CallInStatus.NotCalledIn;
             }
             catch (Exception ex)
@@ -206,28 +216,26 @@
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
-                return 0;
+                ex.FormatWebRequestException();
+                throw;
             }
             catch (Exception ex)
             {
                 Logger.Error($"Failed to get the upload id for device: {deviceId}");
                 Logger.DebugFormat("Exception: ", ex);
-
-                // default return from the api
-                return 0;
+                throw;
             }
         }
 
         public async Task Update(int id)
         {
-            var uploadId = await GetNewUploadId();
+            int uploadId = await GetNewUploadId();
 
             try
             {
                 await _client.For<SupportUpload>().Key(id).Set(new
                 {
-                    CheckInTime = DateTime.Now,
+                    CheckInTime = Clock.Now,
                     Hostname = Environment.MachineName,
                     Status = CallInStatus.CalledIn,
                     UploadId = uploadId
@@ -235,7 +243,7 @@
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
+                ex.FormatWebRequestException();
             }
             catch (Exception ex)
             {
@@ -252,7 +260,7 @@
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
+                ex.FormatWebRequestException();
                 return null;
             }
             catch (Exception ex)
@@ -267,12 +275,12 @@
         {
             try
             {
-                var upload = await _client.For<SupportUpload>().Key(id).Expand(s => s.Users).FindEntryAsync();
+                SupportUpload upload = await _client.For<SupportUpload>().Key(id).Expand(s => s.Users).FindEntryAsync();
                 return upload;
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
+                ex.FormatWebRequestException();
                 return null;
             }
             catch (Exception ex)
@@ -287,7 +295,7 @@
         {
             try
             {
-                var upload = await _client.For<SupportUpload>()
+                SupportUpload upload = await _client.For<SupportUpload>()
                     .Key(uploadId)
                     .Expand(x => x.Users)
                     .FindEntryAsync();
@@ -297,7 +305,7 @@
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
+                ex.FormatWebRequestException();
                 return null;
             }
             catch (Exception ex)
@@ -316,7 +324,7 @@
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
+                ex.FormatWebRequestException();
                 return 0;
             }
             catch (Exception ex)
@@ -330,7 +338,7 @@
         }
     }
 
-    public class ProfileClient : PortalLicenseClient, IProfileClient
+    public class ProfileClient : DomainService, IProfileClient
     {
         private readonly PortalLicenseClient _client;
 
@@ -347,7 +355,7 @@
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
+                ex.FormatWebRequestException();
                 throw;
             }
             catch (Exception ex)
@@ -360,7 +368,7 @@
         }
     }
 
-    public class LicenseGroupClient : PortalLicenseClient, ILicenseGroupClient
+    public class LicenseGroupClient : DomainService, ILicenseGroupClient
     {
         private readonly PortalLicenseClient _client;
 
@@ -373,16 +381,16 @@
         {
             childProgressBar?.UpdateMessage("adding groups");
 
-            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "adding groups", new ProgressBarOptions
+            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "adding groups", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray,
+                BackgroundColor = ConsoleColor.DarkGray
             }) : null)
             {
                 for (int index = 0; index < groups.Count; index++)
                 {
-                    var group = groups[index];
+                    LicenseGroup group = groups[index];
 
                     try
                     {
@@ -397,7 +405,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        FormatWebRequestException(ex);
+                        ex.FormatWebRequestException();
                     }
                     catch (Exception ex)
                     {
@@ -415,16 +423,16 @@
         {
             childProgressBar?.UpdateMessage("removing groups");
 
-            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "removing groups", new ProgressBarOptions
+            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "removing groups", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray,
+                BackgroundColor = ConsoleColor.DarkGray
             }) : null)
             {
                 for (int index = 0; index < groups.Count; index++)
                 {
-                    var group = groups[index];
+                    LicenseGroup group = groups[index];
 
                     try
                     {
@@ -434,7 +442,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        FormatWebRequestException(ex);
+                        ex.FormatWebRequestException();
                     }
                     catch (Exception ex)
                     {
@@ -452,16 +460,16 @@
         {
             childProgressBar?.UpdateMessage("updating groups");
 
-            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "updating groups", new ProgressBarOptions
+            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "updating groups", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray,
+                BackgroundColor = ConsoleColor.DarkGray
             }) : null)
             {
                 for (int index = 0; index < groups.Count; index++)
                 {
-                    var group = groups[index];
+                    LicenseGroup group = groups[index];
 
                     try
                     {
@@ -475,7 +483,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        FormatWebRequestException(ex);
+                        ex.FormatWebRequestException();
                     }
                     catch (Exception ex)
                     {
@@ -493,12 +501,12 @@
         {
             try
             {
-                var groups = await _client.For<LicenseGroup>().FindEntriesAsync();
+                IEnumerable<LicenseGroup> groups = await _client.For<LicenseGroup>().FindEntriesAsync();
                 return groups.ToList();
             }
             catch (WebRequestException ex)
             {
-                FormatWebRequestException(ex);
+                ex.FormatWebRequestException();
                 return null;
             }
             catch (Exception ex)
@@ -510,7 +518,7 @@
         }
     }
 
-    public class LicenseUserGroupClient : PortalLicenseClient, ILicenseUserGroupClient
+    public class LicenseUserGroupClient : DomainService, ILicenseUserGroupClient
     {
         private readonly PortalLicenseClient _client;
 
@@ -523,16 +531,16 @@
         {
             childProgressBar?.UpdateMessage("updating group membership");
 
-            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, $"adding users to group: {group.Name}", new ProgressBarOptions
+            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, $"adding users to group: {group.Name}", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray,
+                BackgroundColor = ConsoleColor.DarkGray
             }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
-                    var user = users[index];
+                    LicenseUser user = users[index];
 
                     try
                     {
@@ -542,7 +550,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        FormatWebRequestException(ex);
+                        ex.FormatWebRequestException();
                     }
                     catch (Exception ex)
                     {
@@ -558,16 +566,16 @@
         {
             childProgressBar?.UpdateMessage("updating group membership");
 
-            using (var pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, $"removing users from group: {group.Name}", new ProgressBarOptions
+            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, $"removing users from group: {group.Name}", new ProgressBarOptions
             {
                 ForeGroundColor = ConsoleColor.Yellow,
                 ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray,
+                BackgroundColor = ConsoleColor.DarkGray
             }) : null)
             {
                 for (int index = 0; index < users.Count; index++)
                 {
-                    var user = users[index];
+                    LicenseUser user = users[index];
 
                     try
                     {
@@ -577,7 +585,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        FormatWebRequestException(ex);
+                        ex.FormatWebRequestException();
                     }
                     catch (Exception ex)
                     {

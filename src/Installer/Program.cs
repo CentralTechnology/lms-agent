@@ -1,6 +1,7 @@
 ﻿namespace Installer
 {
     using System;
+    using System.Collections.Generic;
     using Microsoft.Deployment.WindowsInstaller;
     using WixSharp;
     using WixSharp.Bootstrapper;
@@ -15,25 +16,28 @@
 
             var version = Environment.GetEnvironmentVariable("BuildVersion") ?? "1.0.0.0";
 
-            Bundle bootstrapper = new Bundle("License Monitoring System",
-                new PackageGroupRef("NetFx452Redist"),
-                new ExePackage("../Resources/DotNetFramework/NDP452-KB2901907-x86-x64-AllOS-ENU.exe")
-                {
-                    Id = "NetFx452FullExe",
-                    Compressed = true,
-                    PerMachine = true,
-                    Permanent = false,
-                    InstallCommand = "/q /norestart /ChainingPackage FullX64Bootstrapper",
-                    DetectCondition = "WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED"
-                },
-                new MsiPackage(productMsi) { DisplayInternalUI = true })
+            Bundle bootstrapper = new Bundle("License Monitoring System")
             {
                 Manufacturer = "Central Technology Ltd",
                 OutDir = "bin/%Configuration%",
                 OutFileName = "LMS",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
-                Version = new Version(version)          
-            };            
+                Version = new Version(version),
+                Chain = new List<ChainItem>
+                {
+                    new PackageGroupRef("NetFx452Redist"),
+                    new ExePackage("../Resources/DotNetFramework/NDP452-KB2901907-x86-x64-AllOS-ENU.exe")
+                    {
+                        Id = "NetFx452FullExe",
+                        Compressed = true,
+                        PerMachine = true,
+                        Permanent = true,
+                        InstallCommand = "/q /norestart",
+                        DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED"
+                    },
+                    new MsiPackage(productMsi) {DisplayInternalUI = true}
+                }
+            };
 
             bootstrapper.Build();
         }
