@@ -9,7 +9,7 @@
     using Core.Common.Enum;
     using Menu;
 
-    public class LicenseMonitoringSystemService : ITransientDependency
+    public class LicenseMonitoringSystemService : ISingletonDependency
     {
         private static Timer _timer;
         private readonly IOrchestratorManager _orchestratorManager;
@@ -25,7 +25,6 @@
             _timer = new Timer();
             _timer.Elapsed += UserMonitor;
             _timer.Interval = TimeSpan.FromMinutes(5).TotalMilliseconds;
-            _timer.AutoReset = false;
         }
 
         public ILogger Logger { get; set; }

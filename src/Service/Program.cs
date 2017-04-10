@@ -16,6 +16,8 @@
         /// </summary>
         static void Main(string[] args)
         {
+            Clock.Provider = ClockProviders.Utc;
+
             using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<ServiceModule>())
             {
                 bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog().WithConfig("NLog.config"));

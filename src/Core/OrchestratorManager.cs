@@ -43,22 +43,22 @@
             {
                 try
                 {
-                    int uploadId = await _userOrchestrator.ProcessUpload(pbar);
+                    var upload = await _userOrchestrator.ProcessUpload(pbar);
 
-                    if (uploadId == 0)
+                    if (upload == null || CallInStatus.CalledIn.HasFlag(upload.Status))
                     {
                         return;
                     }
 
                     pbar?.UpdateMaxTicks(initialProgress + 4);
 
-                    List<LicenseUser> users = await _userOrchestrator.ProcessUsers(uploadId, pbar);
+                    List<LicenseUser> users = await _userOrchestrator.ProcessUsers(upload.Id, pbar);
 
                     await _userOrchestrator.ProcessGroups(users, pbar);
 
                     await _userOrchestrator.ProcessUserGroups(users, pbar);
 
-                    await _userOrchestrator.CallIn(uploadId, pbar);
+                    await _userOrchestrator.CallIn(upload.Id, pbar);
                 }
                 catch (Exception ex)
                 {

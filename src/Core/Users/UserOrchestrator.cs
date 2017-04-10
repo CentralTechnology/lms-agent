@@ -38,7 +38,7 @@
             _settingsManager = settingsManager;
         }
 
-        public async Task<int> ProcessUpload(ProgressBar pbar)
+        public async Task<SupportUpload> ProcessUpload(ProgressBar pbar)
         {
             int initialProgress = 2;
             using (var childProgress = Environment.UserInteractive && pbar != null
@@ -67,7 +67,7 @@
                     Logger.Info($"Status: {upload.Status.ToString()}\t Last Check In: {upload.CheckInTime}");
                     Logger.Info($"Upload Id: {uploadId}");
 
-                    return uploadId;
+                    return upload;
                 }
 
                 initialProgress++;
@@ -93,13 +93,13 @@
                 {
                     pbar?.Tick("There was an error creating the new upload.");
                     Logger.Error("There was an error creating the new upload.");
-                    return 0;
+                    return null;
                 }
 
                 pbar?.Tick("Successfully created a new upload.");
                 Logger.Info("Successfully created a new upload.");
                 Logger.Info($"Upload Id: {uploadId}");
-                return upload.Id;       
+                return upload;       
             }
         }
 

@@ -52,7 +52,6 @@
         /// <inheritdoc />
         public SettingsData Read()
         {
-            Logger.Debug("Reading config.");
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             SettingsData configData = (SettingsData)config.GetSection(LmsConstants.SettingsSection);
 

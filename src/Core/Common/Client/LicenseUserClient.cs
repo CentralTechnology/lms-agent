@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Abp;
     using Abp.Domain.Services;
     using Abp.Timing;
     using Extensions;
@@ -216,15 +217,13 @@
             catch (WebRequestException ex)
             {
                 ex.FormatWebRequestException();
-                return 0;
+                throw;
             }
             catch (Exception ex)
             {
                 Logger.Error($"Failed to get the upload id for device: {deviceId}");
                 Logger.DebugFormat("Exception: ", ex);
-
-                // default return from the api
-                return 0;
+                throw;
             }
         }
 
