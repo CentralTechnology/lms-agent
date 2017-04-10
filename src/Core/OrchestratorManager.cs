@@ -27,7 +27,6 @@
                     Logger.Info("No licenses are set to be monitored");
                     break;
                 case Monitor.Users:
-
                     AsyncHelper.RunSync(UserMonitor);
                     break;
                 default:

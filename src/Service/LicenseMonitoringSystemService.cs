@@ -1,7 +1,6 @@
 ﻿namespace Service
 {
     using System;
-    using System.Collections.Generic;
     using System.Timers;
     using Abp.Dependency;
     using Castle.Core.Logging;
@@ -9,16 +8,12 @@
     using Core.Administration;
     using Core.Common.Enum;
     using Menu;
-    using Core.Common.Extensions;
-    using Abp.Extensions;
-    using System.Linq;
-    using Abp.Timing;
 
     public class LicenseMonitoringSystemService : ITransientDependency
     {
+        private static Timer _timer;
         private readonly IOrchestratorManager _orchestratorManager;
         private readonly ISettingsManager _settingsManager;
-        private readonly Timer _timer;
 
         public LicenseMonitoringSystemService(ISettingsManager settingManager, IOrchestratorManager orchestratorManager)
         {
@@ -28,7 +23,7 @@
             Logger = NullLogger.Instance;
 
             _timer = new Timer();
-            _timer.Elapsed += TimerElapsed;
+            _timer.Elapsed += UserMonitor;
             _timer.Interval = TimeSpan.FromMinutes(5).TotalMilliseconds;
             _timer.AutoReset = false;
         }
@@ -39,7 +34,6 @@
         {
             Logger.Info("Service started");
 
-
             if (Environment.UserInteractive)
             {
                 try
@@ -48,7 +42,6 @@
                     Console.WindowHeight = Console.LargestWindowHeight / 3;
                     Console.Clear();
                     new ClientProgram(new Guid()).Run();
-
                 }
                 catch (Exception ex)
                 {
@@ -73,28 +66,27 @@
             return true;
         }
 
-        private void TimerElapsed(object sender, ElapsedEventArgs args)
+        private void UserMonitor(object sender, ElapsedEventArgs args)
         {
             try
             {
-                Logger.Debug("Timer elapsed");
+                var monitors = _settingsManager.Read().Monitors;
 
-                var monitors = _settingsManager.Read().Monitors.GetFlags().ToList();
-
-                Logger.Info($"Found {monitors.Count} monitors");
-
-                foreach (Monitor monitor in monitors)
+                if (!Monitor.Users.HasFlag(monitors))
                 {
-                    Logger.Info($"Started action: {monitor} \t {Clock.Now}");
-
-                    _orchestratorManager.Run(monitor);
-
-                    Logger.Info($"Completed action: {monitor} \t {Clock.Now}");
+                    return;
                 }
+
+                Logger.Info("Users monitor begin.");
+
+                _orchestratorManager.Run(Monitor.Users);
+
+                Logger.Info("Users monitor end.");
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.ToString());
+                Logger.Error(ex.Message);
+                Logger.Debug(ex.ToString());
             }
         }
     }
