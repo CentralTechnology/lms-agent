@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Abp.Domain.Services;
+    using Abp.Timing;
     using Administration;
     using Common.Client;
     using Common.Extensions;
@@ -99,7 +100,7 @@
 
                         var upload = await _uploadClient.Add(new SupportUpload
                         {
-                            CheckInTime = DateTime.Now,
+                            CheckInTime = Clock.Now,
                             DeviceId = deviceId,
                             Hostname = Environment.MachineName,
                             IsActive = true,

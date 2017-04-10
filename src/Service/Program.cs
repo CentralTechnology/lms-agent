@@ -1,8 +1,12 @@
 ﻿namespace Service
 {
+    using System;
     using Abp;
+    using Abp.Dependency;
+    using Abp.Timing;
     using Abp.Topshelf;
     using Castle.Facilities.Logging;
+    using Core.Administration;
     using Topshelf;
 
     class Runner
@@ -16,6 +20,11 @@
             {
                 bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog().WithConfig("NLog.config"));
                 bootstrapper.Initialize();
+
+                using (var settingManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingsManager>())
+                {
+                    settingManager.Object.Validate();
+                }
 
                 HostFactory.Run(serviceConfig =>
                 {

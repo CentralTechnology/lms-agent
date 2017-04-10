@@ -121,6 +121,8 @@
                     DeviceId = deviceId,
                     Monitors = config.Monitors
                 });
+
+                Logger.Info($"Centrastage device id: {config.DeviceId}");
             }
 
             if (config.AccountId == 0)
@@ -134,6 +136,8 @@
                     DeviceId = config.DeviceId,
                     Monitors = config.Monitors
                 });
+
+                Logger.Info($"Account id: {config.AccountId}");
             }
 
             if (Monitor.None.HasFlag(config.Monitors))

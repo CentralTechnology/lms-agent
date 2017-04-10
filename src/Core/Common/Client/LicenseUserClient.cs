@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Abp.Domain.Services;
+    using Abp.Timing;
     using Extensions;
     using Models;
     using ShellProgressBar;
@@ -235,7 +236,7 @@
             {
                 await _client.For<SupportUpload>().Key(id).Set(new
                 {
-                    CheckInTime = DateTime.Now,
+                    CheckInTime = Clock.Now,
                     Hostname = Environment.MachineName,
                     Status = CallInStatus.CalledIn,
                     UploadId = uploadId

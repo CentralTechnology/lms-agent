@@ -1,9 +1,9 @@
 ﻿namespace Core.Common.Extensions
 {
     using Abp.Dependency;
+    using Castle.Core.Logging;
     using Client;
     using Newtonsoft.Json;
-    using NLog;
     using Simple.OData.Client;
 
     public static class ExceptionExtensions
@@ -11,7 +11,7 @@
         public static void FormatWebRequestException(this WebRequestException ex)
         {
             ODataResponseWrapper response = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
-            using (IDisposableDependencyObjectWrapper<ILogger> logger = IocManager.Instance.ResolveAsDisposable<ILogger>())
+            using (var logger = IocManager.Instance.ResolveAsDisposable<ILogger>())
             {
                 if (response != null)
                 {
