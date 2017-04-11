@@ -2,11 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using Microsoft.Deployment.WindowsInstaller;
+    using Service;
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;
-    using Action = WixSharp.Action;
 
     class Script
     {
@@ -16,7 +15,7 @@
 
             var version = Environment.GetEnvironmentVariable("BuildVersion") ?? "1.0.0.0";
 
-            Bundle bootstrapper = new Bundle("License Monitoring System")
+            Bundle bootstrapper = new Bundle(LicenseMonitoringSystemService.ServiceDisplayName)
             {
                 Manufacturer = "Central Technology Ltd",
                 OutDir = "bin/%Configuration%",
@@ -43,17 +42,13 @@
         }
         static string BuildMsi()
         {
+            File service;
             Project project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
                     new DirPermission("LocalSystem", GenericPermission.Write | GenericPermission.Execute),
-                    new DirFiles(@"../Service/bin/%Configuration%/net452/*.*")))
+                    service = new File(@"../Service/bin/%Configuration%/net452/LMS.exe"),
+                    new DirFiles(@"../Service/bin/%Configuration%/net452/*.*", f => !f.EndsWith("LMS.exe"))))
             {
-                Actions = new Action[]
-                {
-                  new InstalledFileAction("LMS.exe","install", Return.check,When.After,Step.InstallFinalize,Condition.NOT_Installed),
-                  new ManagedAction(CustomActions.StartService,Return.check,When.After,Step.InstallFinalize,Condition.NOT_Installed),
-                  new InstalledFileAction("LMS.exe","uninstall",Return.check,When.Before,Step.InstallFinalize, Condition.Installed)
-                },
                 ControlPanelInfo = new ProductInfo
                 {
                     HelpTelephone = "0845 413 88 99",
@@ -62,7 +57,12 @@
                     NoRepair = true
                 },
                 InstallScope = InstallScope.perMachine,
-                Name = "License Monitoring System",
+                MajorUpgrade = new MajorUpgrade
+                {
+                    Schedule = UpgradeSchedule.afterInstallInitialize,
+                    DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
+                },
+                Name = LicenseMonitoringSystemService.ServiceDisplayName,
                 OutDir = "bin/%Configuration%",
                 Platform = Platform.x64,
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
@@ -72,19 +72,26 @@
             project.SetVersionFrom("LMS.exe");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
 
-            return Compiler.BuildMsi(project);
-        }
-    }
-
-    public class CustomActions
-    {
-        [CustomAction]
-        public static ActionResult StartService(Session session)
-        {
-            return session.HandleErrors(() =>
+            service.ServiceInstaller = new ServiceInstaller
             {
-                Tasks.StartService("LicenseMonitoringSystem");
-            });
+                DelayedAutoStart = true,
+                Description = LicenseMonitoringSystemService.ServiceDescription,
+                DisplayName = LicenseMonitoringSystemService.ServiceDisplayName,
+                FirstFailureActionType = FailureActionType.restart,
+                Name = LicenseMonitoringSystemService.ServiceName,
+                RemoveOn = SvcEvent.Uninstall_Wait,
+                ResetPeriodInDays = 1,
+                RestartServiceDelayInSeconds = 30,
+                SecondFailureActionType = FailureActionType.restart,
+                ServiceSid = ServiceSid.none,
+                StartOn = SvcEvent.Install,
+                StopOn = SvcEvent.InstallUninstall_Wait,
+                StartType = SvcStartType.auto,
+                ThirdFailureActionType = FailureActionType.restart,
+                Vital = true
+            };
+
+            return Compiler.BuildMsi(project);
         }
     }
 }

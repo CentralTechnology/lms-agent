@@ -15,6 +15,10 @@
         private readonly IOrchestratorManager _orchestratorManager;
         private readonly ISettingsManager _settingsManager;
 
+        public const string ServiceName = "LicenseMonitoringSystem";
+        public const string ServiceDisplayName = "License Monitoring System";
+        public const string ServiceDescription = "A tool used to monitor various licenses.";
+
         public LicenseMonitoringSystemService(ISettingsManager settingManager, IOrchestratorManager orchestratorManager)
         {
             _settingsManager = settingManager;
@@ -37,6 +41,8 @@
             {
                 try
                 {
+                    _settingsManager.Validate();
+
                     Console.WindowWidth = Console.LargestWindowWidth / 2;
                     Console.WindowHeight = Console.LargestWindowHeight / 3;
                     Console.Clear();
@@ -67,6 +73,8 @@
 
         private void UserMonitor(object sender, ElapsedEventArgs args)
         {
+            _settingsManager.Validate();
+
             try
             {
                 var monitors = _settingsManager.Read().Monitors;
