@@ -2,6 +2,7 @@
 {
     using System;
     using System.Net.Http;
+    using System.Net.Http.Headers;
     using Abp.Dependency;
     using Abp.Threading;
     using Administration;
@@ -43,34 +44,37 @@
 
     public class DefaultLicenseClientSettings : ODataClientSettings, ITransientDependency
     {
+        private readonly ISettingsManager _settingsManager;
+        private readonly PortalClient _portalClient;
         public DefaultLicenseClientSettings()
         {
+            _settingsManager = IocManager.Instance.Resolve<ISettingsManager>();
+            _portalClient = IocManager.Instance.Resolve<PortalClient>();
+
             Logger = NullLogger.Instance;
 
-            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
+            BaseUri = new Uri(LmsConstants.DefaultServiceUrl);
+            var accountId = _settingsManager.Read().AccountId.ToString();
+            var deviceId = _settingsManager.Read().DeviceId.ToString();
+            var token = AsyncHelper.RunSync(() => _portalClient.GetTokenCookie());
+
+
+            BeforeRequest += br =>
             {
-                using (IDisposableDependencyObjectWrapper<PortalClient> portalClient = IocManager.Instance.ResolveAsDisposable<PortalClient>())
-                {
-                    BaseUri = new Uri(LmsConstants.DefaultServiceUrl);
-                    var deviceId = settingManager.Object.Read().DeviceId;
-                    BeforeRequest += br =>
-                    {
-                        br.ShouldIncludeErrorDetail();
-                        br.Headers.Clear();
+                br.ShouldIncludeErrorDetail();
+                br.Headers.Clear();
 
-                        // ReSharper disable once AccessToDisposedClosure
-                        br.Headers.Add("AccountId", settingManager.Object.Read().AccountId.ToString());
-                        // ReSharper disable once AccessToDisposedClosure
-                        br.Headers.Add("XSRF-TOKEN", AsyncHelper.RunSync(() => portalClient.Object.GetTokenCookie()));
-                        // ReSharper disable once AccessToDisposedClosure
-                        br.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Device", deviceId.ToString());
-                    };
+                // ReSharper disable once AccessToDisposedClosure
+                br.Headers.Add("AccountId", accountId);
+                // ReSharper disable once AccessToDisposedClosure
+                br.Headers.Add("XSRF-TOKEN", token);
+                // ReSharper disable once AccessToDisposedClosure
+                br.Headers.Authorization = new AuthenticationHeaderValue("Device", deviceId);
+            };
 
-                    if (settingManager.Object.ReadLoggerLevel() == LoggerLevel.Debug)
-                    {
-                        OnTrace += (x, y) => { Logger.Debug($"{x} {y}"); };
-                    }
-                }
+            if (_settingsManager.ReadLoggerLevel() == LoggerLevel.Debug)
+            {
+                OnTrace += (x, y) => { Logger.Debug($"{x} {y}"); };
             }
         }
 

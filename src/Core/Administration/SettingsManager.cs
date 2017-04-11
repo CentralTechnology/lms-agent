@@ -15,7 +15,6 @@
     using Common.Client;
     using Common.Enum;
     using Common.Extensions;
-    using Newtonsoft.Json;
     using NLog;
     using NLog.Config;
 
@@ -31,7 +30,7 @@
 
             Logger.Debug("Updating config.");
             config.Sections.Add(LmsConstants.SettingsSection, settings);
-            
+
             Logger.Debug("Saving config.");
             config.Save();
 
@@ -40,9 +39,7 @@
             // added because SettingsData class cannot be serialized easily as it inherits from the Configuration
             var settingViewModel = new
             {
-                AccountId = settings.AccountId,
-                DeviceId = settings.DeviceId,
-                Monitors = settings.Monitors
+                settings.AccountId, settings.DeviceId, settings.Monitors
             };
 
             Logger.Debug($"New config: {settingViewModel.Dump()}");
@@ -53,7 +50,7 @@
         public SettingsData Read()
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            SettingsData configData = (SettingsData)config.GetSection(LmsConstants.SettingsSection);
+            SettingsData configData = (SettingsData) config.GetSection(LmsConstants.SettingsSection);
 
             return configData;
         }
@@ -112,7 +109,12 @@
             if (config.DeviceId == new Guid())
             {
                 Logger.Warn("Centrastage device id is not set.");
-                var deviceId = GetDeviceId();
+#if DEBUG
+                Guid deviceId = new Guid("5B7CB593-4BC1-24A0-EB59-76107F1E5255");
+
+#else
+var deviceId = GetDeviceId();
+#endif
 
                 config = Update(new SettingsData
                 {
@@ -127,7 +129,7 @@
             if (config.AccountId == 0)
             {
                 Logger.Warn("Account id is not set.");
-                var accountId = GetAccountId(config.DeviceId);
+                int accountId = GetAccountId(config.DeviceId);
 
                 config = Update(new SettingsData
                 {
@@ -142,13 +144,13 @@
             if (Monitor.None.HasFlag(config.Monitors))
             {
                 Logger.Warn("No actions are set to be monitored.");
-                var defaultMonitor = Monitor.Users;
+                Monitor defaultMonitor = Monitor.Users;
 
                 config = Update(new SettingsData
                 {
                     AccountId = config.AccountId,
                     DeviceId = config.DeviceId,
-                    Monitors = defaultMonitor   
+                    Monitors = defaultMonitor
                 });
             }
 
@@ -157,7 +159,7 @@
 
         private int GetAccountId(Guid deviceId)
         {
-            using (var client = IocManager.Instance.ResolveAsDisposable<ProfileClient>())
+            using (IDisposableDependencyObjectWrapper<ProfileClient> client = IocManager.Instance.ResolveAsDisposable<ProfileClient>())
             {
                 // ReSharper disable once AccessToDisposedClosure
                 return AsyncHelper.RunSync(() => client.Object.GetAccountByDeviceId(deviceId));
