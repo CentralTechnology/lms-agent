@@ -38,7 +38,7 @@
 
                     try
                     {
-                        Logger.Debug($"adding: {user.Dump()}");
+                        Logger.Info($"adding: {user.DisplayName}");
 
                         await _client.For<LicenseUser>().Set(new
                         {
