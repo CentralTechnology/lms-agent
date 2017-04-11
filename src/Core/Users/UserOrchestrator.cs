@@ -77,6 +77,8 @@
                 Logger.Info("This is the first time this device has called in.");
                 Logger.Debug("Creating a new upload");
 
+                var updateId = await _uploadClient.GetNewUploadId();
+
                 upload = await _uploadClient.Add(new SupportUpload
                 {
                     CheckInTime = Clock.Now,
@@ -84,7 +86,7 @@
                     Hostname = Environment.MachineName,
                     IsActive = true,
                     Status = CallInStatus.CalledIn,
-                    UploadId = uploadId
+                    UploadId = updateId
                 });
 
                 childProgress?.Tick();
@@ -98,7 +100,7 @@
 
                 pbar?.Tick("Successfully created a new upload.");
                 Logger.Info("Successfully created a new upload.");
-                Logger.Info($"Upload Id: {uploadId}");
+                Logger.Info($"Upload Id: {upload.Id}");
                 return upload;       
             }
         }
