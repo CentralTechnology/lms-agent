@@ -85,7 +85,7 @@
                     DeviceId = deviceId,
                     Hostname = Environment.MachineName,
                     IsActive = true,
-                    Status = CallInStatus.CalledIn,
+                    Status = CallInStatus.NotCalledIn,
                     UploadId = updateId
                 });
 
