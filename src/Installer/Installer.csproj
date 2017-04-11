@@ -69,6 +69,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Service\Service.csproj">
+      <Project>{9FE5D2BA-A040-47AF-AEC9-446AD47D11FF}</Project>
+      <Name>Service</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
     <GetAssemblyIdentity AssemblyFiles="..\Service\bin\$(Configuration)\net452\LMS.exe">
