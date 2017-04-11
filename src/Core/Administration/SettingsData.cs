@@ -1,11 +1,8 @@
 ﻿namespace Core.Administration
 {
     using System;
-    using System.Collections.Generic;
     using System.Configuration;
-    using Abp.Extensions;
     using Common.Enum;
-    using System.Linq;
 
     public class SettingsData : ConfigurationSection
     {
@@ -20,21 +17,34 @@
         public const string DeviceIdName = "DeviceId";
 
         /// <summary>
+        /// Used to identify the <see cref="Monitors" /> in the configuration
         /// </summary>
         public const string MonitorsName = "Monitors";
 
         [ConfigurationProperty(AccountIdName)]
         public int AccountId
         {
-            get => (int) this[AccountIdName];
-            set => this[AccountIdName] = value;
+            get
+            {
+                return (int)this[AccountIdName];
+            }
+            set
+            {
+                this[AccountIdName] = value;
+            }
         }
 
         [ConfigurationProperty(DeviceIdName)]
         public Guid DeviceId
         {
-            get => (Guid) this[DeviceIdName];
-            set => this[DeviceIdName] = value;
+            get
+            {
+                return (Guid)this[DeviceIdName];
+            }
+            set
+            {
+                this[DeviceIdName] = value;
+            }
         }
 
         [ConfigurationProperty(MonitorsName)]
@@ -47,14 +57,15 @@
                 {
                     return Monitor.Users;
                 }
-                else
-                {
-                    // ReSharper disable once PossibleInvalidCastException
-                    return (Monitor) this[MonitorsName];
-                }
 
+                return (Monitor)this[MonitorsName];
             }
-            set => this[MonitorsName] = value;
+            set
+            {
+                this[MonitorsName] = value;
+            }
         }
+
+
     }
 }
