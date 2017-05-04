@@ -3,6 +3,7 @@
     using Abp.Dependency;
     using Castle.Core.Logging;
     using Client;
+    using Client.OData;
     using Newtonsoft.Json;
     using Simple.OData.Client;
 

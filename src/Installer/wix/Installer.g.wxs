@@ -6,7 +6,7 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="eb7c91a6-6c4c-4385-ba54-e5c9fe9279fb" Name="License Monitoring System" Language="1033" Codepage="Windows-1252" Version="!(bind.FileVersion.LMS.exe)" UpgradeCode="adac7706-188b-42e7-922b-50786779042a" Manufacturer="Central Technology Ltd">
+  <Product Id="22132dfb-cf01-40b7-a146-7c1f879958f4" Name="License Monitoring System" Language="1033" Codepage="Windows-1252" Version="!(bind.FileVersion.LMS.exe)" UpgradeCode="adac7706-188b-42e7-922b-50786779042a" Manufacturer="Central Technology Ltd">
     <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" Languages="1033" InstallScope="perMachine" />
     <Media Id="1" Cabinet="License_Monitoring_System.cab" EmbedCab="yes" />
 
@@ -16,8 +16,8 @@
       <Directory Id="ProgramFiles64Folder" Name="ProgramFiles64Folder">
         <Directory Id="INSTALLDIR" Name="License Monitoring System">
 
-          <Component Id="Component.LMS.exe" Guid="eb7c91a6-6c4c-4385-ba54-e5c9d8ab78f8" Win64="yes">
-            <File Id="LMS.exe" Source="..\Service\bin\Release\net452\LMS.exe" />
+          <Component Id="Component.LMS.exe" Guid="22132dfb-cf01-40b7-a146-7c1f61b257f1" Win64="yes">
+            <File Id="LMS.exe" Source="..\Service\bin\Debug\net452\LMS.exe" />
 
             <ServiceInstall Id="LicenseMonitoringSystem" Name="LicenseMonitoringSystem" DisplayName="License Monitoring System" Description="A tool used to monitor various licenses." Type="ownProcess" Start="auto" ErrorControl="normal" Vital="yes">
               <ServiceConfig DelayedAutoStart="yes" ServiceSid="none" OnInstall="yes" OnReinstall="no" OnUninstall="no" />
@@ -29,219 +29,219 @@
             <ServiceControl Id="RemoveLicenseMonitoringSystem" Name="LicenseMonitoringSystem" Remove="uninstall" Wait="yes" />
           </Component>
 
-          <Component Id="Component.Abp.AutoMapper.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9667ea44e" Win64="yes">
-            <File Id="Abp.AutoMapper.dll" Source="..\Service\bin\Release\net452\Abp.AutoMapper.dll" />
+          <Component Id="Component.Abp.AutoMapper.dll" Guid="22132dfb-cf01-40b7-a146-7c1fef858347" Win64="yes">
+            <File Id="Abp.AutoMapper.dll" Source="..\Service\bin\Debug\net452\Abp.AutoMapper.dll" />
           </Component>
 
-          <Component Id="Component.Abp.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c99283a43e" Win64="yes">
-            <File Id="Abp.dll" Source="..\Service\bin\Release\net452\Abp.dll" />
+          <Component Id="Component.Abp.dll" Guid="22132dfb-cf01-40b7-a146-7c1f1b8a8337" Win64="yes">
+            <File Id="Abp.dll" Source="..\Service\bin\Debug\net452\Abp.dll" />
           </Component>
 
-          <Component Id="Component.Abp.Topshelf.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c972593cf1" Win64="yes">
-            <File Id="Abp.Topshelf.dll" Source="..\Service\bin\Release\net452\Abp.Topshelf.dll" />
+          <Component Id="Component.Abp.Topshelf.dll" Guid="22132dfb-cf01-40b7-a146-7c1ffb601bea" Win64="yes">
+            <File Id="Abp.Topshelf.dll" Source="..\Service\bin\Debug\net452\Abp.Topshelf.dll" />
           </Component>
 
-          <Component Id="Component.Abp.Topshelf.dll.config" Guid="eb7c91a6-6c4c-4385-ba54-e5c9b8a4d819" Win64="yes">
-            <File Id="Abp.Topshelf.dll.config" Source="..\Service\bin\Release\net452\Abp.Topshelf.dll.config" />
+          <Component Id="Component.Abp.Topshelf.dll.config" Guid="22132dfb-cf01-40b7-a146-7c1f41abb712" Win64="yes">
+            <File Id="Abp.Topshelf.dll.config" Source="..\Service\bin\Debug\net452\Abp.Topshelf.dll.config" />
           </Component>
 
-          <Component Id="Component.Abp.Topshelf.pdb" Guid="eb7c91a6-6c4c-4385-ba54-e5c9fb0f3ce9" Win64="yes">
-            <File Id="Abp.Topshelf.pdb" Source="..\Service\bin\Release\net452\Abp.Topshelf.pdb" />
+          <Component Id="Component.Abp.Topshelf.pdb" Guid="22132dfb-cf01-40b7-a146-7c1f84161be2" Win64="yes">
+            <File Id="Abp.Topshelf.pdb" Source="..\Service\bin\Debug\net452\Abp.Topshelf.pdb" />
           </Component>
 
-          <Component Id="Component.Abp.Web.Api.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9f90130cb" Win64="yes">
-            <File Id="Abp.Web.Api.dll" Source="..\Service\bin\Release\net452\Abp.Web.Api.dll" />
+          <Component Id="Component.Abp.Web.Api.dll" Guid="22132dfb-cf01-40b7-a146-7c1f82080fc4" Win64="yes">
+            <File Id="Abp.Web.Api.dll" Source="..\Service\bin\Debug\net452\Abp.Web.Api.dll" />
           </Component>
 
-          <Component Id="Component.Abp.Web.Common.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c909c79dc8" Win64="yes">
-            <File Id="Abp.Web.Common.dll" Source="..\Service\bin\Release\net452\Abp.Web.Common.dll" />
+          <Component Id="Component.Abp.Web.Common.dll" Guid="22132dfb-cf01-40b7-a146-7c1f92ce7cc1" Win64="yes">
+            <File Id="Abp.Web.Common.dll" Source="..\Service\bin\Debug\net452\Abp.Web.Common.dll" />
           </Component>
 
-          <Component Id="Component.Abp.Web.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9307b1f02" Win64="yes">
-            <File Id="Abp.Web.dll" Source="..\Service\bin\Release\net452\Abp.Web.dll" />
+          <Component Id="Component.Abp.Web.dll" Guid="22132dfb-cf01-40b7-a146-7c1fb982fefb" Win64="yes">
+            <File Id="Abp.Web.dll" Source="..\Service\bin\Debug\net452\Abp.Web.dll" />
           </Component>
 
-          <Component Id="Component.AutoMapper.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9322405f9" Win64="yes">
-            <File Id="AutoMapper.dll" Source="..\Service\bin\Release\net452\AutoMapper.dll" />
+          <Component Id="Component.AutoMapper.dll" Guid="22132dfb-cf01-40b7-a146-7c1fbb2be4f2" Win64="yes">
+            <File Id="AutoMapper.dll" Source="..\Service\bin\Debug\net452\AutoMapper.dll" />
           </Component>
 
-          <Component Id="Component.Castle.Core.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c99b078b96" Win64="yes">
-            <File Id="Castle.Core.dll" Source="..\Service\bin\Release\net452\Castle.Core.dll" />
+          <Component Id="Component.Castle.Core.dll" Guid="22132dfb-cf01-40b7-a146-7c1f240e6a8f" Win64="yes">
+            <File Id="Castle.Core.dll" Source="..\Service\bin\Debug\net452\Castle.Core.dll" />
           </Component>
 
-          <Component Id="Component.Castle.Facilities.Logging.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9418027d2" Win64="yes">
-            <File Id="Castle.Facilities.Logging.dll" Source="..\Service\bin\Release\net452\Castle.Facilities.Logging.dll" />
+          <Component Id="Component.Castle.Facilities.Logging.dll" Guid="22132dfb-cf01-40b7-a146-7c1fca8706cb" Win64="yes">
+            <File Id="Castle.Facilities.Logging.dll" Source="..\Service\bin\Debug\net452\Castle.Facilities.Logging.dll" />
           </Component>
 
-          <Component Id="Component._...es.Logging.NLogIntegration.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c90097413d" Win64="yes">
-            <File Id="_...es.Logging.NLogIntegration.dll" Source="..\Service\bin\Release\net452\Castle.Services.Logging.NLogIntegration.dll" />
+          <Component Id="Component._...es.Logging.NLogIntegration.dll" Guid="22132dfb-cf01-40b7-a146-7c1f899e2036" Win64="yes">
+            <File Id="_...es.Logging.NLogIntegration.dll" Source="..\Service\bin\Debug\net452\Castle.Services.Logging.NLogIntegration.dll" />
           </Component>
 
-          <Component Id="Component.Castle.Windsor.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c970d8f1c8" Win64="yes">
-            <File Id="Castle.Windsor.dll" Source="..\Service\bin\Release\net452\Castle.Windsor.dll" />
+          <Component Id="Component.Castle.Windsor.dll" Guid="22132dfb-cf01-40b7-a146-7c1ff9dfd0c1" Win64="yes">
+            <File Id="Castle.Windsor.dll" Source="..\Service\bin\Debug\net452\Castle.Windsor.dll" />
           </Component>
 
-          <Component Id="Component.JetBrains.Annotations.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9cbeb7eb2" Win64="yes">
-            <File Id="JetBrains.Annotations.dll" Source="..\Service\bin\Release\net452\JetBrains.Annotations.dll" />
+          <Component Id="Component.JetBrains.Annotations.dll" Guid="22132dfb-cf01-40b7-a146-7c1f54f25dab" Win64="yes">
+            <File Id="JetBrains.Annotations.dll" Source="..\Service\bin\Debug\net452\JetBrains.Annotations.dll" />
           </Component>
 
-          <Component Id="Component.LMS.Console.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9129b3ff5" Win64="yes">
-            <File Id="LMS.Console.dll" Source="..\Service\bin\Release\net452\LMS.Console.dll" />
+          <Component Id="Component.LMS.Console.dll" Guid="22132dfb-cf01-40b7-a146-7c1f9ba21eee" Win64="yes">
+            <File Id="LMS.Console.dll" Source="..\Service\bin\Debug\net452\LMS.Console.dll" />
           </Component>
 
-          <Component Id="Component.LMS.Console.pdb" Guid="eb7c91a6-6c4c-4385-ba54-e5c9015e23cf" Win64="yes">
-            <File Id="LMS.Console.pdb" Source="..\Service\bin\Release\net452\LMS.Console.pdb" />
+          <Component Id="Component.LMS.Console.pdb" Guid="22132dfb-cf01-40b7-a146-7c1f8a6502c8" Win64="yes">
+            <File Id="LMS.Console.pdb" Source="..\Service\bin\Debug\net452\LMS.Console.pdb" />
           </Component>
 
-          <Component Id="Component.LMS.Core.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c920ebcbbf" Win64="yes">
-            <File Id="LMS.Core.dll" Source="..\Service\bin\Release\net452\LMS.Core.dll" />
+          <Component Id="Component.LMS.Core.dll" Guid="22132dfb-cf01-40b7-a146-7c1fa9f2aab8" Win64="yes">
+            <File Id="LMS.Core.dll" Source="..\Service\bin\Debug\net452\LMS.Core.dll" />
           </Component>
 
-          <Component Id="Component.LMS.Core.dll.config" Guid="eb7c91a6-6c4c-4385-ba54-e5c90f4dd95f" Win64="yes">
-            <File Id="LMS.Core.dll.config" Source="..\Service\bin\Release\net452\LMS.Core.dll.config" />
+          <Component Id="Component.LMS.Core.dll.config" Guid="22132dfb-cf01-40b7-a146-7c1f9854b858" Win64="yes">
+            <File Id="LMS.Core.dll.config" Source="..\Service\bin\Debug\net452\LMS.Core.dll.config" />
           </Component>
 
-          <Component Id="Component.LMS.Core.pdb" Guid="eb7c91a6-6c4c-4385-ba54-e5c99731cbb7" Win64="yes">
-            <File Id="LMS.Core.pdb" Source="..\Service\bin\Release\net452\LMS.Core.pdb" />
+          <Component Id="Component.LMS.Core.pdb" Guid="22132dfb-cf01-40b7-a146-7c1f2038aab0" Win64="yes">
+            <File Id="LMS.Core.pdb" Source="..\Service\bin\Debug\net452\LMS.Core.pdb" />
           </Component>
 
-          <Component Id="Component.LMS.exe.config" Guid="eb7c91a6-6c4c-4385-ba54-e5c9253ea3cf" Win64="yes">
-            <File Id="LMS.exe.config" Source="..\Service\bin\Release\net452\LMS.exe.config" />
+          <Component Id="Component.LMS.exe.config" Guid="22132dfb-cf01-40b7-a146-7c1fae4582c8" Win64="yes">
+            <File Id="LMS.exe.config" Source="..\Service\bin\Debug\net452\LMS.exe.config" />
           </Component>
 
-          <Component Id="Component.LMS.pdb" Guid="eb7c91a6-6c4c-4385-ba54-e5c9f733e840" Win64="yes">
-            <File Id="LMS.pdb" Source="..\Service\bin\Release\net452\LMS.pdb" />
+          <Component Id="Component.LMS.pdb" Guid="22132dfb-cf01-40b7-a146-7c1f803ac739" Win64="yes">
+            <File Id="LMS.pdb" Source="..\Service\bin\Debug\net452\LMS.pdb" />
           </Component>
 
-          <Component Id="Component.Microsoft.Data.Edm.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c93aa23884" Win64="yes">
-            <File Id="Microsoft.Data.Edm.dll" Source="..\Service\bin\Release\net452\Microsoft.Data.Edm.dll" />
+          <Component Id="Component.Microsoft.Data.Edm.dll" Guid="22132dfb-cf01-40b7-a146-7c1fc3a9177d" Win64="yes">
+            <File Id="Microsoft.Data.Edm.dll" Source="..\Service\bin\Debug\net452\Microsoft.Data.Edm.dll" />
           </Component>
 
-          <Component Id="Component.Microsoft.Data.OData.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c916b918da" Win64="yes">
-            <File Id="Microsoft.Data.OData.dll" Source="..\Service\bin\Release\net452\Microsoft.Data.OData.dll" />
+          <Component Id="Component.Microsoft.Data.OData.dll" Guid="22132dfb-cf01-40b7-a146-7c1f9fc0f7d3" Win64="yes">
+            <File Id="Microsoft.Data.OData.dll" Source="..\Service\bin\Debug\net452\Microsoft.Data.OData.dll" />
           </Component>
 
-          <Component Id="Component.Microsoft.OData.Client.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9159b0fae" Win64="yes">
-            <File Id="Microsoft.OData.Client.dll" Source="..\Service\bin\Release\net452\Microsoft.OData.Client.dll" />
+          <Component Id="Component.Microsoft.OData.Client.dll" Guid="22132dfb-cf01-40b7-a146-7c1f9ea2eea7" Win64="yes">
+            <File Id="Microsoft.OData.Client.dll" Source="..\Service\bin\Debug\net452\Microsoft.OData.Client.dll" />
           </Component>
 
-          <Component Id="Component._...oft.OData.Client.resources.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9bbea0c3c" Win64="yes">
-            <File Id="_...oft.OData.Client.resources.dll" Source="..\Service\bin\Release\net452\Microsoft.OData.Client.resources.dll" />
+          <Component Id="Component._...oft.OData.Client.resources.dll" Guid="22132dfb-cf01-40b7-a146-7c1f44f1eb35" Win64="yes">
+            <File Id="_...oft.OData.Client.resources.dll" Source="..\Service\bin\Debug\net452\Microsoft.OData.Client.resources.dll" />
           </Component>
 
-          <Component Id="Component.Microsoft.OData.Core.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9db57ffe4" Win64="yes">
-            <File Id="Microsoft.OData.Core.dll" Source="..\Service\bin\Release\net452\Microsoft.OData.Core.dll" />
+          <Component Id="Component.Microsoft.OData.Core.dll" Guid="22132dfb-cf01-40b7-a146-7c1f645ededd" Win64="yes">
+            <File Id="Microsoft.OData.Core.dll" Source="..\Service\bin\Debug\net452\Microsoft.OData.Core.dll" />
           </Component>
 
-          <Component Id="Component._...osoft.OData.Core.resources.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c92afbf389" Win64="yes">
-            <File Id="_...osoft.OData.Core.resources.dll" Source="..\Service\bin\Release\net452\Microsoft.OData.Core.resources.dll" />
+          <Component Id="Component._...osoft.OData.Core.resources.dll" Guid="22132dfb-cf01-40b7-a146-7c1fb302d282" Win64="yes">
+            <File Id="_...osoft.OData.Core.resources.dll" Source="..\Service\bin\Debug\net452\Microsoft.OData.Core.resources.dll" />
           </Component>
 
-          <Component Id="Component.Microsoft.OData.Edm.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9aa0ad757" Win64="yes">
-            <File Id="Microsoft.OData.Edm.dll" Source="..\Service\bin\Release\net452\Microsoft.OData.Edm.dll" />
+          <Component Id="Component.Microsoft.OData.Edm.dll" Guid="22132dfb-cf01-40b7-a146-7c1f3311b650" Win64="yes">
+            <File Id="Microsoft.OData.Edm.dll" Source="..\Service\bin\Debug\net452\Microsoft.OData.Edm.dll" />
           </Component>
 
-          <Component Id="Component._...rosoft.OData.Edm.resources.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9422d21cb" Win64="yes">
-            <File Id="_...rosoft.OData.Edm.resources.dll" Source="..\Service\bin\Release\net452\Microsoft.OData.Edm.resources.dll" />
+          <Component Id="Component._...rosoft.OData.Edm.resources.dll" Guid="22132dfb-cf01-40b7-a146-7c1fcb3400c4" Win64="yes">
+            <File Id="_...rosoft.OData.Edm.resources.dll" Source="..\Service\bin\Debug\net452\Microsoft.OData.Edm.resources.dll" />
           </Component>
 
-          <Component Id="Component.Microsoft.Spatial.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c974f934fc" Win64="yes">
-            <File Id="Microsoft.Spatial.dll" Source="..\Service\bin\Release\net452\Microsoft.Spatial.dll" />
+          <Component Id="Component.Microsoft.Spatial.dll" Guid="22132dfb-cf01-40b7-a146-7c1ffd0013f5" Win64="yes">
+            <File Id="Microsoft.Spatial.dll" Source="..\Service\bin\Debug\net452\Microsoft.Spatial.dll" />
           </Component>
 
-          <Component Id="Component._...icrosoft.Spatial.resources.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c948236439" Win64="yes">
-            <File Id="_...icrosoft.Spatial.resources.dll" Source="..\Service\bin\Release\net452\Microsoft.Spatial.resources.dll" />
+          <Component Id="Component._...icrosoft.Spatial.resources.dll" Guid="22132dfb-cf01-40b7-a146-7c1fd12a4332" Win64="yes">
+            <File Id="_...icrosoft.Spatial.resources.dll" Source="..\Service\bin\Debug\net452\Microsoft.Spatial.resources.dll" />
           </Component>
 
-          <Component Id="Component.Microsoft.Threading.Tasks.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9f945122d" Win64="yes">
-            <File Id="Microsoft.Threading.Tasks.dll" Source="..\Service\bin\Release\net452\Microsoft.Threading.Tasks.dll" />
+          <Component Id="Component.Microsoft.Threading.Tasks.dll" Guid="22132dfb-cf01-40b7-a146-7c1f824cf126" Win64="yes">
+            <File Id="Microsoft.Threading.Tasks.dll" Source="..\Service\bin\Debug\net452\Microsoft.Threading.Tasks.dll" />
           </Component>
 
-          <Component Id="Component._...g.Tasks.Extensions.Desktop.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c91a3ad726" Win64="yes">
-            <File Id="_...g.Tasks.Extensions.Desktop.dll" Source="..\Service\bin\Release\net452\Microsoft.Threading.Tasks.Extensions.Desktop.dll" />
+          <Component Id="Component._...g.Tasks.Extensions.Desktop.dll" Guid="22132dfb-cf01-40b7-a146-7c1fa341b61f" Win64="yes">
+            <File Id="_...g.Tasks.Extensions.Desktop.dll" Source="..\Service\bin\Debug\net452\Microsoft.Threading.Tasks.Extensions.Desktop.dll" />
           </Component>
 
-          <Component Id="Component._...Threading.Tasks.Extensions.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9dea3d92b" Win64="yes">
-            <File Id="_...Threading.Tasks.Extensions.dll" Source="..\Service\bin\Release\net452\Microsoft.Threading.Tasks.Extensions.dll" />
+          <Component Id="Component._...Threading.Tasks.Extensions.dll" Guid="22132dfb-cf01-40b7-a146-7c1f67aab824" Win64="yes">
+            <File Id="_...Threading.Tasks.Extensions.dll" Source="..\Service\bin\Debug\net452\Microsoft.Threading.Tasks.Extensions.dll" />
           </Component>
 
-          <Component Id="Component.Newtonsoft.Json.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c97cecf4d5" Win64="yes">
-            <File Id="Newtonsoft.Json.dll" Source="..\Service\bin\Release\net452\Newtonsoft.Json.dll" />
+          <Component Id="Component.Newtonsoft.Json.dll" Guid="22132dfb-cf01-40b7-a146-7c1f05f3d3ce" Win64="yes">
+            <File Id="Newtonsoft.Json.dll" Source="..\Service\bin\Debug\net452\Newtonsoft.Json.dll" />
           </Component>
 
-          <Component Id="Component.Nito.AsyncEx.Concurrent.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c903a8dd44" Win64="yes">
-            <File Id="Nito.AsyncEx.Concurrent.dll" Source="..\Service\bin\Release\net452\Nito.AsyncEx.Concurrent.dll" />
+          <Component Id="Component.Nito.AsyncEx.Concurrent.dll" Guid="22132dfb-cf01-40b7-a146-7c1f8cafbc3d" Win64="yes">
+            <File Id="Nito.AsyncEx.Concurrent.dll" Source="..\Service\bin\Debug\net452\Nito.AsyncEx.Concurrent.dll" />
           </Component>
 
-          <Component Id="Component.Nito.AsyncEx.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c98b3b5234" Win64="yes">
-            <File Id="Nito.AsyncEx.dll" Source="..\Service\bin\Release\net452\Nito.AsyncEx.dll" />
+          <Component Id="Component.Nito.AsyncEx.dll" Guid="22132dfb-cf01-40b7-a146-7c1f1442312d" Win64="yes">
+            <File Id="Nito.AsyncEx.dll" Source="..\Service\bin\Debug\net452\Nito.AsyncEx.dll" />
           </Component>
 
-          <Component Id="Component.Nito.AsyncEx.Enlightenment.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9c8c41133" Win64="yes">
-            <File Id="Nito.AsyncEx.Enlightenment.dll" Source="..\Service\bin\Release\net452\Nito.AsyncEx.Enlightenment.dll" />
+          <Component Id="Component.Nito.AsyncEx.Enlightenment.dll" Guid="22132dfb-cf01-40b7-a146-7c1f51cbf02c" Win64="yes">
+            <File Id="Nito.AsyncEx.Enlightenment.dll" Source="..\Service\bin\Debug\net452\Nito.AsyncEx.Enlightenment.dll" />
           </Component>
 
-          <Component Id="Component.NLog.config" Guid="eb7c91a6-6c4c-4385-ba54-e5c9941d92ab" Win64="yes">
-            <File Id="NLog.config" Source="..\Service\bin\Release\net452\NLog.config" />
+          <Component Id="Component.NLog.config" Guid="22132dfb-cf01-40b7-a146-7c1f1d2471a4" Win64="yes">
+            <File Id="NLog.config" Source="..\Service\bin\Debug\net452\NLog.config" />
           </Component>
 
-          <Component Id="Component.NLog.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c900befb0a" Win64="yes">
-            <File Id="NLog.dll" Source="..\Service\bin\Release\net452\NLog.dll" />
+          <Component Id="Component.NLog.dll" Guid="22132dfb-cf01-40b7-a146-7c1f89c5da03" Win64="yes">
+            <File Id="NLog.dll" Source="..\Service\bin\Debug\net452\NLog.dll" />
           </Component>
 
-          <Component Id="Component.ShellProgressBar.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c99fa6f9a1" Win64="yes">
-            <File Id="ShellProgressBar.dll" Source="..\Service\bin\Release\net452\ShellProgressBar.dll" />
+          <Component Id="Component.ShellProgressBar.dll" Guid="22132dfb-cf01-40b7-a146-7c1f28add89a" Win64="yes">
+            <File Id="ShellProgressBar.dll" Source="..\Service\bin\Debug\net452\ShellProgressBar.dll" />
           </Component>
 
-          <Component Id="Component.Simple.OData.Client.Net40.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9ccde4c37" Win64="yes">
-            <File Id="Simple.OData.Client.Net40.dll" Source="..\Service\bin\Release\net452\Simple.OData.Client.Net40.dll" />
+          <Component Id="Component.Simple.OData.Client.Net40.dll" Guid="22132dfb-cf01-40b7-a146-7c1f55e52b30" Win64="yes">
+            <File Id="Simple.OData.Client.Net40.dll" Source="..\Service\bin\Debug\net452\Simple.OData.Client.Net40.dll" />
           </Component>
 
-          <Component Id="Component._...stem.Collections.Immutable.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c99ab61115" Win64="yes">
-            <File Id="_...stem.Collections.Immutable.dll" Source="..\Service\bin\Release\net452\System.Collections.Immutable.dll" />
+          <Component Id="Component._...stem.Collections.Immutable.dll" Guid="22132dfb-cf01-40b7-a146-7c1f23bdf00e" Win64="yes">
+            <File Id="_...stem.Collections.Immutable.dll" Source="..\Service\bin\Debug\net452\System.Collections.Immutable.dll" />
           </Component>
 
-          <Component Id="Component.System.Linq.Dynamic.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c974734138" Win64="yes">
-            <File Id="System.Linq.Dynamic.dll" Source="..\Service\bin\Release\net452\System.Linq.Dynamic.dll" />
+          <Component Id="Component.System.Linq.Dynamic.dll" Guid="22132dfb-cf01-40b7-a146-7c1ffd7a2031" Win64="yes">
+            <File Id="System.Linq.Dynamic.dll" Source="..\Service\bin\Debug\net452\System.Linq.Dynamic.dll" />
           </Component>
 
-          <Component Id="Component.System.Net.Http.Extensions.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9e36688ac" Win64="yes">
-            <File Id="System.Net.Http.Extensions.dll" Source="..\Service\bin\Release\net452\System.Net.Http.Extensions.dll" />
+          <Component Id="Component.System.Net.Http.Extensions.dll" Guid="22132dfb-cf01-40b7-a146-7c1f6c6d67a5" Win64="yes">
+            <File Id="System.Net.Http.Extensions.dll" Source="..\Service\bin\Debug\net452\System.Net.Http.Extensions.dll" />
           </Component>
 
-          <Component Id="Component.System.Net.Http.Formatting.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9302f4459" Win64="yes">
-            <File Id="System.Net.Http.Formatting.dll" Source="..\Service\bin\Release\net452\System.Net.Http.Formatting.dll" />
+          <Component Id="Component.System.Net.Http.Formatting.dll" Guid="22132dfb-cf01-40b7-a146-7c1fb9362352" Win64="yes">
+            <File Id="System.Net.Http.Formatting.dll" Source="..\Service\bin\Debug\net452\System.Net.Http.Formatting.dll" />
           </Component>
 
-          <Component Id="Component.System.Net.Http.Primitives.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c98a937fd2" Win64="yes">
-            <File Id="System.Net.Http.Primitives.dll" Source="..\Service\bin\Release\net452\System.Net.Http.Primitives.dll" />
+          <Component Id="Component.System.Net.Http.Primitives.dll" Guid="22132dfb-cf01-40b7-a146-7c1f139a5ecb" Win64="yes">
+            <File Id="System.Net.Http.Primitives.dll" Source="..\Service\bin\Debug\net452\System.Net.Http.Primitives.dll" />
           </Component>
 
-          <Component Id="Component.System.Spatial.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c904a553c8" Win64="yes">
-            <File Id="System.Spatial.dll" Source="..\Service\bin\Release\net452\System.Spatial.dll" />
+          <Component Id="Component.System.Spatial.dll" Guid="22132dfb-cf01-40b7-a146-7c1f8dac32c1" Win64="yes">
+            <File Id="System.Spatial.dll" Source="..\Service\bin\Debug\net452\System.Spatial.dll" />
           </Component>
 
-          <Component Id="Component.System.Spatial.resources.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c92516277c" Win64="yes">
-            <File Id="System.Spatial.resources.dll" Source="..\Service\bin\Release\net452\System.Spatial.resources.dll" />
+          <Component Id="Component.System.Spatial.resources.dll" Guid="22132dfb-cf01-40b7-a146-7c1fae1d0675" Win64="yes">
+            <File Id="System.Spatial.resources.dll" Source="..\Service\bin\Debug\net452\System.Spatial.resources.dll" />
           </Component>
 
-          <Component Id="Component.System.Web.Http.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9706fa026" Win64="yes">
-            <File Id="System.Web.Http.dll" Source="..\Service\bin\Release\net452\System.Web.Http.dll" />
+          <Component Id="Component.System.Web.Http.dll" Guid="22132dfb-cf01-40b7-a146-7c1ff9767f1f" Win64="yes">
+            <File Id="System.Web.Http.dll" Source="..\Service\bin\Debug\net452\System.Web.Http.dll" />
           </Component>
 
-          <Component Id="Component.System.Web.Http.WebHost.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c93f28146a" Win64="yes">
-            <File Id="System.Web.Http.WebHost.dll" Source="..\Service\bin\Release\net452\System.Web.Http.WebHost.dll" />
+          <Component Id="Component.System.Web.Http.WebHost.dll" Guid="22132dfb-cf01-40b7-a146-7c1fc82ff363" Win64="yes">
+            <File Id="System.Web.Http.WebHost.dll" Source="..\Service\bin\Debug\net452\System.Web.Http.WebHost.dll" />
           </Component>
 
-          <Component Id="Component.Topshelf.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c9c95ce519" Win64="yes">
-            <File Id="Topshelf.dll" Source="..\Service\bin\Release\net452\Topshelf.dll" />
+          <Component Id="Component.Topshelf.dll" Guid="22132dfb-cf01-40b7-a146-7c1f5263c412" Win64="yes">
+            <File Id="Topshelf.dll" Source="..\Service\bin\Debug\net452\Topshelf.dll" />
           </Component>
 
-          <Component Id="Component.Topshelf.NLog.dll" Guid="eb7c91a6-6c4c-4385-ba54-e5c974f5236e" Win64="yes">
-            <File Id="Topshelf.NLog.dll" Source="..\Service\bin\Release\net452\Topshelf.NLog.dll" />
+          <Component Id="Component.Topshelf.NLog.dll" Guid="22132dfb-cf01-40b7-a146-7c1ffdfc0267" Win64="yes">
+            <File Id="Topshelf.NLog.dll" Source="..\Service\bin\Debug\net452\Topshelf.NLog.dll" />
           </Component>
 
-          <Component Id="ComponentDirPermission" Guid="eb7c91a6-6c4c-4385-ba54-e5c95c32c1f8" Win64="yes" KeyPath="yes">
+          <Component Id="ComponentDirPermission" Guid="22132dfb-cf01-40b7-a146-7c1fe539a0f1" Win64="yes" KeyPath="yes">
             <CreateFolder>
               <PermissionEx User="LocalSystem" GenericExecute="yes" GenericWrite="yes" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
             </CreateFolder>

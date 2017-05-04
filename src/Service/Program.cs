@@ -25,6 +25,7 @@
 
                 HostFactory.Run(serviceConfig =>
                 {
+                    // ReSharper disable once AccessToDisposedClosure
                     serviceConfig.UseAbp(bootstrapper);
                     serviceConfig.RunAsLocalSystem();
                     serviceConfig.SetServiceName(LicenseMonitoringSystemService.ServiceName);
