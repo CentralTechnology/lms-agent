@@ -1,33 +1,47 @@
+#---------------------------------#
+#           master branch         #
+#---------------------------------#
 -
     branches:
         only:
             - master
-            - dev
 
+# environment configuration
     image: Visual Studio 2017
+    cache:
+        - packages -> **\packages.config
+        - '%LocalAppData%\NuGet\Cache'
 
+    install:
+        - choco install gitversion.portable -pre -y    
+
+# build configuration
+    platform: Any CPU
     configuration: Release
+    matrix:
+        fast_finish: true
 
     build:
+        parallel: true
         project: LicenseMonitoringSystem.sln
-        verbosity: minimal
-    
-    install:
-        - choco install gitversion.portable -pre -y       
+        verbosity: minimal    
 
     before_build:
         - ps: nuget restore
         - ps: dotnet restore
         - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
+# test configuration
     test:
         assemblies: 
             - '**\*.Tests.dll'
 
+# artifacts configuration
     artifacts: 
         - path: src\Installer\bin\$(configuration)\LMS.exe
           name: setup
 
+# deployment configuration
     deploy:
         release: v$(GitVersion_FullSemVer)
         description: insert description
@@ -40,52 +54,81 @@
         on:
             appveyor_repo_tag: true
 
+#---------------------------------#
+#      release/hotfix branches    #
+#---------------------------------#
 - 
     branches:
         only:
+            - /release/.*/
             - /feature/.*/
 
+# environment configuration
     image: Visual Studio 2017
+    cache:
+        - packages -> **\packages.config
+        - '%LocalAppData%\NuGet\Cache'
 
-    configuration: Release
-
-    build:
-        project: LicenseMonitoringSystem.sln.
-        verbosity: minimal
-    
     install:
         - choco install gitversion.portable -pre -y
 
+# build configuration
+    platform: Any CPU
+    configuration: Release
+    matrix:
+        fast_finish: true
+
+    build:
+        parallel: true
+        project: LicenseMonitoringSystem.sln.
+        verbosity: minimal
+    
     before_build:
         - ps: nuget restore
         - ps: dotnet restore
         - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
+# test configuration
     test:
         assemblies: 
             - '**\*.Tests.dll'
 
+#---------------------------------#
+#          other branches         #
+#---------------------------------#
 -
     branches:
-        only:
+        except:
+            - master
             - /release/.*/
+            - /hotfix/.*/
 
+# environment configuration
     image: Visual Studio 2017
-
-    configuration: Release
-
-    build:
-        project: LicenseMonitoringSystem.sln
-        verbosity: minimal
+    cache:
+        - packages -> **\packages.config
+        - '%LocalAppData%\NuGet\Cache'
 
     install:
         - choco install gitversion.portable -pre -y
 
+# build configuration
+    platform: Any CPU
+    configuration: Release
+    matrix:
+        fast_finish: true
+
+    build:
+        parallel: true
+        project: LicenseMonitoringSystem.sln.
+        verbosity: minimal
+    
     before_build:
         - ps: nuget restore
         - ps: dotnet restore
         - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
+# test configuration
     test:
         assemblies: 
             - '**\*.Tests.dll'
