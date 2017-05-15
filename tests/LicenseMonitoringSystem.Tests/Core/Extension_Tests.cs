@@ -20,7 +20,7 @@
             users.ApplyUploadId(uploadId);
 
             // assert
-            users.ShouldAllBe(x => x.SupportUploadId.Equals(uploadId));
+            users.ShouldAllBe(x => x.ManagedSupportId.Equals(uploadId));
         }
 
         [Fact]
