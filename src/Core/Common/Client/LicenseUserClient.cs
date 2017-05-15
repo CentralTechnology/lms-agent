@@ -42,7 +42,7 @@
                             user.Enabled,
                             user.FirstName,
                             user.Id,
-                            user.SupportUploadId,
+                            user.ManagedSupportId,
                             user.Surname,
                             user.WhenCreated
                         }).InsertEntryAsync();

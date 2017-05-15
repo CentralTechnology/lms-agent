@@ -11,7 +11,7 @@
         {
             return source.Select(u =>
             {
-                u.SupportUploadId = uploadId;
+                u.ManagedSupportId = uploadId;
                 return u;
             }).ToList();
         }

@@ -38,7 +38,7 @@
             _settingsManager = settingsManager;
         }
 
-        public async Task<SupportUpload> ProcessUpload(ProgressBar pbar)
+        public async Task<ManagedSupport> ProcessUpload(ProgressBar pbar)
         {
             int initialProgress = 2;
             using (var childProgress = Environment.UserInteractive && pbar != null
@@ -57,7 +57,7 @@
 
                 var uploadId = await _uploadClient.GetUploadIdByDeviceId(deviceId);               
 
-                SupportUpload upload;
+                ManagedSupport upload;
                 if (uploadId != 0)
                 {
                     upload = await _uploadClient.Get(uploadId);
@@ -79,7 +79,7 @@
 
                 var updateId = await _uploadClient.GetNewUploadId();
 
-                upload = await _uploadClient.Add(new SupportUpload
+                upload = await _uploadClient.Add(new ManagedSupport
                 {
                     CheckInTime = Clock.Now,
                     DeviceId = deviceId,
