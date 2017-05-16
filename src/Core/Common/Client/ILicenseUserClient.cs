@@ -10,28 +10,28 @@
 
     public interface ILicenseUserClient : IDomainService
     {
-        Task Add(List<LicenseUser> users, ChildProgressBar childProgressBar);
-        Task Remove(List<LicenseUser> users, ChildProgressBar childProgressBar);
+        Task Add(List<LicenseUser> users);
+        Task Remove(List<LicenseUser> users);
 
-        Task Update(List<LicenseUser> users, ChildProgressBar childProgressBar);
+        Task Update(List<LicenseUser> users);
 
         Task<List<LicenseUser>> GetAll();
     }
 
     public interface ILicenseGroupClient : IDomainService
     {
-        Task Add(List<LicenseGroup> groups, ChildProgressBar childProgressBar);
-        Task Remove(List<LicenseGroup> groups, ChildProgressBar childProgressBar);
+        Task Add(List<LicenseGroup> groups);
+        Task Remove(List<LicenseGroup> groups);
 
-        Task Update(List<LicenseGroup> groups, ChildProgressBar childProgressBar);
+        Task Update(List<LicenseGroup> groups);
 
         Task<List<LicenseGroup>> GetAll();
     }
 
     public interface ILicenseUserGroupClient : IDomainService
     {
-        Task Add(List<LicenseUser> users, LicenseGroup @group, ChildProgressBar childProgressBar);
-        Task Remove(List<LicenseUser> users, LicenseGroup @group, ChildProgressBar childProgressBar);
+        Task Add(List<LicenseUser> users, LicenseGroup @group);
+        Task Remove(List<LicenseUser> users, LicenseGroup @group);
     }
 
     public interface ISupportUploadClient : IDomainService

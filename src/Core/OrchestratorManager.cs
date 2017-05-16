@@ -37,35 +37,20 @@
 
         public async Task UserMonitor()
         {
-            int initialProgress = 1;
+            var upload = await _userOrchestrator.ProcessUpload();
 
-            using (ProgressBar pbar = Environment.UserInteractive ? new ProgressBar(initialProgress, "overall progress", ConsoleColor.DarkGray) : null)
+            if (upload == null || CallInStatus.CalledIn.HasFlag(upload.Status))
             {
-                try
-                {
-                    var upload = await _userOrchestrator.ProcessUpload(pbar);
-
-                    if (upload == null || CallInStatus.CalledIn.HasFlag(upload.Status))
-                    {
-                        return;
-                    }
-
-                    pbar?.UpdateMaxTicks(initialProgress + 4);
-
-                    List<LicenseUser> users = await _userOrchestrator.ProcessUsers(upload.Id, pbar);
-
-                    await _userOrchestrator.ProcessGroups(users, pbar);
-
-                    await _userOrchestrator.ProcessUserGroups(users, pbar);
-
-                    await _userOrchestrator.CallIn(upload.Id, pbar);
-                }
-                catch (Exception ex)
-                {
-                    pbar?.UpdateMessage(ex.Message);
-                    throw;
-                }
+                return;
             }
+
+            List<LicenseUser> users = await _userOrchestrator.ProcessUsers(upload.Id);
+
+            await _userOrchestrator.ProcessGroups(users);
+
+            await _userOrchestrator.ProcessUserGroups(users);
+
+            await _userOrchestrator.CallIn(upload.Id);
         }
     }
 }
