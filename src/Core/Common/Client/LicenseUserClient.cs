@@ -14,143 +14,107 @@
 
     public class LicenseUserClient : DomainService, ILicenseUserClient
     {
-        public async Task Add(List<LicenseUser> users, ChildProgressBar childProgressBar)
+        public async Task Add(List<LicenseUser> users)
         {
-            childProgressBar?.UpdateMessage("adding users");
+            var client = new ODataClient(new ODataLicenseClientSettings());
 
-            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "adding users", new ProgressBarOptions
+            for (int index = 0; index < users.Count; index++)
             {
-                ForeGroundColor = ConsoleColor.Yellow,
-                ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray
-            }) : null)
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                LicenseUser user = users[index];
 
-                for (int index = 0; index < users.Count; index++)
+                try
                 {
-                    LicenseUser user = users[index];
+                    Logger.Debug($"Creating user: {user.DisplayName}");
 
-                    try
+                    await client.For<LicenseUser>().Set(new
                     {
-                        Logger.Info($"adding: {user.DisplayName}");
-
-                        await client.For<LicenseUser>().Set(new
-                        {
-                            user.DisplayName,
-                            user.Email,
-                            user.Enabled,
-                            user.FirstName,
-                            user.Id,
-                            user.ManagedSupportId,
-                            user.Surname,
-                            user.WhenCreated
-                        }).InsertEntryAsync();
-                    }
-                    catch (WebRequestException ex)
-                    {
-                        ExceptionExtensions.HandleWebRequestException(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Failed to add: {user.DisplayName}");
-                        Logger.Error("Execution will continue");
-                        Logger.DebugFormat("Exception: ", ex);
-                    }
-                    finally
-                    {
-                        pbar?.Tick($"adding: {user.DisplayName}");
-                    }
+                        user.DisplayName,
+                        user.Email,
+                        user.Enabled,
+                        user.FirstName,
+                        user.Id,
+                        user.ManagedSupportId,
+                        user.Surname,
+                        user.WhenCreated
+                    }).InsertEntryAsync();
+                }
+                catch (WebRequestException ex)
+                {
+                    Logger.Error($"Unable to create user: {user.DisplayName}.");
+                    ExceptionExtensions.HandleWebRequestException(ex);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Unable to create user: {user.DisplayName}.");
+                    Logger.Debug($"User: {user.Dump()}");
+                    Logger.Debug(ex.ToString());
                 }
             }
-
-            childProgressBar?.Tick();
         }
 
-        public async Task Remove(List<LicenseUser> users, ChildProgressBar childProgressBar)
+        public async Task Remove(List<LicenseUser> users)
         {
-            childProgressBar?.UpdateMessage("removing users");
 
-            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "removing users", new ProgressBarOptions
-            {
-                ForeGroundColor = ConsoleColor.Yellow,
-                ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray
-            }) : null)
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataLicenseClientSettings());
 
-                for (int index = 0; index < users.Count; index++)
+            for (int index = 0; index < users.Count; index++)
+            {
+                LicenseUser user = users[index];
+
+                try
                 {
-                    LicenseUser user = users[index];
+                    Logger.Debug($"Removing user: {user.DisplayName}");
+                    await client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
 
-                    try
-                    {
-                        await client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
-
-                        pbar?.Tick($"removing: {user.DisplayName}");
-                    }
-                    catch (WebRequestException ex)
-                    {
-                        ExceptionExtensions.HandleWebRequestException(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Failed to delete: {user.DisplayName}");
-                        Logger.Error("Execution will continue");
-                        Logger.DebugFormat("Exception: ", ex);
-                    }
+                }
+                catch (WebRequestException ex)
+                {
+                    Logger.Error($"Unable to remove user: {user.DisplayName}.");
+                    ExceptionExtensions.HandleWebRequestException(ex);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Unable to delete user: {user.DisplayName}");
+                    Logger.Debug($"User: {user.Dump()}");
+                    Logger.Debug(ex.ToString());
                 }
             }
-
-            childProgressBar?.Tick();
         }
 
-        public async Task Update(List<LicenseUser> users, ChildProgressBar childProgressBar)
+        public async Task Update(List<LicenseUser> users)
         {
-            childProgressBar?.UpdateMessage("updating users");
+            var client = new ODataClient(new ODataLicenseClientSettings());
 
-            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, "updating users", new ProgressBarOptions
+            for (int index = 0; index < users.Count; index++)
             {
-                ForeGroundColor = ConsoleColor.Yellow,
-                ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray
-            }) : null)
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                LicenseUser user = users[index];
 
-                for (int index = 0; index < users.Count; index++)
+                try
                 {
-                    LicenseUser user = users[index];
+                    Logger.Debug($"Updating user: {user.DisplayName}");
 
-                    try
+                    await client.For<LicenseUser>().Key(user.Id).Set(new
                     {
-                        await client.For<LicenseUser>().Key(user.Id).Set(new
-                        {
-                            user.DisplayName,
-                            user.Email,
-                            user.Enabled,
-                            user.FirstName,
-                            user.Surname,
-                            user.WhenCreated
-                        }).UpdateEntryAsync();
-
-                        pbar?.Tick($"updating: {user.DisplayName}");
-                    }
-                    catch (WebRequestException ex)
-                    {
-                        ExceptionExtensions.HandleWebRequestException(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Failed to update: {user.DisplayName}");
-                        Logger.Error($"Execution will continue");
-                        Logger.DebugFormat("Exception: ", ex);
-                    }
+                        user.DisplayName,
+                        user.Email,
+                        user.Enabled,
+                        user.FirstName,
+                        user.Surname,
+                        user.WhenCreated
+                    }).UpdateEntryAsync();
+                }
+                catch (WebRequestException ex)
+                {
+                    Logger.Error($"Unable to update user: {user.DisplayName}.");
+                    ExceptionExtensions.HandleWebRequestException(ex);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Unable to update user: {user.DisplayName}.");
+                    Logger.Debug($"User: {user.Dump()}");
+                    Logger.Debug(ex.ToString());
                 }
             }
-
-            childProgressBar?.Tick();
         }
 
         public async Task<List<LicenseUser>> GetAll()

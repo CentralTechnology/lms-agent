@@ -12,12 +12,20 @@
         {
             using (IDisposableDependencyObjectWrapper<ILogger> logger = IocManager.Instance.ResolveAsDisposable<ILogger>())
             {
+                var valid = ex.Response.IsValidJson();
+                if (!valid)
+                {
+                    logger.Object.Error(ex.Message);
+                    logger.Object.Debug(ex.ToString());
+                    return;
+                }
+
                 dynamic response = JsonConvert.DeserializeObject(ex.Response);
                 if (response != null)
                 {
                     logger.Object.Error($"Status: {response.error?.code} \t Message: {response.error?.message}");
 
-                    logger.Object.Debug("", ex);
+                    logger.Object.Debug("Error during WebRequest", ex);
                 }
             }
         }

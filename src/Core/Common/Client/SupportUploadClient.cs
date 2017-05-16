@@ -44,6 +44,7 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
+                Logger.Error($"Failed to get the upload id for device: {deviceId}");
                 ExceptionExtensions.HandleWebRequestException(ex);
                 throw;
             }
@@ -111,12 +112,13 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
+                Logger.Error($"Unable to get upload with id: {id}");
                 ExceptionExtensions.HandleWebRequestException(ex);
                 return null;
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to find upload: {id}");
+                Logger.Error($"Unable to get upload with id: {id}");
                 Logger.Debug(ex.ToString());
                 return null;
             }

@@ -8,135 +8,101 @@
     using Extensions;
     using Models;
     using OData;
-    using ShellProgressBar;
     using Simple.OData.Client;
 
     public class LicenseGroupClient : DomainService, ILicenseGroupClient
     {
-        public async Task Add(List<LicenseGroup> groups, ChildProgressBar childProgressBar)
+        public async Task Add(List<LicenseGroup> groups)
         {
-            childProgressBar?.UpdateMessage("adding groups");
+            var client = new ODataClient(new ODataLicenseClientSettings());
 
-            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "adding groups", new ProgressBarOptions
+            for (int index = 0; index < groups.Count; index++)
             {
-                ForeGroundColor = ConsoleColor.Yellow,
-                ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray
-            }) : null)
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                LicenseGroup group = groups[index];
 
-                for (int index = 0; index < groups.Count; index++)
+                try
                 {
-                    LicenseGroup group = groups[index];
+                    Logger.Debug($"Creating group: {group.Name}");
 
-                    try
+                    await client.For<LicenseGroup>().Set(new
                     {
-                        await client.For<LicenseGroup>().Set(new
-                        {
-                            group.Id,
-                            group.Name,
-                            group.WhenCreated
-                        }).InsertEntryAsync();
-
-                        pbar?.Tick($"adding: {group.Name}");
-                    }
-                    catch (WebRequestException ex)
-                    {
-                        ExceptionExtensions.HandleWebRequestException(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Failed to add: {group.Name}");
-                        Logger.Error("Execution will continue");
-                        Logger.DebugFormat("Exception: ", ex);
-                    }
+                        group.Id,
+                        group.Name,
+                        group.WhenCreated
+                    }).InsertEntryAsync();
+                }
+                catch (WebRequestException ex)
+                {
+                    Logger.Error($"Unable to create group: {group.Name}.");
+                    ExceptionExtensions.HandleWebRequestException(ex);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Unable to create group: {group.Name}.");
+                    Logger.Debug($"Group: {group.Dump()}");
+                    Logger.Debug(ex.ToString());
                 }
             }
-
-            childProgressBar?.Tick();
         }
 
-        public async Task Remove(List<LicenseGroup> groups, ChildProgressBar childProgressBar)
+        public async Task Remove(List<LicenseGroup> groups)
         {
-            childProgressBar?.UpdateMessage("removing groups");
+            var client = new ODataClient(new ODataLicenseClientSettings());
 
-            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "removing groups", new ProgressBarOptions
+            for (int index = 0; index < groups.Count; index++)
             {
-                ForeGroundColor = ConsoleColor.Yellow,
-                ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray
-            }) : null)
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                LicenseGroup group = groups[index];
 
-                for (int index = 0; index < groups.Count; index++)
+                try
                 {
-                    LicenseGroup group = groups[index];
+                    Logger.Debug($"Removing group: {group.Name}");
 
-                    try
-                    {
-                        await client.For<LicenseGroup>().Key(group.Id).DeleteEntryAsync();
-
-                        pbar?.Tick($"removing: {group.Name}");
-                    }
-                    catch (WebRequestException ex)
-                    {
-                        ExceptionExtensions.HandleWebRequestException(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Failed to delete: {group.Name}");
-                        Logger.Error("Execution will continue");
-                        Logger.DebugFormat("Exception: ", ex);
-                    }
+                    await client.For<LicenseGroup>().Key(group.Id).DeleteEntryAsync();
+                }
+                catch (WebRequestException ex)
+                {
+                    Logger.Error($"Unable to remove group: {group.Name}.");
+                    ExceptionExtensions.HandleWebRequestException(ex);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Unable to remove group: {group.Name}.");
+                    Logger.Debug($"Group: {group.Dump()}");
+                    Logger.Debug(ex.ToString());
                 }
             }
-
-            childProgressBar?.Tick();
         }
 
-        public async Task Update(List<LicenseGroup> groups, ChildProgressBar childProgressBar)
+        public async Task Update(List<LicenseGroup> groups)
         {
-            childProgressBar?.UpdateMessage("updating groups");
+            var client = new ODataClient(new ODataLicenseClientSettings());
 
-            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(groups.Count, "updating groups", new ProgressBarOptions
+            for (int index = 0; index < groups.Count; index++)
             {
-                ForeGroundColor = ConsoleColor.Yellow,
-                ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray
-            }) : null)
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                LicenseGroup group = groups[index];
 
-                for (int index = 0; index < groups.Count; index++)
+                try
                 {
-                    LicenseGroup group = groups[index];
+                    Logger.Debug($"Updating group: {group.Name}");
 
-                    try
+                    await client.For<LicenseGroup>().Key(group.Id).Set(new
                     {
-                        await client.For<LicenseGroup>().Key(group.Id).Set(new
-                        {
-                            group.Name,
-                            group.WhenCreated
-                        }).UpdateEntryAsync();
-
-                        pbar?.Tick($"updating: {group.Name}");
-                    }
-                    catch (WebRequestException ex)
-                    {
-                        ExceptionExtensions.HandleWebRequestException(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Failed to update: {group.Name}");
-                        Logger.Error("Execution will continue");
-                        Logger.DebugFormat("Exception: ", ex);
-                    }
+                        group.Name,
+                        group.WhenCreated
+                    }).UpdateEntryAsync();
+                }
+                catch (WebRequestException ex)
+                {
+                    Logger.Error($"Unable to update group: {group.Name}.");
+                    ExceptionExtensions.HandleWebRequestException(ex);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Unable to update group: {group.Name}.");
+                    Logger.Debug($"Group: {group.Dump()}");
+                    Logger.Debug(ex.ToString());
                 }
             }
-
-            childProgressBar?.Tick();
         }
 
         public async Task<List<LicenseGroup>> GetAll()
@@ -155,7 +121,7 @@
             catch (Exception ex)
             {
                 Logger.Error("Failed to obtain a list of groups from the api.");
-                Logger.DebugFormat("Exception: ", ex);
+                Logger.Debug(ex.ToString());
                 return null;
             }
         }

@@ -10,8 +10,7 @@
     {
         /// <summary>
         /// </summary>
-        /// <param name="childProgressBar"></param>
         /// <returns></returns>
-        List<LicenseUser> GetUsersAndGroups(ChildProgressBar childProgressBar);
+        List<LicenseUser> GetUsersAndGroups();
     }
 }

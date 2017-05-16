@@ -7,81 +7,62 @@
     using Extensions;
     using Models;
     using OData;
-    using ShellProgressBar;
     using Simple.OData.Client;
 
     public class LicenseUserGroupClient : DomainService, ILicenseUserGroupClient
     {
-        public async Task Add(List<LicenseUser> users, LicenseGroup group, ChildProgressBar childProgressBar)
+        public async Task Add(List<LicenseUser> users, LicenseGroup group)
         {
-            childProgressBar?.UpdateMessage($"updating group membership - {group.Name}");
+            var client = new ODataClient(new ODataLicenseClientSettings());
 
-            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, $"adding users to group: {group.Name}", new ProgressBarOptions
+            for (int index = 0; index < users.Count; index++)
             {
-                ForeGroundColor = ConsoleColor.Yellow,
-                ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray
-            }) : null)
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                LicenseUser user = users[index];
 
-                for (int index = 0; index < users.Count; index++)
+                try
                 {
-                    LicenseUser user = users[index];
+                    Logger.Debug($"Adding user: {user.DisplayName} to group: {group}");
 
-                    try
-                    {
-                        await client.For<LicenseUser>().Key(user.Id).LinkEntryAsync(group, "Groups");
-
-                        pbar?.Tick($"adding: {user.DisplayName}");
-                    }
-                    catch (WebRequestException ex)
-                    {
-                        ExceptionExtensions.HandleWebRequestException(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Failed to add: {user.DisplayName}");
-                        Logger.Error("Execution will continue");
-                        Logger.DebugFormat("Exception: ", ex);
-                    }
+                    await client.For<LicenseUser>().Key(user.Id).LinkEntryAsync(group, "Groups");
+                }
+                catch (WebRequestException ex)
+                {
+                    Logger.Error($"Unable to add {user.DisplayName} to {group.Name}");
+                    ExceptionExtensions.HandleWebRequestException(ex);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Unable to add {user.DisplayName} to {group.Name}");
+                    Logger.Debug($"User: {user.Dump()}");
+                    Logger.Debug(ex.ToString());
                 }
             }
         }
 
-        public async Task Remove(List<LicenseUser> users, LicenseGroup group, ChildProgressBar childProgressBar)
+        public async Task Remove(List<LicenseUser> users, LicenseGroup group)
         {
-            childProgressBar?.UpdateMessage("updating group membership");
+            var client = new ODataClient(new ODataLicenseClientSettings());
 
-            using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, $"removing users from group: {group.Name}", new ProgressBarOptions
+            for (int index = 0; index < users.Count; index++)
             {
-                ForeGroundColor = ConsoleColor.Yellow,
-                ProgressCharacter = '─',
-                BackgroundColor = ConsoleColor.DarkGray
-            }) : null)
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                LicenseUser user = users[index];
 
-                for (int index = 0; index < users.Count; index++)
+                try
                 {
-                    LicenseUser user = users[index];
+                    Logger.Debug($"Removing user: {user.DisplayName} from group: {group}");
 
-                    try
-                    {
-                        await client.For<LicenseUser>().Key(user.Id).UnlinkEntryAsync(group, "Groups");
-
-                        pbar?.Tick($"removing: {user.DisplayName}");
-                    }
-                    catch (WebRequestException ex)
-                    {
-                        ExceptionExtensions.HandleWebRequestException(ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Failed to add: {user.DisplayName}");
-                        Logger.Error("Execution will continue");
-                        Logger.DebugFormat("Exception: ", ex);
-                    }
+                    await client.For<LicenseUser>().Key(user.Id).UnlinkEntryAsync(group, "Groups");
+                }
+                catch (WebRequestException ex)
+                {
+                    Logger.Error($"Unable to remove {user.DisplayName} from {group.Name}");
+                    ExceptionExtensions.HandleWebRequestException(ex);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Unable to remove {user.DisplayName} from {group.Name}");
+                    Logger.Debug($"User: {user.Dump()}");
+                    Logger.Debug(ex.ToString());
                 }
             }
         }
