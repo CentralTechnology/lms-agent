@@ -36,8 +36,8 @@
 
     public interface ISupportUploadClient : IDomainService
     {
-        Task<SupportUpload> Add(SupportUpload upload);
-        Task<SupportUpload> Get(int id);
+        Task<ManagedSupport> Add(ManagedSupport upload);
+        Task<ManagedSupport> Get(int id);
         Task<CallInStatus> GetStatusByDeviceId(Guid deviceId);
         Task<int> GetUploadIdByDeviceId(Guid deviceId);
 

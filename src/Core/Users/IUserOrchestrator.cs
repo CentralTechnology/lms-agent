@@ -25,7 +25,7 @@ namespace Core.Users
         /// </summary>
         /// <param name="pbar"></param>
         /// <returns></returns>
-        Task<SupportUpload> ProcessUpload(ProgressBar pbar);
+        Task<ManagedSupport> ProcessUpload(ProgressBar pbar);
 
         /// <summary>
         /// Applies the upload id to all the users then performs the CRUD operations via the api

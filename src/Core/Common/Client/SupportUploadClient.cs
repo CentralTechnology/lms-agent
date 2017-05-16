@@ -17,7 +17,7 @@ namespace Core.Common.Client
             try
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
-                return await client.For<SupportUpload>().Function("GetCallInStatus").Set(new {deviceId}).ExecuteAsScalarAsync<CallInStatus>();
+                return await client.For<ManagedSupport>().Function("GetCallInStatus").Set(new {deviceId}).ExecuteAsScalarAsync<CallInStatus>();
             }
             catch (WebRequestException ex)
             {
@@ -40,7 +40,7 @@ namespace Core.Common.Client
             try
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
-                return await client.For<SupportUpload>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int>();
+                return await client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int>();
             }
             catch (WebRequestException ex)
             {
@@ -62,7 +62,7 @@ namespace Core.Common.Client
             try
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
-                await client.For<SupportUpload>().Key(id).Set(new
+                await client.For<ManagedSupport>().Key(id).Set(new
                 {
                     CheckInTime = Clock.Now,
                     Hostname = Environment.MachineName,
@@ -81,12 +81,12 @@ namespace Core.Common.Client
             }
         }
 
-        public async Task<SupportUpload> Add(SupportUpload upload)
+        public async Task<ManagedSupport> Add(ManagedSupport upload)
         {
             try
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
-                return await client.For<SupportUpload>().Set(upload).InsertEntryAsync();
+                return await client.For<ManagedSupport>().Set(upload).InsertEntryAsync();
             }
             catch (WebRequestException ex)
             {
@@ -101,12 +101,12 @@ namespace Core.Common.Client
             }
         }
 
-        public async Task<SupportUpload> Get(int id)
+        public async Task<ManagedSupport> Get(int id)
         {
             try
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
-                SupportUpload upload = await client.For<SupportUpload>().Key(id).Expand(s => s.Users).FindEntryAsync();
+                ManagedSupport upload = await client.For<ManagedSupport>().Key(id).Expand(s => s.Users).FindEntryAsync();
                 return upload;
             }
             catch (WebRequestException ex)
@@ -127,7 +127,7 @@ namespace Core.Common.Client
             try
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
-                SupportUpload upload = await client.For<SupportUpload>()
+                ManagedSupport upload = await client.For<ManagedSupport>()
                     .Key(uploadId)
                     .Expand(x => x.Users)
                     .FindEntryAsync();
@@ -153,7 +153,7 @@ namespace Core.Common.Client
             try
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
-                return await client.For<SupportUpload>().Function("NewUploadId").ExecuteAsScalarAsync<int>();
+                return await client.For<ManagedSupport>().Function("NewUploadId").ExecuteAsScalarAsync<int>();
             }
             catch (WebRequestException ex)
             {

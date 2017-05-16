@@ -14,7 +14,7 @@
     {
         public async Task Add(List<LicenseUser> users, LicenseGroup group, ChildProgressBar childProgressBar)
         {
-            childProgressBar?.UpdateMessage("updating group membership");
+            childProgressBar?.UpdateMessage($"updating group membership - {group.Name}");
 
             using (ChildProgressBar pbar = Environment.UserInteractive && childProgressBar != null ? childProgressBar.Spawn(users.Count, $"adding users to group: {group.Name}", new ProgressBarOptions
             {

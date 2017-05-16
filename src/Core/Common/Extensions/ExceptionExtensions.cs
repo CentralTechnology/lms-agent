@@ -10,22 +10,32 @@
     public static class ExceptionExtensions
     {
         public static void FormatWebRequestException(this WebRequestException ex)
-        {
-            ODataResponseWrapper response = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
+        {           
             using (var logger = IocManager.Instance.ResolveAsDisposable<ILogger>())
             {
-                if (response != null)
+                try
                 {
-                    logger.Object.Error($"Status: {response.Error.Code}");
-                    logger.Object.Error($"Message: {response.Error.Message}");
-
-                    if (response.Error.InnerError != null)
+                    ODataResponseWrapper response = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
+                    if (response != null)
                     {
-                        logger.Object.Error($"Inner Message: {response.Error.InnerError.Message}");
+                        logger.Object.Error($"Status: {response.Error.Code}");
+                        logger.Object.Error($"Message: {response.Error.Message}");
+
+                        if (response.Error.InnerError != null)
+                        {
+                            logger.Object.Error($"Inner Message: {response.Error.InnerError.Message}");
+                        }
                     }
                 }
-
-                logger.Object.Debug(ex.ToString);
+                catch (JsonReaderException jre)
+                {
+                    logger.Object.Debug("Unable to parse WebRequestException to ODataResponseWrapper");
+                    logger.Object.Debug(jre.ToString);
+                }
+                finally
+                {
+                    logger.Object.Debug(ex.ToString);
+                }               
             }
         }
     }
