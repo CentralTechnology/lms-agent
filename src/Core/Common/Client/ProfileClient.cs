@@ -18,7 +18,7 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
-                ex.FormatWebRequestException();
+                ExceptionExtensions.HandleWebRequestException(ex);
                 throw;
             }
             catch (Exception ex)

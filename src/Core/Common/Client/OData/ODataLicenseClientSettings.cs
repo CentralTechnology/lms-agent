@@ -30,6 +30,7 @@ namespace Core.Common.Client.OData
                 // ReSharper disable once AccessToDisposedClosure
                 br.Headers.Authorization = new AuthenticationHeaderValue("Device", DeviceId.ToString("D").ToUpper());
             };
+
         }
 
         private static int AccountId { get; set; }
