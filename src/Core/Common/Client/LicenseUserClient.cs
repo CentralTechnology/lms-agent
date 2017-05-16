@@ -49,7 +49,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        ex.FormatWebRequestException();
+                        ExceptionExtensions.HandleWebRequestException(ex);
                     }
                     catch (Exception ex)
                     {
@@ -92,7 +92,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        ex.FormatWebRequestException();
+                        ExceptionExtensions.HandleWebRequestException(ex);
                     }
                     catch (Exception ex)
                     {
@@ -139,7 +139,7 @@
                     }
                     catch (WebRequestException ex)
                     {
-                        ex.FormatWebRequestException();
+                        ExceptionExtensions.HandleWebRequestException(ex);
                     }
                     catch (Exception ex)
                     {
@@ -165,7 +165,7 @@
             }
             catch (WebRequestException ex)
             {
-                ex.FormatWebRequestException();
+                ExceptionExtensions.HandleWebRequestException(ex);
                 return null;
             }
             catch (Exception ex)

@@ -1,41 +1,24 @@
 ﻿namespace Core.Common.Extensions
 {
+    using System;
     using Abp.Dependency;
     using Castle.Core.Logging;
-    using Client;
-    using Client.OData;
     using Newtonsoft.Json;
     using Simple.OData.Client;
 
     public static class ExceptionExtensions
     {
-        public static void FormatWebRequestException(this WebRequestException ex)
-        {           
-            using (var logger = IocManager.Instance.ResolveAsDisposable<ILogger>())
+        public static void HandleWebRequestException(WebRequestException ex)
+        {
+            using (IDisposableDependencyObjectWrapper<ILogger> logger = IocManager.Instance.ResolveAsDisposable<ILogger>())
             {
-                try
+                dynamic response = JsonConvert.DeserializeObject(ex.Response);
+                if (response != null)
                 {
-                    ODataResponseWrapper response = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
-                    if (response != null)
-                    {
-                        logger.Object.Error($"Status: {response.Error.Code}");
-                        logger.Object.Error($"Message: {response.Error.Message}");
+                    logger.Object.Error($"Status: {response.error?.code} \t Message: {response.error?.message}");
 
-                        if (response.Error.InnerError != null)
-                        {
-                            logger.Object.Error($"Inner Message: {response.Error.InnerError.Message}");
-                        }
-                    }
+                    logger.Object.Debug("", ex);
                 }
-                catch (JsonReaderException jre)
-                {
-                    logger.Object.Debug("Unable to parse WebRequestException to ODataResponseWrapper");
-                    logger.Object.Debug(jre.ToString);
-                }
-                finally
-                {
-                    logger.Object.Debug(ex.ToString);
-                }               
             }
         }
     }

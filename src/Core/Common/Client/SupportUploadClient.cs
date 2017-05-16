@@ -21,7 +21,7 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
-                ex.FormatWebRequestException();
+                ExceptionExtensions.HandleWebRequestException(ex);
                 return CallInStatus.NotCalledIn;
             }
             catch (Exception ex)
@@ -44,7 +44,7 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
-                ex.FormatWebRequestException();
+                ExceptionExtensions.HandleWebRequestException(ex);
                 throw;
             }
             catch (Exception ex)
@@ -72,7 +72,7 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
-                ex.FormatWebRequestException();
+                ExceptionExtensions.HandleWebRequestException(ex);
             }
             catch (Exception ex)
             {
@@ -90,7 +90,7 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
-                ex.FormatWebRequestException();
+                ExceptionExtensions.HandleWebRequestException(ex);
                 return null;
             }
             catch (Exception ex)
@@ -111,7 +111,7 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
-                ex.FormatWebRequestException();
+                ExceptionExtensions.HandleWebRequestException(ex);
                 return null;
             }
             catch (Exception ex)
@@ -137,7 +137,7 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
-                ex.FormatWebRequestException();
+                ExceptionExtensions.HandleWebRequestException(ex);
                 return null;
             }
             catch (Exception ex)
@@ -157,7 +157,7 @@ namespace Core.Common.Client
             }
             catch (WebRequestException ex)
             {
-                ex.FormatWebRequestException();
+                ExceptionExtensions.HandleWebRequestException(ex);
                 return 0;
             }
             catch (Exception ex)
