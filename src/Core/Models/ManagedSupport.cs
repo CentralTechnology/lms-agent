@@ -23,8 +23,6 @@
         public CallInStatus Status { get; set; }
         public int TenantId { get; set; }
 
-        public double? Threshold { get; set; }
-
         [Required]
         public int UploadId { get; set; }
 
