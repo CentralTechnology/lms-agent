@@ -40,13 +40,13 @@
             var sb = new StringBuilder();
 
             var dash = new String('-', defaultWidth);
-            var titleWidth = defaultWidth - (title.Length + 5);
+            var titleWidth = defaultWidth - (title.Length + 6);
 
             var titleLine = new String(' ', titleWidth / 2);
 
             sb.Append(Environment.NewLine);
             sb.AppendLine(dash);
-            sb.AppendLine($"-{titleLine} {title} {titleLine}-");
+            sb.AppendLine($"{titleLine} {title} {titleLine}");
             sb.AppendLine(dash);
 
             return sb.ToString();
