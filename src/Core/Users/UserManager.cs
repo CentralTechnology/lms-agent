@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
     using System.Linq;
     using Abp.Domain.Services;
@@ -24,22 +25,24 @@
         {
             try
             {
+                var users = new List<LicenseUser>();
                 using (var context = new PrincipalContext(ContextType.Domain))
                 {
                     using (var search = new PrincipalSearcher(new UserPrincipal(context)))
                     {
-                        List<UserPrincipal> allUsers = search.FindAll().Cast<UserPrincipal>().ToList();
-                        var users = new List<LicenseUser>(allUsers.Count);
+                        IEnumerable<UserPrincipal> allUsers = search.FindAll().Cast<UserPrincipal>();
 
                         foreach (UserPrincipal user in allUsers)
                         {
                             try
                             {
-                                users.Add(new LicenseUser
+                                var dirEntry = user.GetUnderlyingObject() as DirectoryEntry;
+
+                                var localUser = new LicenseUser
                                 {
                                     DisplayName = user.DisplayName,
                                     Email = user.EmailAddress,
-                                    Enabled = user.Enabled ?? false,
+                                    Enabled = !dirEntry.IsAccountDisabled(),
                                     FirstName = user.GivenName,
                                     Groups = user.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new LicenseGroup
                                     {
@@ -50,7 +53,9 @@
                                     Id = Guid.Parse(user.Guid.ToString()),
                                     Surname = user.Surname,
                                     WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
-                                });
+                                };
+
+                                users.Add(localUser);
                             }
                             catch (Exception ex)
                             {
