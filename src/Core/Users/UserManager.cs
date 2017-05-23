@@ -33,8 +33,8 @@
                 var groupSearch = new PrincipalSearcher(new GroupPrincipal(context));
 
                 var groups = groupSearch.FindAll()
-                    .Where(g => g.Guid != null)
                     .Cast<GroupPrincipal>()
+                    .Where(g => g.Guid != null)
                     .Where(g => g.IsSecurityGroup != null && (bool) g.IsSecurityGroup)
                     .Select(g => new
                     {
@@ -48,8 +48,8 @@
                 var userSearch = new PrincipalSearcher(new UserPrincipal(context));
 
                 List<UserPrincipal> users = userSearch.FindAll()
-                    .Where(u => u.Guid != null)
                     .Cast<UserPrincipal>()
+                    .Where(u => u.Guid != null)
                     .ToList();
 
                 foreach (UserPrincipal user in users)
@@ -70,6 +70,7 @@
                                 WhenCreated = g.WhenCreated
                             }).ToList(),
                         Id = Guid.Parse(user.Guid.ToString()),
+                        SamAccountName = user.SamAccountName,
                         Surname = user.Surname,
                         WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
                     });

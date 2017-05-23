@@ -26,6 +26,9 @@
         public string Surname { get; set; }
 
         public DateTime WhenCreated { get; set; }
+
+        [MaxLength(256)]
+        public string SamAccountName { get; set; }
     }
 
     [Flags]

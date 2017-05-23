@@ -27,5 +27,7 @@
         public int UploadId { get; set; }
 
         public List<LicenseUser> Users { get; set; }
+
+        public string ClientVersion { get; set; }
     }
 }

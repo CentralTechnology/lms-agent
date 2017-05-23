@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Configuration;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Text.RegularExpressions;
     using Abp;
@@ -155,6 +156,22 @@ var deviceId = GetDeviceId();
             }
 
             Logger.Debug("Configuration is valid.");
+        }
+
+        /// <inheritdoc />
+        public string GetClientVersion()
+        {
+            try
+            {
+                return Assembly.GetEntryAssembly().GetName().Version.ToString();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Unable to determine client version.");
+                Logger.Debug(ex.ToString());
+            }
+
+            return string.Empty;
         }
 
         private int GetAccountId(Guid deviceId)

@@ -39,5 +39,11 @@ namespace Core.Administration
         /// 
         /// </summary>
         void Validate();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        string GetClientVersion();
     }
 }

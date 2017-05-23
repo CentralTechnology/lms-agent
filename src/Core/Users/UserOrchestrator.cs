@@ -247,6 +247,7 @@
         {
             Logger.Info("Processing Upload Information".SectionTitle());
             Logger.Info("Calling in");
+            
             await _uploadClient.Update(uploadId);
         }
     }
