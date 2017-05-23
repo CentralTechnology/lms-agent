@@ -110,9 +110,8 @@
                 Logger.Info($"Applying the upload id: {uploadId} to all the local users.");
                 usersToCreate = usersToCreate.ApplyUploadId(uploadId);
 
-                Logger.Info("CREATING USERS BEGIN");
+                Logger.Info("Creating the users.");
                 await _licenseUserClient.Add(usersToCreate);
-                Logger.Info("CREATING USERS END");
             }
 
             Logger.Info("Calculating the number of users that need to be updated in the api.");
@@ -121,9 +120,8 @@
 
             if (usersToUpdate.Count > 0)
             {
-                Logger.Info("UPDATING USERS BEGIN");
+                Logger.Info("Updating the users.");
                 await _licenseUserClient.Update(usersToUpdate);
-                Logger.Info("UPDATING USERS END");
             }
 
             Logger.Info("Calculating the number of users that need to be deleted in the api.");
@@ -132,9 +130,8 @@
 
             if (usersToDelete.Count > 0)
             {
-                Logger.Info("DELETING USERS BEGIN");
+                Logger.Info("Deleting the users.");
                 await _licenseUserClient.Remove(usersToDelete);
-                Logger.Info("DELETING USERS END");
             }
 
             var summary = new[]
@@ -168,9 +165,8 @@
 
             if (groupsToCreate.Count > 0)
             {
-                Logger.Info("CREATING GROUPS BEGIN");
+                Logger.Info("Ccreating the groups.");
                 await _licenseGroupClient.Add(groupsToCreate);
-                Logger.Info("CREATING GROUPS END");
             }
 
             Logger.Info("Calculating the number of groups that need to be updated in the api.");
@@ -179,9 +175,8 @@
 
             if (groupsToUpdate.Count > 0)
             {
-                Logger.Info("UPDATING GROUPS BEGIN");
+                Logger.Info("Updating the groups.");
                 await _licenseGroupClient.Update(groupsToUpdate);
-                Logger.Info("UPDATING GROUPS END");
             }
 
             Logger.Info("Calculating the number of groups that need to be deleted in the api.");
@@ -190,9 +185,8 @@
 
             if (groupsToDelete.Count > 0)
             {
-                Logger.Info("DELETING GROUPS BEGIN");
+                Logger.Info("Deleting the groups.");
                 await _licenseGroupClient.Remove(groupsToDelete);
-                Logger.Info("DELETING GROUPS END");
             }
 
             var summary = new[]
@@ -252,9 +246,9 @@
         public async Task CallIn(int uploadId)
         {
             Logger.Info("Processing Upload Information".SectionTitle());
-            Logger.Info("CALL IN BEGIN");
+            Logger.Info("Calling in");
+            
             await _uploadClient.Update(uploadId);
-            Logger.Info("CALL IN END");
         }
     }
 }

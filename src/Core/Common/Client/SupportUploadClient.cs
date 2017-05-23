@@ -5,6 +5,7 @@ namespace Core.Common.Client
     using System.Threading.Tasks;
     using Abp.Domain.Services;
     using Abp.Timing;
+    using Administration;
     using Extensions;
     using Models;
     using OData;
@@ -12,6 +13,12 @@ namespace Core.Common.Client
 
     public class SupportUploadClient : DomainService, ISupportUploadClient
     {
+        private readonly ISettingsManager _settingsManager;
+
+        public SupportUploadClient(ISettingsManager settingsManager)
+        {
+            _settingsManager = settingsManager;
+        }
         public async Task<CallInStatus> GetStatusByDeviceId(Guid deviceId)
         {
             try
@@ -60,12 +67,16 @@ namespace Core.Common.Client
         {
             int uploadId = await GetNewUploadId();
 
+            var version = _settingsManager.GetClientVersion();
+            Logger.Debug($"Current client version: {version}");
+
             try
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
                 await client.For<ManagedSupport>().Key(id).Set(new
                 {
                     CheckInTime = Clock.Now,
+                    ClientVersion = version,
                     Hostname = Environment.MachineName,
                     Status = CallInStatus.CalledIn,
                     UploadId = uploadId

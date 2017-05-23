@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
     using System.Linq;
     using Abp.Domain.Services;
@@ -22,54 +23,67 @@
         /// <returns></returns>
         private List<LicenseUser> AllUsers()
         {
+            var localUsers = new List<LicenseUser>();
+
             try
             {
-                using (var context = new PrincipalContext(ContextType.Domain))
-                {
-                    using (var search = new PrincipalSearcher(new UserPrincipal(context)))
+                var context = new PrincipalContext(ContextType.Domain);
+
+                // get the groups first
+                var groupSearch = new PrincipalSearcher(new GroupPrincipal(context));
+
+                var groups = groupSearch.FindAll()
+                    .Cast<GroupPrincipal>()
+                    .Where(g => g.Guid != null)
+                    .Where(g => g.IsSecurityGroup != null && (bool) g.IsSecurityGroup)
+                    .Select(g => new
                     {
-                        List<UserPrincipal> allUsers = search.FindAll().Cast<UserPrincipal>().ToList();
-                        var users = new List<LicenseUser>(allUsers.Count);
+                        Id = g.Guid,
+                        g.Name,
+                        Members = g.Members.Select(m => m.Guid).ToList(),
+                        WhenCreated = DateTime.Parse(g.GetProperty("whenCreated"))
+                    }).ToList();
 
-                        foreach (UserPrincipal user in allUsers)
-                        {
-                            try
-                            {
-                                users.Add(new LicenseUser
-                                {
-                                    DisplayName = user.DisplayName,
-                                    Email = user.EmailAddress,
-                                    Enabled = user.Enabled ?? false,
-                                    FirstName = user.GivenName,
-                                    Groups = user.GetAuthorizationGroups().Where(g => g is GroupPrincipal && g.Guid != null).Select(g => new LicenseGroup
-                                    {
-                                        Id = Guid.Parse(g.Guid.ToString()),
-                                        Name = g.Name,
-                                        WhenCreated = DateTime.Parse(g.GetProperty("whenCreated"))
-                                    }).ToList(),
-                                    Id = Guid.Parse(user.Guid.ToString()),
-                                    Surname = user.Surname,
-                                    WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
-                                });
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Error($"There was a problem processing {user.Name}.");
-                                Logger.Error(ex.Message);
-                                Logger.Debug($"Could not convert the following UserPrinciple into a User object: {user.Dump()}");
-                                Logger.Debug(ex.ToString());
-                            }
-                        }
+                // then process the users
+                var userSearch = new PrincipalSearcher(new UserPrincipal(context));
 
-                        return users;
-                    }
+                List<UserPrincipal> users = userSearch.FindAll()
+                    .Cast<UserPrincipal>()
+                    .Where(u => u.Guid != null)
+                    .ToList();
+
+                foreach (UserPrincipal user in users)
+                {
+                    var dirEntry = user.GetUnderlyingObject() as DirectoryEntry;
+
+                    localUsers.Add(new LicenseUser
+                    {
+                        DisplayName = user.DisplayName,
+                        Email = user.EmailAddress,
+                        Enabled = !dirEntry.IsAccountDisabled(),
+                        FirstName = user.GivenName,
+                        Groups = groups.Where(g => g.Members.Any(m => m == user.Guid))
+                            .Select(g => new LicenseGroup
+                            {
+                                Id = Guid.Parse(g.Id.ToString()),
+                                Name = g.Name,
+                                WhenCreated = g.WhenCreated
+                            }).ToList(),
+                        Id = Guid.Parse(user.Guid.ToString()),
+                        SamAccountName = user.SamAccountName,
+                        Surname = user.Surname,
+                        WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
+                    });
                 }
             }
             catch (Exception ex)
             {
+                Logger.Error(ex.Message);
                 Logger.Debug(ex.ToString());
                 throw;
             }
+
+            return localUsers;
         }
     }
 }

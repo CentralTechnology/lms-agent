@@ -51,6 +51,8 @@
             await _userOrchestrator.ProcessUserGroups(users);
 
             await _userOrchestrator.CallIn(upload.Id);
+
+            Logger.Info("Finished.");
         }
     }
 }
