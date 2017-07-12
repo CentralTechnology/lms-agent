@@ -19,7 +19,7 @@
             {
                 Manufacturer = "Central Technology Ltd",
                 OutDir = "bin/%Configuration%",
-                OutFileName = "LMS",
+                OutFileName = "LmsInstaller",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
                 Version = new Version(version),
                 Chain = new List<ChainItem>
