@@ -353,7 +353,7 @@ Task -Name __InstallGitVersion -Depends __InstallChocolatey -Description $privat
 
 		if (-not (Test-Path $gitVersionExe)) {
 			exec {
-							Invoke-Expression "$script:chocolateyCommand install GitVersion.Portable -pre -y -source https://www.myget.org/F/gep13/";
+							Invoke-Expression "$script:chocolateyCommand install GitVersion.Portable -pre -y";
 			}
 		} else {
 			Write-Output "GitVersion.Portable already installed";
