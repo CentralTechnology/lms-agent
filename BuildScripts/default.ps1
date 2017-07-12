@@ -427,7 +427,7 @@ Task -Name RunGitVersion -Depends __InstallGitVersion -Description "Execute the 
 		exec {
 			if(isAppVeyor) {
 				Write-Output "Running on AppVeyor, so UpdateAssemblyInfo will be called."
-				& $gitVersionExe /output buildserver /UpdateAssemblyInfo true
+				& $gitVersionExe /l console /output buildserver /UpdateAssemblyInfo /b $env:APPVEYOR_REPO_BRANCH
 				$script:version = $env:GitVersion_LegacySemVerPadded
 			} else {
 				$output = & $gitVersionExe
