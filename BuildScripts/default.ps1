@@ -1,7 +1,7 @@
 $psake.use_exit_on_error = $true
 properties {
 	$config = 'Debug';
-	$platform = 'x64';
+	$platform = 'Any CPU';
 	$nugetExe = "..\Tools\NuGet\NuGet.exe";
 	$projectName = "LicenseMonitoringSystem";
 }
