@@ -547,7 +547,7 @@ Task -Name BuildSolution -Depends __RemoveBuildArtifactsDirectory, __VerifyConfi
 		Write-Output "Running BuildSolution..."
 
 		exec {
-			Invoke-MSBuild "$sourceDirectory\LicenseMonitoringSystem.sln" -NoLogo -Configuration $config -Platform $platform -Targets Build -DetailedSummary -VisualStudioVersion  14.0 -debugMode;
+			Invoke-MSBuild "$sourceDirectory\LicenseMonitoringSystem.sln" -NoLogo -Configuration $config -Platform $platform -Targets Build -DetailedSummary -VisualStudioVersion  14.0;
 
 			$styleCopResultsFiles = Get-ChildItem $buildArtifactsDirectory -Filter "StyleCop*.xml"
 			foreach ($styleCopResultsFile in $styleCopResultsFiles) {
@@ -566,7 +566,7 @@ Task -Name BuildSolution -Depends __RemoveBuildArtifactsDirectory, __VerifyConfi
 			}
 
 			if(isAppVeyor) {
-				$expectedMsiFile = Join-Path -Path $buildArtifactsDirectory -ChildPath "ChocolateyGUI.msi"
+				$expectedMsiFile = Join-Path -Path $buildArtifactsDirectory -ChildPath "LmsInstaller.exe"
 				if(Test-Path $expectedMsiFile) {
 					Push-AppveyorArtifact $expectedMsiFile;
 				}

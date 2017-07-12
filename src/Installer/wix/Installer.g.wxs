@@ -6,7 +6,7 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="e05fe767-9b78-4434-9ebc-3a9c1ad7a409" Name="License Monitoring System" Language="1033" Codepage="Windows-1252" Version="!(bind.FileVersion.LMS.exe)" UpgradeCode="adac7706-188b-42e7-922b-50786779042a" Manufacturer="Central Technology Ltd">
+  <Product Id="9b6fcb68-b52a-42d9-9a3e-57fe6f3205ab" Name="License Monitoring System" Language="1033" Codepage="Windows-1252" Version="!(bind.FileVersion.LMS.exe)" UpgradeCode="adac7706-188b-42e7-922b-50786779042a" Manufacturer="Central Technology Ltd">
     <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" Languages="1033" InstallScope="perMachine" />
     <Media Id="1" Cabinet="License_Monitoring_System.cab" EmbedCab="yes" />
 
@@ -16,8 +16,8 @@
       <Directory Id="ProgramFiles64Folder" Name="ProgramFiles64Folder">
         <Directory Id="INSTALLDIR" Name="License Monitoring System">
 
-          <Component Id="Component.LMS.exe" Guid="e05fe767-9b78-4434-9ebc-3a9cf4f0a306" Win64="yes">
-            <File Id="LMS.exe" Source="LMS.exe" />
+          <Component Id="Component.LMS.exe" Guid="9b6fcb68-b52a-42d9-9a3e-57fe494b04a8" Win64="yes">
+            <File Id="LMS.exe" Source="..\Service\bin\Debug\LMS.exe" />
 
             <ServiceInstall Id="LicenseMonitoringSystem" Name="LicenseMonitoringSystem" DisplayName="License Monitoring System" Description="A tool used to monitor various licenses." Type="ownProcess" Start="auto" ErrorControl="normal" Vital="yes">
               <ServiceConfig DelayedAutoStart="yes" ServiceSid="none" OnInstall="yes" OnReinstall="no" OnUninstall="no" />
@@ -29,31 +29,247 @@
             <ServiceControl Id="RemoveLicenseMonitoringSystem" Name="LicenseMonitoringSystem" Remove="uninstall" Wait="yes" />
           </Component>
 
-          <Component Id="Component.App.config" Guid="e05fe767-9b78-4434-9ebc-3a9c57399228" Win64="yes">
-            <File Id="App.config" Source="App.config" />
+          <Component Id="Component.Abp.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe032330ee" Win64="yes">
+            <File Id="Abp.dll" Source="..\Service\bin\Debug\Abp.dll" />
           </Component>
 
-          <Component Id="Component.Installer.csproj" Guid="e05fe767-9b78-4434-9ebc-3a9cb0ad6d50" Win64="yes">
-            <File Id="Installer.csproj" Source="Installer.csproj" />
+          <Component Id="Component.Abp.Topshelf.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fee3f9c8a1" Win64="yes">
+            <File Id="Abp.Topshelf.dll" Source="..\Service\bin\Debug\Abp.Topshelf.dll" />
           </Component>
 
-          <Component Id="Component.packages.config" Guid="e05fe767-9b78-4434-9ebc-3a9c2d387c79" Win64="yes">
-            <File Id="packages.config" Source="packages.config" />
+          <Component Id="Component.Abp.Topshelf.pdb" Guid="9b6fcb68-b52a-42d9-9a3e-57fe6cafc899" Win64="yes">
+            <File Id="Abp.Topshelf.pdb" Source="..\Service\bin\Debug\Abp.Topshelf.pdb" />
           </Component>
 
-          <Component Id="Component.Program.cs" Guid="e05fe767-9b78-4434-9ebc-3a9c2f934466" Win64="yes">
-            <File Id="Program.cs" Source="Program.cs" />
+          <Component Id="Component.Abp.Web.Api.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe6aa1bc7b" Win64="yes">
+            <File Id="Abp.Web.Api.dll" Source="..\Service\bin\Debug\Abp.Web.Api.dll" />
           </Component>
 
-          <Component Id="Component.setup.wixpdb" Guid="e05fe767-9b78-4434-9ebc-3a9c6f307f4d" Win64="yes">
-            <File Id="setup.wixpdb" Source="setup.wixpdb" />
+          <Component Id="Component.Abp.Web.Api.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe69da8fe7" Win64="yes">
+            <File Id="Abp.Web.Api.xml" Source="..\Service\bin\Debug\Abp.Web.Api.xml" />
           </Component>
 
-          <Component Id="Component.setup.wxs" Guid="e05fe767-9b78-4434-9ebc-3a9cc65b7fa9" Win64="yes">
-            <File Id="setup.wxs" Source="setup.wxs" />
+          <Component Id="Component.Abp.Web.Common.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe7a672978" Win64="yes">
+            <File Id="Abp.Web.Common.dll" Source="..\Service\bin\Debug\Abp.Web.Common.dll" />
           </Component>
 
-          <Component Id="ComponentDirPermission" Guid="e05fe767-9b78-4434-9ebc-3a9c7877ec06" Win64="yes" KeyPath="yes">
+          <Component Id="Component.Abp.Web.Common.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fed7d3b5dd" Win64="yes">
+            <File Id="Abp.Web.Common.xml" Source="..\Service\bin\Debug\Abp.Web.Common.xml" />
+          </Component>
+
+          <Component Id="Component.Abp.Web.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fea11babb2" Win64="yes">
+            <File Id="Abp.Web.dll" Source="..\Service\bin\Debug\Abp.Web.dll" />
+          </Component>
+
+          <Component Id="Component.Abp.Web.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fee0076ba6" Win64="yes">
+            <File Id="Abp.Web.xml" Source="..\Service\bin\Debug\Abp.Web.xml" />
+          </Component>
+
+          <Component Id="Component.Abp.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fec3a914d2" Win64="yes">
+            <File Id="Abp.xml" Source="..\Service\bin\Debug\Abp.xml" />
+          </Component>
+
+          <Component Id="Component.Castle.Core.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe0ca71746" Win64="yes">
+            <File Id="Castle.Core.dll" Source="..\Service\bin\Debug\Castle.Core.dll" />
+          </Component>
+
+          <Component Id="Component.Castle.Core.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe4c213362" Win64="yes">
+            <File Id="Castle.Core.xml" Source="..\Service\bin\Debug\Castle.Core.xml" />
+          </Component>
+
+          <Component Id="Component.Castle.Facilities.Logging.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57feb220b382" Win64="yes">
+            <File Id="Castle.Facilities.Logging.dll" Source="..\Service\bin\Debug\Castle.Facilities.Logging.dll" />
+          </Component>
+
+          <Component Id="Component.Castle.Facilities.Logging.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57feb221b386" Win64="yes">
+            <File Id="Castle.Facilities.Logging.xml" Source="..\Service\bin\Debug\Castle.Facilities.Logging.xml" />
+          </Component>
+
+          <Component Id="Component._...es.Logging.NLogIntegration.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe7137cded" Win64="yes">
+            <File Id="_...es.Logging.NLogIntegration.dll" Source="..\Service\bin\Debug\Castle.Services.Logging.NLogIntegration.dll" />
+          </Component>
+
+          <Component Id="Component.Castle.Windsor.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fee1787d78" Win64="yes">
+            <File Id="Castle.Windsor.dll" Source="..\Service\bin\Debug\Castle.Windsor.dll" />
+          </Component>
+
+          <Component Id="Component.Castle.Windsor.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe3ebd09dd" Win64="yes">
+            <File Id="Castle.Windsor.xml" Source="..\Service\bin\Debug\Castle.Windsor.xml" />
+          </Component>
+
+          <Component Id="Component.JetBrains.Annotations.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe3c8b0a62" Win64="yes">
+            <File Id="JetBrains.Annotations.dll" Source="..\Service\bin\Debug\JetBrains.Annotations.dll" />
+          </Component>
+
+          <Component Id="Component.JetBrains.Annotations.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe3c8c0a76" Win64="yes">
+            <File Id="JetBrains.Annotations.xml" Source="..\Service\bin\Debug\JetBrains.Annotations.xml" />
+          </Component>
+
+          <Component Id="Component.LMS.Console.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe833bcba5" Win64="yes">
+            <File Id="LMS.Console.dll" Source="..\Service\bin\Debug\LMS.Console.dll" />
+          </Component>
+
+          <Component Id="Component.LMS.Console.pdb" Guid="9b6fcb68-b52a-42d9-9a3e-57fe72feaf7f" Win64="yes">
+            <File Id="LMS.Console.pdb" Source="..\Service\bin\Debug\LMS.Console.pdb" />
+          </Component>
+
+          <Component Id="Component.LMS.Core.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe918b576f" Win64="yes">
+            <File Id="LMS.Core.dll" Source="..\Service\bin\Debug\LMS.Core.dll" />
+          </Component>
+
+          <Component Id="Component.LMS.Core.pdb" Guid="9b6fcb68-b52a-42d9-9a3e-57fe08d15767" Win64="yes">
+            <File Id="LMS.Core.pdb" Source="..\Service\bin\Debug\LMS.Core.pdb" />
+          </Component>
+
+          <Component Id="Component.LMS.exe.config" Guid="9b6fcb68-b52a-42d9-9a3e-57fe96de2f7f" Win64="yes">
+            <File Id="LMS.exe.config" Source="..\Service\bin\Debug\LMS.exe.config" />
+          </Component>
+
+          <Component Id="Component.LMS.pdb" Guid="9b6fcb68-b52a-42d9-9a3e-57fe68d374f0" Win64="yes">
+            <File Id="LMS.pdb" Source="..\Service\bin\Debug\LMS.pdb" />
+          </Component>
+
+          <Component Id="Component.MarkdownLog.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57feaec59509" Win64="yes">
+            <File Id="MarkdownLog.dll" Source="..\Service\bin\Debug\MarkdownLog.dll" />
+          </Component>
+
+          <Component Id="Component.Microsoft.Threading.Tasks.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe6ae59edd" Win64="yes">
+            <File Id="Microsoft.Threading.Tasks.dll" Source="..\Service\bin\Debug\Microsoft.Threading.Tasks.dll" />
+          </Component>
+
+          <Component Id="Component._...g.Tasks.Extensions.Desktop.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe8bda63d6" Win64="yes">
+            <File Id="_...g.Tasks.Extensions.Desktop.dll" Source="..\Service\bin\Debug\Microsoft.Threading.Tasks.Extensions.Desktop.dll" />
+          </Component>
+
+          <Component Id="Component._...g.Tasks.Extensions.Desktop.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fee946ee3b" Win64="yes">
+            <File Id="_...g.Tasks.Extensions.Desktop.xml" Source="..\Service\bin\Debug\Microsoft.Threading.Tasks.Extensions.Desktop.xml" />
+          </Component>
+
+          <Component Id="Component._...Threading.Tasks.Extensions.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe4f4365db" Win64="yes">
+            <File Id="_...Threading.Tasks.Extensions.dll" Source="..\Service\bin\Debug\Microsoft.Threading.Tasks.Extensions.dll" />
+          </Component>
+
+          <Component Id="Component._...Threading.Tasks.Extensions.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57feac7ff040" Win64="yes">
+            <File Id="_...Threading.Tasks.Extensions.xml" Source="..\Service\bin\Debug\Microsoft.Threading.Tasks.Extensions.xml" />
+          </Component>
+
+          <Component Id="Component.Microsoft.Threading.Tasks.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe6ae49ed1" Win64="yes">
+            <File Id="Microsoft.Threading.Tasks.xml" Source="..\Service\bin\Debug\Microsoft.Threading.Tasks.xml" />
+          </Component>
+
+          <Component Id="Component.Newtonsoft.Json.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57feed8c8085" Win64="yes">
+            <File Id="Newtonsoft.Json.dll" Source="..\Service\bin\Debug\Newtonsoft.Json.dll" />
+          </Component>
+
+          <Component Id="Component.Newtonsoft.Json.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57feecc553f1" Win64="yes">
+            <File Id="Newtonsoft.Json.xml" Source="..\Service\bin\Debug\Newtonsoft.Json.xml" />
+          </Component>
+
+          <Component Id="Component.Nito.AsyncEx.Concurrent.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe744869f4" Win64="yes">
+            <File Id="Nito.AsyncEx.Concurrent.dll" Source="..\Service\bin\Debug\Nito.AsyncEx.Concurrent.dll" />
+          </Component>
+
+          <Component Id="Component.Nito.AsyncEx.Concurrent.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe5fd3f2b0" Win64="yes">
+            <File Id="Nito.AsyncEx.Concurrent.xml" Source="..\Service\bin\Debug\Nito.AsyncEx.Concurrent.xml" />
+          </Component>
+
+          <Component Id="Component.Nito.AsyncEx.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fefcdbdee4" Win64="yes">
+            <File Id="Nito.AsyncEx.dll" Source="..\Service\bin\Debug\Nito.AsyncEx.dll" />
+          </Component>
+
+          <Component Id="Component.Nito.AsyncEx.Enlightenment.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe39649de3" Win64="yes">
+            <File Id="Nito.AsyncEx.Enlightenment.dll" Source="..\Service\bin\Debug\Nito.AsyncEx.Enlightenment.dll" />
+          </Component>
+
+          <Component Id="Component.Nito.AsyncEx.Enlightenment.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe96c12848" Win64="yes">
+            <File Id="Nito.AsyncEx.Enlightenment.xml" Source="..\Service\bin\Debug\Nito.AsyncEx.Enlightenment.xml" />
+          </Component>
+
+          <Component Id="Component.Nito.AsyncEx.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe8597dee3" Win64="yes">
+            <File Id="Nito.AsyncEx.xml" Source="..\Service\bin\Debug\Nito.AsyncEx.xml" />
+          </Component>
+
+          <Component Id="Component.NLog.config" Guid="9b6fcb68-b52a-42d9-9a3e-57fe05bd1e5b" Win64="yes">
+            <File Id="NLog.config" Source="..\Service\bin\Debug\NLog.config" />
+          </Component>
+
+          <Component Id="Component.NLog.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe715e87ba" Win64="yes">
+            <File Id="NLog.dll" Source="..\Service\bin\Debug\NLog.dll" />
+          </Component>
+
+          <Component Id="Component.NLog.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fef91a87b9" Win64="yes">
+            <File Id="NLog.xml" Source="..\Service\bin\Debug\NLog.xml" />
+          </Component>
+
+          <Component Id="Component.Simple.OData.Client.Net40.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe3d7ed8e7" Win64="yes">
+            <File Id="Simple.OData.Client.Net40.dll" Source="..\Service\bin\Debug\Simple.OData.Client.Net40.dll" />
+          </Component>
+
+          <Component Id="Component.Simple.OData.Client.Net40.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe3d7fd8fb" Win64="yes">
+            <File Id="Simple.OData.Client.Net40.xml" Source="..\Service\bin\Debug\Simple.OData.Client.Net40.xml" />
+          </Component>
+
+          <Component Id="Component._...stem.Collections.Immutable.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe0b569dc5" Win64="yes">
+            <File Id="_...stem.Collections.Immutable.dll" Source="..\Service\bin\Debug\System.Collections.Immutable.dll" />
+          </Component>
+
+          <Component Id="Component._...stem.Collections.Immutable.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe68cb282a" Win64="yes">
+            <File Id="_...stem.Collections.Immutable.xml" Source="..\Service\bin\Debug\System.Collections.Immutable.xml" />
+          </Component>
+
+          <Component Id="Component.System.Linq.Dynamic.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fee513cde8" Win64="yes">
+            <File Id="System.Linq.Dynamic.dll" Source="..\Service\bin\Debug\System.Linq.Dynamic.dll" />
+          </Component>
+
+          <Component Id="Component.System.Net.Http.Extensions.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe5406145c" Win64="yes">
+            <File Id="System.Net.Http.Extensions.dll" Source="..\Service\bin\Debug\System.Net.Http.Extensions.dll" />
+          </Component>
+
+          <Component Id="Component.System.Net.Http.Extensions.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57feb252a0c1" Win64="yes">
+            <File Id="System.Net.Http.Extensions.xml" Source="..\Service\bin\Debug\System.Net.Http.Extensions.xml" />
+          </Component>
+
+          <Component Id="Component.System.Net.Http.Formatting.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fea1cfd009" Win64="yes">
+            <File Id="System.Net.Http.Formatting.dll" Source="..\Service\bin\Debug\System.Net.Http.Formatting.dll" />
+          </Component>
+
+          <Component Id="Component.System.Net.Http.Formatting.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fefe0c5b6e" Win64="yes">
+            <File Id="System.Net.Http.Formatting.xml" Source="..\Service\bin\Debug\System.Net.Http.Formatting.xml" />
+          </Component>
+
+          <Component Id="Component.System.Web.Http.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fee10f2cd6" Win64="yes">
+            <File Id="System.Web.Http.dll" Source="..\Service\bin\Debug\System.Web.Http.dll" />
+          </Component>
+
+          <Component Id="Component.System.Web.Http.WebHost.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57feb0c8a01a" Win64="yes">
+            <File Id="System.Web.Http.WebHost.dll" Source="..\Service\bin\Debug\System.Web.Http.WebHost.dll" />
+          </Component>
+
+          <Component Id="Component.System.Web.Http.WebHost.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe858a29d6" Win64="yes">
+            <File Id="System.Web.Http.WebHost.xml" Source="..\Service\bin\Debug\System.Web.Http.WebHost.xml" />
+          </Component>
+
+          <Component Id="Component.System.Web.Http.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fea2236be2" Win64="yes">
+            <File Id="System.Web.Http.xml" Source="..\Service\bin\Debug\System.Web.Http.xml" />
+          </Component>
+
+          <Component Id="Component.Topshelf.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fe3afc71c9" Win64="yes">
+            <File Id="Topshelf.dll" Source="..\Service\bin\Debug\Topshelf.dll" />
+          </Component>
+
+          <Component Id="Component.Topshelf.NLog.dll" Guid="9b6fcb68-b52a-42d9-9a3e-57fee595af1e" Win64="yes">
+            <File Id="Topshelf.NLog.dll" Source="..\Service\bin\Debug\Topshelf.NLog.dll" />
+          </Component>
+
+          <Component Id="Component.Topshelf.NLog.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fee596af3a" Win64="yes">
+            <File Id="Topshelf.NLog.xml" Source="..\Service\bin\Debug\Topshelf.NLog.xml" />
+          </Component>
+
+          <Component Id="Component.Topshelf.xml" Guid="9b6fcb68-b52a-42d9-9a3e-57fe790871c8" Win64="yes">
+            <File Id="Topshelf.xml" Source="..\Service\bin\Debug\Topshelf.xml" />
+          </Component>
+
+          <Component Id="ComponentDirPermission" Guid="9b6fcb68-b52a-42d9-9a3e-57fecdd24da8" Win64="yes" KeyPath="yes">
             <CreateFolder>
               <PermissionEx User="LocalSystem" GenericExecute="yes" GenericWrite="yes" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
             </CreateFolder>
@@ -77,12 +293,66 @@
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
       <ComponentRef Id="Component.LMS.exe" />
-      <ComponentRef Id="Component.App.config" />
-      <ComponentRef Id="Component.Installer.csproj" />
-      <ComponentRef Id="Component.packages.config" />
-      <ComponentRef Id="Component.Program.cs" />
-      <ComponentRef Id="Component.setup.wixpdb" />
-      <ComponentRef Id="Component.setup.wxs" />
+      <ComponentRef Id="Component.Abp.dll" />
+      <ComponentRef Id="Component.Abp.Topshelf.dll" />
+      <ComponentRef Id="Component.Abp.Topshelf.pdb" />
+      <ComponentRef Id="Component.Abp.Web.Api.dll" />
+      <ComponentRef Id="Component.Abp.Web.Api.xml" />
+      <ComponentRef Id="Component.Abp.Web.Common.dll" />
+      <ComponentRef Id="Component.Abp.Web.Common.xml" />
+      <ComponentRef Id="Component.Abp.Web.dll" />
+      <ComponentRef Id="Component.Abp.Web.xml" />
+      <ComponentRef Id="Component.Abp.xml" />
+      <ComponentRef Id="Component.Castle.Core.dll" />
+      <ComponentRef Id="Component.Castle.Core.xml" />
+      <ComponentRef Id="Component.Castle.Facilities.Logging.dll" />
+      <ComponentRef Id="Component.Castle.Facilities.Logging.xml" />
+      <ComponentRef Id="Component._...es.Logging.NLogIntegration.dll" />
+      <ComponentRef Id="Component.Castle.Windsor.dll" />
+      <ComponentRef Id="Component.Castle.Windsor.xml" />
+      <ComponentRef Id="Component.JetBrains.Annotations.dll" />
+      <ComponentRef Id="Component.JetBrains.Annotations.xml" />
+      <ComponentRef Id="Component.LMS.Console.dll" />
+      <ComponentRef Id="Component.LMS.Console.pdb" />
+      <ComponentRef Id="Component.LMS.Core.dll" />
+      <ComponentRef Id="Component.LMS.Core.pdb" />
+      <ComponentRef Id="Component.LMS.exe.config" />
+      <ComponentRef Id="Component.LMS.pdb" />
+      <ComponentRef Id="Component.MarkdownLog.dll" />
+      <ComponentRef Id="Component.Microsoft.Threading.Tasks.dll" />
+      <ComponentRef Id="Component._...g.Tasks.Extensions.Desktop.dll" />
+      <ComponentRef Id="Component._...g.Tasks.Extensions.Desktop.xml" />
+      <ComponentRef Id="Component._...Threading.Tasks.Extensions.dll" />
+      <ComponentRef Id="Component._...Threading.Tasks.Extensions.xml" />
+      <ComponentRef Id="Component.Microsoft.Threading.Tasks.xml" />
+      <ComponentRef Id="Component.Newtonsoft.Json.dll" />
+      <ComponentRef Id="Component.Newtonsoft.Json.xml" />
+      <ComponentRef Id="Component.Nito.AsyncEx.Concurrent.dll" />
+      <ComponentRef Id="Component.Nito.AsyncEx.Concurrent.xml" />
+      <ComponentRef Id="Component.Nito.AsyncEx.dll" />
+      <ComponentRef Id="Component.Nito.AsyncEx.Enlightenment.dll" />
+      <ComponentRef Id="Component.Nito.AsyncEx.Enlightenment.xml" />
+      <ComponentRef Id="Component.Nito.AsyncEx.xml" />
+      <ComponentRef Id="Component.NLog.config" />
+      <ComponentRef Id="Component.NLog.dll" />
+      <ComponentRef Id="Component.NLog.xml" />
+      <ComponentRef Id="Component.Simple.OData.Client.Net40.dll" />
+      <ComponentRef Id="Component.Simple.OData.Client.Net40.xml" />
+      <ComponentRef Id="Component._...stem.Collections.Immutable.dll" />
+      <ComponentRef Id="Component._...stem.Collections.Immutable.xml" />
+      <ComponentRef Id="Component.System.Linq.Dynamic.dll" />
+      <ComponentRef Id="Component.System.Net.Http.Extensions.dll" />
+      <ComponentRef Id="Component.System.Net.Http.Extensions.xml" />
+      <ComponentRef Id="Component.System.Net.Http.Formatting.dll" />
+      <ComponentRef Id="Component.System.Net.Http.Formatting.xml" />
+      <ComponentRef Id="Component.System.Web.Http.dll" />
+      <ComponentRef Id="Component.System.Web.Http.WebHost.dll" />
+      <ComponentRef Id="Component.System.Web.Http.WebHost.xml" />
+      <ComponentRef Id="Component.System.Web.Http.xml" />
+      <ComponentRef Id="Component.Topshelf.dll" />
+      <ComponentRef Id="Component.Topshelf.NLog.dll" />
+      <ComponentRef Id="Component.Topshelf.NLog.xml" />
+      <ComponentRef Id="Component.Topshelf.xml" />
       <ComponentRef Id="ComponentDirPermission" />
     </Feature>
 

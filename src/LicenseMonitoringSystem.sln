@@ -6,9 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{660406F8-9991-484F-B375-04BD0B3FF917}"
 	ProjectSection(SolutionItems) = preProject
 		..\appveyor.yml = ..\appveyor.yml
-		GitHubReleaseManager.yaml = GitHubReleaseManager.yaml
-		GitVersion.yml = GitVersion.yml
-		README.md = README.md
+		..\GitHubReleaseManager.yaml = ..\GitHubReleaseManager.yaml
+		..\GitVersion.yml = ..\GitVersion.yml
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4AB0291F-E60C-4168-9968-52BCD2369A65}"
