@@ -1,7 +1,5 @@
 ﻿namespace Core.Common
 {
-    using System;
-
     public class LmsConstants
     {
         /// <summary>
@@ -19,8 +17,7 @@
         /// </summary>
         public const string BaseServiceUrl = "http://localhost:61814/";
 
-#else
-/// <summary>
+#else /// <summary>
 /// Base url for the api client
 /// </summary>  
         public const string BaseServiceUrl = "https://portal.ct.co.uk";
@@ -31,25 +28,22 @@
         ///     Default endpoint for OData
         /// </summary>
         public const string DefaultServiceUrl = "http://localhost:61814/odata/v1";
-#else
-        /// <summary>
-        ///     Default endpoint for OData
-        /// </summary>
+#else /// <summary>
+///     Default endpoint for OData
+/// </summary>
         public const string DefaultServiceUrl = "https://portal.ct.co.uk/odata/v1";
 
 #endif
         /// <summary>
-        /// 
         /// </summary>
         public const string DeviceIdKeyPath = @"SOFTWARE\CentraStage";
 
         /// <summary>
-        /// 
         /// </summary>
         public const string DeviceIdKeyName = "DeviceID";
 
         /// <summary>
-        ///  Doesn't actually provide any admin access. Its just used to hide menu items.
+        ///     Doesn't actually provide any admin access. Its just used to hide menu items.
         /// </summary>
         public const string AdminAccess = "a490d701-b267-4d4a-87bc-fe0d0f4c9105";
     }

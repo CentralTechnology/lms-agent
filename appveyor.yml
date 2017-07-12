@@ -1,131 +1,43 @@
 #---------------------------------#
-#           master branch         #
+#      general configuration      #
 #---------------------------------#
--
-    branches:
-        only:
-            - master
 
-# environment configuration
-    image: Visual Studio 2017
-    cache:
-        - packages -> **\packages.config
-        - '%LocalAppData%\NuGet\Cache'
+# version format
+version: 1.0.{build}
 
-    install:
-        - choco install gitversion.portable -pre -y    
-
-# build configuration
-    configuration: Release
-    matrix:
-        fast_finish: true
-
-    build:
-        parallel: true
-        project: LicenseMonitoringSystem.sln
-        verbosity: minimal    
-
-    before_build:
-        - ps: nuget restore
-        - ps: dotnet restore
-        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
-
-# test configuration
-    test:
-        assemblies: 
-            - '**\*.Tests.dll'
-
-# artifacts configuration
-    artifacts: 
-        - path: src\Installer\bin\$(configuration)\LMS.exe
-          name: setup
-
-# deployment configuration
-    deploy:
-        release: v$(GitVersion_FullSemVer)
-        description: insert description
-        provider: GitHub
-        auth_token:
-            secure: iAL0fibu0a8mOfti5EphBezFTZ1j1QDS439gkSJgRTEyGe8Smr1maQYwNMrOZosA
-        artifact: setup
-        draft: false
-        prerelease: false
-        on:
-            appveyor_repo_tag: true
+branches:
+  only:
+    - master
+    - dev
 
 #---------------------------------#
-#      release/hotfix branches    #
+#    environment configuration    #
 #---------------------------------#
-- 
-    branches:
-        only:
-            - /release/.*/
-            - /feature/.*/
 
-# environment configuration
-    image: Visual Studio 2017
-    cache:
-        - packages -> **\packages.config
-        - '%LocalAppData%\NuGet\Cache'
+# environment variables
+environment:
+  GitHubUserName:
+    secure: 5/1fTn1ujG9fgBeJU0NFbA==
+  GitHubPassword:
+    secure: uminGVAG8/kES/o/cXSqnnAtqxy8bSzj6qdlpITVzLo=
+   
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
 
-    install:
-        - choco install gitversion.portable -pre -y
-
-# build configuration
-    configuration: Release
-    matrix:
-        fast_finish: true
-
-    build:
-        parallel: true
-        project: LicenseMonitoringSystem.sln.
-        verbosity: minimal
-    
-    before_build:
-        - ps: nuget restore
-        - ps: dotnet restore
-        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
-
-# test configuration
-    test:
-        assemblies: 
-            - '**\*.Tests.dll'
+build_script:
+  - ps: .\BuildScripts\build.ps1
+  
+test: off
 
 #---------------------------------#
-#          other branches         #
+#      caching configuration      #
 #---------------------------------#
--
-    branches:
-        except:
-            - master
-            - /release/.*/
-            - /hotfix/.*/
 
-# environment configuration
-    image: Visual Studio 2017
-    cache:
-        - packages -> **\packages.config
-        - '%LocalAppData%\NuGet\Cache'
+cache:
+  - packages -> **\packages.config
+  - '%LocalAppData%\NuGet\Cache'
 
-    install:
-        - choco install gitversion.portable -pre -y
-
-# build configuration
-    configuration: Release
-    matrix:
-        fast_finish: true
-
-    build:
-        parallel: true
-        project: LicenseMonitoringSystem.sln.
-        verbosity: minimal
-    
-    before_build:
-        - ps: nuget restore
-        - ps: dotnet restore
-        - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
-
-# test configuration
-    test:
-        assemblies: 
-            - '**\*.Tests.dll'
+#---------------------------------#
+#  notifications configuration    #
+#---------------------------------#

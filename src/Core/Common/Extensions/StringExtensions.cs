@@ -35,14 +35,14 @@
 
         public static string SectionTitle(this string title)
         {
-            var defaultWidth = 80;
+            int defaultWidth = 80;
 
             var sb = new StringBuilder();
 
-            var dash = new String('-', defaultWidth);
-            var titleWidth = defaultWidth - (title.Length + 6);
+            string dash = new String('-', defaultWidth);
+            int titleWidth = defaultWidth - (title.Length + 6);
 
-            var titleLine = new String(' ', titleWidth / 2);
+            string titleLine = new String(' ', titleWidth / 2);
 
             sb.Append(Environment.NewLine);
             sb.AppendLine(dash);

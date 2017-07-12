@@ -25,7 +25,7 @@
         public static List<TEntity> FilterCreate<TEntity, TPrimaryKey>(this List<TEntity> source, List<TEntity> comparison)
             where TEntity : class, IEntity<TPrimaryKey>
         {
-            List<TEntity> newSource = new List<TEntity>(source);
+            var newSource = new List<TEntity>(source);
 
             return comparison.Where(s => !newSource.Any(c => c.Id.Equals(s.Id))).ToList();
         }
@@ -33,7 +33,7 @@
         public static List<TEntity> FilterDelete<TEntity, TPrimaryKey>(this List<TEntity> source, List<TEntity> comparison)
             where TEntity : class, IEntity<TPrimaryKey>
         {
-            List<TEntity> newSource = new List<TEntity>(source);
+            var newSource = new List<TEntity>(source);
 
             return newSource.Where(s => !comparison.Any(c => c.Id.Equals(s.Id))).ToList();
         }
@@ -47,7 +47,7 @@
         public static List<TEntity> FilterUpdate<TEntity, TPrimaryKey>(this List<TEntity> source, List<TEntity> comparison)
             where TEntity : class, IEntity<TPrimaryKey>
         {
-            List<TEntity> newSource = new List<TEntity>(source);
+            var newSource = new List<TEntity>(source);
 
             return comparison.Where(c => newSource.Any(s => s.Id.Equals(c.Id))).ToList();
         }

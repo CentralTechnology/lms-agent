@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net452</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AssemblyName>LMS.Tests</AssemblyName>
+    <PackageId>LicenseMonitoringSystem.Tests</PackageId>
+    <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Core\Core.csproj" />
+    <ProjectReference Include="..\..\src\Service\Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Abp">
+      <HintPath>..\..\src\packages\Abp.1.5.1\lib\net452\Abp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+    <PackageReference Include="Abp" Version="1.5.1" />
+    <PackageReference Include="Microsoft.Bcl.Build" Version="1.0.21" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="NLog" Version="4.4.5" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="Shouldly" Version="2.8.2" />
+    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.2.0" />
+  </ItemGroup>
+
+</Project>

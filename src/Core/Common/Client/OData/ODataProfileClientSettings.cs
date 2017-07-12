@@ -27,6 +27,7 @@
                 br.Headers.Authorization = new AuthenticationHeaderValue("Device", DeviceId.ToString("D").ToUpper());
             };
         }
+
         private static Guid DeviceId { get; set; }
 
         private static string Token { get; set; }
@@ -50,7 +51,7 @@
                     using (IDisposableDependencyObjectWrapper<PortalClient> portalClient = IocManager.Instance.ResolveAsDisposable<PortalClient>())
                     {
                         // ReSharper disable once AccessToDisposedClosure
-                        Token = AsyncHelper.RunSync(() => portalClient.Object.GetTokenCookie());  
+                        Token = AsyncHelper.RunSync(() => portalClient.Object.GetTokenCookie());
                     }
                 }
             }

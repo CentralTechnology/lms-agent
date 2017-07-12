@@ -3,8 +3,8 @@
     using System;
     using System.Linq;
     using Abp.Dependency;
+    using Common;
     using Core.Administration;
-    using Core.Common.Extensions;
     using EasyConsole;
 
     public class DevicePage : MenuPage

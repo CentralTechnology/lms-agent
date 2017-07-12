@@ -9,6 +9,8 @@
     {
         public DateTime CheckInTime { get; set; }
 
+        public string ClientVersion { get; set; }
+
         [Required]
         public Guid DeviceId { get; set; }
 
@@ -27,7 +29,5 @@
         public int UploadId { get; set; }
 
         public List<LicenseUser> Users { get; set; }
-
-        public string ClientVersion { get; set; }
     }
 }

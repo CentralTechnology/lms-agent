@@ -1,13 +1,11 @@
 ﻿namespace Core
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Abp.Domain.Services;
     using Abp.Threading;
     using Common.Enum;
     using Models;
-    using ShellProgressBar;
     using Users;
 
     public class OrchestratorManager : DomainService, IOrchestratorManager
@@ -37,7 +35,7 @@
 
         public async Task UserMonitor()
         {
-            var upload = await _userOrchestrator.ProcessUpload();
+            ManagedSupport upload = await _userOrchestrator.ProcessUpload();
 
             if (upload == null || CallInStatus.CalledIn.HasFlag(upload.Status))
             {

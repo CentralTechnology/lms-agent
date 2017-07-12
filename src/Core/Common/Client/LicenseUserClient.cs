@@ -4,12 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Abp;
     using Abp.Domain.Services;
     using Extensions;
     using Models;
     using OData;
-    using ShellProgressBar;
     using Simple.OData.Client;
 
     public class LicenseUserClient : DomainService, ILicenseUserClient
@@ -54,7 +52,6 @@
 
         public async Task Remove(List<LicenseUser> users)
         {
-
             var client = new ODataClient(new ODataLicenseClientSettings());
 
             for (int index = 0; index < users.Count; index++)
@@ -65,7 +62,6 @@
                 {
                     Logger.Debug($"Removing user: {user.DisplayName}");
                     await client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
-
                 }
                 catch (WebRequestException ex)
                 {

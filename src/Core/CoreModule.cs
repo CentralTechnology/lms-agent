@@ -3,7 +3,6 @@
     using System.Reflection;
     using Abp.Modules;
     using Abp.WebApi;
-    using Common.Client;
 
     [DependsOn(typeof(AbpWebApiModule))]
     public class CoreModule : AbpModule

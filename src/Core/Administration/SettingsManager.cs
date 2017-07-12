@@ -40,7 +40,9 @@
             // added because SettingsData class cannot be serialized easily as it inherits from the Configuration
             var settingViewModel = new
             {
-                settings.AccountId, settings.DeviceId, settings.Monitors
+                settings.AccountId,
+                settings.DeviceId,
+                settings.Monitors
             };
 
             Logger.Debug($"New config: {settingViewModel.Dump()}");
@@ -51,7 +53,7 @@
         public SettingsData Read()
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            SettingsData configData = (SettingsData) config.GetSection(LmsConstants.SettingsSection);
+            var configData = (SettingsData) config.GetSection(LmsConstants.SettingsSection);
 
             return configData;
         }
@@ -69,7 +71,7 @@
         public LoggerLevel ReadLoggerLevel()
         {
             IList<LoggingRule> rules = LogManager.Configuration.LoggingRules;
-            Regex validator = new Regex(LmsConstants.LoggerTarget);
+            var validator = new Regex(LmsConstants.LoggerTarget);
 
             foreach (LoggingRule rule in rules.Where(r => validator.IsMatch(r.Targets[0].Name)))
             {
@@ -111,7 +113,7 @@
             {
                 Logger.Warn("Centrastage device id is not set.");
 #if DEBUG
-                Guid deviceId = new Guid("5B7CB593-4BC1-24A0-EB59-76107F1E5255");
+                var deviceId = new Guid("5B7CB593-4BC1-24A0-EB59-76107F1E5255");
 
 #else
 var deviceId = GetDeviceId();
@@ -145,7 +147,7 @@ var deviceId = GetDeviceId();
             if (Monitor.None.HasFlag(config.Monitors))
             {
                 Logger.Warn("No actions are set to be monitored.");
-                Monitor defaultMonitor = Monitor.Users;
+                var defaultMonitor = Monitor.Users;
 
                 config = Update(new SettingsData
                 {
@@ -217,7 +219,7 @@ var deviceId = GetDeviceId();
         private void SetLogLevel(LogLevel logLevel)
         {
             IList<LoggingRule> rules = LogManager.Configuration.LoggingRules;
-            Regex validator = new Regex(LmsConstants.LoggerTarget);
+            var validator = new Regex(LmsConstants.LoggerTarget);
 
             foreach (LoggingRule rule in rules.Where(r => validator.IsMatch(r.Targets[0].Name)))
             {

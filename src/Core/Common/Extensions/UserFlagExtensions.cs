@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Common.Extensions
+﻿namespace Core.Common.Extensions
 {
     using Models;
 
     public static class UserFlagExtensions
     {
         /// <summary>
-        /// Check if flags contains the specific user flag. This method is more efficient compared to 'HasFlag()'.
+        ///     Check if flags contains the specific user flag. This method is more efficient compared to 'HasFlag()'.
         /// </summary>
         /// <param name="haystack">The bunch of flags</param>
         /// <param name="needle">The flag to look for.</param>

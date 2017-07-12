@@ -1,6 +1,5 @@
 ﻿namespace Core.Common.Extensions
 {
-    using System;
     using Abp.Dependency;
     using Castle.Core.Logging;
     using Newtonsoft.Json;
@@ -12,7 +11,7 @@
         {
             using (IDisposableDependencyObjectWrapper<ILogger> logger = IocManager.Instance.ResolveAsDisposable<ILogger>())
             {
-                var valid = ex.Response.IsValidJson();
+                bool valid = ex.Response.IsValidJson();
                 if (!valid)
                 {
                     logger.Object.Error(ex.Message);

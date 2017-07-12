@@ -19,6 +19,7 @@ namespace Core.Common.Client
         {
             _settingsManager = settingsManager;
         }
+
         public async Task<CallInStatus> GetStatusByDeviceId(Guid deviceId)
         {
             try
@@ -67,7 +68,7 @@ namespace Core.Common.Client
         {
             int uploadId = await GetNewUploadId();
 
-            var version = _settingsManager.GetClientVersion();
+            string version = _settingsManager.GetClientVersion();
             Logger.Debug($"Current client version: {version}");
 
             try
