@@ -82,12 +82,10 @@
     </GetAssemblyIdentity>
     <SetEnvVar Values="ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);SolutionName=$(SolutionName);SolutionDir=$(SolutionDir);BuildVersion=%(AssemblyVersion.Version);Configuration=$(Configuration)" />
   </Target>
-  <Import Project="..\..\packages\WixSharp.1.4.2.0\build\WixSharp.targets" Condition="Exists('..\..\packages\WixSharp.1.4.2.0\build\WixSharp.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\WixSharp.1.4.2.0\build\WixSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\WixSharp.1.4.2.0\build\WixSharp.targets'))" />
     <Error Condition="!Exists('..\packages\WixSharp.1.4.6.2\build\WixSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WixSharp.1.4.6.2\build\WixSharp.targets'))" />
   </Target>
   <Import Project="..\packages\WixSharp.1.4.6.2\build\WixSharp.targets" Condition="Exists('..\packages\WixSharp.1.4.6.2\build\WixSharp.targets')" />
