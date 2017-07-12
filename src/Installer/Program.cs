@@ -46,8 +46,8 @@
             Project project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
                     new DirPermission("LocalSystem", GenericPermission.Write | GenericPermission.Execute),
-                    service = new File(@"../Service/bin/%Configuration%/LMS.exe"),
-                    new DirFiles(@"../Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe"))))
+                    service = new File(@"%SolutionDir%/Service/bin/%Configuration%/LMS.exe"),
+                    new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe"))))
             {
                 ControlPanelInfo = new ProductInfo
                 {
