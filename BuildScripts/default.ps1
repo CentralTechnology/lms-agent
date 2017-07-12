@@ -547,7 +547,7 @@ Task -Name BuildSolution -Depends __RemoveBuildArtifactsDirectory, __VerifyConfi
 		Write-Output "Running BuildSolution..."
 
 		exec {
-			Invoke-MSBuild "$sourceDirectory\LicenseMonitoringSystem.sln" -NoLogo -Configuration $config -Platform $platform -Targets Build -DetailedSummary ;
+			Invoke-MSBuild "$sourceDirectory\LicenseMonitoringSystem.sln" -NoLogo -Configuration $config -Platform $platform -Targets Build -DetailedSummary -VisualStudioVersion  12.0;
 
 			$styleCopResultsFiles = Get-ChildItem $buildArtifactsDirectory -Filter "StyleCop*.xml"
 			foreach ($styleCopResultsFile in $styleCopResultsFiles) {
