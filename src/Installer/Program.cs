@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using Service;
     using WixSharp;
     using WixSharp.Bootstrapper;
@@ -13,7 +14,7 @@
         {
             string productMsi = BuildMsi();
 
-            var version = Environment.GetEnvironmentVariable("BuildVersion") ?? "1.0.0.0";
+            var version = typeof(ServiceModule).Assembly.GetName().Version.ToString();
 
             Bundle bootstrapper = new Bundle(LicenseMonitoringSystemService.ServiceDisplayName)
             {
