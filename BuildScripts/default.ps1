@@ -255,7 +255,7 @@ Task -Name __InstallReSharperCommandLineTools -Depends __InstallChocolatey -Desc
 
 		if (-not (Test-Path $inspectCodeExe)) {
 			exec {
-				Invoke-Expression "$script:chocolateyCommand install resharper-clt -y";
+				Invoke-Expression "$script:chocolateyCommand install resharper-clt -y --no-progress";
 			}
 		} else {
 			Write-Output "resharper-clt already installed";
@@ -320,7 +320,7 @@ Task -Name __InstallGitVersion -Depends __InstallChocolatey -Description $privat
 
 		if (-not (Test-Path $gitVersionExe)) {
 			exec {
-							Invoke-Expression "$script:chocolateyCommand install GitVersion.Portable -pre -y";
+							Invoke-Expression "$script:chocolateyCommand install GitVersion.Portable -pre -y --no-progress";
 			}
 		} else {
 			Write-Output "GitVersion.Portable already installed";
@@ -343,7 +343,7 @@ Task -Name __InstallGitReleaseManager -Depends __InstallChocolatey -Description 
 
 		if (-not (Test-Path $gitReleaseManagerExe)) {
 			exec {
-							Invoke-Expression "$script:chocolateyCommand install GitReleaseManager.Portable -pre -y";
+							Invoke-Expression "$script:chocolateyCommand install GitReleaseManager.Portable -pre -y --no-progress";
 			}
 		} else {
 			Write-Output "GitReleaseManager.Portable already installed";
