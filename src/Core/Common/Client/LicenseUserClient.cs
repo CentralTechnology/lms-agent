@@ -31,6 +31,7 @@
                         user.Enabled,
                         user.FirstName,
                         user.Id,
+                        user.LastLoginDate,
                         user.ManagedSupportId,
                         user.Surname,
                         user.WhenCreated
@@ -95,6 +96,7 @@
                         user.Email,
                         user.Enabled,
                         user.FirstName,
+                        user.LastLoginDate,
                         user.Surname,
                         user.WhenCreated
                     }).UpdateEntryAsync();

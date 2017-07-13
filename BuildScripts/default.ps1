@@ -379,7 +379,7 @@ Task -Name InspectCodeForProblems -Depends RebuildSolution, RunDupFinder, RunIns
 
 Task -Name DeployMasterSolution -Depends InspectCodeForProblems, CreateGitHubReleaseNotes -Description "Complete build, including creation of Chocolatey Package and Deployment to MyGet.org"
 
-Task -Name DeploySolutionToGitHub -Depends ExportGitHubReleaseNotes, InspectCodeForProblems, DeployPackageToChocolatey, AddAssetsToGitHubRelease, CloseMilestone -Description "Complete build, including creation of LMS agent package and Deployment to GitHub releases."
+Task -Name DeploySolutionToGitHub -Depends ExportGitHubReleaseNotes, InspectCodeForProblems, AddAssetsToGitHubRelease, CloseMilestone -Description "Complete build, including creation of LMS agent package and Deployment to GitHub releases."
 
 # build tasks
 
