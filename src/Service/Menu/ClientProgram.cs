@@ -6,7 +6,7 @@
     using Pages.Client;
     using Pages.Tools;
     using Pages.Tools.Account;
-    using Pages.Tools.DebugPage;
+    using Pages.Tools.Debug;
     using Pages.Tools.Device;
 
     class ClientProgram : Program

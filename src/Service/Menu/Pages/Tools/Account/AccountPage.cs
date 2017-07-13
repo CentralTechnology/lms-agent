@@ -1,7 +1,6 @@
 ﻿namespace Service.Menu.Pages.Tools.Account
 {
     using System;
-    using System.Linq;
     using Abp.Dependency;
     using Core.Administration;
     using EasyConsole;
@@ -34,29 +33,16 @@
 
         public override void Display()
         {
-            if (Program.History.Count > 1 && Program.BreadcrumbHeader)
-            {
-                string breadcrumb = null;
-                foreach (string title in Program.History.Select(page => page.Title).Reverse())
-                    breadcrumb += title + " > ";
-                breadcrumb = breadcrumb.Remove(breadcrumb.Length - 3);
-                Console.WriteLine(breadcrumb);
-            }
-            else
-            {
-                Console.WriteLine(Title);
-            }
-            Console.WriteLine("---");
+            this.AddBreadCrumb();
 
             using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
             {
                 int acctId = settingsManager.Object.Read().AccountId;
 
-                Output.WriteLine($"Account Id: {acctId}");              
+                Output.WriteLine($"Account Id: {acctId}");
             }
 
-            if (Program.NavigationEnabled && !Menu.Contains("Go back"))
-                Menu.Add("Go back", () => { Program.NavigateBack(); });
+            this.AddBackOption();
 
             Menu.Display();
         }

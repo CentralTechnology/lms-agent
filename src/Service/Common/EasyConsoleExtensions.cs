@@ -1,4 +1,4 @@
-﻿namespace Core.Common.Extensions
+﻿namespace Service.Common
 {
     using System;
     using EasyConsole;

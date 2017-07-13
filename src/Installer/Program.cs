@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using Service;
     using WixSharp;
     using WixSharp.Bootstrapper;
@@ -13,13 +14,13 @@
         {
             string productMsi = BuildMsi();
 
-            var version = Environment.GetEnvironmentVariable("BuildVersion") ?? "1.0.0.0";
+            var version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? typeof(ServiceModule).Assembly.GetName().Version.ToString();
 
             Bundle bootstrapper = new Bundle(LicenseMonitoringSystemService.ServiceDisplayName)
             {
                 Manufacturer = "Central Technology Ltd",
                 OutDir = "bin/%Configuration%",
-                OutFileName = "LMS",
+                OutFileName = "LmsInstaller",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
                 Version = new Version(version),
                 Chain = new List<ChainItem>
@@ -46,8 +47,8 @@
             Project project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
                     new DirPermission("LocalSystem", GenericPermission.Write | GenericPermission.Execute),
-                    service = new File(@"../Service/bin/%Configuration%/net452/LMS.exe"),
-                    new DirFiles(@"../Service/bin/%Configuration%/net452/*.*", f => !f.EndsWith("LMS.exe"))))
+                    service = new File(@"%SolutionDir%/Service/bin/%Configuration%/LMS.exe"),
+                    new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe"))))
             {
                 ControlPanelInfo = new ProductInfo
                 {

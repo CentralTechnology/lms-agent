@@ -1,10 +1,9 @@
 ﻿namespace Service.Menu.Pages.Tools.Device
 {
     using System;
-    using System.Linq;
     using Abp.Dependency;
+    using Common;
     using Core.Administration;
-    using Core.Common.Extensions;
     using EasyConsole;
 
     public class DevicePage : MenuPage
@@ -35,19 +34,7 @@
 
         public override void Display()
         {
-            if (Program.History.Count > 1 && Program.BreadcrumbHeader)
-            {
-                string breadcrumb = null;
-                foreach (string title in Program.History.Select(page => page.Title).Reverse())
-                    breadcrumb += title + " > ";
-                breadcrumb = breadcrumb.Remove(breadcrumb.Length - 3);
-                Console.WriteLine(breadcrumb);
-            }
-            else
-            {
-                Console.WriteLine(Title);
-            }
-            Console.WriteLine("---");
+            this.AddBreadCrumb();
 
             using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
             {
@@ -56,8 +43,7 @@
                 Output.WriteLine($"Device Id: {deviceId}");
             }
 
-            if (Program.NavigationEnabled && !Menu.Contains("Go back"))
-                Menu.Add("Go back", () => { Program.NavigateBack(); });
+            this.AddBackOption();
 
             Menu.Display();
         }

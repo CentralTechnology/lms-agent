@@ -1,0 +1,14 @@
+create:
+   include-footer:  false
+# export:
+#   include-created-date-in-title: true | false
+#   created-date-string-format: MMMM dd, yyyy
+#   perform-regex-removal: true | false
+#   regex-text: '### Where to get it(\r\n)*You can .*\)'
+#   multiline-regex: true | false
+issue-labels-include:
+- Bug
+- Feature
+- Improvement
+issue-labels-exclude:
+- Internal Refactoring

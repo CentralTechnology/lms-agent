@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Common.Extensions
+﻿namespace Core.Common.Extensions
 {
+    using System;
+    using System.Collections.Generic;
     using Enum;
-    using Enum = System.Enum;
 
     public static class EnumExtensions
     {
+        public static Monitor ClearFlag(Monitor value, Monitor flag)
+        {
+            return value & ~flag;
+        }
+
         public static IEnumerable<Monitor> GetFlags(this Monitor input)
         {
             foreach (Monitor item in Enum.GetValues(input.GetType()))
@@ -20,10 +20,6 @@ namespace Core.Common.Extensions
                     yield return item;
                 }
             }
-        }
-        public static Monitor ClearFlag(Monitor value, Monitor flag)
-        {
-            return value & ~flag;
         }
     }
 }

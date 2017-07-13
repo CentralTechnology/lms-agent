@@ -70,6 +70,7 @@
                                 WhenCreated = g.WhenCreated
                             }).ToList(),
                         Id = Guid.Parse(user.Guid.ToString()),
+                        LastLoginDate = user.LastLogon,
                         SamAccountName = user.SamAccountName,
                         Surname = user.Surname,
                         WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))

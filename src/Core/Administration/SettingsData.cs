@@ -17,34 +17,22 @@
         public const string DeviceIdName = "DeviceId";
 
         /// <summary>
-        /// Used to identify the <see cref="Monitors" /> in the configuration
+        ///     Used to identify the <see cref="Monitors" /> in the configuration
         /// </summary>
         public const string MonitorsName = "Monitors";
 
         [ConfigurationProperty(AccountIdName)]
         public int AccountId
         {
-            get
-            {
-                return (int)this[AccountIdName];
-            }
-            set
-            {
-                this[AccountIdName] = value;
-            }
+            get { return (int) this[AccountIdName]; }
+            set { this[AccountIdName] = value; }
         }
 
         [ConfigurationProperty(DeviceIdName)]
         public Guid DeviceId
         {
-            get
-            {
-                return (Guid)this[DeviceIdName];
-            }
-            set
-            {
-                this[DeviceIdName] = value;
-            }
+            get { return (Guid) this[DeviceIdName]; }
+            set { this[DeviceIdName] = value; }
         }
 
         [ConfigurationProperty(MonitorsName)]
@@ -52,20 +40,15 @@
         {
             get
             {
-                var mon = this[MonitorsName];
+                object mon = this[MonitorsName];
                 if (string.IsNullOrEmpty(mon as string))
                 {
                     return Monitor.Users;
                 }
 
-                return (Monitor)this[MonitorsName];
+                return (Monitor) this[MonitorsName];
             }
-            set
-            {
-                this[MonitorsName] = value;
-            }
+            set { this[MonitorsName] = value; }
         }
-
-
     }
 }
