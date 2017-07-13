@@ -9,50 +9,31 @@
     using Administration;
     using Common.Client;
     using Common.Extensions;
+    using Factory;
     using MarkdownLog;
     using Models;
+    using NLog;
 
-    public class UserOrchestrator : DomainService, IUserOrchestrator
+    public class UserOrchestrator
     {
-        private readonly ILicenseGroupClient _licenseGroupClient;
-        private readonly ILicenseUserClient _licenseUserClient;
-        private readonly ILicenseUserGroupClient _licenseUserGroupClient;
-        private readonly ISettingsManager _settingsManager;
-        private readonly ISupportUploadClient _uploadClient;
-        private readonly IUserManager _userManager;
-
-        public UserOrchestrator(
-            ISupportUploadClient uploadClient,
-            ILicenseUserClient licenseUserClient,
-            ILicenseGroupClient licenseGroupClient,
-            ILicenseUserGroupClient licenseUserGroupClient,
-            IUserManager userManager,
-            ISettingsManager settingsManager)
-        {
-            _uploadClient = uploadClient;
-            _licenseUserClient = licenseUserClient;
-            _licenseGroupClient = licenseGroupClient;
-            _licenseUserGroupClient = licenseUserGroupClient;
-            _userManager = userManager;
-            _settingsManager = settingsManager;
-        }
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public async Task<ManagedSupport> ProcessUpload()
         {
             Logger.Info("Processing Upload Information".SectionTitle());
 
-            Guid deviceId = _settingsManager.Read().DeviceId;
+            Guid deviceId = SettingFactory.SettingsManager().Read().DeviceId;
             Logger.Debug($"Device id thats registered in settings: {deviceId}");
 
             Logger.Debug("Obtaining the upload id.");
-            int uploadId = await _uploadClient.GetUploadIdByDeviceId(deviceId);
+            int uploadId = await ClientFactory.SupportUploadClient().GetUploadIdByDeviceId(deviceId);
             Logger.Debug($"Upload Id: {uploadId}");
 
             Logger.Info("Getting the call in status.");
             ManagedSupport upload;
             if (uploadId != 0)
             {
-                upload = await _uploadClient.Get(uploadId);
+                upload = await ClientFactory.SupportUploadClient().Get(uploadId);
 
                 Logger.Info($"Status: {upload.Status}\t Last Check In: {upload.CheckInTime.ToUniversalTime()}");
 
@@ -62,9 +43,9 @@
             Logger.Warn("This is the first time this device has called in. A new upload request is needed.");
             Logger.Info("Creating a new upload.");
 
-            int updateId = await _uploadClient.GetNewUploadId();
+            int updateId = await ClientFactory.SupportUploadClient().GetNewUploadId();
 
-            upload = await _uploadClient.Add(new ManagedSupport
+            upload = await ClientFactory.SupportUploadClient().Add(new ManagedSupport
             {
                 CheckInTime = Clock.Now,
                 DeviceId = deviceId,
@@ -89,12 +70,12 @@
 
             // get the local users 
             Logger.Info("Getting a list of local users from Active Directory.");
-            List<LicenseUser> localUsers = _userManager.GetUsersAndGroups();
+            List<LicenseUser> localUsers = UserFactory.UserManager().GetUsersAndGroups();
             Logger.Info($"{localUsers.Count} local users have been found in the Active Directory.");
 
             // get the api users
             Logger.Info("Getting a list of users that have already been created in the api.");
-            List<LicenseUser> remoteUsers = await _uploadClient.GetUsers(uploadId);
+            List<LicenseUser> remoteUsers = await ClientFactory.SupportUploadClient().GetUsers(uploadId);
             Logger.Info($"{remoteUsers.Count} users have been returned from the api.");
 
             // return a list of users that need adding to the api
@@ -108,7 +89,7 @@
                 usersToCreate = usersToCreate.ApplyUploadId(uploadId);
 
                 Logger.Info("Creating the users.");
-                await _licenseUserClient.Add(usersToCreate);
+                await ClientFactory.LicenseUserClient().Add(usersToCreate);
             }
 
             Logger.Info("Calculating the number of users that need to be updated in the api.");
@@ -118,7 +99,7 @@
             if (usersToUpdate.Count > 0)
             {
                 Logger.Info("Updating the users.");
-                await _licenseUserClient.Update(usersToUpdate);
+                await ClientFactory.LicenseUserClient().Update(usersToUpdate);
             }
 
             Logger.Info("Calculating the number of users that need to be deleted in the api.");
@@ -128,7 +109,7 @@
             if (usersToDelete.Count > 0)
             {
                 Logger.Info("Deleting the users.");
-                await _licenseUserClient.Remove(usersToDelete);
+                await ClientFactory.LicenseUserClient().Remove(usersToDelete);
             }
 
             var summary = new[]
@@ -152,7 +133,7 @@
 
             // get the api groups
             Logger.Info("Getting a list of groups that have already been created in the api.");
-            List<LicenseGroup> remoteGroups = await _licenseGroupClient.GetAll();
+            List<LicenseGroup> remoteGroups = await ClientFactory.LicenseGroupClient().GetAll();
             Logger.Info($"{remoteGroups.Count} groups have been returned from the api.");
 
             // return a list of groups that need adding to the api
@@ -163,7 +144,7 @@
             if (groupsToCreate.Count > 0)
             {
                 Logger.Info("Ccreating the groups.");
-                await _licenseGroupClient.Add(groupsToCreate);
+                await ClientFactory.LicenseGroupClient().Add(groupsToCreate);
             }
 
             Logger.Info("Calculating the number of groups that need to be updated in the api.");
@@ -173,7 +154,7 @@
             if (groupsToUpdate.Count > 0)
             {
                 Logger.Info("Updating the groups.");
-                await _licenseGroupClient.Update(groupsToUpdate);
+                await ClientFactory.LicenseGroupClient().Update(groupsToUpdate);
             }
 
             Logger.Info("Calculating the number of groups that need to be deleted in the api.");
@@ -183,7 +164,7 @@
             if (groupsToDelete.Count > 0)
             {
                 Logger.Info("Deleting the groups.");
-                await _licenseGroupClient.Remove(groupsToDelete);
+                await ClientFactory.LicenseGroupClient().Remove(groupsToDelete);
             }
 
             var summary = new[]
@@ -206,7 +187,7 @@
 
             // get the remote users and groups
             Logger.Info("Getting a list of users and their group membership from the api.");
-            List<LicenseUser> apiUsers = await _licenseUserClient.GetAll();
+            List<LicenseUser> apiUsers = await ClientFactory.LicenseUserClient().GetAll();
 
             // if groups are null then create a new list of groups
             List<LicenseUser> remoteUsers = apiUsers.Select(u =>
@@ -227,7 +208,7 @@
                 Logger.Debug($"Adding {usersToBeAdded.Count} users.");
                 if (usersToBeAdded.Count > 0)
                 {
-                    await _licenseUserGroupClient.Add(usersToBeAdded, localGroup);
+                    await ClientFactory.LicenseUserGroupClient().Add(usersToBeAdded, localGroup);
                 }
 
                 Logger.Debug("Calculating the number of users that need to be removed from this group.");
@@ -235,7 +216,7 @@
                 Logger.Debug($"Removing {usersToBeAdded.Count} users.");
                 if (usersToBeRemoved.Count > 0)
                 {
-                    await _licenseUserGroupClient.Remove(usersToBeRemoved, localGroup);
+                    await ClientFactory.LicenseUserGroupClient().Remove(usersToBeRemoved, localGroup);
                 }
             }
         }
@@ -245,7 +226,7 @@
             Logger.Info("Processing Upload Information".SectionTitle());
             Logger.Info("Calling in");
 
-            await _uploadClient.Update(uploadId);
+            await ClientFactory.SupportUploadClient().Update(uploadId);
         }
     }
 }

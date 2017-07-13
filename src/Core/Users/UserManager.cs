@@ -9,9 +9,12 @@
     using Common;
     using Common.Extensions;
     using Models;
+    using NLog;
 
-    public class UserManager : DomainService, IUserManager
+    public class UserManager
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public List<LicenseUser> GetUsersAndGroups()
         {
             return AllUsers();

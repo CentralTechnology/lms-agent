@@ -5,17 +5,14 @@
     using Abp.Domain.Services;
     using Abp.Threading;
     using Common.Enum;
+    using Factory;
     using Models;
+    using NLog;
     using Users;
 
-    public class OrchestratorManager : DomainService, IOrchestratorManager
+    public class OrchestratorManager
     {
-        private readonly IUserOrchestrator _userOrchestrator;
-
-        public OrchestratorManager(IUserOrchestrator userOrchestrator)
-        {
-            _userOrchestrator = userOrchestrator;
-        }
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public void Run(Monitor monitor)
         {
@@ -35,20 +32,20 @@
 
         public async Task UserMonitor()
         {
-            ManagedSupport upload = await _userOrchestrator.ProcessUpload();
+            ManagedSupport upload = await OrchestratorFactory.UserOrchestrator().ProcessUpload();
 
             if (upload == null || CallInStatus.CalledIn.HasFlag(upload.Status))
             {
                 return;
             }
 
-            List<LicenseUser> users = await _userOrchestrator.ProcessUsers(upload.Id);
+            List<LicenseUser> users = await OrchestratorFactory.UserOrchestrator().ProcessUsers(upload.Id);
 
-            await _userOrchestrator.ProcessGroups(users);
+            await OrchestratorFactory.UserOrchestrator().ProcessGroups(users);
 
-            await _userOrchestrator.ProcessUserGroups(users);
+            await OrchestratorFactory.UserOrchestrator().ProcessUserGroups(users);
 
-            await _userOrchestrator.CallIn(upload.Id);
+            await OrchestratorFactory.UserOrchestrator().CallIn(upload.Id);
 
             Logger.Info("Finished.");
         }

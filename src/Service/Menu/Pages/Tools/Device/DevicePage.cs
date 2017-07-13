@@ -4,6 +4,7 @@
     using Abp.Dependency;
     using Common;
     using Core.Administration;
+    using Core.Factory;
     using EasyConsole;
 
     public class DevicePage : MenuPage
@@ -11,17 +12,15 @@
         public DevicePage(Program program)
             : base("Device", program)
         {
-            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
-            {
                 Menu.Add("Update", () =>
                 {
                     Guid newDeviceId = EasyConsoleExtensions.ReadGuid("Enter a new device id: ");
 
-                    SettingsData settings = settingManager.Object.Read();
-                    settingManager.Object.Update(new SettingsData
+                    SettingsData settings = SettingFactory.SettingsManager().Read();
+                    SettingFactory.SettingsManager().Update(new SettingsData
                     {
                         AccountId = settings.AccountId,
-                        DeviceId = settings.DeviceId,
+                        DeviceId = newDeviceId,
                         Monitors = settings.Monitors
                     });
 
@@ -29,19 +28,17 @@
                     Input.ReadString("Press [Enter]");
                     Program.NavigateTo<DevicePage>();
                 });
-            }
+            
         }
 
         public override void Display()
         {
             this.AddBreadCrumb();
 
-            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingsManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
-            {
-                Guid deviceId = settingsManager.Object.Read().DeviceId;
+                Guid deviceId = SettingFactory.SettingsManager().Read().DeviceId;
 
                 Output.WriteLine($"Device Id: {deviceId}");
-            }
+            
 
             this.AddBackOption();
 

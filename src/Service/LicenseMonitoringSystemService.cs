@@ -2,36 +2,30 @@
 {
     using System;
     using System.Timers;
-    using Abp.Dependency;
-    using Castle.Core.Logging;
     using Core;
     using Core.Administration;
     using Core.Common.Enum;
+    using Core.Factory;
     using Menu;
+    using NLog;
 
-    public class LicenseMonitoringSystemService : ISingletonDependency
+    public class LicenseMonitoringSystemService
     {
         private static Timer _timer;
-        private readonly IOrchestratorManager _orchestratorManager;
-        private readonly ISettingsManager _settingsManager;
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public const string ServiceName = "LicenseMonitoringSystem";
         public const string ServiceDisplayName = "License Monitoring System";
         public const string ServiceDescription = "A tool used to monitor various licenses.";
 
-        public LicenseMonitoringSystemService(ISettingsManager settingManager, IOrchestratorManager orchestratorManager)
+        public LicenseMonitoringSystemService()
         {
-            _settingsManager = settingManager;
-            _orchestratorManager = orchestratorManager;
-
-            Logger = NullLogger.Instance;
-
             _timer = new Timer();
             _timer.Elapsed += UserMonitor;
             _timer.Interval = TimeSpan.FromMinutes(5).TotalMilliseconds;
         }
-
-        public ILogger Logger { get; set; }
+       
 
         public bool Start()
         {
@@ -41,7 +35,7 @@
             {
                 try
                 {
-                    _settingsManager.Validate();
+                    SettingFactory.SettingsManager().Validate();
 
                     Console.WindowWidth = Console.LargestWindowWidth / 2;
                     Console.WindowHeight = Console.LargestWindowHeight / 3;
@@ -73,11 +67,11 @@
 
         private void UserMonitor(object sender, ElapsedEventArgs args)
         {
-            _settingsManager.Validate();
+            SettingFactory.SettingsManager().Validate();
 
             try
             {
-                var monitors = _settingsManager.Read().Monitors;
+                var monitors = SettingFactory.SettingsManager().Read().Monitors;
 
                 if (!Monitor.Users.HasFlag(monitors))
                 {
@@ -86,7 +80,7 @@
 
                 Logger.Info("Users monitor begin.");
 
-                _orchestratorManager.Run(Monitor.Users);
+                OrchestratorFactory.Orchestrator().Run(Monitor.Users);
 
                 Logger.Info("Users monitor end.");
             }

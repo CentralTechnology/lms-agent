@@ -4,11 +4,14 @@ namespace Core.Common.Client
     using System.Threading.Tasks;
     using Abp.Domain.Services;
     using Extensions;
+    using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class ProfileClient : DomainService, IProfileClient
+    public class ProfileClient
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public async Task<int> GetAccountByDeviceId(Guid deviceId)
         {
             try
@@ -24,7 +27,7 @@ namespace Core.Common.Client
             catch (Exception ex)
             {
                 Logger.Error($"Failed to get the account id for device: {deviceId}");
-                Logger.DebugFormat("Exception: ", ex);
+                Logger.Debug(ex);
 
                 throw;
             }

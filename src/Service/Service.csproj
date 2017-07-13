@@ -111,7 +111,6 @@
     <Compile Include="Menu\Pages\Tools\ToolsPage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -126,10 +125,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Abp.Topshelf\Abp.Topshelf.csproj">
-      <Project>{a93727b4-3cd2-4ced-a3e4-6bd3c950173e}</Project>
-      <Name>Abp.Topshelf</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Console\Console.csproj">
       <Project>{3BD99F52-5681-471B-9F33-52840BD1A2A2}</Project>
       <Name>Console</Name>

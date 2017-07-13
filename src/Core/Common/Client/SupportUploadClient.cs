@@ -7,18 +7,15 @@ namespace Core.Common.Client
     using Abp.Timing;
     using Administration;
     using Extensions;
+    using Factory;
     using Models;
+    using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class SupportUploadClient : DomainService, ISupportUploadClient
+    public class SupportUploadClient
     {
-        private readonly ISettingsManager _settingsManager;
-
-        public SupportUploadClient(ISettingsManager settingsManager)
-        {
-            _settingsManager = settingsManager;
-        }
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public async Task<CallInStatus> GetStatusByDeviceId(Guid deviceId)
         {
@@ -68,7 +65,7 @@ namespace Core.Common.Client
         {
             int uploadId = await GetNewUploadId();
 
-            string version = _settingsManager.GetClientVersion();
+            string version = SettingFactory.SettingsManager().GetClientVersion();
             Logger.Debug($"Current client version: {version}");
 
             try
@@ -108,7 +105,7 @@ namespace Core.Common.Client
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to add upload");
+                Logger.Error("Failed to add upload");
                 Logger.Debug(ex.ToString());
                 return null;
             }

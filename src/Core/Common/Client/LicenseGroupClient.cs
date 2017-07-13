@@ -7,11 +7,14 @@
     using Abp.Domain.Services;
     using Extensions;
     using Models;
+    using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class LicenseGroupClient : DomainService, ILicenseGroupClient
+    public class LicenseGroupClient
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public async Task Add(List<LicenseGroup> groups)
         {
             var client = new ODataClient(new ODataLicenseClientSettings());

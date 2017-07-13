@@ -16,13 +16,15 @@
     using Common.Client;
     using Common.Enum;
     using Common.Extensions;
-    using Factory;
     using NLog;
     using NLog.Config;
 
-    public class SettingsManager
+    public class SettingManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public static SettingManager SettingManager()
+        {
+            return new SettingManager();
+        }
 
         /// <inheritdoc />
         public SettingsData Update(SettingsData settings)
@@ -181,7 +183,11 @@ var deviceId = GetDeviceId();
 
         private int GetAccountId(Guid deviceId)
         {
-            return AsyncHelper.RunSync(() => ClientFactory.ProfileClient().GetAccountByDeviceId(deviceId));
+            using (IDisposableDependencyObjectWrapper<ProfileClient> client = IocManager.Instance.ResolveAsDisposable<ProfileClient>())
+            {
+                // ReSharper disable once AccessToDisposedClosure
+                return AsyncHelper.RunSync(() => client.Object.GetAccountByDeviceId(deviceId));
+            }
         }
 
         private Guid GetDeviceId()

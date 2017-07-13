@@ -7,11 +7,14 @@
     using Abp.Domain.Services;
     using Extensions;
     using Models;
+    using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class LicenseUserClient : DomainService, ILicenseUserClient
+    public class LicenseUserClient
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public async Task Add(List<LicenseUser> users)
         {
             var client = new ODataClient(new ODataLicenseClientSettings());
@@ -133,7 +136,7 @@
             catch (Exception ex)
             {
                 Logger.Error("Failed to obtain a list of users from the api.");
-                Logger.DebugFormat("Exception: ", ex);
+                Logger.Debug(ex);
                 return null;
             }
         }

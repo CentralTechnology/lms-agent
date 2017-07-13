@@ -4,21 +4,19 @@
     using Abp.Dependency;
     using Castle.Core.Logging;
     using Core.Administration;
+    using Core.Factory;
     using EasyConsole;
 
     public class DebugPage : MenuPage
     {
-        private readonly ISettingsManager _settingManager;
-
         public DebugPage(Program program)
             : base("Debug", program)
         {
-            _settingManager = IocManager.Instance.Resolve<ISettingsManager>();
 
             Menu.Add("Toggle", () =>
             {
-                bool debug = _settingManager.ReadLoggerLevel() == LoggerLevel.Debug;
-                _settingManager.UpdateLoggerLevel(!debug);
+                bool debug = SettingFactory.SettingsManager().ReadLoggerLevel() == LoggerLevel.Debug;
+                SettingFactory.SettingsManager().UpdateLoggerLevel(!debug);
 
                 Output.WriteLine(Environment.NewLine);
                 Input.ReadString("Press [Enter]");
@@ -30,7 +28,7 @@
         {
             this.AddBreadCrumb();
 
-            LoggerLevel debug = _settingManager.ReadLoggerLevel();
+            LoggerLevel debug = SettingFactory.SettingsManager().ReadLoggerLevel();
 
             Output.WriteLine(debug == LoggerLevel.Debug ? "Status: enabled" : "Status: disabled");
             Output.WriteLine(Environment.NewLine);

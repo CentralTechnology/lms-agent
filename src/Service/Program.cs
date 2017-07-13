@@ -2,7 +2,6 @@
 {
     using Abp;
     using Abp.Timing;
-    using Abp.Topshelf;
     using Castle.Facilities.Logging;
     using Topshelf;
 
@@ -15,32 +14,22 @@
         {
             Clock.Provider = ClockProviders.Utc;
 
-            using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<ServiceModule>())
+            HostFactory.Run(sc =>
             {
-                bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog().WithConfig("NLog.config"));
-                bootstrapper.Initialize();
-
-                HostFactory.Run(serviceConfig =>
+                sc.Service<LicenseMonitoringSystemService>(s =>
                 {
-                    // ReSharper disable once AccessToDisposedClosure
-                    serviceConfig.UseAbp(bootstrapper);
-                    serviceConfig.RunAsLocalSystem();
-                    serviceConfig.SetServiceName(LicenseMonitoringSystemService.ServiceName);
-                    serviceConfig.SetDisplayName(LicenseMonitoringSystemService.ServiceDisplayName);
-                    serviceConfig.SetDescription(LicenseMonitoringSystemService.ServiceDescription);
-                    serviceConfig.StartAutomaticallyDelayed();
-
-                    serviceConfig.Service<LicenseMonitoringSystemService>(serviceInstance =>
-                    {
-                        serviceInstance.ConstructUsingAbp();
-
-                        serviceInstance.WhenStarted(execute => execute.Start());
-
-                        serviceInstance.WhenStopped(execute => execute.Stop());
-                    });
-
+                    s.ConstructUsing(name => new LicenseMonitoringSystemService());
+                    s.WhenStarted(lms => lms.Start());
+                    s.WhenStopped(lms => lms.Stop());
                 });
-            }
+
+                sc.UseNLog();
+                sc.RunAsLocalSystem();
+                sc.SetServiceName(LicenseMonitoringSystemService.ServiceName);
+                sc.SetDisplayName(LicenseMonitoringSystemService.ServiceDisplayName);
+                sc.SetDescription(LicenseMonitoringSystemService.ServiceDescription);
+                sc.StartAutomaticallyDelayed();
+            });
         }
     }
 }

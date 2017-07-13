@@ -6,39 +6,44 @@
     using Abp.Extensions;
     using Abp.Threading;
     using Administration;
+    using Factory;
+    using NLog;
     using Simple.OData.Client;
 
     public abstract class ODataCommonClientSettings : ODataClientSettings
     {
+        protected ODataCommonClientSettings()
+        {
+            Logger= LogManager.GetCurrentClassLogger();
+            SettingsManager = SettingFactory.SettingsManager();
+        }
+
+        public SettingsManager SettingsManager { get; set; }
+        public Logger Logger { get; set; }
+
         protected static Guid DeviceId { get; set; }
 
         protected static string Token { get; set; }
 
         protected void ValidateDeviceId()
         {
-            using (IDisposableDependencyObjectWrapper<ISettingsManager> settingManager = IocManager.Instance.ResolveAsDisposable<ISettingsManager>())
-            {
+
                 if (DeviceId == Guid.Empty)
                 {
-                    DeviceId = settingManager.Object.Read().DeviceId;
+                    DeviceId = SettingsManager.Read().DeviceId;
 
                     if (DeviceId == Guid.Empty)
                     {
                         throw new AbpException($"Cannot perform web request when device id is {Guid.Empty}");
                     }
-                }
-            }
+                }           
         }
 
         protected void ValidateToken()
         {
             if (Token.IsNullOrEmpty())
             {
-                using (IDisposableDependencyObjectWrapper<PortalClient> portalClient = IocManager.Instance.ResolveAsDisposable<PortalClient>())
-                {
-                    // ReSharper disable once AccessToDisposedClosure
-                    Token = AsyncHelper.RunSync(() => portalClient.Object.GetTokenCookie());
-                }
+                Token = AsyncHelper.RunSync(() => ClientFactory.PortalClient().GetTokenCookie());
             }
         }
     }
