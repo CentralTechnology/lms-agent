@@ -15,17 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4AB0291F-E60
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{43F09060-A65A-4B48-B7E0-18CD8429A236}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{91A8AE4E-5DA8-4C01-93B4-C0F4F2E35560}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotNetFramework", "DotNetFramework", "{C12F854B-AAF5-4497-B80C-3FF43DB1F610}"
-	ProjectSection(SolutionItems) = preProject
-		src\Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe = src\Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildScripts", "BuildScripts", "{33E4119A-11EF-4DF0-BAD1-8B4A27AFE5E2}"
 	ProjectSection(SolutionItems) = preProject
 		..\BuildScripts\build.ps1 = ..\BuildScripts\build.ps1
 		..\BuildScripts\default.ps1 = ..\BuildScripts\default.ps1
+		dupfinder.config = dupfinder.config
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{3740D580-5151-4A42-8CB9-693E2E3C28DB}"
@@ -58,6 +52,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{540928
 		..\.nuget\NuGet.Config = ..\.nuget\NuGet.Config
 		..\.nuget\NuGet.exe = ..\.nuget\NuGet.exe
 		..\.nuget\NuGet.targets = ..\.nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{A27E2EAC-686E-47E8-917A-4714D32FB610}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotNetFramework", "DotNetFramework", "{8885ECDF-9443-4DB0-8EC7-F7A192DACE8A}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe = Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe
 	EndProjectSection
 EndProject
 Global
@@ -147,8 +148,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{91A8AE4E-5DA8-4C01-93B4-C0F4F2E35560} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
-		{C12F854B-AAF5-4497-B80C-3FF43DB1F610} = {91A8AE4E-5DA8-4C01-93B4-C0F4F2E35560}
 		{F6BEB2CB-5B5B-4F36-BCB4-A282DAF8F092} = {3740D580-5151-4A42-8CB9-693E2E3C28DB}
 		{8A9A8308-E19B-4ACD-A0E0-1E3C4A2E7576} = {3740D580-5151-4A42-8CB9-693E2E3C28DB}
 		{A93727B4-3CD2-4CED-A3E4-6BD3C950173E} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
@@ -157,5 +156,7 @@ Global
 		{6981655A-0373-4F38-A3AE-4A7262FA7150} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 		{3BD99F52-5681-471B-9F33-52840BD1A2A2} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 		{10460D58-DF4F-4944-AC01-FE20D0A92CD8} = {43F09060-A65A-4B48-B7E0-18CD8429A236}
+		{A27E2EAC-686E-47E8-917A-4714D32FB610} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
+		{8885ECDF-9443-4DB0-8EC7-F7A192DACE8A} = {A27E2EAC-686E-47E8-917A-4714D32FB610}
 	EndGlobalSection
 EndGlobal
