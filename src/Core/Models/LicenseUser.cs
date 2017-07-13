@@ -20,6 +20,8 @@
 
         public List<LicenseGroup> Groups { get; set; }
 
+        public DateTime? LastLoginDate { get; set; }
+
         public int ManagedSupportId { get; set; }
 
         [MaxLength(256)]
