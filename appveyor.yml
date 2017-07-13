@@ -28,7 +28,9 @@ environment:
 build_script:
   - ps: .\BuildScripts\build.ps1
   
-test: off
+test:
+    assemblies:
+        -'**\*.Tests.dll'
 
 #---------------------------------#
 #      caching configuration      #
