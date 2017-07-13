@@ -514,7 +514,7 @@ Task -Name BuildSolution -Depends __RemoveBuildArtifactsDirectory, __VerifyConfi
 			Invoke-MSBuild "$env:appveyor_build_folder\src\LicenseMonitoringSystem.sln" -NoLogo -Configuration $config -Platform $platform -Targets Build -DetailedSummary -VisualStudioVersion  14.0;
 
 			if(isAppVeyor) {
-				$expectedMsiFile = Join-Path -Path $buildArtifactsDirectory -ChildPath "LmsInstaller.exe"
+				$expectedMsiFile = Join-Path -Path "$env:appveyor_build_folder\src\Installer\bin\$config\" -ChildPath "Lms.Installer.exe"
 				if(Test-Path $expectedMsiFile) {
 					Push-AppveyorArtifact $expectedMsiFile;
 				}
