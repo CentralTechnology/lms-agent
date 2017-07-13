@@ -14,7 +14,7 @@
         {
             string productMsi = BuildMsi();
 
-            var version = Environment.GetEnvironmentVariable("GitVersion_LegacySemVerPadded") ?? typeof(ServiceModule).Assembly.GetName().Version.ToString();
+            var version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? typeof(ServiceModule).Assembly.GetName().Version.ToString();
 
             Bundle bootstrapper = new Bundle(LicenseMonitoringSystemService.ServiceDisplayName)
             {
