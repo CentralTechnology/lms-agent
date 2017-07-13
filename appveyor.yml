@@ -29,8 +29,8 @@ build_script:
   - ps: .\BuildScripts\build.ps1
   
 test:
-    assemblies:
-        -'**\*.Tests.dll'
+        assemblies: 
+            - '**\*.Tests.dll'
 
 #---------------------------------#
 #      caching configuration      #
