@@ -81,39 +81,6 @@ function isChocolateyInstalled() {
 	Test-Path -Path $script:chocolateyDir;
 }
 
-function analyseStyleCopResults( [Parameter(ValueFromPipeline=$true)]$styleCopResultsFile ) {
-	$styleCopViolations = [xml](Get-Content $styleCopResultsFile);
-
-	foreach ($styleCopViolation in $styleCopViolations.StyleCopViolations.Violation) {
-		Write-Output "Violation of Rule $($styleCopViolation.RuleId): $($styleCopViolation.Rule) Line Number: $($styleCopViolation.LineNumber) FileName: $($styleCopViolation.Source) ErrorMessage: $($styleCopViolation.InnerXml)";
-
-		if(isAppVeyor) {
-			Add-AppveyorTest "Violation of Rule $($styleCopViolation.RuleId): $($styleCopViolation.Rule) Line Number: $($styleCopViolation.LineNumber)" -Outcome Failed -FileName $styleCopViolation.Source -ErrorMessage $styleCopViolation.InnerXml;
-		}
-	}
-
-	if(isAppVeyor) {
-		Push-AppveyorArtifact $styleCopResultsFile;
-	}
-}
-
-function analyseCodeAnalysisResults( [Parameter(ValueFromPipeline=$true)]$codeAnalysisResultsFile ) {
-	$codeAnalysisErrors = [xml](Get-Content $codeAnalysisResultsFile);
-
-	foreach ($codeAnalysisError in $codeAnalysisErrors.SelectNodes("//Message")) {
-		$issueNode = $codeAnalysisError.SelectSingleNode("Issue");
-		Write-Output "Violation of Rule $($codeAnalysisError.CheckId): $($codeAnalysisError.TypeName) Line Number: $($issueNode.Line) FileName: $($issueNode.Path)\$($codeAnalysisError.Issue.File) ErrorMessage: $($issueNode.InnerXml)";
-
-		if(isAppVeyor) {
-			Add-AppveyorTest "Violation of Rule $($codeAnalysisError.CheckId): $($codeAnalysisError.TypeName) Line Number: $($issueNode.Line)" -Outcome Failed -FileName "$($issueNode.Path)\$($codeAnalysisError.Issue.File)" -ErrorMessage $($issueNode.InnerXml);
-		}
-	}
-
-	if(isAppVeyor) {
-		Push-AppveyorArtifact $codeAnalysisResultsFile;
-	}
-}
-
 function analyseDupFinderResults( [Parameter(ValueFromPipeline=$true)]$dupFinderResultsFile ) {
 	$dupFinderErrors = [xml](Get-Content $dupFinderResultsFile);
 	$anyFailures = $FALSE
@@ -540,30 +507,11 @@ Task -Name BuildSolution -Depends __RemoveBuildArtifactsDirectory, __VerifyConfi
 	$buildArtifactsDirectory = get-buildArtifactsDirectory;
 	$buildScriptsDirectory = get-buildScriptsDirectory;
 
-	$styleCopXslFile = Join-Path -Path $buildScriptsDirectory -ChildPath "StyleCopReport.xsl";
-	$codeAnalysisXslFile = Join-Path -Path $buildScriptsDirectory -ChildPath "CodeAnalysisReport.xsl";
-
 	try {
 		Write-Output "Running BuildSolution..."
 
 		exec {
 			Invoke-MSBuild "$env:appveyor_build_folder\src\LicenseMonitoringSystem.sln" -NoLogo -Configuration $config -Platform $platform -Targets Build -DetailedSummary -VisualStudioVersion  14.0;
-
-			$styleCopResultsFiles = Get-ChildItem $buildArtifactsDirectory -Filter "StyleCop*.xml"
-			foreach ($styleCopResultsFile in $styleCopResultsFiles) {
-				$reportXmlFile = Join-Path -Path $buildArtifactsDirectory -ChildPath $styleCopResultsFile | Resolve-Path;
-				$reportHtmlFile = $reportXmlFile -replace ".xml", ".html";
-				applyXslTransform $reportXmlFile $styleCopXslFile $reportHtmlFile;
-        Join-Path -Path $buildArtifactsDirectory -ChildPath $styleCopResultsFile | analyseStyleCopResults;
-			}
-
-			$codeAnalysisFiles = Get-ChildItem $buildArtifactsDirectory -Filter "CodeAnalysis*.xml"
-			foreach ($codeAnalysisFile in $codeAnalysisFiles) {
-				$reportXmlFile = Join-Path -Path $buildArtifactsDirectory -ChildPath $codeAnalysisFile | Resolve-Path;
-				$reportHtmlFile = $reportXmlFile -replace ".xml", ".html";
-				applyXslTransform $reportXmlFile $codeAnalysisXslFile $reportHtmlFile;
-        Join-Path -Path $buildArtifactsDirectory -ChildPath $codeAnalysisFile | analyseCodeAnalysisResults;
-			}
 
 			if(isAppVeyor) {
 				$expectedMsiFile = Join-Path -Path $buildArtifactsDirectory -ChildPath "LmsInstaller.exe"
