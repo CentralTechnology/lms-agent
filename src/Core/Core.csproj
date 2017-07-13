@@ -147,6 +147,7 @@
     <Compile Include="Common\Client\LicenseUserClient.cs" />
     <Compile Include="Common\Client\LicenseUserGroupClient.cs" />
     <Compile Include="Common\Client\OData\InnerError.cs" />
+    <Compile Include="Common\Client\OData\ODataCommonClientSettings.cs" />
     <Compile Include="Common\Client\OData\ODataLicenseClientSettings.cs" />
     <Compile Include="Common\Client\OData\ODataProfileClientSettings.cs" />
     <Compile Include="Common\Client\OData\ODataResponse.cs" />

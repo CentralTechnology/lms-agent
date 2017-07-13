@@ -1,7 +1,6 @@
-﻿namespace Service.Menu.Pages.Tools.DebugPage
+﻿namespace Service.Menu.Pages.Tools.Debug
 {
     using System;
-    using System.Linq;
     using Abp.Dependency;
     using Castle.Core.Logging;
     using Core.Administration;
@@ -29,27 +28,14 @@
 
         public override void Display()
         {
-            if (Program.History.Count > 1 && Program.BreadcrumbHeader)
-            {
-                string breadcrumb = null;
-                foreach (string title in Program.History.Select(page => page.Title).Reverse())
-                    breadcrumb += title + " > ";
-                breadcrumb = breadcrumb.Remove(breadcrumb.Length - 3);
-                Console.WriteLine(breadcrumb);
-            }
-            else
-            {
-                Console.WriteLine(Title);
-            }
-            Console.WriteLine("---");
+            this.AddBreadCrumb();
 
             LoggerLevel debug = _settingManager.ReadLoggerLevel();
 
             Output.WriteLine(debug == LoggerLevel.Debug ? "Status: enabled" : "Status: disabled");
             Output.WriteLine(Environment.NewLine);
 
-            if (Program.NavigationEnabled && !Menu.Contains("Go back"))
-                Menu.Add("Go back", () => { Program.NavigateBack(); });
+            this.AddBackOption();
 
             Menu.Display();
         }

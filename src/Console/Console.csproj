@@ -7,7 +7,7 @@
     <ProjectGuid>{3BD99F52-5681-471B-9F33-52840BD1A2A2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Console</RootNamespace>
+    <RootNamespace>EasyConsole</RootNamespace>
     <AssemblyName>LMS.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -45,6 +45,7 @@
     <Compile Include="Input.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="MenuPage.cs" />
+    <Compile Include="MenuPageExtensions.cs" />
     <Compile Include="Option.cs" />
     <Compile Include="Output.cs" />
     <Compile Include="Page.cs" />

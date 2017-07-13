@@ -1,6 +1,7 @@
 ﻿namespace Service.Menu.Pages.Tools
 {
     using Account;
+    using Debug;
     using Device;
     using EasyConsole;
 
@@ -11,7 +12,7 @@
         {
             Menu.Add("Account", () => program.NavigateTo<AccountPage>());
             Menu.Add("Device", () => program.NavigateTo<DevicePage>());
-            Menu.Add("Debug", () => program.NavigateTo<DebugPage.DebugPage>());
+            Menu.Add("Debug", () => program.NavigateTo<DebugPage>());
         }
     }
 }
