@@ -377,7 +377,7 @@ Task -Name __UpdateGitVersion -Description $private -Action {
 
 Task -Name InspectCodeForProblems -Depends RebuildSolution, RunDupFinder, RunInspectCode -Description "Complete build, including running dupfinder, and inspectcode."
 
-Task -Name DeployMasterSolutionToMyGet -Depends InspectCodeForProblems, DeployMasterPackageToMyGet, CreateGitHubReleaseNotes -Description "Complete build, including creation of Chocolatey Package and Deployment to MyGet.org"
+Task -Name DeployMasterSolution -Depends InspectCodeForProblems, CreateGitHubReleaseNotes -Description "Complete build, including creation of Chocolatey Package and Deployment to MyGet.org"
 
 Task -Name DeploySolutionToGitHub -Depends ExportGitHubReleaseNotes, InspectCodeForProblems, DeployPackageToChocolatey, AddAssetsToGitHubRelease, CloseMilestone -Description "Complete build, including creation of LMS agent package and Deployment to GitHub releases."
 
@@ -514,7 +514,7 @@ Task -Name BuildSolution -Depends __RemoveBuildArtifactsDirectory, __VerifyConfi
 			Invoke-MSBuild "$env:appveyor_build_folder\src\LicenseMonitoringSystem.sln" -NoLogo -Configuration $config -Platform $platform -Targets Build -DetailedSummary -VisualStudioVersion  14.0;
 
 			if(isAppVeyor) {
-				$expectedMsiFile = Join-Path -Path $buildArtifactsDirectory -ChildPath "LmsInstaller.exe"
+				$expectedMsiFile = Join-Path -Path "$env:appveyor_build_folder\src\Installer\bin\$config\" -ChildPath "LMS.Setup.exe"
 				if(Test-Path $expectedMsiFile) {
 					Push-AppveyorArtifact $expectedMsiFile;
 				}
