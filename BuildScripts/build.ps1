@@ -32,13 +32,13 @@ if(Test-Path -Path env:\APPVEYOR) {
       invoke-psake "$here/default.ps1" -task InspectCodeForProblems -properties @{ 'config'='Release'; }
 		} elseif($env:APPVEYOR_REPO_BRANCH -eq "master" -And $env:APPVEYOR_PULL_REQUEST_NUMBER -eq $null -And $env:APPVEYOR_REPO_TAG -eq $false) {
       Write-Output "Since we are on master branch with no pull request number, and no tag applied, we are just going to package the solution, with no deployment"
-      invoke-psake "$here/default.ps1" -task InspectCodeForProblems -properties @{ 'config'='Release'; }
+      invoke-psake "$here/default.ps1" -task DeployMasterSolution -properties @{ 'config'='Release'; }
 		} elseif($env:APPVEYOR_REPO_BRANCH -eq "master" -And $env:APPVEYOR_PULL_REQUEST_NUMBER -ne $null -And $env:APPVEYOR_REPO_TAG -eq $false) {
       Write-Output "Since we are on master branch with a pull request number, and no tag applied, we are just going to package the solution, with no deployment"
       invoke-psake "$here/default.ps1" -task InspectCodeForProblems -properties @{ 'config'='Release'; }
 		} elseif($env:APPVEYOR_REPO_BRANCH -eq "master" -And $env:APPVEYOR_PULL_REQUEST_NUMBER -eq $null -And $env:APPVEYOR_REPO_TAG -eq $true) {
       Write-Output "Since we are on master branch with no pull request number, and a tag has been applied, we are ready to deploy to GitHub releases"
-      invoke-psake "$here/default.ps1" -task DeploySolutionToChocolatey -properties @{ 'config'='Release'; }
+      invoke-psake "$here/default.ps1" -task DeploySolutionToGitHub -properties @{ 'config'='Release'; }
 		}
 } else {
 		invoke-psake "$here/default.ps1" -task $Action -properties @{ 'config'=$Config; }

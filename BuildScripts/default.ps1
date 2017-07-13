@@ -377,7 +377,7 @@ Task -Name __UpdateGitVersion -Description $private -Action {
 
 Task -Name InspectCodeForProblems -Depends RebuildSolution, RunDupFinder, RunInspectCode -Description "Complete build, including running dupfinder, and inspectcode."
 
-Task -Name DeployMasterSolutionToMyGet -Depends InspectCodeForProblems, DeployMasterPackageToMyGet, CreateGitHubReleaseNotes -Description "Complete build, including creation of Chocolatey Package and Deployment to MyGet.org"
+Task -Name DeployMasterSolution -Depends InspectCodeForProblems, CreateGitHubReleaseNotes -Description "Complete build, including creation of Chocolatey Package and Deployment to MyGet.org"
 
 Task -Name DeploySolutionToGitHub -Depends ExportGitHubReleaseNotes, InspectCodeForProblems, DeployPackageToChocolatey, AddAssetsToGitHubRelease, CloseMilestone -Description "Complete build, including creation of LMS agent package and Deployment to GitHub releases."
 
