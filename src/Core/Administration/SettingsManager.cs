@@ -34,7 +34,7 @@
             return GetSettingValueInternalAsync(name);
         }
 
-        public async Task ChangeSettingForApplicationAsync(string name, string value)
+        public async Task ChangeSettingAsync(string name, string value)
         {
             await InsertOrUpdateSettingValueAsync(name, value);
         }

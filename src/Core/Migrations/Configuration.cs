@@ -26,6 +26,7 @@ namespace Core.Migrations
             context.Settings.Add(new Setting(SettingNames.DebugMode, false.ToString()));
             context.Settings.Add(new Setting(SettingNames.MonitorUsers, false.ToString()));
             context.Settings.Add(new Setting(SettingNames.MonitorVeeam, false.ToString()));
+            context.Settings.Add(new Setting(SettingNames.PrimaryDomainControllerOverride, false.ToString()));
         }
     }
 }

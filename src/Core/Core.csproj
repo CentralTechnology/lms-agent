@@ -182,8 +182,10 @@
     <Compile Include="Common\Extensions\UserFlagExtensions.cs" />
     <Compile Include="Common\LmsConstants.cs" />
     <Compile Include="Common\PrincipleExtensions.cs" />
+    <Compile Include="DirectoryServices\DirectoryServicesManager.cs" />
     <Compile Include="EntityFramework\AgentDbContext.cs" />
     <Compile Include="Factory\ClientFactory.cs" />
+    <Compile Include="Factory\DirectoryServicesFactory.cs" />
     <Compile Include="Factory\OrchestratorFactory.cs" />
     <Compile Include="Factory\SettingFactory.cs" />
     <Compile Include="Factory\UserFactory.cs" />

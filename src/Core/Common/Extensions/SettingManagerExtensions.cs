@@ -31,7 +31,7 @@ namespace Core.Common.Extensions
 
         public static void ChangeSettingForApplication(this SettingManager settingManager, string name, string value)
         {
-            AsyncHelper.RunSync(() => settingManager.ChangeSettingForApplicationAsync(name, value));
+            AsyncHelper.RunSync(() => settingManager.ChangeSettingAsync(name, value));
         }
     }
 }

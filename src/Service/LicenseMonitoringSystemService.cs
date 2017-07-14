@@ -29,6 +29,16 @@
 
         public bool Start()
         {
+            StartupFactory.StartupManager().Init();
+
+
+
+
+
+
+
+
+
             Logger.Info("Service started");
 
             if (Environment.UserInteractive)
