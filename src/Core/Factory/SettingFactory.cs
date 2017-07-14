@@ -4,9 +4,9 @@
 
     public static class SettingFactory
     {
-        public static SettingsManager SettingsManager()
+        public static SettingManager SettingsManager()
         {
-            return new SettingsManager();
+            return new SettingManager();
         }
     }
 }

@@ -15,10 +15,10 @@
         protected ODataCommonClientSettings()
         {
             Logger= LogManager.GetCurrentClassLogger();
-            SettingsManager = SettingFactory.SettingsManager();
+            SettingManager = SettingFactory.SettingsManager();
         }
 
-        public SettingsManager SettingsManager { get; set; }
+        public SettingManager SettingManager { get; set; }
         public Logger Logger { get; set; }
 
         protected static Guid DeviceId { get; set; }
@@ -30,7 +30,7 @@
 
                 if (DeviceId == Guid.Empty)
                 {
-                    DeviceId = SettingsManager.Read().DeviceId;
+                    DeviceId = SettingManager.Read().DeviceId;
 
                     if (DeviceId == Guid.Empty)
                     {

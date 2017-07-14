@@ -3,10 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.Data.Entity;
     using System.Linq;
     using System.Reflection;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
     using Abp;
     using Abp.Dependency;
     using Abp.Domain.Services;
@@ -16,13 +18,71 @@
     using Common.Client;
     using Common.Enum;
     using Common.Extensions;
+    using EntityFramework;
     using Factory;
     using NLog;
     using NLog.Config;
+    using Abp.Extensions;
+    using System.Data.Entity.Migrations;
 
-    public class SettingsManager
+    public class SettingManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        public Task<string> GetSettingValueAsync(string name)
+        {
+            return GetSettingValueInternalAsync(name);
+        }
+
+        public async Task ChangeSettingForApplicationAsync(string name, string value)
+        {
+            await InsertOrUpdateSettingValueAsync(name, value);
+        }
+
+        #region Private methods
+
+        private Task<string> GetSettingValueInternalAsync(string name)
+        {
+            using (var context = new AgentDbContext())
+            {
+                return context.Settings.Where(s => s.Name.Equals(name)).Select(s => s.Value).FirstOrDefaultAsync();
+            }
+        }
+
+        private Task<Setting> GetSettingInternalAsync(string name)
+        {
+            using (var context = new AgentDbContext())
+            {
+                return context.Settings.Where(s => s.Name.Equals(name)).FirstOrDefaultAsync();
+            }
+        }
+
+        private async Task<Setting> InsertOrUpdateSettingValueAsync(string name, string value)
+        {
+            var setting = await GetSettingInternalAsync(name);
+
+            using (var context = new AgentDbContext())
+            {
+                // if its not stored in the database, then insert it
+                if (setting == null)
+                {
+                    setting = new Setting(name, value);
+                }
+                else
+                {
+                    setting.Value = value;
+                }
+
+                context.Settings.AddOrUpdate(setting);
+                await context.SaveChangesAsync();
+            }
+
+            return setting;
+        }
+
+        #endregion
+
+
 
         /// <inheritdoc />
         public SettingsData Update(SettingsData settings)
@@ -56,7 +116,7 @@
         public SettingsData Read()
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var configData = (SettingsData) config.GetSection(LmsConstants.SettingsSection);
+            var configData = (SettingsData)config.GetSection(LmsConstants.SettingsSection);
 
             return configData;
         }
