@@ -14,22 +14,6 @@
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public void Run(Monitor monitor)
-        {
-            switch (monitor)
-            {
-                case Monitor.None:
-                    Logger.Info("No licenses are set to be monitored");
-                    break;
-                case Monitor.Users:
-                    AsyncHelper.RunSync(UserMonitor);
-                    break;
-                default:
-                    Logger.Info("No licenses are set to be monitored");
-                    break;
-            }
-        }
-
         public async Task UserMonitor()
         {
             ManagedSupport upload = await OrchestratorFactory.UserOrchestrator().ProcessUpload();
@@ -46,8 +30,6 @@
             await OrchestratorFactory.UserOrchestrator().ProcessUserGroups(users);
 
             await OrchestratorFactory.UserOrchestrator().CallIn(upload.Id);
-
-            Logger.Info("Finished.");
         }
     }
 }

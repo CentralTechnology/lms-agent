@@ -159,7 +159,6 @@
   <ItemGroup>
     <Compile Include="Administration\Setting.cs" />
     <Compile Include="Administration\SettingNames.cs" />
-    <Compile Include="Administration\SettingsData.cs" />
     <Compile Include="Administration\SettingsManager.cs" />
     <Compile Include="Common\Client\LicenseGroupClient.cs" />
     <Compile Include="Common\Client\LicenseUserClient.cs" />

@@ -6,6 +6,7 @@ namespace Core.Common.Client.OData
     using Abp;
     using Abp.Dependency;
     using Administration;
+    using Extensions;
     using Factory;
 
     public class ODataLicenseClientSettings : ODataCommonClientSettings
@@ -45,7 +46,7 @@ namespace Core.Common.Client.OData
         {
             if (AccountId == 0)
             {
-                AccountId = SettingFactory.SettingsManager().Read().AccountId;
+                AccountId = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
 
                 if (AccountId == 0)
                 {

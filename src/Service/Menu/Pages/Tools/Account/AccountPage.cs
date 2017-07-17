@@ -3,6 +3,7 @@
     using System;
     using Abp.Dependency;
     using Core.Administration;
+    using Core.Common.Extensions;
     using Core.Factory;
     using EasyConsole;
 
@@ -15,13 +16,7 @@
                 {
                     int newAcctId = Input.ReadInt("New Account Id: ", int.MinValue, int.MaxValue);
 
-                    SettingsData settings = SettingFactory.SettingsManager().Read();
-                    SettingFactory.SettingsManager().Update(new SettingsData
-                    {
-                        AccountId = newAcctId,
-                        DeviceId = settings.DeviceId,
-                        Monitors = settings.Monitors
-                    });
+                    SettingFactory.SettingsManager().ChangeSetting(SettingNames.AutotaskAccountId, newAcctId.ToString());
 
                     Output.WriteLine(Environment.NewLine);
                     Input.ReadString("Press [Enter]");
@@ -34,9 +29,9 @@
         {
             this.AddBreadCrumb();
 
-                int acctId = SettingFactory.SettingsManager().Read().AccountId;
+                int acctId = SettingFactory.SettingsManager().GetSettingValue<int>(SettingNames.AutotaskAccountId);
 
-                Output.WriteLine($"Account Id: {acctId}");
+            Output.WriteLine($"Account Id: {acctId}");
             
 
             this.AddBackOption();

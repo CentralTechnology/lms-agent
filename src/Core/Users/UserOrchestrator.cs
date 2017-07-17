@@ -22,7 +22,7 @@
         {
             Logger.Info("Processing Upload Information".SectionTitle());
 
-            Guid deviceId = SettingFactory.SettingsManager().Read().DeviceId;
+            Guid deviceId = SettingFactory.SettingsManager().GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
             Logger.Debug($"Device id thats registered in settings: {deviceId}");
 
             Logger.Debug("Obtaining the upload id.");

@@ -29,7 +29,7 @@ namespace Core.Common.Extensions
             return (await settingManager.GetSettingValueAsync(name)).To<T>();
         }
 
-        public static void ChangeSettingForApplication(this SettingManager settingManager, string name, string value)
+        public static void ChangeSetting(this SettingManager settingManager, string name, string value)
         {
             AsyncHelper.RunSync(() => settingManager.ChangeSettingAsync(name, value));
         }

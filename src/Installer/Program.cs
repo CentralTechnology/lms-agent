@@ -14,9 +14,9 @@
         {
             string productMsi = BuildMsi();
 
-            var version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? typeof(LicenseMonitoringSystemService).Assembly.GetName().Version.ToString();
+            var version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? typeof(LmsServiceBase).Assembly.GetName().Version.ToString();
 
-            Bundle bootstrapper = new Bundle(LicenseMonitoringSystemService.ServiceDisplayName)
+            Bundle bootstrapper = new Bundle(LmsServiceBase.ServiceDisplayName)
             {
                 Manufacturer = "Central Technology Ltd",
                 OutDir = "bin/%Configuration%",
@@ -63,7 +63,7 @@
                     Schedule = UpgradeSchedule.afterInstallInitialize,
                     DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
                 },
-                Name = LicenseMonitoringSystemService.ServiceDisplayName,
+                Name = LmsServiceBase.ServiceDisplayName,
                 OutDir = "bin/%Configuration%",
                 Platform = Platform.x64,
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
@@ -76,10 +76,10 @@
             service.ServiceInstaller = new ServiceInstaller
             {
                 DelayedAutoStart = true,
-                Description = LicenseMonitoringSystemService.ServiceDescription,
-                DisplayName = LicenseMonitoringSystemService.ServiceDisplayName,
+                Description = LmsServiceBase.ServiceDescription,
+                DisplayName = LmsServiceBase.ServiceDisplayName,
                 FirstFailureActionType = FailureActionType.restart,
-                Name = LicenseMonitoringSystemService.ServiceName,
+                Name = LmsServiceBase.ServiceName,
                 RemoveOn = SvcEvent.Uninstall_Wait,
                 ResetPeriodInDays = 1,
                 RestartServiceDelayInSeconds = 30,

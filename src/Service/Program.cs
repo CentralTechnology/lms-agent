@@ -4,6 +4,7 @@
     using Abp;
     using Abp.Timing;
     using Castle.Facilities.Logging;
+    using Newtonsoft.Json;
     using OneTrueError.Client;
     using Topshelf;
 
@@ -21,21 +22,28 @@
 
             Clock.Provider = ClockProviders.Utc;
 
-            HostFactory.Run(sc =>
+            HostFactory.Run(x =>
             {
-                sc.Service<LicenseMonitoringSystemService>(s =>
+                x.Service<LmsService>(sc =>
                 {
-                    s.ConstructUsing(name => new LicenseMonitoringSystemService());
-                    s.WhenStarted(lms => lms.Start());
-                    s.WhenStopped(lms => lms.Stop());
+
+                    sc.ConstructUsing(() => new LmsService());
+
+                    sc.WhenStarted(s => s.Start());
+                    sc.WhenStopped(s => s.Stop());
+
+                    sc.WhenPaused(s => s.Pause());
+                    sc.WhenContinued(s => s.Continue());
+
+                    sc.WhenShutdown(s => s.Shutdown());
                 });
 
-                sc.UseNLog();
-                sc.RunAsLocalSystem();
-                sc.SetServiceName(LicenseMonitoringSystemService.ServiceName);
-                sc.SetDisplayName(LicenseMonitoringSystemService.ServiceDisplayName);
-                sc.SetDescription(LicenseMonitoringSystemService.ServiceDescription);
-                sc.StartAutomaticallyDelayed();
+                x.UseNLog();
+                x.RunAsLocalSystem();
+                x.SetServiceName("LicenseMonitoringSystem");
+                x.SetDisplayName("License Monitoring System");
+                x.SetDescription("A tool used to monitor various licenses.");
+                x.StartAutomatically();
             });
         }
     }

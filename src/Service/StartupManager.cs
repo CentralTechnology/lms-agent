@@ -10,6 +10,7 @@ namespace Service
     using Core.Common.Extensions;
     using Core.Factory;
     using NLog;
+    using OneTrueError.Client;
 
     public class StartupManager
     {
@@ -21,15 +22,15 @@ namespace Service
 
             try
             {
-                var monUsers = MonitorUsers();               
-                SettingFactory.SettingsManager().ChangeSettingForApplication(SettingNames.MonitorUsers, monUsers.ToString());
+                bool monUsers = MonitorUsers();
+                SettingFactory.SettingsManager().ChangeSetting(SettingNames.MonitorUsers, monUsers.ToString());
                 Logger.Info(monUsers ? "Monitoring Users" : "Not Monitoring Users");
-
-
             }
             catch (Exception ex)
             {
-                
+                Logger.Error(ex.Message);
+                Logger.Debug(ex);
+                OneTrue.Report(ex);
             }
 
             Logger.Info("************ Initialisation  Successful ************");
@@ -39,44 +40,36 @@ namespace Service
         {
             Logger.Info("Dermining whether to monitor users...");
 
-            try
+            // check if a domain exists
+            var domainExists = DirectoryServicesFactory.DirectoryServicesManager().DomainExist();
+            if (!domainExists)
             {
-                // check if a domain exists
-                var domainExists = DirectoryServicesFactory.DirectoryServicesManager().DomainExist();
-                if (!domainExists)
+                Logger.Warn("Check Domain: FAIL");
+                return false;
+            }
+
+            Logger.Info("Check Domain: OK");
+
+            // check if this is a primary domain controller
+            var pdc = DirectoryServicesFactory.DirectoryServicesManager().PrimaryDomainController();
+            if (!pdc)
+            {
+                Logger.Warn("Check PDC: FAIL");
+
+                // check override is enabled
+                var pdcOverride = SettingFactory.SettingsManager().GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
+                if (!pdcOverride)
                 {
-                    Logger.Warn("Check Domain: FAIL");
+                    Logger.Warn("Check PDC Override: FAIL");
                     return false;
                 }
 
-                Logger.Info("Check Domain: OK");
-
-                // check if this is a primary domain controller
-                var pdc = DirectoryServicesFactory.DirectoryServicesManager().PrimaryDomainController();
-                if (!pdc)
-                {
-                    Logger.Warn("Check PDC: FAIL");
-
-                    // check override is enabled
-                    var pdcOverride = SettingFactory.SettingsManager().GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
-                    if (!pdcOverride)
-                    {
-                        Logger.Warn("Check PDC Override: FAIL");
-                        return false;
-                    }
-
-                    Logger.Warn("Check PDC Override: OK");
-                }
-
-                Logger.Info("Check PDC: OK");
-
-                return true;             
+                Logger.Warn("Check PDC Override: OK");
             }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-                throw;
-            }
+
+            Logger.Info("Check PDC: OK");
+
+            return true;
         }
     }
 }

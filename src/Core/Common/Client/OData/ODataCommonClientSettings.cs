@@ -6,6 +6,7 @@
     using Abp.Extensions;
     using Abp.Threading;
     using Administration;
+    using Extensions;
     using Factory;
     using NLog;
     using Simple.OData.Client;
@@ -30,7 +31,7 @@
 
                 if (DeviceId == Guid.Empty)
                 {
-                    DeviceId = SettingManager.Read().DeviceId;
+                    DeviceId = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
 
                     if (DeviceId == Guid.Empty)
                     {
