@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Common.Extensions
+﻿namespace Core.Common.Extensions
 {
+    using System.Threading.Tasks;
     using Abp.Extensions;
     using Abp.Threading;
     using Administration;
 
     public static class SettingManagerExtensions
     {
+        public static void ChangeSetting(this SettingManager settingManager, string name, string value)
+        {
+            AsyncHelper.RunSync(() => settingManager.ChangeSettingAsync(name, value));
+        }
+
         public static string GetSettingValue(this SettingManager settingManager, string name)
         {
             return AsyncHelper.RunSync(() => settingManager.GetSettingValueAsync(name));
@@ -27,11 +27,6 @@ namespace Core.Common.Extensions
             where T : struct
         {
             return (await settingManager.GetSettingValueAsync(name)).To<T>();
-        }
-
-        public static void ChangeSetting(this SettingManager settingManager, string name, string value)
-        {
-            AsyncHelper.RunSync(() => settingManager.ChangeSettingAsync(name, value));
         }
     }
 }

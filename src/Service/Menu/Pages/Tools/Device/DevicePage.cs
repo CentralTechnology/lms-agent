@@ -1,7 +1,6 @@
 ﻿namespace Service.Menu.Pages.Tools.Device
 {
     using System;
-    using Abp.Dependency;
     using Common;
     using Core.Administration;
     using Core.Common.Extensions;
@@ -23,14 +22,13 @@
                 Input.ReadString("Press [Enter]");
                 Program.NavigateTo<DevicePage>();
             });
-
         }
 
         public override void Display()
         {
             this.AddBreadCrumb();
 
-            Guid deviceId = SettingFactory.SettingsManager().GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
+            var deviceId = SettingFactory.SettingsManager().GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
 
             Output.WriteLine($"Device Id: {deviceId}");
 

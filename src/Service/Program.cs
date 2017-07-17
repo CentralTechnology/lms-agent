@@ -1,10 +1,7 @@
 ﻿namespace Service
 {
     using System;
-    using Abp;
     using Abp.Timing;
-    using Castle.Facilities.Logging;
-    using Newtonsoft.Json;
     using OneTrueError.Client;
     using Topshelf;
 
@@ -26,7 +23,6 @@
             {
                 x.Service<LmsService>(sc =>
                 {
-
                     sc.ConstructUsing(() => new LmsService());
 
                     sc.WhenStarted(s => s.Start());

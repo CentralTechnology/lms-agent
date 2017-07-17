@@ -4,9 +4,19 @@ namespace Core.Factory
 
     public static class ClientFactory
     {
-        public static ProfileClient ProfileClient()
+        public static LicenseGroupClient LicenseGroupClient()
         {
-            return new ProfileClient();
+            return new LicenseGroupClient();
+        }
+
+        public static LicenseUserClient LicenseUserClient()
+        {
+            return new LicenseUserClient();
+        }
+
+        public static LicenseUserGroupClient LicenseUserGroupClient()
+        {
+            return new LicenseUserGroupClient();
         }
 
         public static PortalClient PortalClient()
@@ -14,24 +24,14 @@ namespace Core.Factory
             return new PortalClient();
         }
 
+        public static ProfileClient ProfileClient()
+        {
+            return new ProfileClient();
+        }
+
         public static SupportUploadClient SupportUploadClient()
         {
-            return new Common.Client.SupportUploadClient();
-        }
-
-        public static LicenseUserClient LicenseUserClient()
-        {
-            return new Common.Client.LicenseUserClient();
-        }
-
-        public static LicenseGroupClient LicenseGroupClient()
-        {
-            return new Common.Client.LicenseGroupClient();
-        }
-
-        public static LicenseUserGroupClient LicenseUserGroupClient()
-        {
-            return new Common.Client.LicenseUserGroupClient();
+            return new SupportUploadClient();
         }
     }
 }

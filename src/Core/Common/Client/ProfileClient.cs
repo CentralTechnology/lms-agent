@@ -2,7 +2,6 @@ namespace Core.Common.Client
 {
     using System;
     using System.Threading.Tasks;
-    using Abp.Domain.Services;
     using Extensions;
     using NLog;
     using OData;

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Factory
+﻿namespace Core.Factory
 {
     using DirectoryServices;
 
@@ -14,6 +8,5 @@ namespace Core.Factory
         {
             return new DirectoryServicesManager();
         }
-
     }
 }

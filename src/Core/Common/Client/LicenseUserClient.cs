@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Abp.Domain.Services;
     using Extensions;
     using Models;
     using NLog;
@@ -51,6 +50,29 @@
                     Logger.Debug($"User: {user.Dump()}");
                     Logger.Debug(ex.ToString());
                 }
+            }
+        }
+
+        public async Task<List<LicenseUser>> GetAll()
+        {
+            try
+            {
+                var client = new ODataClient(new ODataLicenseClientSettings());
+                IEnumerable<LicenseUser> users = await client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
+                List<LicenseUser> licenseUsers = users.ToList();
+                Logger.Debug($"{licenseUsers.Count} users returned from the api.");
+                return licenseUsers;
+            }
+            catch (WebRequestException ex)
+            {
+                ExceptionExtensions.HandleWebRequestException(ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to obtain a list of users from the api.");
+                Logger.Debug(ex);
+                return null;
             }
         }
 
@@ -115,29 +137,6 @@
                     Logger.Debug($"User: {user.Dump()}");
                     Logger.Debug(ex.ToString());
                 }
-            }
-        }
-
-        public async Task<List<LicenseUser>> GetAll()
-        {
-            try
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
-                IEnumerable<LicenseUser> users = await client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
-                List<LicenseUser> licenseUsers = users.ToList();
-                Logger.Debug($"{licenseUsers.Count} users returned from the api.");
-                return licenseUsers;
-            }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to obtain a list of users from the api.");
-                Logger.Debug(ex);
-                return null;
             }
         }
     }

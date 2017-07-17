@@ -4,10 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Abp.Domain.Services;
     using Abp.Timing;
     using Administration;
-    using Common.Client;
     using Common.Extensions;
     using Factory;
     using MarkdownLog;
@@ -18,11 +16,73 @@
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        public async Task CallIn(int uploadId)
+        {
+            Logger.Info("Processing Upload Information".SectionTitle());
+            Logger.Info("Calling in");
+
+            await ClientFactory.SupportUploadClient().Update(uploadId);
+        }
+
+        public async Task ProcessGroups(List<LicenseUser> users)
+        {
+            Logger.Info("Processing Group Information".SectionTitle());
+
+            // get the local groups
+            Logger.Info("Getting a list of local groups from Active Directory.");
+            List<LicenseGroup> localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
+
+            // get the api groups
+            Logger.Info("Getting a list of groups that have already been created in the api.");
+            List<LicenseGroup> remoteGroups = await ClientFactory.LicenseGroupClient().GetAll();
+            Logger.Info($"{remoteGroups.Count} groups have been returned from the api.");
+
+            // return a list of groups that need adding to the api
+            Logger.Info("Calculating the number of groups that need to be created in the api.");
+            List<LicenseGroup> groupsToCreate = remoteGroups.FilterCreate<LicenseGroup, Guid>(localGroups);
+            Logger.Info($"{groupsToCreate.Count} groups need creating in the api.");
+
+            if (groupsToCreate.Count > 0)
+            {
+                Logger.Info("Ccreating the groups.");
+                await ClientFactory.LicenseGroupClient().Add(groupsToCreate);
+            }
+
+            Logger.Info("Calculating the number of groups that need to be updated in the api.");
+            List<LicenseGroup> groupsToUpdate = remoteGroups.FilterUpdate<LicenseGroup, Guid>(localGroups);
+            Logger.Info($"{groupsToUpdate.Count} groups need updating in the api.");
+
+            if (groupsToUpdate.Count > 0)
+            {
+                Logger.Info("Updating the groups.");
+                await ClientFactory.LicenseGroupClient().Update(groupsToUpdate);
+            }
+
+            Logger.Info("Calculating the number of groups that need to be deleted in the api.");
+            List<LicenseGroup> groupsToDelete = remoteGroups.FilterDelete<LicenseGroup, Guid>(localGroups);
+            Logger.Info($"{groupsToDelete.Count} groups need deleting in the api.");
+
+            if (groupsToDelete.Count > 0)
+            {
+                Logger.Info("Deleting the groups.");
+                await ClientFactory.LicenseGroupClient().Remove(groupsToDelete);
+            }
+
+            var summary = new[]
+            {
+                new {Action = "Created", groupsToCreate.Count},
+                new {Action = "Delete", groupsToDelete.Count},
+                new {Action = "Update", groupsToUpdate.Count}
+            };
+
+            Logger.Info($"{Environment.NewLine}{summary.ToMarkdownTable()}");
+        }
+
         public async Task<ManagedSupport> ProcessUpload()
         {
             Logger.Info("Processing Upload Information".SectionTitle());
 
-            Guid deviceId = SettingFactory.SettingsManager().GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
+            var deviceId = SettingFactory.SettingsManager().GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
             Logger.Debug($"Device id thats registered in settings: {deviceId}");
 
             Logger.Debug("Obtaining the upload id.");
@@ -62,6 +122,50 @@
 
             Logger.Info($"A new upload has been created with id: {upload.Id}");
             return upload;
+        }
+
+        public async Task ProcessUserGroups(List<LicenseUser> users)
+        {
+            Logger.Info("Processing User Group Information".SectionTitle());
+
+            // get the local groups
+            Logger.Info("Getting a list of local groups from Active Directory.");
+            List<LicenseGroup> localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
+
+            // get the remote users and groups
+            Logger.Info("Getting a list of users and their group membership from the api.");
+            List<LicenseUser> apiUsers = await ClientFactory.LicenseUserClient().GetAll();
+
+            // if groups are null then create a new list of groups
+            List<LicenseUser> remoteUsers = apiUsers.Select(u =>
+            {
+                u.Groups = u.Groups ?? new List<LicenseGroup>();
+                return u;
+            }).ToList();
+
+            foreach (LicenseGroup localGroup in localGroups)
+            {
+                Logger.Debug($"Processing group: {localGroup}");
+
+                List<LicenseUser> usersThatWereMembers = remoteUsers.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
+                List<LicenseUser> usersThatAreMembers = users.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
+
+                Logger.Debug("Calculating the number of users that need to be added to this group.");
+                List<LicenseUser> usersToBeAdded = usersThatWereMembers.FilterCreate<LicenseUser, Guid>(usersThatAreMembers);
+                Logger.Debug($"Adding {usersToBeAdded.Count} users.");
+                if (usersToBeAdded.Count > 0)
+                {
+                    await ClientFactory.LicenseUserGroupClient().Add(usersToBeAdded, localGroup);
+                }
+
+                Logger.Debug("Calculating the number of users that need to be removed from this group.");
+                List<LicenseUser> usersToBeRemoved = usersThatWereMembers.FilterDelete<LicenseUser, Guid>(usersThatAreMembers);
+                Logger.Debug($"Removing {usersToBeAdded.Count} users.");
+                if (usersToBeRemoved.Count > 0)
+                {
+                    await ClientFactory.LicenseUserGroupClient().Remove(usersToBeRemoved, localGroup);
+                }
+            }
         }
 
         public async Task<List<LicenseUser>> ProcessUsers(int uploadId)
@@ -121,112 +225,6 @@
 
             Logger.Info($"{Environment.NewLine}{summary.ToMarkdownTable()}");
             return localUsers;
-        }
-
-        public async Task ProcessGroups(List<LicenseUser> users)
-        {
-            Logger.Info("Processing Group Information".SectionTitle());
-
-            // get the local groups
-            Logger.Info("Getting a list of local groups from Active Directory.");
-            List<LicenseGroup> localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
-
-            // get the api groups
-            Logger.Info("Getting a list of groups that have already been created in the api.");
-            List<LicenseGroup> remoteGroups = await ClientFactory.LicenseGroupClient().GetAll();
-            Logger.Info($"{remoteGroups.Count} groups have been returned from the api.");
-
-            // return a list of groups that need adding to the api
-            Logger.Info("Calculating the number of groups that need to be created in the api.");
-            List<LicenseGroup> groupsToCreate = remoteGroups.FilterCreate<LicenseGroup, Guid>(localGroups);
-            Logger.Info($"{groupsToCreate.Count} groups need creating in the api.");
-
-            if (groupsToCreate.Count > 0)
-            {
-                Logger.Info("Ccreating the groups.");
-                await ClientFactory.LicenseGroupClient().Add(groupsToCreate);
-            }
-
-            Logger.Info("Calculating the number of groups that need to be updated in the api.");
-            List<LicenseGroup> groupsToUpdate = remoteGroups.FilterUpdate<LicenseGroup, Guid>(localGroups);
-            Logger.Info($"{groupsToUpdate.Count} groups need updating in the api.");
-
-            if (groupsToUpdate.Count > 0)
-            {
-                Logger.Info("Updating the groups.");
-                await ClientFactory.LicenseGroupClient().Update(groupsToUpdate);
-            }
-
-            Logger.Info("Calculating the number of groups that need to be deleted in the api.");
-            List<LicenseGroup> groupsToDelete = remoteGroups.FilterDelete<LicenseGroup, Guid>(localGroups);
-            Logger.Info($"{groupsToDelete.Count} groups need deleting in the api.");
-
-            if (groupsToDelete.Count > 0)
-            {
-                Logger.Info("Deleting the groups.");
-                await ClientFactory.LicenseGroupClient().Remove(groupsToDelete);
-            }
-
-            var summary = new[]
-            {
-                new {Action = "Created", groupsToCreate.Count},
-                new {Action = "Delete", groupsToDelete.Count},
-                new {Action = "Update", groupsToUpdate.Count}
-            };
-
-            Logger.Info($"{Environment.NewLine}{summary.ToMarkdownTable()}");
-        }
-
-        public async Task ProcessUserGroups(List<LicenseUser> users)
-        {
-            Logger.Info("Processing User Group Information".SectionTitle());
-
-            // get the local groups
-            Logger.Info("Getting a list of local groups from Active Directory.");
-            List<LicenseGroup> localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
-
-            // get the remote users and groups
-            Logger.Info("Getting a list of users and their group membership from the api.");
-            List<LicenseUser> apiUsers = await ClientFactory.LicenseUserClient().GetAll();
-
-            // if groups are null then create a new list of groups
-            List<LicenseUser> remoteUsers = apiUsers.Select(u =>
-            {
-                u.Groups = u.Groups ?? new List<LicenseGroup>();
-                return u;
-            }).ToList();
-
-            foreach (LicenseGroup localGroup in localGroups)
-            {
-                Logger.Debug($"Processing group: {localGroup}");
-
-                List<LicenseUser> usersThatWereMembers = remoteUsers.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
-                List<LicenseUser> usersThatAreMembers = users.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
-
-                Logger.Debug("Calculating the number of users that need to be added to this group.");
-                List<LicenseUser> usersToBeAdded = usersThatWereMembers.FilterCreate<LicenseUser, Guid>(usersThatAreMembers);
-                Logger.Debug($"Adding {usersToBeAdded.Count} users.");
-                if (usersToBeAdded.Count > 0)
-                {
-                    await ClientFactory.LicenseUserGroupClient().Add(usersToBeAdded, localGroup);
-                }
-
-                Logger.Debug("Calculating the number of users that need to be removed from this group.");
-                List<LicenseUser> usersToBeRemoved = usersThatWereMembers.FilterDelete<LicenseUser, Guid>(usersThatAreMembers);
-                Logger.Debug($"Removing {usersToBeAdded.Count} users.");
-                if (usersToBeRemoved.Count > 0)
-                {
-                    await ClientFactory.LicenseUserGroupClient().Remove(usersToBeRemoved, localGroup);
-                }
-            }
-        }
-
-        public async Task CallIn(int uploadId)
-        {
-            Logger.Info("Processing Upload Information".SectionTitle());
-            Logger.Info("Calling in");
-
-            await ClientFactory.SupportUploadClient().Update(uploadId);
         }
     }
 }

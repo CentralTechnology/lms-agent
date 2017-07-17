@@ -2,7 +2,6 @@
 {
     using System;
     using Abp;
-    using Abp.Dependency;
     using Abp.Extensions;
     using Abp.Threading;
     using Administration;
@@ -15,29 +14,28 @@
     {
         protected ODataCommonClientSettings()
         {
-            Logger= LogManager.GetCurrentClassLogger();
+            Logger = LogManager.GetCurrentClassLogger();
             SettingManager = SettingFactory.SettingsManager();
         }
 
-        public SettingManager SettingManager { get; set; }
+        protected static Guid DeviceId { get; set; }
         public Logger Logger { get; set; }
 
-        protected static Guid DeviceId { get; set; }
+        public SettingManager SettingManager { get; set; }
 
         protected static string Token { get; set; }
 
         protected void ValidateDeviceId()
         {
+            if (DeviceId == Guid.Empty)
+            {
+                DeviceId = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
 
                 if (DeviceId == Guid.Empty)
                 {
-                    DeviceId = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
-
-                    if (DeviceId == Guid.Empty)
-                    {
-                        throw new AbpException($"Cannot perform web request when device id is {Guid.Empty}");
-                    }
-                }           
+                    throw new AbpException($"Cannot perform web request when device id is {Guid.Empty}");
+                }
+            }
         }
 
         protected void ValidateToken()

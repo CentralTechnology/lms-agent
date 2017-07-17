@@ -1,9 +1,7 @@
 ﻿namespace Service.Menu.Pages.Tools.Debug
 {
     using System;
-    using Abp.Dependency;
     using Castle.Core.Logging;
-    using Core.Administration;
     using Core.Factory;
     using EasyConsole;
 
@@ -12,7 +10,6 @@
         public DebugPage(Program program)
             : base("Debug", program)
         {
-
             Menu.Add("Toggle", () =>
             {
                 bool debug = SettingFactory.SettingsManager().ReadLoggerLevel() == LoggerLevel.Debug;

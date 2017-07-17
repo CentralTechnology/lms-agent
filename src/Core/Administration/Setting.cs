@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Administration
+﻿namespace Core.Administration
 {
     using System.ComponentModel.DataAnnotations;
     using Abp.Domain.Entities;
@@ -13,7 +7,6 @@ namespace Core.Administration
     {
         public Setting()
         {
-            
         }
 
         public Setting(string name, string value)

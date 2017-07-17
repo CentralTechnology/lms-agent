@@ -426,7 +426,7 @@ namespace ServiceTimer
 #else
             catch (Exception ex)
             {
-                _log?.Error(ex,logmessages.WorkerException);
+                _log?.Error(ex, logmessages.WorkerException);
 #endif
             }
             finally

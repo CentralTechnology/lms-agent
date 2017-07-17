@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.DirectoryServices
+﻿namespace Core.DirectoryServices
 {
+    using System;
     using System.DirectoryServices.AccountManagement;
     using System.DirectoryServices.ActiveDirectory;
     using NLog;
@@ -40,10 +35,10 @@ namespace Core.DirectoryServices
 
             try
             {
-                DirectoryContext context = new DirectoryContext(DirectoryContextType.Domain);
+                var context = new DirectoryContext(DirectoryContextType.Domain);
                 domain = Domain.GetDomain(context);
 
-                var pdc = domain.PdcRoleOwner;
+                DomainController pdc = domain.PdcRoleOwner;
 
                 return pdc.Name.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase);
             }
@@ -55,7 +50,7 @@ namespace Core.DirectoryServices
             finally
             {
                 domain?.Dispose();
-            }         
+            }
         }
     }
 }

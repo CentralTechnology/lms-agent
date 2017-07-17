@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.EntityFramework
+﻿namespace Core.EntityFramework
 {
     using System.Data.Entity;
     using Administration;
@@ -14,7 +8,7 @@ namespace Core.EntityFramework
     {
         public AgentDbContext() : base("Default")
         {
-            Database.SetInitializer<AgentDbContext>(new MigrateDatabaseToLatestVersion<AgentDbContext, Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<AgentDbContext, Configuration>());
         }
 
         public DbSet<Setting> Settings { get; set; }

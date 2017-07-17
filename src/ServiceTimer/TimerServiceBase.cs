@@ -41,6 +41,13 @@ namespace ServiceTimer
         /// </summary>
         private ArrayList _workers;
 
+        public TimerServiceBase()
+        {
+            DefaultLog();
+
+            _log?.Info(logmessages.ServiceInitialised);
+        }
+
         /// <summary>
         ///     Get all of the signals used for transitioning between states
         /// </summary>
@@ -233,13 +240,6 @@ namespace ServiceTimer
             }
 
             _log?.Info(logmessages.ServiceStopped);
-        }
-
-        public TimerServiceBase()
-        {
-            DefaultLog();
-
-            _log?.Info(logmessages.ServiceInitialised);
         }
 
         /// <inheritdoc />

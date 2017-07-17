@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Abp.Domain.Services;
     using Extensions;
     using Models;
     using NLog;
@@ -45,6 +44,27 @@
                     Logger.Debug($"Group: {group.Dump()}");
                     Logger.Debug(ex.ToString());
                 }
+            }
+        }
+
+        public async Task<List<LicenseGroup>> GetAll()
+        {
+            try
+            {
+                var client = new ODataClient(new ODataLicenseClientSettings());
+                IEnumerable<LicenseGroup> groups = await client.For<LicenseGroup>().FindEntriesAsync();
+                return groups.ToList();
+            }
+            catch (WebRequestException ex)
+            {
+                ExceptionExtensions.HandleWebRequestException(ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to obtain a list of groups from the api.");
+                Logger.Debug(ex.ToString());
+                return null;
             }
         }
 
@@ -105,27 +125,6 @@
                     Logger.Debug($"Group: {group.Dump()}");
                     Logger.Debug(ex.ToString());
                 }
-            }
-        }
-
-        public async Task<List<LicenseGroup>> GetAll()
-        {
-            try
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
-                IEnumerable<LicenseGroup> groups = await client.For<LicenseGroup>().FindEntriesAsync();
-                return groups.ToList();
-            }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to obtain a list of groups from the api.");
-                Logger.Debug(ex.ToString());
-                return null;
             }
         }
     }

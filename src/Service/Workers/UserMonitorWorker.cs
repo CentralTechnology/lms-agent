@@ -1,28 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Service.Workers
+﻿namespace Service.Workers
 {
+    using System;
     using Abp.Threading;
     using Core.Factory;
     using ServiceTimer;
 
     internal class UserMonitorWorker : TimerWorker
     {
-
         internal UserMonitorWorker()
-            : base(delayOnStart: 30000, timerInterval: 10000, workOnElapseCount: 90)
+            : base(30000, 10000, 90)
         {
-            
         }
 
         /// <inheritdoc />
         protected override void StartWork(TimerWorkerInfo info)
         {
-            
         }
 
         /// <inheritdoc />
@@ -42,7 +34,6 @@ namespace Service.Workers
                 Log.Error("************ User Monitoring Failed ************");
                 OneTrueError.Client.OneTrue.Report(ex);
             }
-            
         }
     }
 }

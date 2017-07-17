@@ -1,18 +1,9 @@
-﻿/* 27 Oct 2014
-// This code released to community under The Code Project Open License (CPOL) 1.02
-// The copyright owner and author of this version of the code is Robert Ellis
-// Please retain this notice and clearly identify your own edits, amendments and/or contributions
-// In line with the CPOL this code is provided "AS IS" and without warranty
-// Use entirely at your own risk
-*/
-using System;
-
-namespace ServiceTimer
+﻿namespace ServiceTimer
 {
+    using System;
+
     public class TimerWorkException : Exception
     {
-        public TimerWorkerInfo TimerWorkerInfo { private set; get; }
-
         public TimerWorkException()
         {
         }
@@ -30,8 +21,10 @@ namespace ServiceTimer
         public TimerWorkException(string message, Exception inner, TimerWorkerInfo info)
             : base(message, inner)
         {
-            this.TimerWorkerInfo = info;
+            TimerWorkerInfo = info;
         }
+
+        public TimerWorkerInfo TimerWorkerInfo { private set; get; }
     }
 
     public class OnPauseException : TimerWorkException
@@ -53,7 +46,6 @@ namespace ServiceTimer
         public OnPauseException(string message, Exception inner, TimerWorkerInfo info)
             : base(message, inner, info)
         {
-            
         }
     }
 
@@ -76,7 +68,6 @@ namespace ServiceTimer
         public OnContinueException(string message, Exception inner, TimerWorkerInfo info)
             : base(message, inner, info)
         {
-
         }
     }
 
@@ -99,7 +90,6 @@ namespace ServiceTimer
         public OnStopException(string message, Exception inner, TimerWorkerInfo info)
             : base(message, inner, info)
         {
-
         }
     }
 
@@ -122,7 +112,6 @@ namespace ServiceTimer
         public OnShutdownException(string message, Exception inner, TimerWorkerInfo info)
             : base(message, inner, info)
         {
-
         }
     }
 
@@ -145,7 +134,6 @@ namespace ServiceTimer
         public OnWorkException(string message, Exception inner, TimerWorkerInfo info)
             : base(message, inner, info)
         {
-
         }
     }
 }

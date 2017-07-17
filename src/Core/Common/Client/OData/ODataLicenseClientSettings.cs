@@ -4,10 +4,8 @@ namespace Core.Common.Client.OData
     using System.Net.Http;
     using System.Net.Http.Headers;
     using Abp;
-    using Abp.Dependency;
     using Administration;
     using Extensions;
-    using Factory;
 
     public class ODataLicenseClientSettings : ODataCommonClientSettings
     {
@@ -52,7 +50,6 @@ namespace Core.Common.Client.OData
                 {
                     throw new AbpException("Cannot perform web request when account id is 0");
                 }
-
             }
         }
     }

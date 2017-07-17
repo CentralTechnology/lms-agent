@@ -1,7 +1,6 @@
 ﻿namespace Core.Common.Client
 {
     using System.Threading.Tasks;
-    using Abp.Dependency;
     using Abp.WebApi.Client;
 
     /// <summary>
@@ -13,7 +12,8 @@
 
         public PortalClient()
         {
-            BaseUrl = LmsConstants.BaseServiceUrl;;
+            BaseUrl = LmsConstants.BaseServiceUrl;
+            ;
         }
 
         public string BaseUrl { get; set; }

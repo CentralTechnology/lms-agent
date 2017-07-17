@@ -3,14 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Abp.Domain.Services;
     using Extensions;
     using Models;
     using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class LicenseUserGroupClient 
+    public class LicenseUserGroupClient
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 

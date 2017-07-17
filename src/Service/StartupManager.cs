@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Service
+﻿namespace Service
 {
+    using System;
     using Core.Administration;
     using Core.Common.Extensions;
     using Core.Factory;
@@ -41,7 +36,7 @@ namespace Service
             Logger.Info("Dermining whether to monitor users...");
 
             // check if a domain exists
-            var domainExists = DirectoryServicesFactory.DirectoryServicesManager().DomainExist();
+            bool domainExists = DirectoryServicesFactory.DirectoryServicesManager().DomainExist();
             if (!domainExists)
             {
                 Logger.Warn("Check Domain: FAIL");
@@ -51,13 +46,13 @@ namespace Service
             Logger.Info("Check Domain: OK");
 
             // check if this is a primary domain controller
-            var pdc = DirectoryServicesFactory.DirectoryServicesManager().PrimaryDomainController();
+            bool pdc = DirectoryServicesFactory.DirectoryServicesManager().PrimaryDomainController();
             if (!pdc)
             {
                 Logger.Warn("Check PDC: FAIL");
 
                 // check override is enabled
-                var pdcOverride = SettingFactory.SettingsManager().GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
+                bool pdcOverride = SettingFactory.SettingsManager().GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
                 if (!pdcOverride)
                 {
                     Logger.Warn("Check PDC Override: FAIL");
