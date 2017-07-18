@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Veeam.Backup.Common
+﻿namespace Core.Veeam.Backup.Common
 {
     public enum EPlatform
     {
@@ -18,6 +12,6 @@ namespace Core.Veeam.Backup.Common
         EConf = 10,
         EExtension0 = 100,
         EExtension1 = 101,
-        EExtension2 = 102,
+        EExtension2 = 102
     }
 }

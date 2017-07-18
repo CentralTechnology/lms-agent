@@ -213,6 +213,7 @@
     <Compile Include="Factory\OrchestratorFactory.cs" />
     <Compile Include="Factory\SettingFactory.cs" />
     <Compile Include="Factory\UserFactory.cs" />
+    <Compile Include="Factory\VeeamVersionFactory.cs" />
     <Compile Include="Migrations\201707140955114_Initial.cs" />
     <Compile Include="Migrations\201707140955114_Initial.Designer.cs">
       <DependentUpon>201707140955114_Initial.cs</DependentUpon>
@@ -226,7 +227,12 @@
     <Compile Include="Users\UserManager.cs" />
     <Compile Include="Users\UserOrchestrator.cs" />
     <Compile Include="Factory\VeeamFactory.cs" />
+    <Compile Include="Veeam\Backup\Common\EPlatform.cs" />
+    <Compile Include="Veeam\DBManager\DbAccessor.cs" />
+    <Compile Include="Veeam\DBManager\LocalDbAccessor.cs" />
     <Compile Include="Veeam\VeeamManager.cs" />
+    <Compile Include="Veeam\VeeamVersion.cs" />
+    <Compile Include="Veeam\VeeamVersion900902.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
