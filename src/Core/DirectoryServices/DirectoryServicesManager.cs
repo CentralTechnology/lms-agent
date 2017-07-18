@@ -4,6 +4,7 @@
     using System.DirectoryServices.AccountManagement;
     using System.DirectoryServices.ActiveDirectory;
     using NLog;
+    using OneTrueError.Client;
 
     public class DirectoryServicesManager
     {
@@ -39,11 +40,13 @@
                 domain = Domain.GetDomain(context);
 
                 DomainController pdc = domain.PdcRoleOwner;
+                string currentMachine = $"{Environment.MachineName}.{System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName}";
 
-                return pdc.Name.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase);
+                return pdc.Name.Equals(currentMachine, StringComparison.OrdinalIgnoreCase);
             }
             catch (Exception ex)
             {
+                OneTrue.Report(ex);
                 Logger.Debug(ex);
                 return false;
             }
