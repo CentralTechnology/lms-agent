@@ -39,11 +39,6 @@
                         user.WhenCreated
                     }).InsertEntryAsync();
                 }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to create user: {user.DisplayName}.");
-                    ExceptionExtensions.HandleWebRequestException(ex);
-                }
                 catch (Exception ex)
                 {
                     Logger.Error($"Unable to create user: {user.DisplayName}.");
@@ -62,11 +57,6 @@
                 List<LicenseUser> licenseUsers = users.ToList();
                 Logger.Debug($"{licenseUsers.Count} users returned from the api.");
                 return licenseUsers;
-            }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return null;
             }
             catch (Exception ex)
             {
@@ -88,11 +78,6 @@
                 {
                     Logger.Debug($"Removing user: {user.DisplayName}");
                     await client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
-                }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to remove user: {user.DisplayName}.");
-                    ExceptionExtensions.HandleWebRequestException(ex);
                 }
                 catch (Exception ex)
                 {
@@ -125,11 +110,6 @@
                         user.Surname,
                         user.WhenCreated
                     }).UpdateEntryAsync();
-                }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to update user: {user.DisplayName}.");
-                    ExceptionExtensions.HandleWebRequestException(ex);
                 }
                 catch (Exception ex)
                 {

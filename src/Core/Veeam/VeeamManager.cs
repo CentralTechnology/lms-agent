@@ -44,7 +44,7 @@ namespace Core.Veeam
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex.Message);
+                    Logger.Error("Unable to contact the local Veeam server. Please make sure the services are started.");
                     Logger.Debug(ex);
                     return false;
                 }

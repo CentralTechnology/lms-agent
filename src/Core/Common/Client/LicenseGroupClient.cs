@@ -33,11 +33,6 @@
                         group.WhenCreated
                     }).InsertEntryAsync();
                 }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to create group: {group.Name}.");
-                    ExceptionExtensions.HandleWebRequestException(ex);
-                }
                 catch (Exception ex)
                 {
                     Logger.Error($"Unable to create group: {group.Name}.");
@@ -54,11 +49,6 @@
                 var client = new ODataClient(new ODataLicenseClientSettings());
                 IEnumerable<LicenseGroup> groups = await client.For<LicenseGroup>().FindEntriesAsync();
                 return groups.ToList();
-            }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return null;
             }
             catch (Exception ex)
             {
@@ -81,11 +71,6 @@
                     Logger.Debug($"Removing group: {group.Name}");
 
                     await client.For<LicenseGroup>().Key(group.Id).DeleteEntryAsync();
-                }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to remove group: {group.Name}.");
-                    ExceptionExtensions.HandleWebRequestException(ex);
                 }
                 catch (Exception ex)
                 {
@@ -113,11 +98,6 @@
                         group.Name,
                         group.WhenCreated
                     }).UpdateEntryAsync();
-                }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to update group: {group.Name}.");
-                    ExceptionExtensions.HandleWebRequestException(ex);
                 }
                 catch (Exception ex)
                 {

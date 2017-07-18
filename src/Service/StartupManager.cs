@@ -1,7 +1,9 @@
 ﻿namespace Service
 {
     using System;
+    using Abp;
     using Core.Administration;
+    using Core.Common.Constants;
     using Core.Common.Extensions;
     using Core.Factory;
     using NLog;
@@ -33,6 +35,19 @@
                 Logger.Error(ex.Message);
                 Logger.Debug(ex);
                 OneTrue.Report(ex);
+            }
+
+            try
+            {
+                ValidateApiCredentials();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+                Logger.Error("************ Initialisation  Failed ************");
+                Logger.Debug(ex);
+                OneTrue.Report(ex);
+                throw;
             }
 
             Logger.Info("************ Initialisation  Successful ************");
@@ -108,6 +123,36 @@
 
             Logger.Warn("Check Veeam Version: OK");
             return true;
+        }
+
+        private void ValidateApiCredentials()
+        {
+            // get the centrastage device id
+            Logger.Info("Getting the centrastage device id...");
+
+            var deviceId = Constants.CentraStage.GetCentrastageId();
+            if (deviceId == null)
+            {
+                Logger.Warn("Get centrastage device id: FAIL");
+                throw new AbpException("Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
+            }
+
+            Logger.Info($"Get centrastage device id: {deviceId}");
+            SettingFactory.SettingsManager().ChangeSetting(SettingNames.CentrastageDeviceId, deviceId.ToString());
+
+            // get the autotask account id
+            Logger.Info("Getting the autotask account id id...");
+
+            var accountId = SettingFactory.SettingsManager().GetAccountId((Guid) deviceId);
+
+            if (accountId == 0)
+            {
+                Logger.Warn("Get autotask account id: FAIL");
+                throw new AbpException("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
+            }
+
+            Logger.Info($"Get autotask account id: {accountId}");
+            SettingFactory.SettingsManager().ChangeSetting(SettingNames.AutotaskAccountId, accountId.ToString());
         }
     }
 }

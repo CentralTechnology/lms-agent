@@ -4,10 +4,6 @@
     {
         /// <summary>
         /// </summary>
-        public const string SettingsSection = "LMSSettings";
-
-        /// <summary>
-        /// </summary>
         public const string LoggerTarget = "colouredConsole|file";
 
 #if DEBUG
@@ -36,11 +32,6 @@
 #endif
         /// <summary>
         /// </summary>
-        public const string DeviceIdKeyPath = @"SOFTWARE\CentraStage";
-
-        /// <summary>
-        /// </summary>
-        public const string DeviceIdKeyName = "DeviceID";
 
         /// <summary>
         ///     Doesn't actually provide any admin access. Its just used to hide menu items.

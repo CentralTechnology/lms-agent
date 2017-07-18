@@ -22,11 +22,6 @@ namespace Core.Common.Client
                 var client = new ODataClient(new ODataLicenseClientSettings());
                 return await client.For<ManagedSupport>().Set(upload).InsertEntryAsync();
             }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return null;
-            }
             catch (Exception ex)
             {
                 Logger.Error("Failed to add upload");
@@ -43,12 +38,6 @@ namespace Core.Common.Client
                 ManagedSupport upload = await client.For<ManagedSupport>().Key(id).Expand(s => s.Users).FindEntryAsync();
                 return upload;
             }
-            catch (WebRequestException ex)
-            {
-                Logger.Error($"Unable to get upload with id: {id}");
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return null;
-            }
             catch (Exception ex)
             {
                 Logger.Error($"Unable to get upload with id: {id}");
@@ -63,11 +52,6 @@ namespace Core.Common.Client
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
                 return await client.For<ManagedSupport>().Function("NewUploadId").ExecuteAsScalarAsync<int>();
-            }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return 0;
             }
             catch (Exception ex)
             {
@@ -86,11 +70,6 @@ namespace Core.Common.Client
                 var client = new ODataClient(new ODataLicenseClientSettings());
                 return await client.For<ManagedSupport>().Function("GetCallInStatus").Set(new {deviceId}).ExecuteAsScalarAsync<CallInStatus>();
             }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return CallInStatus.NotCalledIn;
-            }
             catch (Exception ex)
             {
                 Logger.Error($"Status: {ex.Message}");
@@ -108,12 +87,6 @@ namespace Core.Common.Client
             {
                 var client = new ODataClient(new ODataLicenseClientSettings());
                 return await client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int>();
-            }
-            catch (WebRequestException ex)
-            {
-                Logger.Error($"Failed to get the upload id for device: {deviceId}");
-                ExceptionExtensions.HandleWebRequestException(ex);
-                throw;
             }
             catch (Exception ex)
             {
@@ -135,11 +108,6 @@ namespace Core.Common.Client
 
                 // return a new list if null, could just be the first check in
                 return upload.Users ?? new List<LicenseUser>();
-            }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return null;
             }
             catch (Exception ex)
             {
@@ -167,10 +135,6 @@ namespace Core.Common.Client
                     Status = CallInStatus.CalledIn,
                     UploadId = uploadId
                 }).UpdateEntryAsync();
-            }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
             }
             catch (Exception ex)
             {

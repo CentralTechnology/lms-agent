@@ -27,11 +27,6 @@
 
                     await client.For<LicenseUser>().Key(user.Id).LinkEntryAsync(group, "Groups");
                 }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to add {user.DisplayName} to {group.Name}");
-                    ExceptionExtensions.HandleWebRequestException(ex);
-                }
                 catch (Exception ex)
                 {
                     Logger.Error($"Unable to add {user.DisplayName} to {group.Name}");
@@ -54,11 +49,6 @@
                     Logger.Debug($"Removing user: {user.DisplayName} from group: {group}");
 
                     await client.For<LicenseUser>().Key(user.Id).UnlinkEntryAsync(group, "Groups");
-                }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to remove {user.DisplayName} from {group.Name}");
-                    ExceptionExtensions.HandleWebRequestException(ex);
                 }
                 catch (Exception ex)
                 {

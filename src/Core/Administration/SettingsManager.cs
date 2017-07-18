@@ -51,35 +51,6 @@
             return string.Empty;
         }
 
-        public Guid GetDeviceId()
-        {
-            byte[] id;
-
-            try
-            {
-                id = Encoding.UTF8.GetBytes(RegistryExtentions.GetRegistryValue(LmsConstants.DeviceIdKeyPath, LmsConstants.DeviceIdKeyName).ToString());
-            }
-            catch (Exception)
-            {
-                Logger.Error("There was an error reading the centrastage device id from the registry. Please make sure this application is running with appropriate permissions.");
-                throw;
-            }
-
-            if (id == null)
-            {
-                throw new AbpException("Unable to obtain the centrastage device id from the registry. Please manually enter this setting through the menu system.");
-            }
-
-            string registryValue = Encoding.UTF8.GetString(id);
-            bool valid = Guid.TryParse(registryValue, out Guid deviceId);
-            if (!valid)
-            {
-                throw new AbpException($"Failed to parse the registry value to a valid centrastage device id. The value was {registryValue}");
-            }
-
-            return deviceId;
-        }
-
         public Task<string> GetSettingValueAsync(string name)
         {
             return GetSettingValueInternalAsync(name);

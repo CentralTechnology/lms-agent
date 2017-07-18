@@ -18,36 +18,31 @@ namespace Core.Common.Extensions
         /// <returns></returns>
         public static bool IsApplictionInstalled(this string pName)
         {
-            string displayName;
-
             // search in: CurrentUser
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
             if (key != null)
             {
-                displayName = key.GetDisplayName();
-                if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
+                if (key.DisplayNameExists(pName))
                 {
                     return true;
                 }
             }
 
             // search in: LocalMachine_32
-            key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
             if (key != null)
             {
-                displayName = key.GetDisplayName();
-                if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
+                if (key.DisplayNameExists(pName))
                 {
                     return true;
                 }
             }
 
             // search in: LocalMachine_64
-            key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
             if (key != null)
             {
-                displayName = key.GetDisplayName();
-                if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
+                if (key.DisplayNameExists(pName))
                 {
                     return true;
                 }
@@ -61,19 +56,80 @@ namespace Core.Common.Extensions
         /// 
         /// </summary>
         /// <param name="key"></param>
+        /// <param name="pName"></param>
         /// <returns></returns>
-        private static string GetDisplayName(this RegistryKey key)
+        private static bool DisplayNameExists(this RegistryKey key, string pName)
         {
             foreach (string keyName in key.GetSubKeyNames())
             {
                 RegistryKey subKey = key.OpenSubKey(keyName);
                 if (subKey != null)
                 {
-                    return subKey.GetValue("DisplayName") as string;
+                    var displayName =  subKey.GetValue("DisplayName") as string;
+                    if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
                 }
             }
 
-            return string.Empty;
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pName"></param>
+        /// <returns></returns>
+        public static Guid? GetCentrastageId(this string pName)
+        {
+            string deviceId;
+
+            // search in: LocalMachine_32
+            RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE");
+            if (key != null)
+            {
+                foreach (string keyName in key.GetSubKeyNames())
+                {
+                    RegistryKey subKey = key.OpenSubKey(keyName);
+                    if (subKey != null)
+                    {
+                        deviceId = subKey.GetValue("DeviceID") as string;
+                        if (!deviceId.IsNullOrEmpty() || deviceId != null)
+                        {
+                            bool valid = Guid.TryParse(deviceId, out Guid csId);
+                            if (valid)
+                            {
+                                return csId;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // search in: LocalMachine_64
+            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE");
+            if (key != null)
+            {
+                foreach (string keyName in key.GetSubKeyNames())
+                {
+                    RegistryKey subKey = key.OpenSubKey(keyName);
+                    if (subKey != null)
+                    {
+                        deviceId = subKey.GetValue("DeviceID") as string;
+                        if (!deviceId.IsNullOrEmpty() || deviceId != null)
+                        {
+                            bool valid = Guid.TryParse(deviceId, out Guid csId);
+                            if (valid)
+                            {
+                                return csId;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

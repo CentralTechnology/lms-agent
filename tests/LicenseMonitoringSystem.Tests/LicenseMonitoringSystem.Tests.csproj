@@ -109,6 +109,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Common\Extensions\ObjectExtension_Tests.cs" />
     <Compile Include="Core\Extension_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
