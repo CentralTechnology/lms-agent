@@ -164,6 +164,7 @@
     <Compile Include="StartupFactory.cs" />
     <Compile Include="StartupManager.cs" />
     <Compile Include="Workers\UserMonitorWorker.cs" />
+    <Compile Include="Workers\VeeamMonitorWorker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

@@ -6,38 +6,39 @@
     using OneTrueError.Client;
     using ServiceTimer;
 
-    internal class UserMonitorWorker : TimerWorker
+    internal class VeeamMonitorWorker : TimerWorker
     {
         /// <summary>
-        /// 30 second start up delay
-        /// 10 second check
-        /// 90*10/60 = 15 min execute
+        ///     30 second start up delay
+        ///     10 second check
+        ///     180*10/60 = 30 min execute
         /// </summary>
-        internal UserMonitorWorker()
-            : base(30000, 10000, 90)
+        internal VeeamMonitorWorker()
+            : base(30000, 10000, 180)
         {
         }
 
         /// <inheritdoc />
         protected override void StartWork(TimerWorkerInfo info)
         {
+            
         }
 
         /// <inheritdoc />
         protected override void Work(TimerWorkerInfo info)
         {
-            Log.Info("User monitoring begin...");
+            Log.Info("Veeam monitoring begin...");
 
             try
             {
-                AsyncHelper.RunSync(() => OrchestratorFactory.Orchestrator().UserMonitor());
+                AsyncHelper.RunSync(() => OrchestratorFactory.Orchestrator().VeeamMonitor());
 
-                Log.Info("************ User Monitoring Successful ************");
+                Log.Info("************ Veeam Monitoring Successful ************");
             }
             catch (Exception ex)
             {
                 Log.Error(ex.Message);
-                Log.Error("************ User Monitoring Failed ************");
+                Log.Error("************ Veeam Monitoring Failed ************");
                 OneTrue.Report(ex);
             }
         }
