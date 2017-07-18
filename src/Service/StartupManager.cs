@@ -14,12 +14,19 @@
         public void Init()
         {
             Logger.Info("Running initialisation...");
+            Console.WriteLine(Environment.NewLine);
 
             try
             {
                 bool monUsers = MonitorUsers();
                 SettingFactory.SettingsManager().ChangeSetting(SettingNames.MonitorUsers, monUsers.ToString());
                 Logger.Info(monUsers ? "Monitoring Users" : "Not Monitoring Users");
+                Console.WriteLine(Environment.NewLine);
+
+                bool monVeeam = MonitorVeeam();
+                SettingFactory.SettingsManager().ChangeSetting(SettingNames.MonitorVeeam, monVeeam.ToString());
+                Logger.Info(monUsers ? "Monitoring Veeam" : "Not Monitoring Veeam");
+                Console.WriteLine(Environment.NewLine);
             }
             catch (Exception ex)
             {
@@ -64,6 +71,42 @@
 
             Logger.Info("Check PDC: OK");
 
+            return true;
+        }
+
+        private bool MonitorVeeam()
+        {
+            Logger.Info("Dermining whether to monitor veeam...");
+
+            // check if veeam is installed
+            bool veeamInstalled = VeeamFactory.VeeamManager().VeeamInstalled();
+            if (!veeamInstalled)
+            {
+                Logger.Warn("Check Veeam Installed: FAIL");
+                return false;
+            }
+
+            Logger.Info("Check Veeam Installed: OK");
+
+            // check veeam is online
+            bool veeamOnline = VeeamFactory.VeeamManager().VeeamOnline();
+            if (!veeamOnline)
+            {
+                Logger.Warn("Check Veeam Online: FAIL");
+                return false;
+            }
+
+            Logger.Info("Check Veeam Online: OK");
+
+            // check the veeam version
+            Version veeamVersion = VeeamFactory.VeeamManager().VeeamVersion();
+            if (veeamVersion == null)
+            {
+                Logger.Warn("Check Veeam Version: FAIL");
+                return false;
+            }
+
+            Logger.Warn("Check Veeam Version: OK");
             return true;
         }
     }

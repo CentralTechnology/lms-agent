@@ -4,12 +4,9 @@
     using System.Threading.Tasks;
     using Factory;
     using Models;
-    using NLog;
 
     public class OrchestratorManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         public async Task UserMonitor()
         {
             ManagedSupport upload = await OrchestratorFactory.UserOrchestrator().ProcessUpload();
