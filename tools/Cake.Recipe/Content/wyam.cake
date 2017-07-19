@@ -68,6 +68,7 @@ BuildParameters.Tasks.PublishDocumentationTask = Task("Publish-Documentation")
 )
 .OnError(exception =>
 {
+	Error("Publish-Documentation is the problem");
     Error(exception.Message);
     Information("Publish-Documentation Task failed, but continuing with next Task...");
     publishingError = true;

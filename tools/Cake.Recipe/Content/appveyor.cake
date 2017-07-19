@@ -49,7 +49,12 @@ BuildParameters.Tasks.UploadAppVeyorArtifactsTask = Task("Upload-AppVeyor-Artifa
     {
         AppVeyor.UploadArtifact(package);
     }
-});
+})
+.OnError(exception => 
+{
+	Error("Upload-AppVeyor-Artifacts is the problem");
+	Error(exception);
+};
 
 BuildParameters.Tasks.ClearAppVeyorCacheTask = Task("Clear-AppVeyor-Cache")
     .Does(() =>

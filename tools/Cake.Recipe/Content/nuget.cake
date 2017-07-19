@@ -139,6 +139,7 @@ BuildParameters.Tasks.PublishMyGetPackagesTask = Task("Publish-MyGet-Packages")
 })
 .OnError(exception =>
 {
+	Error("Publish-MyGet-Packages is the problem");
     Error(exception.Message);
     Information("Publish-MyGet-Packages Task failed, but continuing with next Task...");
     publishingError = true;

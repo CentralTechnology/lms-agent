@@ -81,6 +81,7 @@ BuildParameters.Tasks.PublishGitHubReleaseTask = Task("Publish-GitHub-Release")
 )
 .OnError(exception =>
 {
+	Error("Publish-GitHub-Release is the problem");
     Error(exception.Message);
     Information("Publish-GitHub-Release Task failed, but continuing with next Task...");
     publishingError = true;
