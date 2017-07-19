@@ -15,7 +15,9 @@ public class BuildVersion
             throw new ArgumentNullException("context");
         }
 
-        string version = null;
+		try{
+
+		string version = null;
         string semVersion = null;
         string milestone = null;
         string informationalVersion = null;
@@ -75,5 +77,14 @@ public class BuildVersion
             InformationalVersion = informationalVersion,
             FullSemVersion = fullSemVersion
         };
+
+
+
+		}catch(Exception ex){
+			context.Error(ex.StackTrace);
+			throw;
+		}
+
+        
     }
 }
