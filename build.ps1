@@ -81,6 +81,8 @@ function MD5HashFile([string] $filePath)
 }
 
 Write-Host "Preparing to run build script..."
+Write-Host "Tools Directory - Before"
+ls tools | Write-Host
 
 if(!$PSScriptRoot){
     $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
@@ -185,6 +187,7 @@ if (!(Test-Path $CAKE_EXE)) {
 
 # Start Cake
 Write-Host "Running build script..."
+Write-Host "Tools Directory - After"
 ls tools | Write-Host
 Invoke-Expression "& `"$CAKE_EXE`" `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`" $UseMono $UseDryRun $UseExperimental $ScriptArgs"
 exit $LASTEXITCODE
