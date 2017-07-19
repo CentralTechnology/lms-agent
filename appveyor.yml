@@ -14,6 +14,9 @@ branches:
 #    environment configuration    #
 #---------------------------------#
 
+hosts:
+    api.nuget.org: 93.184.221.200
+
 # environment variables
 environment:
   GitHubUserName:
