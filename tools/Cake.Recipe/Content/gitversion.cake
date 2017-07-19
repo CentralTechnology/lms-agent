@@ -15,8 +15,6 @@ public class BuildVersion
             throw new ArgumentNullException("context");
         }
 
-		try{
-
 		string version = null;
         string semVersion = null;
         string milestone = null;
@@ -42,10 +40,10 @@ public class BuildVersion
                 milestone = string.Concat(version);
             }
 
-           // GitVersion assertedVersions = context.GitVersion(new GitVersionSettings
-           // {
-           //     OutputType = GitVersionOutput.Json,
-           // });
+            GitVersion assertedVersions = context.GitVersion(new GitVersionSettings
+            {
+                OutputType = GitVersionOutput.Json,
+            });
 
             version = assertedVersions.MajorMinorPatch;
             semVersion = assertedVersions.LegacySemVerPadded;
@@ -76,15 +74,6 @@ public class BuildVersion
             CakeVersion = cakeVersion,
             InformationalVersion = informationalVersion,
             FullSemVersion = fullSemVersion
-        };
-
-
-
-		}catch(Exception ex){
-			context.Error(ex.StackTrace);
-			throw;
-		}
-
-        
+        };        
     }
 }

@@ -3,7 +3,7 @@
 #---------------------------------#
 
 build_script:
-  - ps: .\build.ps1 -Verbose -Target AppVeyor
+  - ps: .\build.ps1 -Verbosity Diagnostic -Target AppVeyor
 
 #---------------------------------#
 # Tests
