@@ -43,6 +43,7 @@ public class BuildVersion
             GitVersion assertedVersions = context.GitVersion(new GitVersionSettings
             {
                 OutputType = GitVersionOutput.Json,
+				NoFetch = true
             });
 
             version = assertedVersions.MajorMinorPatch;
