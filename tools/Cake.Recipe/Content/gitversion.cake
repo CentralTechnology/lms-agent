@@ -24,6 +24,7 @@ public class BuildVersion
         if (context.IsRunningOnWindows())
         {
             context.Information("Calculating Semantic Version...");
+			
             if (!BuildParameters.IsLocalBuild || BuildParameters.IsPublishBuild || BuildParameters.IsReleaseBuild)
             {
                 context.GitVersion(new GitVersionSettings{
