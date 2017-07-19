@@ -42,10 +42,10 @@ public class BuildVersion
                 milestone = string.Concat(version);
             }
 
-            GitVersion assertedVersions = context.GitVersion(new GitVersionSettings
-            {
-                OutputType = GitVersionOutput.Json,
-            });
+           // GitVersion assertedVersions = context.GitVersion(new GitVersionSettings
+           // {
+           //     OutputType = GitVersionOutput.Json,
+           // });
 
             version = assertedVersions.MajorMinorPatch;
             semVersion = assertedVersions.LegacySemVerPadded;
