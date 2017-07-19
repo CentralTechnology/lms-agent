@@ -240,3 +240,10 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+# cake
+tools/*
+!tools/packages.config
+
+# build artifacts
+BuildArtifacts

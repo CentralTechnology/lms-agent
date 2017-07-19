@@ -1,48 +1,31 @@
 #---------------------------------#
-#      general configuration      #
+#  Build Script                   #
 #---------------------------------#
 
-# version format
-version: 1.0.{build}
+build_script:
+  - ps: .\build.ps1 -Target AppVeyor
+
+#---------------------------------#
+# Tests
+#---------------------------------#
+
+test: off
+
+#---------------------------------#
+#        Branches to build        #
+#---------------------------------#
 
 branches:
   only:
     - master
-    - dev
+    - develop
+    - /release/.*/
+    - /hotfix/.*/
 
 #---------------------------------#
-#    environment configuration    #
-#---------------------------------#
-
-hosts:
-    api.nuget.org: 93.184.221.200
-
-# environment variables
-environment:
-  GitHubUserName:
-    secure: 5/1fTn1ujG9fgBeJU0NFbA==
-  GitHubPassword:
-    secure: uminGVAG8/kES/o/cXSqnnAtqxy8bSzj6qdlpITVzLo=
-   
-#---------------------------------#
-#       build configuration       #
-#---------------------------------#
-
-build_script:
-  - ps: .\BuildScripts\build.ps1
-  
-test:
-        assemblies: 
-            - '**\*.Tests.dll'
-
-#---------------------------------#
-#      caching configuration      #
+#  Build Cache                    #
 #---------------------------------#
 
 cache:
-  - packages -> **\packages.config
-  - '%LocalAppData%\NuGet\Cache'
-
-#---------------------------------#
-#  notifications configuration    #
-#---------------------------------#
+- src\packages -> src\**\packages.config
+- tools -> setup.cake
