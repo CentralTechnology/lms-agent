@@ -81,8 +81,6 @@ function MD5HashFile([string] $filePath)
 }
 
 Write-Host "Preparing to run build script..."
-Write-Host "Tools Directory - Before"
-ls tools | Write-Host
 
 if(!$PSScriptRoot){
     $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
@@ -163,7 +161,7 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
     if((!(Test-Path $PACKAGES_CONFIG_MD5)) -Or
       ($md5Hash -ne (Get-Content $PACKAGES_CONFIG_MD5 ))) {
         Write-Verbose -Message "Missing or changed package.config hash..."
-        Remove-Item * -Recurse -Exclude packages.config,nuget.exe
+        Remove-Item * -Recurse -Exclude packages.config,nuget.exe,Cake.Recipe
     }
 
     Write-Verbose -Message "Restoring tools from NuGet..."
@@ -187,7 +185,6 @@ if (!(Test-Path $CAKE_EXE)) {
 
 # Start Cake
 Write-Host "Running build script..."
-Write-Host "Tools Directory - After"
-ls tools | Write-Host
+
 Invoke-Expression "& `"$CAKE_EXE`" `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`" $UseMono $UseDryRun $UseExperimental $ScriptArgs"
 exit $LASTEXITCODE

@@ -3,7 +3,7 @@
 #---------------------------------#
 
 build_script:
-  - ps: .\build.ps1 -Target AppVeyor
+  - ps: .\build.ps1 -Verbose -Target AppVeyor
 
 #---------------------------------#
 # Tests
