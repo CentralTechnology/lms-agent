@@ -18,7 +18,7 @@ test: off
 branches:
   only:
     - master
-    - develop
+    - dev
     - /release/.*/
     - /hotfix/.*/
 
