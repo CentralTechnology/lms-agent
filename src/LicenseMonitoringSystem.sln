@@ -48,6 +48,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{17B86A6B
 		..\tools\packages.config = ..\tools\packages.config
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cake.Recipe", "Cake.Recipe", "{17EF290A-A44E-4235-94E7-9AC640CC8E76}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Content", "Content", "{3D603CA8-A64A-4384-A23F-7B7B68A48864}"
+	ProjectSection(SolutionItems) = preProject
+		..\tools\Cake.Recipe\Content\gitversion.cake = ..\tools\Cake.Recipe\Content\gitversion.cake
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,5 +150,7 @@ Global
 		{10460D58-DF4F-4944-AC01-FE20D0A92CD8} = {43F09060-A65A-4B48-B7E0-18CD8429A236}
 		{A27E2EAC-686E-47E8-917A-4714D32FB610} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 		{8885ECDF-9443-4DB0-8EC7-F7A192DACE8A} = {A27E2EAC-686E-47E8-917A-4714D32FB610}
+		{17EF290A-A44E-4235-94E7-9AC640CC8E76} = {17B86A6B-C865-4931-8154-E2CCB28DCC5F}
+		{3D603CA8-A64A-4384-A23F-7B7B68A48864} = {17EF290A-A44E-4235-94E7-9AC640CC8E76}
 	EndGlobalSection
 EndGlobal

@@ -29,3 +29,17 @@ branches:
 cache:
 - src\packages -> src\**\packages.config
 - tools -> setup.cake
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+hosts:
+    api.nuget.org: 93.184.221.200
+
+# environment variables
+environment:
+  GitHubUserName:
+    secure: 5/1fTn1ujG9fgBeJU0NFbA==
+  GitHubPassword:
+    secure: uminGVAG8/kES/o/cXSqnnAtqxy8bSzj6qdlpITVzLo=
