@@ -36,7 +36,8 @@ BuildParameters.SetParameters(context: Context,
 							isPublicRepository: false,
                             appVeyorAccountName: "CentralTechnologyLtd",
                             shouldDownloadFullReleaseNotes: true,
-                            shouldDownloadMilestoneReleaseNotes: true);
+                            shouldDownloadMilestoneReleaseNotes: true,
+							shouldExecuteGitLink: false);
 
 ToolSettings.SetToolSettings(context: Context,
                              buildPlatformTarget: PlatformTarget.x64);
