@@ -1,42 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{660406F8-9991-484F-B375-04BD0B3FF917}"
 	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
 		..\appveyor.yml = ..\appveyor.yml
+		..\build.ps1 = ..\build.ps1
 		..\GitHubReleaseManager.yaml = ..\GitHubReleaseManager.yaml
 		..\GitVersion.yml = ..\GitVersion.yml
 		..\README.md = ..\README.md
+		..\setup.cake = ..\setup.cake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4AB0291F-E60C-4168-9968-52BCD2369A65}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{43F09060-A65A-4B48-B7E0-18CD8429A236}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildScripts", "BuildScripts", "{33E4119A-11EF-4DF0-BAD1-8B4A27AFE5E2}"
-	ProjectSection(SolutionItems) = preProject
-		..\BuildScripts\build.ps1 = ..\BuildScripts\build.ps1
-		..\BuildScripts\default.ps1 = ..\BuildScripts\default.ps1
-		..\BuildScripts\dupfinder.config = ..\BuildScripts\dupfinder.config
-		..\BuildScripts\dupfinder.xsl = ..\BuildScripts\dupfinder.xsl
-		..\BuildScripts\inspectcode.config = ..\BuildScripts\inspectcode.config
-		..\BuildScripts\inspectcode.xsl = ..\BuildScripts\inspectcode.xsl
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{3740D580-5151-4A42-8CB9-693E2E3C28DB}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "psake", "psake", "{F6BEB2CB-5B5B-4F36-BCB4-A282DAF8F092}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\psake\psake.ps1 = Tools\psake\psake.ps1
-		Tools\psake\psake.psm1 = Tools\psake\psake.psm1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{8A9A8308-E19B-4ACD-A0E0-1E3C4A2E7576}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\NuGet\NuGet.exe = Tools\NuGet\NuGet.exe
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abp.Topshelf", "Abp.Topshelf\Abp.Topshelf.csproj", "{A93727B4-3CD2-4CED-A3E4-6BD3C950173E}"
 EndProject
@@ -62,6 +42,42 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotNetFramework", "DotNetFramework", "{8885ECDF-9443-4DB0-8EC7-F7A192DACE8A}"
 	ProjectSection(SolutionItems) = preProject
 		Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe = Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{17B86A6B-C865-4931-8154-E2CCB28DCC5F}"
+	ProjectSection(SolutionItems) = preProject
+		..\tools\packages.config = ..\tools\packages.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cake.Recipe", "Cake.Recipe", "{E43417AF-F94B-42A0-804B-B57E803C6B88}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Content", "Content", "{3CC05D32-AC5D-4323-B28A-8BAC6AA5462F}"
+	ProjectSection(SolutionItems) = preProject
+		..\tools\Cake.Recipe\Content\addins.cake = ..\tools\Cake.Recipe\Content\addins.cake
+		..\tools\Cake.Recipe\Content\analyzing.cake = ..\tools\Cake.Recipe\Content\analyzing.cake
+		..\tools\Cake.Recipe\Content\appveyor.cake = ..\tools\Cake.Recipe\Content\appveyor.cake
+		..\tools\Cake.Recipe\Content\build.cake = ..\tools\Cake.Recipe\Content\build.cake
+		..\tools\Cake.Recipe\Content\chocolatey.cake = ..\tools\Cake.Recipe\Content\chocolatey.cake
+		..\tools\Cake.Recipe\Content\codecov.cake = ..\tools\Cake.Recipe\Content\codecov.cake
+		..\tools\Cake.Recipe\Content\coveralls.cake = ..\tools\Cake.Recipe\Content\coveralls.cake
+		..\tools\Cake.Recipe\Content\credentials.cake = ..\tools\Cake.Recipe\Content\credentials.cake
+		..\tools\Cake.Recipe\Content\environment.cake = ..\tools\Cake.Recipe\Content\environment.cake
+		..\tools\Cake.Recipe\Content\gitlink.cake = ..\tools\Cake.Recipe\Content\gitlink.cake
+		..\tools\Cake.Recipe\Content\gitreleasemanager.cake = ..\tools\Cake.Recipe\Content\gitreleasemanager.cake
+		..\tools\Cake.Recipe\Content\gitter.cake = ..\tools\Cake.Recipe\Content\gitter.cake
+		..\tools\Cake.Recipe\Content\gitversion.cake = ..\tools\Cake.Recipe\Content\gitversion.cake
+		..\tools\Cake.Recipe\Content\microsoftteams.cake = ..\tools\Cake.Recipe\Content\microsoftteams.cake
+		..\tools\Cake.Recipe\Content\nuget.cake = ..\tools\Cake.Recipe\Content\nuget.cake
+		..\tools\Cake.Recipe\Content\packages.cake = ..\tools\Cake.Recipe\Content\packages.cake
+		..\tools\Cake.Recipe\Content\parameters.cake = ..\tools\Cake.Recipe\Content\parameters.cake
+		..\tools\Cake.Recipe\Content\paths.cake = ..\tools\Cake.Recipe\Content\paths.cake
+		..\tools\Cake.Recipe\Content\slack.cake = ..\tools\Cake.Recipe\Content\slack.cake
+		..\tools\Cake.Recipe\Content\tasks.cake = ..\tools\Cake.Recipe\Content\tasks.cake
+		..\tools\Cake.Recipe\Content\testing.cake = ..\tools\Cake.Recipe\Content\testing.cake
+		..\tools\Cake.Recipe\Content\tools.cake = ..\tools\Cake.Recipe\Content\tools.cake
+		..\tools\Cake.Recipe\Content\toolsettings.cake = ..\tools\Cake.Recipe\Content\toolsettings.cake
+		..\tools\Cake.Recipe\Content\twitter.cake = ..\tools\Cake.Recipe\Content\twitter.cake
+		..\tools\Cake.Recipe\Content\wyam.cake = ..\tools\Cake.Recipe\Content\wyam.cake
 	EndProjectSection
 EndProject
 Global
@@ -151,8 +167,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F6BEB2CB-5B5B-4F36-BCB4-A282DAF8F092} = {3740D580-5151-4A42-8CB9-693E2E3C28DB}
-		{8A9A8308-E19B-4ACD-A0E0-1E3C4A2E7576} = {3740D580-5151-4A42-8CB9-693E2E3C28DB}
 		{A93727B4-3CD2-4CED-A3E4-6BD3C950173E} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 		{C26EC769-9729-452C-84D1-363C8B72F90F} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 		{FA86143F-7692-4E33-9719-52B5F13E4380} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
@@ -161,5 +175,7 @@ Global
 		{10460D58-DF4F-4944-AC01-FE20D0A92CD8} = {43F09060-A65A-4B48-B7E0-18CD8429A236}
 		{A27E2EAC-686E-47E8-917A-4714D32FB610} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 		{8885ECDF-9443-4DB0-8EC7-F7A192DACE8A} = {A27E2EAC-686E-47E8-917A-4714D32FB610}
+		{E43417AF-F94B-42A0-804B-B57E803C6B88} = {17B86A6B-C865-4931-8154-E2CCB28DCC5F}
+		{3CC05D32-AC5D-4323-B28A-8BAC6AA5462F} = {E43417AF-F94B-42A0-804B-B57E803C6B88}
 	EndGlobalSection
 EndGlobal

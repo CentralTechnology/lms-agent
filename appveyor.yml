@@ -1,45 +1,48 @@
 #---------------------------------#
-#      general configuration      #
+#  Build Script                   #
 #---------------------------------#
 
-# version format
-version: 1.0.{build}
+build_script:
+  - ps: .\build.ps1 -Target AppVeyor -Verbosity Diagnostic
+
+#---------------------------------#
+# Tests
+#---------------------------------#
+
+test: off
+
+#---------------------------------#
+#        Branches to build        #
+#---------------------------------#
 
 branches:
   only:
     - master
     - dev
+    - /release/.*/
+    - /hotfix/.*/
+
+#---------------------------------#
+#  Build Cache                    #
+#---------------------------------#
+
+cache:
+- src\packages -> src\**\packages.config
 
 #---------------------------------#
 #    environment configuration    #
 #---------------------------------#
 
+hosts:
+    api.nuget.org: 93.184.221.200
+
 # environment variables
 environment:
-  GitHubUserName:
-    secure: 5/1fTn1ujG9fgBeJU0NFbA==
-  GitHubPassword:
-    secure: uminGVAG8/kES/o/cXSqnnAtqxy8bSzj6qdlpITVzLo=
-   
-#---------------------------------#
-#       build configuration       #
-#---------------------------------#
-
-build_script:
-  - ps: .\BuildScripts\build.ps1
-  
-test:
-        assemblies: 
-            - '**\*.Tests.dll'
-
-#---------------------------------#
-#      caching configuration      #
-#---------------------------------#
-
-cache:
-  - packages -> **\packages.config
-  - '%LocalAppData%\NuGet\Cache'
-
-#---------------------------------#
-#  notifications configuration    #
-#---------------------------------#
+    GITHUB_USERNAME:
+        secure: 5/1fTn1ujG9fgBeJU0NFbA==
+    GITHUB_PASSWORD:
+        secure: uminGVAG8/kES/o/cXSqnnAtqxy8bSzj6qdlpITVzLo=
+    APPVEYOR_API_TOKEN:
+        secure: bv3OAkxTvWkMKa10ZThe0yv0SjwX1bjh/Yfvq1gjkiU=
+    CODECOV_REPO_TOKEN:
+        secure: 7eQZghNqRnwThS9R9qZ46YZL4j1wDXEBA1l7lTOQ6QxtWBZFv4VxLA52qIV1FPmc
