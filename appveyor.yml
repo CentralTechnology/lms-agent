@@ -44,3 +44,5 @@ environment:
         secure: uminGVAG8/kES/o/cXSqnnAtqxy8bSzj6qdlpITVzLo=
     APPVEYOR_API_TOKEN:
         secure: bv3OAkxTvWkMKa10ZThe0yv0SjwX1bjh/Yfvq1gjkiU=
+    CODECOV_REPO_TOKEN:
+        secure: 7eQZghNqRnwThS9R9qZ46YZL4j1wDXEBA1l7lTOQ6QxtWBZFv4VxLA52qIV1FPmc
