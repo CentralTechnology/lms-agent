@@ -20,15 +20,13 @@ public class BuildVersion
         string milestone = null;
         string informationalVersion = null;
         string fullSemVersion = null;
+		GitVersion assertedVersions = null;
 
         if (context.IsRunningOnWindows())
         {
             context.Information("Calculating Semantic Version...");
             if (!BuildParameters.IsLocalBuild || BuildParameters.IsPublishBuild || BuildParameters.IsReleaseBuild)
             {
-			context.Information("public: {0}", BuildParameters.IsPublicRepository);
-			context.Information("appveyor: {0}", BuildParameters.IsRunningOnAppVeyor);
-
 				if(!BuildParameters.IsPublicRepository && BuildParameters.IsRunningOnAppVeyor)
 				{
 					context.GitVersion(new GitVersionSettings{
@@ -51,10 +49,19 @@ public class BuildVersion
                 milestone = string.Concat(version);
             }
 
-            GitVersion assertedVersions = context.GitVersion(new GitVersionSettings
-            {
-                OutputType = GitVersionOutput.Json,
-            });
+				if(!BuildParameters.IsPublicRepository && BuildParameters.IsRunningOnAppVeyor)
+				{				 
+					assertedVersions = context.GitVersion(new GitVersionSettings
+						{
+							OutputType = GitVersionOutput.Json,
+							NoFetch = true
+						});
+				}else{
+					assertedVersions = context.GitVersion(new GitVersionSettings
+						{
+							OutputType = GitVersionOutput.Json,
+						});
+				}
 
             version = assertedVersions.MajorMinorPatch;
             semVersion = assertedVersions.LegacySemVerPadded;
