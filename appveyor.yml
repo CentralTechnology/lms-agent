@@ -38,7 +38,9 @@ hosts:
 
 # environment variables
 environment:
-  GitHubUserName:
-    secure: 5/1fTn1ujG9fgBeJU0NFbA==
-  GitHubPassword:
-    secure: uminGVAG8/kES/o/cXSqnnAtqxy8bSzj6qdlpITVzLo=
+    GITHUB_USERNAME:
+        secure: 5/1fTn1ujG9fgBeJU0NFbA==
+    GITHUB_PASSWORD:
+        secure: uminGVAG8/kES/o/cXSqnnAtqxy8bSzj6qdlpITVzLo=
+    APPVEYOR_API_TOKEN:
+        secure: bv3OAkxTvWkMKa10ZThe0yv0SjwX1bjh/Yfvq1gjkiU=

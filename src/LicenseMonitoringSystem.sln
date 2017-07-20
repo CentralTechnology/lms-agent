@@ -49,37 +49,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{17B86A6B
 		..\tools\packages.config = ..\tools\packages.config
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cake.Recipe", "Cake.Recipe", "{4F7B317E-2DF4-4423-B174-CF04E7EACAB1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Content", "Content", "{8FFDB530-EBAD-47D1-83CC-6C948F189B3F}"
-	ProjectSection(SolutionItems) = preProject
-		..\tools\Cake.Recipe\Content\addins.cake = ..\tools\Cake.Recipe\Content\addins.cake
-		..\tools\Cake.Recipe\Content\analyzing.cake = ..\tools\Cake.Recipe\Content\analyzing.cake
-		..\tools\Cake.Recipe\Content\appveyor.cake = ..\tools\Cake.Recipe\Content\appveyor.cake
-		..\tools\Cake.Recipe\Content\build.cake = ..\tools\Cake.Recipe\Content\build.cake
-		..\tools\Cake.Recipe\Content\chocolatey.cake = ..\tools\Cake.Recipe\Content\chocolatey.cake
-		..\tools\Cake.Recipe\Content\codecov.cake = ..\tools\Cake.Recipe\Content\codecov.cake
-		..\tools\Cake.Recipe\Content\coveralls.cake = ..\tools\Cake.Recipe\Content\coveralls.cake
-		..\tools\Cake.Recipe\Content\credentials.cake = ..\tools\Cake.Recipe\Content\credentials.cake
-		..\tools\Cake.Recipe\Content\environment.cake = ..\tools\Cake.Recipe\Content\environment.cake
-		..\tools\Cake.Recipe\Content\gitlink.cake = ..\tools\Cake.Recipe\Content\gitlink.cake
-		..\tools\Cake.Recipe\Content\gitreleasemanager.cake = ..\tools\Cake.Recipe\Content\gitreleasemanager.cake
-		..\tools\Cake.Recipe\Content\gitter.cake = ..\tools\Cake.Recipe\Content\gitter.cake
-		..\tools\Cake.Recipe\Content\gitversion.cake = ..\tools\Cake.Recipe\Content\gitversion.cake
-		..\tools\Cake.Recipe\Content\microsoftteams.cake = ..\tools\Cake.Recipe\Content\microsoftteams.cake
-		..\tools\Cake.Recipe\Content\nuget.cake = ..\tools\Cake.Recipe\Content\nuget.cake
-		..\tools\Cake.Recipe\Content\packages.cake = ..\tools\Cake.Recipe\Content\packages.cake
-		..\tools\Cake.Recipe\Content\parameters.cake = ..\tools\Cake.Recipe\Content\parameters.cake
-		..\tools\Cake.Recipe\Content\paths.cake = ..\tools\Cake.Recipe\Content\paths.cake
-		..\tools\Cake.Recipe\Content\slack.cake = ..\tools\Cake.Recipe\Content\slack.cake
-		..\tools\Cake.Recipe\Content\tasks.cake = ..\tools\Cake.Recipe\Content\tasks.cake
-		..\tools\Cake.Recipe\Content\testing.cake = ..\tools\Cake.Recipe\Content\testing.cake
-		..\tools\Cake.Recipe\Content\tools.cake = ..\tools\Cake.Recipe\Content\tools.cake
-		..\tools\Cake.Recipe\Content\toolsettings.cake = ..\tools\Cake.Recipe\Content\toolsettings.cake
-		..\tools\Cake.Recipe\Content\twitter.cake = ..\tools\Cake.Recipe\Content\twitter.cake
-		..\tools\Cake.Recipe\Content\wyam.cake = ..\tools\Cake.Recipe\Content\wyam.cake
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -175,7 +144,5 @@ Global
 		{10460D58-DF4F-4944-AC01-FE20D0A92CD8} = {43F09060-A65A-4B48-B7E0-18CD8429A236}
 		{A27E2EAC-686E-47E8-917A-4714D32FB610} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 		{8885ECDF-9443-4DB0-8EC7-F7A192DACE8A} = {A27E2EAC-686E-47E8-917A-4714D32FB610}
-		{4F7B317E-2DF4-4423-B174-CF04E7EACAB1} = {17B86A6B-C865-4931-8154-E2CCB28DCC5F}
-		{8FFDB530-EBAD-47D1-83CC-6C948F189B3F} = {4F7B317E-2DF4-4423-B174-CF04E7EACAB1}
 	EndGlobalSection
 EndGlobal

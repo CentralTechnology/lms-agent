@@ -161,11 +161,7 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
     if((!(Test-Path $PACKAGES_CONFIG_MD5)) -Or
       ($md5Hash -ne (Get-Content $PACKAGES_CONFIG_MD5 ))) {
         Write-Verbose -Message "Missing or changed package.config hash..."
-		Get-ChildItem -Exclude "Cake.Recipe", packages.config,nuget.exe | Get-ChildItem -Recurse | foreach ($_) {
-    "CLEANING :" + $_.fullname
-    Remove-Item $_.fullname -Force -Recurse
-    "CLEANED... :" + $_.fullname
-}
+        Remove-Item * -Recurse -Exclude packages.config,nuget.exe
     }
 
     Write-Verbose -Message "Restoring tools from NuGet..."
@@ -189,6 +185,5 @@ if (!(Test-Path $CAKE_EXE)) {
 
 # Start Cake
 Write-Host "Running build script..."
-
 Invoke-Expression "& `"$CAKE_EXE`" `"$Script`" -target=`"$Target`" -configuration=`"$Configuration`" -verbosity=`"$Verbosity`" $UseMono $UseDryRun $UseExperimental $ScriptArgs"
 exit $LASTEXITCODE
