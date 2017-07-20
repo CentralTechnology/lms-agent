@@ -24,6 +24,10 @@ function get-rootDirectory {
 	return "." | Resolve-Path | Join-Path -ChildPath "../";
 }
 
+function get-installerArtifactsDirectory {
+	return "." | Resolve-Path | Join-Path -ChildPath "../src/Installer/bin/$config"
+}
+
 function create-PackageDirectory( [Parameter(ValueFromPipeline=$true)]$packageDirectory ) {
 	process {
 		Write-Verbose "checking for package path $packageDirectory...";
@@ -506,6 +510,7 @@ Task -Name BuildSolution -Depends __RemoveBuildArtifactsDirectory, __VerifyConfi
 	$sourceDirectory = get-sourceDirectory;
 	$buildArtifactsDirectory = get-buildArtifactsDirectory;
 	$buildScriptsDirectory = get-buildScriptsDirectory;
+	$installerArtifactDirectory = get-installerArtifactsDirectory;
 
 	try {
 		Write-Output "Running BuildSolution..."
@@ -514,7 +519,7 @@ Task -Name BuildSolution -Depends __RemoveBuildArtifactsDirectory, __VerifyConfi
 			Invoke-MSBuild "$env:appveyor_build_folder\src\LicenseMonitoringSystem.sln" -NoLogo -Configuration $config -Platform $platform -Targets Build -DetailedSummary -VisualStudioVersion  14.0;
 
 			if(isAppVeyor) {
-				$expectedMsiFile = Join-Path -Path "$env:appveyor_build_folder\src\Installer\bin\$config\" -ChildPath "LMS.Setup.exe"
+				$expectedMsiFile = Join-Path -Path "$installerArtifactDirectory" -ChildPath "LMS.Setup.exe"
 				if(Test-Path $expectedMsiFile) {
 					Push-AppveyorArtifact $expectedMsiFile;
 				}
@@ -581,7 +586,7 @@ Task -Name ExportGitHubReleaseNotes -Depends __InstallGitReleaseManager -Descrip
     $gitReleaseManagerExe = Join-Path $chocolateyBinDir -ChildPath "GitReleaseManager.exe";
 
 		exec {
-			& $gitReleaseManagerExe export -f $changeLogFilePath -u $env:GitHubUserName -p $env:GitHubPassword -o chocolatey -r chocolateygui -d $rootDirectory
+			& $gitReleaseManagerExe export -f $changeLogFilePath -u $env:GitHubUserName -p $env:GitHubPassword -o CentralTechnology -r lms-agent -d $rootDirectory
 		}
 
 		Write-Output ("************ Export GitHub Release Notes Successful ************")
@@ -599,16 +604,10 @@ try {
     $buildArtifactsDirectory = get-buildArtifactsDirectory;
     $chocolateyBinDir = Join-Path $script:chocolateyDir -ChildPath "bin";
     $gitReleaseManagerExe = Join-Path $chocolateyBinDir -ChildPath "GitReleaseManager.exe";
+	$installerArtifactDirectory = get-installerArtifactsDirectory;
 
 		exec {
-			Get-ChildItem $buildArtifactsDirectory -Filter *.nupkg | Foreach-Object {
-				$nugetPath = ($_ | Resolve-Path).Path;
-	      $convertedPath = Convert-Path $nugetPath;
-
-				& $gitReleaseManagerExe addasset -a $convertedPath -t $script:version -u $env:GitHubUserName -p $env:GitHubPassword -o chocolatey -r chocolateygui -d $rootDirectory
-			}
-
-			& $gitReleaseManagerExe addasset -a "$buildArtifactsDirectory\LMS.exe" -t $script:version -u $env:GitHubUserName -p $env:GitHubPassword -o CentralTechnology -r lms-agent -d $rootDirectory
+			& $gitReleaseManagerExe addasset -a "$installerArtifactDirectory\LMS.Setup.exe" -t $script:version -u $env:GitHubUserName -p $env:GitHubPassword -o CentralTechnology -r lms-agent -d $rootDirectory
 		}
 
 		Write-Output ("************ Adding assets Successful ************")
@@ -627,7 +626,7 @@ try {
     $gitReleaseManagerExe = Join-Path $chocolateyBinDir -ChildPath "GitReleaseManager.exe";
 
 		exec {
-			& $gitReleaseManagerExe close -m $script:version -u $env:GitHubUserName -p $env:GitHubPassword -o chocolatey -r chocolateygui d $rootDirectory
+			& $gitReleaseManagerExe close -m $script:version -u $env:GitHubUserName -p $env:GitHubPassword -o CentralTechnology -r lms-agent -d $rootDirectory
 		}
 
 		Write-Output ("************ Closing GitHub Milestone Successful ************")

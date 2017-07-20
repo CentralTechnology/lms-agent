@@ -56,25 +56,33 @@
                 {
                     var dirEntry = user.GetUnderlyingObject() as DirectoryEntry;
 
-                    localUsers.Add(new LicenseUser
+                    try
                     {
-                        DisplayName = user.DisplayName,
-                        Email = user.EmailAddress,
-                        Enabled = !dirEntry.IsAccountDisabled(),
-                        FirstName = user.GivenName,
-                        Groups = groups.Where(g => g.Members.Any(m => m == user.Guid))
-                            .Select(g => new LicenseGroup
-                            {
-                                Id = Guid.Parse(g.Id.ToString()),
-                                Name = g.Name,
-                                WhenCreated = g.WhenCreated
-                            }).ToList(),
-                        Id = Guid.Parse(user.Guid.ToString()),
-                        LastLoginDate = user.LastLogon,
-                        SamAccountName = user.SamAccountName,
-                        Surname = user.Surname,
-                        WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
-                    });
+                        localUsers.Add(new LicenseUser
+                        {
+                            DisplayName = user.DisplayName,
+                            Email = user.EmailAddress,
+                            Enabled = !dirEntry.IsAccountDisabled(),
+                            FirstName = user.GivenName,
+                            Groups = groups.Where(g => g.Members.Any(m => m == user.Guid))
+                                .Select(g => new LicenseGroup
+                                {
+                                    Id = Guid.Parse(g.Id.ToString()),
+                                    Name = g.Name,
+                                    WhenCreated = g.WhenCreated
+                                }).ToList(),
+                            Id = Guid.Parse(user.Guid.ToString()),
+                            LastLoginDate = user.LastLogon,
+                            SamAccountName = user.SamAccountName,
+                            Surname = user.Surname,
+                            WhenCreated = DateTime.Parse(user.GetProperty("whenCreated"))
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"There was an error getting: {user.DisplayName}");
+                        Logger.Debug(ex.ToString());
+                    }
                 }
             }
             catch (Exception ex)
