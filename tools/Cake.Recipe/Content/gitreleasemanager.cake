@@ -47,13 +47,7 @@ BuildParameters.Tasks.ExportReleaseNotesTask = Task("Export-Release-Notes")
             Warning("Unable to use GitReleaseManager, as necessary credentials are not available");
         }
     })
-)
-.OnError(exception =>
-{
-    Error(exception.Message);
-	Error(exception);
-    Information("Export-Release-Notes Task failed, but continuing with next Task...");
-});;
+);
 
 BuildParameters.Tasks.PublishGitHubReleaseTask = Task("Publish-GitHub-Release")
     .IsDependentOn("Package")
