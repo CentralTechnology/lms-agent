@@ -145,6 +145,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Common\EasyConsoleExtensions.cs" />
     <Compile Include="LmsService.cs" />
     <Compile Include="logmessages.Designer.cs">

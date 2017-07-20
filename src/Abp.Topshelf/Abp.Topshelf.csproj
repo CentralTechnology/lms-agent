@@ -98,6 +98,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="AbpBuilderConfigurator.cs" />
     <Compile Include="AbpServiceConfiguratorExtensions.cs" />
     <Compile Include="HostConfiguratorExtensions.cs" />

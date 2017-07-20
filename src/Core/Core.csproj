@@ -179,6 +179,9 @@
   <ItemGroup>
     <Compile Include="Administration\Setting.cs" />
     <Compile Include="Administration\SettingNames.cs" />
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Administration\SettingsManager.cs" />
     <Compile Include="Common\Client\LicenseGroupClient.cs" />
     <Compile Include="Common\Client\LicenseUserClient.cs" />
