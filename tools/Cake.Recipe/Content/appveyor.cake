@@ -37,7 +37,7 @@ BuildParameters.Tasks.PrintAppVeyorEnvironmentVariablesTask = Task("Print-AppVey
 BuildParameters.Tasks.UploadAppVeyorArtifactsTask = Task("Upload-AppVeyor-Artifacts")
     .IsDependentOn("Package")
     .WithCriteria(() => BuildParameters.IsRunningOnAppVeyor)
-    .WithCriteria(() => DirectoryExists(BuildParameters.Paths.Directories.NuGetPackages) || DirectoryExists(BuildParameters.Paths.Directories.ChocolateyPackages))
+    .WithCriteria(() => DirectoryExists(BuildParameters.Paths.Directories.NuGetPackages) || DirectoryExists(BuildParameters.Paths.Directories.ChocolateyPackages) || DirectoryExists(BuildParameters.Paths.Directories.InstallerPackages))
     .Does(() =>
 {
     foreach(var package in GetFiles(BuildParameters.Paths.Directories.NuGetPackages + "/*"))
@@ -49,6 +49,11 @@ BuildParameters.Tasks.UploadAppVeyorArtifactsTask = Task("Upload-AppVeyor-Artifa
     {
         AppVeyor.UploadArtifact(package);
     }
+
+	foreach(var package in GetFiles(BuildParameters.Paths.Directories.InstallerPackages + "/LMS.Setup.exe"))
+	{
+		AppVeyor.UploadArtifact(package);
+	}
 });
 
 BuildParameters.Tasks.ClearAppVeyorCacheTask = Task("Clear-AppVeyor-Cache")
