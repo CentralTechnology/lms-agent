@@ -52,7 +52,7 @@ BuildParameters.Tasks.UploadAppVeyorArtifactsTask = Task("Upload-AppVeyor-Artifa
 
 	foreach(var package in GetFiles(BuildParameters.Paths.Directories.InstallerPackages + "/LMS.Setup.exe"))
 	{
-		AppVeyor.UploadArtifact(package);
+		AppVeyor.UploadArtifact(package, new AppVeyorUploadArtifactsSettings().SetDeploymentName("LMS.exe"));
 	}
 });
 
