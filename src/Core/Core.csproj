@@ -139,6 +139,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Administration\ISettingsManager.cs" />
     <Compile Include="Administration\SettingsData.cs" />
     <Compile Include="Administration\SettingsManager.cs" />
