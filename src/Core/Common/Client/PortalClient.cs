@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using Abp.WebApi.Client;
+    using Constants;
 
     /// <summary>
     ///     Class used for standard api calls
@@ -12,7 +13,7 @@
 
         public PortalClient()
         {
-            BaseUrl = LmsConstants.BaseServiceUrl;
+            BaseUrl = Constants.BaseServiceUrl;
             ;
         }
 

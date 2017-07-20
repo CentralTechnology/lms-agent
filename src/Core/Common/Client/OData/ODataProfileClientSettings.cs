@@ -3,6 +3,7 @@
     using System;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using Constants;
 
     public class ODataProfileClientSettings : ODataCommonClientSettings
     {
@@ -10,7 +11,7 @@
         {
             Validate();
 
-            BaseUri = new Uri(LmsConstants.DefaultServiceUrl);
+            BaseUri = new Uri(Constants.DefaultServiceUrl);
 
             BeforeRequest += br =>
             {

@@ -2,6 +2,7 @@
 {
     using System;
     using Abp.Timing;
+    using Core.Common.Constants;
     using OneTrueError.Client;
     using Topshelf;
 
@@ -36,9 +37,9 @@
 
                 x.UseNLog();
                 x.RunAsLocalSystem();
-                x.SetServiceName("LicenseMonitoringSystem");
-                x.SetDisplayName("License Monitoring System");
-                x.SetDescription("A tool used to monitor various licenses.");
+                x.SetServiceName(Constants.ServiceName);
+                x.SetDisplayName(Constants.ServiceDisplayName);
+                x.SetDescription(Constants.ServiceDescription);
                 x.StartAutomatically();
             });
         }

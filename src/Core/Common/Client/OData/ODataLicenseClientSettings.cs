@@ -5,6 +5,7 @@ namespace Core.Common.Client.OData
     using System.Net.Http.Headers;
     using Abp;
     using Administration;
+    using Constants;
     using Extensions;
 
     public class ODataLicenseClientSettings : ODataCommonClientSettings
@@ -13,7 +14,7 @@ namespace Core.Common.Client.OData
         {
             Validate();
 
-            BaseUri = new Uri(LmsConstants.DefaultServiceUrl);
+            BaseUri = new Uri(Constants.DefaultServiceUrl);
 
             BeforeRequest += br =>
             {

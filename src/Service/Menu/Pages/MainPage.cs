@@ -3,6 +3,7 @@
     using System;
     using Client;
     using Core.Common;
+    using Core.Common.Constants;
     using EasyConsole;
     using Tools;
 
@@ -11,7 +12,7 @@
         public MainPage(Program program, Guid adminAccess)
             : base("Main Page", program)
         {
-            if (adminAccess == Guid.Parse(LmsConstants.AdminAccess))
+            if (adminAccess == Guid.Parse(Constants.AdminAccess))
             {
                 Menu.Add(new Option("Admin", () => Console.WriteLine("Admin")));
             }

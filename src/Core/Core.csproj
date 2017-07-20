@@ -207,8 +207,7 @@
     <Compile Include="Common\Extensions\SettingManagerExtensions.cs" />
     <Compile Include="Common\Extensions\StringExtensions.cs" />
     <Compile Include="Common\Extensions\UserFlagExtensions.cs" />
-    <Compile Include="Common\LmsConstants.cs" />
-    <Compile Include="Common\PrincipleExtensions.cs" />
+    <Compile Include="Common\Extensions\PrincipleExtensions.cs" />
     <Compile Include="DirectoryServices\DirectoryServicesManager.cs" />
     <Compile Include="EntityFramework\AgentDbContext.cs" />
     <Compile Include="Factory\ClientFactory.cs" />

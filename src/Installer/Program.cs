@@ -2,21 +2,75 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
-    using Service;
+    using Core.Common.Constants;
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;
+    using Assembly = System.Reflection.Assembly;
 
     class Script
     {
+        static string BuildMsi()
+        {
+            File service;
+            var project = new Project("LMS",
+                new Dir(@"%ProgramFiles%\License Monitoring System",
+                    new DirPermission("LocalSystem", GenericPermission.Write | GenericPermission.Execute),
+                    service = new File(@"%SolutionDir%/Service/bin/%Configuration%/LMS.exe"),
+                    new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe"))))
+            {
+                ControlPanelInfo = new ProductInfo
+                {
+                    HelpTelephone = "0845 413 88 99",
+                    Manufacturer = "Central Technology Ltd",
+                    NoModify = true,
+                    NoRepair = true
+                },
+                InstallScope = InstallScope.perMachine,
+                MajorUpgrade = new MajorUpgrade
+                {
+                    Schedule = UpgradeSchedule.afterInstallInitialize,
+                    DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
+                },
+                Name = Constants.ServiceDisplayName,
+                OutDir = "bin/%Configuration%",
+                Platform = Platform.x64,
+                UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
+                UI = WUI.WixUI_Common
+            };
+
+            project.SetVersionFrom("LMS.exe");
+            project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
+
+            service.ServiceInstaller = new ServiceInstaller
+            {
+                DelayedAutoStart = true,
+                Description = Constants.ServiceDescription,
+                DisplayName = Constants.ServiceDisplayName,
+                FirstFailureActionType = FailureActionType.restart,
+                Name = Constants.ServiceName,
+                RemoveOn = SvcEvent.Uninstall_Wait,
+                ResetPeriodInDays = 1,
+                RestartServiceDelayInSeconds = 30,
+                SecondFailureActionType = FailureActionType.restart,
+                ServiceSid = ServiceSid.none,
+                StartOn = SvcEvent.Install,
+                StopOn = SvcEvent.InstallUninstall_Wait,
+                StartType = SvcStartType.auto,
+                ThirdFailureActionType = FailureActionType.restart,
+                Vital = true
+            };
+
+            return Compiler.BuildMsi(project);
+        }
+
         static void Main(string[] args)
         {
             string productMsi = BuildMsi();
 
-            var version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? typeof(LmsServiceBase).Assembly.GetName().Version.ToString();
+            string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-            Bundle bootstrapper = new Bundle(LmsServiceBase.ServiceDisplayName)
+            var bootstrapper = new Bundle(Constants.ServiceDisplayName)
             {
                 Manufacturer = "Central Technology Ltd",
                 OutDir = "bin/%Configuration%",
@@ -40,59 +94,6 @@
             };
 
             bootstrapper.Build();
-        }
-        static string BuildMsi()
-        {
-            File service;
-            Project project = new Project("LMS",
-                new Dir(@"%ProgramFiles%\License Monitoring System",
-                    new DirPermission("LocalSystem", GenericPermission.Write | GenericPermission.Execute),
-                    service = new File(@"%SolutionDir%/Service/bin/%Configuration%/LMS.exe"),
-                    new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe"))))
-            {
-                ControlPanelInfo = new ProductInfo
-                {
-                    HelpTelephone = "0845 413 88 99",
-                    Manufacturer = "Central Technology Ltd",
-                    NoModify = true,
-                    NoRepair = true
-                },
-                InstallScope = InstallScope.perMachine,
-                MajorUpgrade = new MajorUpgrade
-                {
-                    Schedule = UpgradeSchedule.afterInstallInitialize,
-                    DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
-                },
-                Name = LmsServiceBase.ServiceDisplayName,
-                OutDir = "bin/%Configuration%",
-                Platform = Platform.x64,
-                UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
-                UI = WUI.WixUI_Common
-            };
-
-            project.SetVersionFrom("LMS.exe");
-            project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
-
-            service.ServiceInstaller = new ServiceInstaller
-            {
-                DelayedAutoStart = true,
-                Description = LmsServiceBase.ServiceDescription,
-                DisplayName = LmsServiceBase.ServiceDisplayName,
-                FirstFailureActionType = FailureActionType.restart,
-                Name = LmsServiceBase.ServiceName,
-                RemoveOn = SvcEvent.Uninstall_Wait,
-                ResetPeriodInDays = 1,
-                RestartServiceDelayInSeconds = 30,
-                SecondFailureActionType = FailureActionType.restart,
-                ServiceSid = ServiceSid.none,
-                StartOn = SvcEvent.Install,
-                StopOn = SvcEvent.InstallUninstall_Wait,
-                StartType = SvcStartType.auto,
-                ThirdFailureActionType = FailureActionType.restart,
-                Vital = true
-            };
-
-            return Compiler.BuildMsi(project);
         }
     }
 }
