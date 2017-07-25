@@ -8,6 +8,17 @@
 
     public class VeeamVersion900902 : VeeamVersion
     {
+        public VeeamVersion900902()
+        {
+            
+        }
+
+        public VeeamVersion900902(string connectionString) 
+            : base(connectionString)
+        {
+            
+        }
+
         /// <inheritdoc />
         public override int GetProtectedVms()
         {

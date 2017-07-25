@@ -13,6 +13,11 @@
             LocalDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
         }
 
+        protected VeeamVersion(string connectionString)
+        {
+            LocalDbAccessor = new LocalDbAccessor(connectionString);
+        }
+
         public abstract int GetProtectedVms();
 
         public abstract int GetProtectedVms(EPlatform platform);

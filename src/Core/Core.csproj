@@ -221,6 +221,7 @@
       <DependentUpon>201707140955114_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\SeedData\InitialDbBuilder.cs" />
     <Compile Include="Models\LicenseGroup.cs" />
     <Compile Include="Models\LicenseUser.cs" />
     <Compile Include="Models\ManagedSupport.cs" />
