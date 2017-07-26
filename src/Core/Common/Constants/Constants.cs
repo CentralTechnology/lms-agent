@@ -17,7 +17,12 @@
         /// </summary>
         public const string VeeamVersion900902 = "9.0.0.902";
 
-        public const int VeeamProtectedVmCountDays = 30;
+        /// <summary>
+        ///     Veeam Backup & Replication: 9.5.0.1038
+        /// </summary>
+        public const string VeeamVersion9501038 = "9.5.0.1038";
+
+        public const int VeeamProtectedVmCountDays = 31;
 
 #if DEBUG
 

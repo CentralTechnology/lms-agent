@@ -83,6 +83,9 @@ namespace Core.Common.Extensions
         /// <returns></returns>
         public static Guid? GetCentrastageId(this string pName)
         {
+#if DEBUG
+            return new Guid("2a5d23dc-1b9a-9341-32c6-1160a5df7883");
+#endif
             string deviceId;
 
             // search in: LocalMachine_32

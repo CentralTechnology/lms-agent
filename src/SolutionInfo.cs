@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
@@ -6,3 +7,5 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyCompany("Central Technology Ltd")]
+
+[assembly: InternalsVisibleTo("LicenseMonitoringSystem.Tests")]

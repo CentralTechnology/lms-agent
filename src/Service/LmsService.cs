@@ -11,11 +11,14 @@
 
             StartupFactory.StartupManager().Init();
 
-            if (true)
-            {
-                var userMonitorWorker = new UserMonitorWorker();
-                RegisterWorker(userMonitorWorker);
-            }
+            var veeamMonitorWorker = new VeeamMonitorWorker();
+            RegisterWorker(veeamMonitorWorker);
+
+            //if (true)
+            //{
+            //    var userMonitorWorker = new UserMonitorWorker();
+            //    RegisterWorker(userMonitorWorker);
+            //}
 
             return true;
         }

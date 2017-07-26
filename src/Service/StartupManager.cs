@@ -121,7 +121,7 @@
                 return false;
             }
 
-            Logger.Warn("Check Veeam Version: OK");
+            Logger.Info("Check Veeam Version: OK");
             return true;
         }
 

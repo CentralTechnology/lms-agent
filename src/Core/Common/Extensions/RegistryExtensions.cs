@@ -1,38 +1,29 @@
 ﻿namespace Core.Common.Extensions
 {
     using System;
+    using Abp;
     using Microsoft.Win32;
 
     public static class RegistryExtentions
     {
-        /// <summary>
-        ///     gets the registry key with a given path
-        /// </summary>
-        /// <param name="keyPath"></param>
-        /// <returns></returns>
-        private static RegistryKey GetRegistryKey(string keyPath)
+        public static TResult GetSearchValue<TResult>(this RegistryKey key, string searchName, string searchValue)
+            where TResult : class
         {
-            RegistryKey localMachineRegistry
-                = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
-                    Environment.Is64BitOperatingSystem
-                        ? RegistryView.Registry64
-                        : RegistryView.Registry32);
+            foreach (string keyName in key.GetSubKeyNames())
+            {
+                if (keyName == searchName)
+                {
+                    RegistryKey subKey = key.OpenSubKey(keyName);
+                    if (subKey == null)
+                    {
+                        throw new AbpException($"Unable to open subkey registry entry for {keyName}");
+                    }
 
-            return string.IsNullOrEmpty(keyPath)
-                ? localMachineRegistry
-                : localMachineRegistry.OpenSubKey(keyPath);
-        }
+                    return subKey.GetValue(searchValue) as TResult;
+                }
+            }
 
-        /// <summary>
-        ///     gets the registry value from the key path and name
-        /// </summary>
-        /// <param name="keyPath"></param>
-        /// <param name="keyName"></param>
-        /// <returns></returns>
-        public static object GetRegistryValue(string keyPath, string keyName)
-        {
-            RegistryKey registry = GetRegistryKey(keyPath);
-            return registry.GetValue(keyName);
+            return null;
         }
     }
 }

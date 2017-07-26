@@ -1,24 +1,19 @@
-﻿namespace Core.Veeam
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Core.Veeam
 {
-    using System;
     using System.Data;
+    using System.Xml.Linq;
     using Backup.Common;
     using Common.Constants;
     using DBManager;
 
-    public class VeeamVersion900902 : VeeamVersion
+    public class VeeamVersion9501038 : VeeamVersion
     {
-        public VeeamVersion900902()
-        {
-            
-        }
-
-        public VeeamVersion900902(string connectionString) 
-            : base(connectionString)
-        {
-            
-        }
-
         /// <inheritdoc />
         public override int GetProtectedVms()
         {
@@ -26,7 +21,7 @@
             {
                 if (dataReader.Read())
                 {
-                    return (int) dataReader["vm_count"];
+                    return (int)dataReader["vm_count"];
                 }
             }
 
@@ -42,7 +37,12 @@
         /// <inheritdoc />
         public override Veeam Build()
         {
-            throw new NotImplementedException();
+            var veeam = new Veeam
+            {
+                vSphere = GetProtectedVms()
+            };
+
+            return veeam;
         }
     }
 }

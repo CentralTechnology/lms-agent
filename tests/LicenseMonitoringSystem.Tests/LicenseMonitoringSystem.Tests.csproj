@@ -113,6 +113,7 @@
     <Compile Include="ConnectionStrings.cs" />
     <Compile Include="Core\Common\Extensions\ObjectExtension_Tests.cs" />
     <Compile Include="Core\Extension_Tests.cs" />
+    <Compile Include="Core\Veeam\VeeamLicenseManager_Tests.cs" />
     <Compile Include="Core\Veeam\VeeamVersion900902_Tests.cs" />
     <Compile Include="LicenseMonitoringSystemTestBase.cs" />
   </ItemGroup>

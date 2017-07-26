@@ -27,7 +27,8 @@
 
         public async Task VeeamMonitor()
         {
-            
+            var v = VeeamFactory.VeeamManager().VeeamVersion().ToString();
+            var x = VeeamVersionFactory.Get(v);
         }
     }
 }
