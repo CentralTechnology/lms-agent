@@ -27,7 +27,12 @@ namespace Core.Common.Extensions
                 return (T) TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(obj.ToString());
             }
 
-            return (T)Convert.ChangeType(obj, typeof(T), CultureInfo.InvariantCulture);
+            if (typeof(T).IsEnum)
+            {
+                return (T) System.Enum.Parse(typeof(T), obj.ToString());
+            }
+
+            return (T)Convert.ChangeType(obj, typeof(T), CultureInfo.CurrentCulture);
         }
     }
 }

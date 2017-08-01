@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Veeam
+﻿namespace Core.Veeam
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class Veeam
     {
+        public LicenseEditions Edition { get; set; }
         public DateTime ExpirationDate { get; set; }
         public string ExternalIpAddress { get; set; }
         public string Hostname { get; set; }
         public int HyperV { get; set; }
+        public Guid Id { get; set; }
         public LicenseTypeEx LicenseType { get; set; }
         public EPlatformFlags Platform { get; set; }
         public string ProgramVersion { get; set; }
         public string SupportId { get; set; }
+        public int TenantId { get; set; }
         public int vSphere { get; set; }
     }
 
@@ -42,5 +41,12 @@ namespace Core.Veeam
         Perpetual,
         Rental,
         Subscription
+    }
+
+    public enum LicenseEditions
+    {
+        Standard,
+        Enterprise,
+        EnterprisePlus
     }
 }

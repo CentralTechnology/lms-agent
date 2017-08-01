@@ -1,6 +1,7 @@
 ﻿namespace Core.Veeam
 {
     using System;
+    using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
     using System.Net;
@@ -9,6 +10,7 @@
     using Administration;
     using Common.Constants;
     using Common.Extensions;
+    using DBManager;
     using Factory;
     using Microsoft.Win32;
     using NLog;
@@ -80,18 +82,44 @@
             }
         }
 
-        public Version VeeamVersion()
+        public string VeeamVersion()
         {
-            return new Version("9.5.0.1038");
-            Version veeamVersion = Constants.VeeamApplicationName.GetApplicationVersion();
+            return "9.5.0.1038";
+            string veeamVersion = Constants.VeeamApplicationName.GetApplicationVersion().ToString();
             if (veeamVersion == null)
             {
                 SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, string.Empty);
                 return null;
             }
 
-            SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, veeamVersion.ToString());
+            SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, veeamVersion);
             return veeamVersion;
+        }
+
+        public int GetProtectedVms()
+        {
+            var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
+
+            using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", Constants.VeeamProtectedVmCountDays)).CreateDataReader())
+            {
+                if (dataReader.Read())
+                {
+                    return (int)dataReader["vm_count"];
+                }
+            }
+
+            return 0;
+        }
+
+        public Veeam Build(LicenseManager licenseManager)
+        {
+            Veeam veeam = new Veeam();
+
+            veeam.Edition = licenseManager.GetPropertyNoThrow<LicenseEditions>("Edition");
+            veeam.ExpirationDate = licenseManager.GetPropertyNoThrow<DateTime>("Expiration date");
+            
+
+            return veeam;
         }
     }
 }

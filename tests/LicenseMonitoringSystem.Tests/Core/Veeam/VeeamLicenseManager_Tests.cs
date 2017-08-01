@@ -31,10 +31,10 @@ Version=9.x
 Installation time=30606421:-779068240]]></License></Licenses>
 ";
 
-        private readonly VeeamLicenseManager _vlm;
+        private readonly LicenseManager _vlm;
         public VeeamLicenseManager_Tests()
         {
-            _vlm = new VeeamLicenseManager(_exampleLicense);
+            _vlm = new LicenseManager(_exampleLicense);
         }
 
         [Fact]
@@ -86,6 +86,25 @@ Installation time=30606421:-779068240]]></License></Licenses>
             // assert
             sut.ShouldBeOfType<string>();
             sut.ShouldBe(string.Empty);
+        }
+
+        [Fact]
+        public void GetPropertyNoThrow_ShouldReturnCorrectType_WhenUsedWithTypeParameter()
+        {
+            // act
+            var sutInt = _vlm.GetPropertyNoThrow<int>("Managed VMs (Hyper-V)");
+            var sutDate = _vlm.GetPropertyNoThrow<DateTime>("Expiration date");
+            var sutEnum = _vlm.GetPropertyNoThrow<LicenseEditions>("Edition");
+
+            // assert
+            sutInt.ShouldBeOfType<int>();
+            sutInt.ShouldBe(0);
+
+            sutDate.ShouldBeOfType<DateTime>();
+            sutDate.ShouldBe(new DateTime(2017, 11, 30));
+
+            sutEnum.ShouldBeOfType<LicenseEditions>();
+            sutEnum.ShouldBe(LicenseEditions.Enterprise);
         }
     }
 }

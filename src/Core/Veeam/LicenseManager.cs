@@ -8,17 +8,17 @@
     using Common.Extensions;
     using Microsoft.Win32;
 
-    public class VeeamLicenseManager
+    public class LicenseManager
     {
         private Dictionary<string, string> _lic;
         private string _licenseFile;
 
-        public VeeamLicenseManager()
+        public LicenseManager()
         {
             Initialize(LoadFromRegistry());
         }
 
-        public VeeamLicenseManager(string licenseFile)
+        public LicenseManager(string licenseFile)
         {
             Initialize(licenseFile);
         }
@@ -50,6 +50,19 @@
             catch (Exception)
             {
                 return string.Empty;
+            }
+        }
+
+        public TResult GetPropertyNoThrow<TResult>(string name)
+            where TResult : struct
+        {
+            try
+            {
+                return GetProperty(name).To<TResult>();
+            }
+            catch (Exception)
+            {
+                return default(TResult);
             }
         }
 
