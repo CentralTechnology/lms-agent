@@ -2,9 +2,11 @@
 {
     using System;
     using Abp.Threading;
+    using Core.Common.Constants;
     using Core.Factory;
-    using OneTrueError.Client;
     using ServiceTimer;
+    using SharpRaven;
+    using SharpRaven.Data;
 
     internal class UserMonitorWorker : TimerWorker
     {
@@ -26,19 +28,19 @@
         /// <inheritdoc />
         protected override void Work(TimerWorkerInfo info)
         {
-            Log.Info("User monitoring begin...");
+            Logger.Info("User monitoring begin...");
 
             try
             {
                 AsyncHelper.RunSync(() => OrchestratorFactory.Orchestrator().UserMonitor());
 
-                Log.Info("************ User Monitoring Successful ************");
+                Logger.Info("************ User Monitoring Successful ************");
             }
             catch (Exception ex)
             {
-                Log.Error(ex.Message);
-                Log.Error("************ User Monitoring Failed ************");
-                OneTrue.Report(ex);
+                RavenClient.Capture(new SentryEvent(ex));
+                Logger.Error(ex.Message);
+                Logger.Error("************ User Monitoring Failed ************");
             }
         }
     }

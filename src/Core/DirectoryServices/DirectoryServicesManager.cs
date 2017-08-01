@@ -3,13 +3,20 @@
     using System;
     using System.DirectoryServices.AccountManagement;
     using System.DirectoryServices.ActiveDirectory;
+    using Common.Constants;
     using NLog;
-    using OneTrueError.Client;
+    using SharpRaven;
+    using SharpRaven.Data;
 
     public class DirectoryServicesManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected RavenClient RavenClient;
 
+        public DirectoryServicesManager()
+        {
+            RavenClient = new RavenClient(Constants.SentryDSN);
+        }
         public bool DomainExist()
         {
             PrincipalContext context = null;
@@ -46,7 +53,7 @@
             }
             catch (Exception ex)
             {
-                OneTrue.Report(ex);
+                RavenClient.Capture(new SentryEvent(ex));
                 Logger.Debug(ex);
                 return false;
             }

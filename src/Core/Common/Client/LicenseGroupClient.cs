@@ -16,7 +16,7 @@
 
         public async Task Add(List<LicenseGroup> groups)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < groups.Count; index++)
             {
@@ -46,7 +46,7 @@
         {
             try
             {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 IEnumerable<LicenseGroup> groups = await client.For<LicenseGroup>().FindEntriesAsync();
                 return groups.ToList();
             }
@@ -60,7 +60,7 @@
 
         public async Task Remove(List<LicenseGroup> groups)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < groups.Count; index++)
             {
@@ -83,7 +83,7 @@
 
         public async Task Update(List<LicenseGroup> groups)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < groups.Count; index++)
             {

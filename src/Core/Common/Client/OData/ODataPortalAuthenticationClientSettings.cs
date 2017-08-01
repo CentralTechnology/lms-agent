@@ -8,9 +8,9 @@ namespace Core.Common.Client.OData
     using Constants;
     using Extensions;
 
-    public class ODataLicenseClientSettings : ODataCommonClientSettings
+    public class ODataPortalAuthenticationClientSettings : ODataCommonClientSettings
     {
-        public ODataLicenseClientSettings()
+        public ODataPortalAuthenticationClientSettings()
         {
             Validate();
 

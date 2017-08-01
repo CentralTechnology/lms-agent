@@ -2,9 +2,11 @@
 {
     using System;
     using Abp.Threading;
+    using Core.Common.Constants;
     using Core.Factory;
-    using OneTrueError.Client;
     using ServiceTimer;
+    using SharpRaven;
+    using SharpRaven.Data;
 
     internal class VeeamMonitorWorker : TimerWorker
     {
@@ -27,19 +29,19 @@
         /// <inheritdoc />
         protected override void Work(TimerWorkerInfo info)
         {
-            Log.Info("Veeam monitoring begin...");
+            Logger.Info("Veeam monitoring begin...");
 
             try
             {
                 AsyncHelper.RunSync(() => OrchestratorFactory.Orchestrator().VeeamMonitor());
 
-                Log.Info("************ Veeam Monitoring Successful ************");
+                Logger.Info("************ Veeam Monitoring Successful ************");
             }
             catch (Exception ex)
             {
-                Log.Error(ex.Message);
-                Log.Error("************ Veeam Monitoring Failed ************");
-                OneTrue.Report(ex);
+                RavenClient.Capture(new SentryEvent(ex));
+                Logger.Error(ex.Message);
+                Logger.Error("************ Veeam Monitoring Failed ************");                
             }
         }
     }

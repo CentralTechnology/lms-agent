@@ -15,7 +15,7 @@
 
         public async Task Add(List<LicenseUser> users, LicenseGroup group)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < users.Count; index++)
             {
@@ -38,7 +38,7 @@
 
         public async Task Remove(List<LicenseUser> users, LicenseGroup group)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < users.Count; index++)
             {

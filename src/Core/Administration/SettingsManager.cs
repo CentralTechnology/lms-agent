@@ -1,28 +1,29 @@
 ﻿namespace Core.Administration
 {
     using System;
-    using System.Collections.Generic;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
-    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using Abp;
     using Abp.Threading;
     using Castle.Core.Logging;
-    using Common;
-    using Common.Extensions;
+    using Common.Constants;
     using EntityFramework;
     using Factory;
     using NLog;
-    using NLog.Config;
-    using OneTrueError.Client;
+    using SharpRaven;
+    using SharpRaven.Data;
 
     public class SettingManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected RavenClient RavenClient;
+
+        public SettingManager()
+        {
+            RavenClient = new RavenClient(Constants.SentryDSN);
+        }
 
         public async Task ChangeSettingAsync(string name, string value)
         {
@@ -43,7 +44,7 @@
             }
             catch (Exception ex)
             {
-                OneTrue.Report(ex);
+                RavenClient.Capture(new SentryEvent(ex));
                 Logger.Error("Unable to determine client version.");
                 Logger.Debug(ex);
             }

@@ -19,7 +19,7 @@ namespace Core.Common.Client
         {
             try
             {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 return await client.For<ManagedSupport>().Set(upload).InsertEntryAsync();
             }
             catch (Exception ex)
@@ -34,7 +34,7 @@ namespace Core.Common.Client
         {
             try
             {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 ManagedSupport upload = await client.For<ManagedSupport>().Key(id).Expand(s => s.Users).FindEntryAsync();
                 return upload;
             }
@@ -50,7 +50,7 @@ namespace Core.Common.Client
         {
             try
             {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 return await client.For<ManagedSupport>().Function("NewUploadId").ExecuteAsScalarAsync<int>();
             }
             catch (Exception ex)
@@ -67,7 +67,7 @@ namespace Core.Common.Client
         {
             try
             {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 return await client.For<ManagedSupport>().Function("GetCallInStatus").Set(new {deviceId}).ExecuteAsScalarAsync<CallInStatus>();
             }
             catch (Exception ex)
@@ -85,7 +85,7 @@ namespace Core.Common.Client
         {
             try
             {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 return await client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int>();
             }
             catch (Exception ex)
@@ -100,7 +100,7 @@ namespace Core.Common.Client
         {
             try
             {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 ManagedSupport upload = await client.For<ManagedSupport>()
                     .Key(uploadId)
                     .Expand(x => x.Users)
@@ -126,7 +126,7 @@ namespace Core.Common.Client
 
             try
             {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 await client.For<ManagedSupport>().Key(id).Set(new
                 {
                     CheckInTime = Clock.Now,

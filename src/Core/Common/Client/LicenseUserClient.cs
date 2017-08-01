@@ -16,7 +16,7 @@
 
         public async Task Add(List<LicenseUser> users)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < users.Count; index++)
             {
@@ -52,7 +52,7 @@
         {
             try
             {
-                var client = new ODataClient(new ODataLicenseClientSettings());
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 IEnumerable<LicenseUser> users = await client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
                 List<LicenseUser> licenseUsers = users.ToList();
                 Logger.Debug($"{licenseUsers.Count} users returned from the api.");
@@ -68,7 +68,7 @@
 
         public async Task Remove(List<LicenseUser> users)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < users.Count; index++)
             {
@@ -90,7 +90,7 @@
 
         public async Task Update(List<LicenseUser> users)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < users.Count; index++)
             {

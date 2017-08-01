@@ -7,11 +7,18 @@
     using Core.Common.Extensions;
     using Core.Factory;
     using NLog;
-    using OneTrueError.Client;
+    using SharpRaven;
+    using SharpRaven.Data;
 
     public class StartupManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected RavenClient RavenClient;
+
+        public StartupManager()
+        {
+            RavenClient = new RavenClient(Constants.SentryDSN);
+        }
 
         public void Init()
         {
@@ -32,9 +39,8 @@
             }
             catch (Exception ex)
             {
+                RavenClient.Capture(new SentryEvent(ex));
                 Logger.Error(ex.Message);
-                Logger.Debug(ex);
-                OneTrue.Report(ex);
             }
 
             try
@@ -43,10 +49,9 @@
             }
             catch (Exception ex)
             {
+                RavenClient.Capture(new SentryEvent(ex));
                 Logger.Error(ex.Message);
                 Logger.Error("************ Initialisation  Failed ************");
-                Logger.Debug(ex);
-                OneTrue.Report(ex);
                 throw;
             }
 
@@ -114,7 +119,7 @@
             Logger.Info("Check Veeam Online: OK");
 
             // check the veeam version
-            Version veeamVersion = VeeamFactory.VeeamManager().VeeamVersion();
+            var veeamVersion = VeeamFactory.VeeamManager().VeeamVersion();
             if (veeamVersion == null)
             {
                 Logger.Warn("Check Veeam Version: FAIL");

@@ -3,14 +3,19 @@
     using System;
     using System.Data;
     using System.Data.SqlClient;
-    using OneTrueError.Client;
+    using Common.Constants;
+    using SharpRaven;
+    using SharpRaven.Data;
 
     public class LocalDbAccessor
     {
         private readonly string _connectionString;
+        protected RavenClient RavenClient;
 
         public LocalDbAccessor(string connectionString)
         {
+            RavenClient = new RavenClient(Constants.SentryDSN);
+
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new ArgumentNullException(nameof(connectionString));
@@ -57,7 +62,7 @@
             }
             catch (Exception ex)
             {
-                OneTrue.Report(ex);
+                RavenClient.Capture(new SentryEvent(ex));
                 throw;
             }
         }
