@@ -1,6 +1,7 @@
 ﻿namespace Core.Factory
 {
     using Users;
+    using Veeam;
 
     public static class OrchestratorFactory
     {
@@ -12,6 +13,11 @@
         public static UserOrchestrator UserOrchestrator()
         {
             return new UserOrchestrator();
+        }
+
+        public static VeeamOrchestrator VeeamOrchestrator()
+        {
+            return new VeeamOrchestrator();
         }
     }
 }

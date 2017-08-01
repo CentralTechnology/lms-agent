@@ -33,7 +33,7 @@
 
             try
             {
-                AsyncHelper.RunSync(() => OrchestratorFactory.Orchestrator().VeeamMonitor());
+                AsyncHelper.RunSync(() => OrchestratorFactory.VeeamOrchestrator().Start());
 
                 Logger.Info("************ Veeam Monitoring Successful ************");
             }

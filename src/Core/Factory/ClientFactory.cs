@@ -33,5 +33,10 @@ namespace Core.Factory
         {
             return new SupportUploadClient();
         }
+
+        public static VeeamClient VeeamClient()
+        {
+            return new VeeamClient();
+        }
     }
 }

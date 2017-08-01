@@ -2,6 +2,7 @@
 {
     using System;
     using Abp;
+    using Abp.Threading;
     using Core.Administration;
     using Core.Common.Constants;
     using Core.Common.Extensions;
@@ -148,7 +149,7 @@
             // get the autotask account id
             Logger.Info("Getting the autotask account id id...");
 
-            var accountId = SettingFactory.SettingsManager().GetAccountId((Guid) deviceId);
+            var accountId = AsyncHelper.RunSync(() => ClientFactory.ProfileClient().GetAccountByDeviceId((Guid)deviceId));
 
             if (accountId == 0)
             {

@@ -30,11 +30,6 @@
             await InsertOrUpdateSettingValueAsync(name, value);
         }
 
-        public int GetAccountId(Guid deviceId)
-        {
-            return AsyncHelper.RunSync(() => ClientFactory.ProfileClient().GetAccountByDeviceId(deviceId));
-        }
-
         /// <inheritdoc />
         public string GetClientVersion()
         {
