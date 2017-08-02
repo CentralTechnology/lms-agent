@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Veeam
+﻿namespace Core.Veeam
 {
+    using System;
+    using System.Threading.Tasks;
     using Administration;
+    using Common.Client;
     using Common.Extensions;
     using Factory;
     using Models;
@@ -15,10 +12,17 @@ namespace Core.Veeam
     public class VeeamOrchestrator
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly VeeamClient VeeamClient = new VeeamClient();
+
+        public async Task<CallInStatus> GetStatus()
+        {
+            Guid device = await SettingFactory.SettingsManager().GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
+            return await VeeamClient.GetStatus(device);
+        }
 
         public async Task Start()
         {
-            var status = await GetStatus();
+            CallInStatus status = await GetStatus();
 
             switch (status)
             {
@@ -36,13 +40,21 @@ namespace Core.Veeam
                     break;
             }
 
-            // collect information
-        }
+            var veeam = new Veeam();
 
-        public async Task<CallInStatus> GetStatus()
-        {
-            var device = await SettingFactory.SettingsManager().GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
-            return await ClientFactory.VeeamClient().GetStatus(device);
+            Logger.Info("Collecting information...this could take some time.");
+
+            await veeam.CollectInformation();
+
+            Logger.Info(veeam.ToString());
+
+            if (status == CallInStatus.NeverCalledIn)
+            {
+                await VeeamClient.Add(veeam);
+                return;
+            }
+
+            await VeeamClient.Update(veeam);
         }
     }
 }

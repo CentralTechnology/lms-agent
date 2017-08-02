@@ -197,7 +197,8 @@
     <Compile Include="Common\Client\SupportUploadClient.cs" />
     <Compile Include="Common\Client\VeeamClient.cs" />
     <Compile Include="Common\Constants\Constants.cs" />
-    <Compile Include="Common\Extensions\Class1.cs" />
+    <Compile Include="Common\Extensions\IDataReaderExtensions.cs" />
+    <Compile Include="Common\Extensions\VeeamExtensions.cs" />
     <Compile Include="Common\Extensions\DirectoryEntryExtensions.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.cs" />
     <Compile Include="Common\Extensions\GenericExtensions.cs" />
@@ -230,12 +231,20 @@
     <Compile Include="Users\UserOrchestrator.cs" />
     <Compile Include="Factory\VeeamFactory.cs" />
     <Compile Include="Veeam\Backup\Common\EPlatform.cs" />
+    <Compile Include="Veeam\CPerVmStoredProceduresMapping.cs" />
+    <Compile Include="Veeam\CPerVmTrialStoredProceduresMapping.cs" />
     <Compile Include="Veeam\DBManager\DbAccessor.cs" />
+    <Compile Include="Veeam\DBManager\ISqlFieldDescriptor.cs" />
+    <Compile Include="Veeam\DBManager\ISqlFieldDescriptorOfType.cs" />
     <Compile Include="Veeam\DBManager\LocalDbAccessor.cs" />
+    <Compile Include="Veeam\DBManager\SqlFieldDescriptor.cs" />
+    <Compile Include="Veeam\DBManager\SqlValueTypeFieldDescriptorOfType.cs" />
+    <Compile Include="Veeam\IPerVmStoredProceduresMapping.cs" />
     <Compile Include="Veeam\Veeam.cs" />
     <Compile Include="Veeam\LicenseManager.cs" />
     <Compile Include="Veeam\VeeamManager.cs" />
     <Compile Include="Veeam\VeeamOrchestrator.cs" />
+    <Compile Include="Veeam\VmsCounterInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

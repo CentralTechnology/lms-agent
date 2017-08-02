@@ -53,6 +53,12 @@
             }
         }
 
+        public TResult GetProperty<TResult>(string name)
+            where TResult : struct
+        {
+            return GetProperty(name).To<TResult>();
+        }
+
         public TResult GetPropertyNoThrow<TResult>(string name)
             where TResult : struct
         {
