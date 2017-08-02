@@ -21,6 +21,7 @@
             await _client.For<Veeam>()
                 .Set(new
                 {
+                    veeam.ClientVersion,
                     veeam.Edition,
                     veeam.ExpirationDate,
                     veeam.HyperV,
@@ -44,6 +45,7 @@
                 .Key(veeam.Id)
                 .Set(new
                 {
+                    veeam.ClientVersion,
                     veeam.Edition,
                     veeam.ExpirationDate,
                     veeam.HyperV,

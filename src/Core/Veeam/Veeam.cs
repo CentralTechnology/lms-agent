@@ -6,6 +6,7 @@
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class Veeam
     {
+        public string ClientVersion { get; set; }
         public LicenseEditions Edition { get; set; }
         public DateTime ExpirationDate { get; set; }
         public int HyperV { get; set; }

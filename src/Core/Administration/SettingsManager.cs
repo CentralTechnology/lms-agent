@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
-    using Castle.Core.Logging;
     using Common.Constants;
     using EntityFramework;
     using NLog;
@@ -50,43 +49,6 @@
             return GetSettingValueInternalAsync(name);
         }
 
-        /// <inheritdoc />
-        public LoggerLevel ReadLoggerLevel()
-        {
-            //IList<LoggingRule> rules = LogManager.Configuration.LoggingRules;
-            //var validator = new Regex(LmsConstants.LoggerTarget);
-
-            //foreach (LoggingRule rule in rules.Where(r => validator.IsMatch(r.Targets[0].Name)))
-            //{
-            //    if (rule.IsLoggingEnabledForLevel(LogLevel.Debug))
-            //    {
-            //        return LoggerLevel.Debug;
-            //    }
-
-            //    if (rule.IsLoggingEnabledForLevel(LogLevel.Info))
-            //    {
-            //        return LoggerLevel.Info;
-            //    }
-
-            //    if (rule.IsLoggingEnabledForLevel(LogLevel.Warn))
-            //    {
-            //        return LoggerLevel.Warn;
-            //    }
-
-            //    if (rule.IsLoggingEnabledForLevel(LogLevel.Error))
-            //    {
-            //        return LoggerLevel.Error;
-            //    }
-
-            //    if (rule.IsLoggingEnabledForLevel(LogLevel.Fatal))
-            //    {
-            //        return LoggerLevel.Fatal;
-            //    }
-            //}
-
-            return LoggerLevel.Info;
-        }
-
         private void SetLogLevel(LogLevel logLevel)
         {
             //IList<LoggingRule> rules = LogManager.Configuration.LoggingRules;
@@ -103,15 +65,6 @@
             //}
 
             //LogManager.ReconfigExistingLoggers();
-        }
-
-        /// <inheritdoc />
-        public LoggerLevel UpdateLoggerLevel(bool enableDebug)
-        {
-            Logger.Debug(enableDebug ? "Debug mode enabled." : "Debug mode disabled");
-            SetLogLevel(enableDebug ? LogLevel.Debug : LogLevel.Info);
-
-            return ReadLoggerLevel();
         }
 
         #region Private methods

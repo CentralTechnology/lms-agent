@@ -30,6 +30,7 @@
                 throw new AbpException("Unsupported version of Veeam detected. Please make sure the agent is the latest version");
             }
 
+            veeam.ClientVersion = SettingManager.GetClientVersion();
             veeam.Edition = LicenseManager.GetProperty<LicenseEditions>("Edition");
             veeam.ExpirationDate = LicenseManager.GetProperty<DateTime>("Expiration date");
             veeam.Id = await SettingManager.GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
