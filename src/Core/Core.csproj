@@ -183,6 +183,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Administration\SettingsManager.cs" />
+    <Compile Include="Common\Caster.cs" />
     <Compile Include="Common\Client\LicenseGroupClient.cs" />
     <Compile Include="Common\Client\LicenseUserClient.cs" />
     <Compile Include="Common\Client\LicenseUserGroupClient.cs" />
@@ -237,8 +238,12 @@
     <Compile Include="Veeam\DBManager\ISqlFieldDescriptor.cs" />
     <Compile Include="Veeam\DBManager\ISqlFieldDescriptorOfType.cs" />
     <Compile Include="Veeam\DBManager\LocalDbAccessor.cs" />
+    <Compile Include="Veeam\DBManager\SqlCastableTypeFieldDescriptor.cs" />
+    <Compile Include="Veeam\DBManager\SqlExtendableReferenceTypeFieldDescriptor.cs" />
     <Compile Include="Veeam\DBManager\SqlFieldDescriptor.cs" />
-    <Compile Include="Veeam\DBManager\SqlValueTypeFieldDescriptorOfType.cs" />
+    <Compile Include="Veeam\DBManager\SqlNullableTypeFieldDescriptor.cs" />
+    <Compile Include="Veeam\DBManager\SqlReferenceTypeFieldDescriptor.cs" />
+    <Compile Include="Veeam\DBManager\SqlValueTypeFieldDescriptor.cs" />
     <Compile Include="Veeam\IPerVmStoredProceduresMapping.cs" />
     <Compile Include="Veeam\Veeam.cs" />
     <Compile Include="Veeam\LicenseManager.cs" />

@@ -1,6 +1,5 @@
 ﻿namespace Core.Common.Extensions
 {
-    using System;
     using Abp;
     using Microsoft.Win32;
 

@@ -34,7 +34,7 @@
         EConf = 10,
         EExtension0 = 100,
         EExtension1 = 101,
-        EExtension2 = 102,
+        EExtension2 = 102
     }
 
     [Flags]

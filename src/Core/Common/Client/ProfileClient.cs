@@ -2,7 +2,6 @@ namespace Core.Common.Client
 {
     using System;
     using System.Threading.Tasks;
-    using Extensions;
     using NLog;
     using OData;
     using Simple.OData.Client;

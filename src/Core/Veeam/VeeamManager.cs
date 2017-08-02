@@ -18,13 +18,9 @@
     public class VeeamManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly IPerVmStoredProceduresMapping PerVmTrialQueriesMapping = (IPerVmStoredProceduresMapping)new CPerVmTrialStoredProceduresMapping();
-        private static readonly IPerVmStoredProceduresMapping PerVmQueriesMapping = (IPerVmStoredProceduresMapping)new CPerVmStoredProceduresMapping();
-        private static readonly ISqlFieldDescriptor<Guid> ObjectIdField = SqlFieldDescriptor.UniqueIdentifier("object_id");
+        private static readonly IPerVmStoredProceduresMapping PerVmTrialQueriesMapping = new CPerVmTrialStoredProceduresMapping();
+        private static readonly IPerVmStoredProceduresMapping PerVmQueriesMapping = new CPerVmStoredProceduresMapping();
         private static readonly ISqlFieldDescriptor<int> PlatformField = SqlFieldDescriptor.Int("platform");
-        private static readonly ISqlFieldDescriptor<DateTime> FirstStartTimeField = SqlFieldDescriptor.DateTime("first_start_time");
-        private static readonly ISqlFieldDescriptor<DateTime> LastStartTimeField = SqlFieldDescriptor.DateTime("last_start_time");
-        private static readonly ISqlFieldDescriptor<DateTime> UpdateTimeField = SqlFieldDescriptor.DateTime("update_time");
         private static readonly ISqlFieldDescriptor<bool> IsTrialField = SqlFieldDescriptor.Bit("is_trial");
 
         [SuppressMessage("ReSharper", "JoinNullCheckWithUsage")]
@@ -53,6 +49,36 @@
             };
 
             return connectionString.ConnectionString;
+        }
+
+        private static IPerVmStoredProceduresMapping GetMapping(bool useTrialStrategy)
+        {
+            return !useTrialStrategy ? PerVmQueriesMapping : PerVmTrialQueriesMapping;
+        }
+
+        public int GetProtectedVmCount()
+        {
+            var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
+
+            using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", Constants.VeeamProtectedVmCountDays)).CreateDataReader())
+            {
+                if (dataReader.Read())
+                {
+                    return (int) dataReader["vm_count"];
+                }
+            }
+
+            return 0;
+        }
+
+        public VmsCounterInfo GetVmsCounters(EPlatform platform, bool useTrialStrategy)
+        {
+            var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
+            using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, PlatformField.MakeParam((int) platform)).CreateDataReader())
+            {
+                dataReader.Read();
+                return new VmsCounterInfo(dataReader.GetValue<int>("vm_active"), dataReader.GetValue<int>("vm_trial"));
+            }
         }
 
         public bool VeeamInstalled()
@@ -102,36 +128,6 @@
 
             SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, veeamVersion);
             return veeamVersion;
-        }
-
-        public int GetProtectedVmCount()
-        {
-            var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
-
-            using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", Constants.VeeamProtectedVmCountDays)).CreateDataReader())
-            {
-                if (dataReader.Read())
-                {
-                    return (int)dataReader["vm_count"];
-                }
-            }
-
-            return 0;
-        }
-
-        public VmsCounterInfo GetVmsCounters(EPlatform platform, bool useTrialStrategy)
-        {
-            var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
-            using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, PlatformField.MakeParam((int)platform)).CreateDataReader())
-            {
-                dataReader.Read();
-                return new VmsCounterInfo(dataReader.GetValue<int>("vm_active"), dataReader.GetValue<int>("vm_trial"));
-            }
-        }
-
-        private static IPerVmStoredProceduresMapping GetMapping(bool useTrialStrategy)
-        {
-            return !useTrialStrategy ? PerVmQueriesMapping : PerVmTrialQueriesMapping;
         }
     }
 }

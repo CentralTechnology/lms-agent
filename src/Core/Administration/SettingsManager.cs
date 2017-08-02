@@ -6,11 +6,9 @@
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
-    using Abp.Threading;
     using Castle.Core.Logging;
     using Common.Constants;
     using EntityFramework;
-    using Factory;
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;

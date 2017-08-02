@@ -41,7 +41,8 @@
             return (T) obj;
         }
 
-        public static T GetNullable<T>(this IDataReader self, string name, T defaultValue) where T : struct
+        public static T? GetNullable<T>(this IDataReader self, string name, T defaultValue) 
+            where T : struct
         {
             object obj = self[name];
             if (obj == Convert.DBNull)
@@ -49,7 +50,7 @@
                 return defaultValue;
             }
 
-            return (T) obj;
+            return (T)obj;
         }
 
         public static T GetValue<T>(this IDataReader self, string name) where T : struct

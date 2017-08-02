@@ -3,6 +3,7 @@
     using System;
     using System.DirectoryServices.AccountManagement;
     using System.DirectoryServices.ActiveDirectory;
+    using System.Net.NetworkInformation;
     using Common.Constants;
     using NLog;
     using SharpRaven;
@@ -17,6 +18,7 @@
         {
             RavenClient = new RavenClient(Constants.SentryDSN);
         }
+
         public bool DomainExist()
         {
             PrincipalContext context = null;
@@ -47,7 +49,7 @@
                 domain = Domain.GetDomain(context);
 
                 DomainController pdc = domain.PdcRoleOwner;
-                string currentMachine = $"{Environment.MachineName}.{System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName}";
+                string currentMachine = $"{Environment.MachineName}.{IPGlobalProperties.GetIPGlobalProperties().DomainName}";
 
                 return pdc.Name.Equals(currentMachine, StringComparison.OrdinalIgnoreCase);
             }

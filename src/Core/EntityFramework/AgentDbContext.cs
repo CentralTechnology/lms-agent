@@ -6,7 +6,7 @@
 
     public class AgentDbContext : DbContext
     {
-        public AgentDbContext() 
+        public AgentDbContext()
             : base("Default")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<AgentDbContext, Configuration>());
@@ -15,7 +15,6 @@
         public AgentDbContext(string nameOrConnectionString)
             : base(nameOrConnectionString)
         {
-            
         }
 
         public DbSet<Setting> Settings { get; set; }

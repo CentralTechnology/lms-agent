@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Common.Extensions
+﻿namespace Core.Common.Extensions
 {
+    using System;
+    using System.Threading.Tasks;
     using Abp;
     using Administration;
     using Veeam;
@@ -15,6 +11,7 @@ namespace Core.Common.Extensions
         private static readonly LicenseManager LicenseManager = new LicenseManager();
         private static readonly VeeamManager VeeamManager = new VeeamManager();
         private static readonly SettingManager SettingManager = new SettingManager();
+
         public static async Task CollectInformation(this Veeam veeam)
         {
             veeam.LicenseType = LicenseManager.GetProperty<LicenseTypeEx>("License type");
@@ -23,8 +20,8 @@ namespace Core.Common.Extensions
             if (veeam.ProgramVersion.StartsWith("9.0"))
             {
                 veeam.CollectVmInformation90();
-
-            }else if (veeam.ProgramVersion.StartsWith("9.5"))
+            }
+            else if (veeam.ProgramVersion.StartsWith("9.5"))
             {
                 veeam.CollectVmInformation95();
             }
@@ -40,6 +37,22 @@ namespace Core.Common.Extensions
             veeam.TenantId = await SettingManager.GetSettingValueAsync<int>(SettingNames.AutotaskAccountId);
 
             veeam.Validate();
+        }
+
+        private static void CollectVmInformation90(this Veeam veeam)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void CollectVmInformation95(this Veeam veeam)
+        {
+            bool evaluation = veeam.LicenseType != LicenseTypeEx.Evalution;
+
+            VmsCounterInfo vSphereCounterInfo = VeeamManager.GetVmsCounters(EPlatform.EVmware, evaluation);
+            VmsCounterInfo hypervCounterInfo = VeeamManager.GetVmsCounters(EPlatform.EHyperV, evaluation);
+
+            veeam.vSphere = evaluation ? vSphereCounterInfo.TrialVmsCount : vSphereCounterInfo.NonTrialVmsCount;
+            veeam.HyperV = evaluation ? hypervCounterInfo.TrialVmsCount : hypervCounterInfo.NonTrialVmsCount;
         }
 
         public static void Validate(this Veeam veeam)
@@ -58,22 +71,6 @@ namespace Core.Common.Extensions
             {
                 throw new AbpException($"Invalid Account: {veeam.TenantId}");
             }
-        }
-
-        private static void CollectVmInformation90(this Veeam veeam)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void CollectVmInformation95(this Veeam veeam)
-        {
-            bool evaluation = veeam.LicenseType != LicenseTypeEx.Evalution;
-
-            var vSphereCounterInfo = VeeamManager.GetVmsCounters(EPlatform.EVmware, evaluation);
-            var hypervCounterInfo = VeeamManager.GetVmsCounters(EPlatform.EHyperV, evaluation);
-
-            veeam.vSphere = evaluation ? vSphereCounterInfo.TrialVmsCount : vSphereCounterInfo.NonTrialVmsCount;
-            veeam.HyperV = evaluation ? hypervCounterInfo.TrialVmsCount : hypervCounterInfo.NonTrialVmsCount;
         }
     }
 }

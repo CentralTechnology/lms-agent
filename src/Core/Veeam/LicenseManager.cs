@@ -41,6 +41,12 @@
             throw new AbpException($"Property: {name}, cannot be found in the Veeam license file. Make sure you have typed the property in correctly.");
         }
 
+        public TResult GetProperty<TResult>(string name)
+            where TResult : struct
+        {
+            return GetProperty(name).To<TResult>();
+        }
+
         public string GetPropertyNoThrow(string name)
         {
             try
@@ -51,12 +57,6 @@
             {
                 return string.Empty;
             }
-        }
-
-        public TResult GetProperty<TResult>(string name)
-            where TResult : struct
-        {
-            return GetProperty(name).To<TResult>();
         }
 
         public TResult GetPropertyNoThrow<TResult>(string name)
