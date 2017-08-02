@@ -164,7 +164,6 @@
     <Compile Include="Menu\Pages\Tools\ToolsPage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StartupFactory.cs" />
     <Compile Include="StartupManager.cs" />
     <Compile Include="Workers\UserMonitorWorker.cs" />
     <Compile Include="Workers\VeeamMonitorWorker.cs" />
