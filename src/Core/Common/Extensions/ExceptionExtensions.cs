@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Common.Extensions
+﻿namespace Core.Common.Extensions
 {
+    using System;
     using Client.OData;
     using Newtonsoft.Json;
     using NLog;
@@ -20,7 +15,7 @@ namespace Core.Common.Extensions
                 var rootException = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
                 if (rootException != null)
                 {
-                    var inner = rootException.Error.InnerError;
+                    InnerError inner = rootException.Error.InnerError;
                     if (inner != null)
                     {
                         logger.Error($"Code: {ex.Code}");

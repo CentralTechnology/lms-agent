@@ -1,6 +1,7 @@
 ﻿namespace Core.Common.Extensions
 {
     using System;
+    using System.Collections.Generic;
     using Abp.Extensions;
     using Microsoft.Win32;
 
@@ -13,20 +14,9 @@
         /// <returns></returns>
         private static bool DisplayNameExists(this RegistryKey key, string pName)
         {
-            foreach (string keyName in key.GetSubKeyNames())
-            {
-                RegistryKey subKey = key.OpenSubKey(keyName);
-                if (subKey != null)
-                {
-                    string displayName = subKey.GetValue("DisplayName") as string;
-                    if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
-            }
+            var data = key.GetSubKeyValue(key.GetSubKeyNames(), pName);
 
-            return false;
+            return data.exist;
         }
 
         /// <summary>
@@ -35,76 +25,21 @@
         /// <returns></returns>
         public static Version GetApplicationVersion(this string pName)
         {
-            string displayName;
-
-            // search in: CurrentUser
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-            if (key != null)
+            var keys = new List<RegistryKey>
             {
-                foreach (string keyName in key.GetSubKeyNames())
-                {
-                    RegistryKey subkey = key.OpenSubKey(keyName);
-                    if (subkey != null)
-                    {
-                        displayName = subkey.GetValue("DisplayName") as string;
-                        if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            string version = subkey.GetValue("DisplayVersion") as string;
-                            if (version.IsNullOrEmpty() || version == null)
-                            {
-                                return null;
-                            }
+                Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
+                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
+                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
+            };
 
-                            return new Version(version);
-                        }
-                    }
-                }
-            }
-
-            // search in: LocalMachine_32
-            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-            if (key != null)
+            foreach (RegistryKey key in keys)
             {
-                foreach (string keyName in key.GetSubKeyNames())
+                if (key != null)
                 {
-                    RegistryKey subkey = key.OpenSubKey(keyName);
-                    if (subkey != null)
+                    (bool exist, string value) data = key.GetSubKeyValue(key.GetSubKeyNames(), pName, "DisplayVersion");
+                    if (data.exist)
                     {
-                        displayName = subkey.GetValue("DisplayName") as string;
-                        if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            string version = subkey.GetValue("DisplayVersion") as string;
-                            if (version.IsNullOrEmpty() || version == null)
-                            {
-                                return null;
-                            }
-
-                            return new Version(version);
-                        }
-                    }
-                }
-            }
-
-            // search in: LocalMachine_64
-            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-            if (key != null)
-            {
-                foreach (string keyName in key.GetSubKeyNames())
-                {
-                    RegistryKey subkey = key.OpenSubKey(keyName);
-                    if (subkey != null)
-                    {
-                        displayName = subkey.GetValue("DisplayName") as string;
-                        if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            string version = subkey.GetValue("DisplayVersion") as string;
-                            if (version.IsNullOrEmpty() || version == null)
-                            {
-                                return null;
-                            }
-
-                            return new Version(version);
-                        }
+                        return new Version(data.value);
                     }
                 }
             }
@@ -169,6 +104,35 @@
             }
 
             return null;
+        }
+
+        private static (bool exist, string value) GetSubKeyValue(this RegistryKey key, string[] subKeyNames, string pName, string requestValue = null)
+        {
+            foreach (string keyName in subKeyNames)
+            {
+                RegistryKey subkey = key.OpenSubKey(keyName);
+                if (subkey != null)
+                {
+                    string displayName = subkey.GetValue("DisplayName") as string;
+                    if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (requestValue == null)
+                        {
+                            return (true, string.Empty);
+                        }
+
+                        string value = subkey.GetValue(requestValue) as string;
+                        if (value.IsNullOrEmpty() || value == null)
+                        {
+                            return (false, string.Empty);
+                        }
+
+                        return (true, value);
+                    }
+                }
+            }
+
+            return (false, string.Empty);
         }
 
         /// <summary>

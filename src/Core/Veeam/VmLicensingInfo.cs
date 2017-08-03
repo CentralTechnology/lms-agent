@@ -1,6 +1,7 @@
 ﻿namespace Core.Veeam
 {
     using System;
+    using Backup.Common;
 
     public class VmLicensingInfo
     {

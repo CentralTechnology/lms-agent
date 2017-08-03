@@ -49,13 +49,13 @@
 
             Logger.Info(veeam.ToString());
 
-            var uploadId = await VeeamClient.UploadId();
+            int uploadId = await VeeamClient.UploadId();
             veeam.UploadId = uploadId;
             veeam.CheckInTime = Clock.Now;
             veeam.Status = CallInStatus.CalledIn;
 
             if (status == CallInStatus.NeverCalledIn)
-            {                
+            {
                 await VeeamClient.Add(veeam);
                 return;
             }

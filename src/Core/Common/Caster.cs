@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq.Expressions;
-    using Abp.Extensions;
 
     public static class Caster<TSource, TTarget>
     {
@@ -10,7 +9,7 @@
 
         private static Func<TSource, TTarget> UncheckedCast()
         {
-            return ((Expression<Func<TSource, TTarget>>) (source => (TTarget)Convert.ChangeType(source,typeof(TTarget)))).Compile();
+            return ((Expression<Func<TSource, TTarget>>) (source => (TTarget) Convert.ChangeType(source, typeof(TTarget)))).Compile();
         }
     }
 }

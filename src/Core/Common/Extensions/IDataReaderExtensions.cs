@@ -24,7 +24,7 @@
             object obj = self[name];
             if (obj == Convert.DBNull)
                 return default(T);
-            return (T)obj;
+            return (T) obj;
         }
 
         public static T GetNullable<T>(this IDataReader self, string name, T defaultValue) where T : struct
@@ -32,7 +32,7 @@
             object obj = self[name];
             if (obj == Convert.DBNull)
                 return defaultValue;
-            return (T)obj;
+            return (T) obj;
         }
 
         public static T GetNullable<T>(this IDataReader self, string name)
@@ -42,7 +42,7 @@
             Type t = typeof(T);
             t = Nullable.GetUnderlyingType(t) ?? t;
 
-            return (value == null || DBNull.Value.Equals(value)) ? default(T) : (T) Convert.ChangeType(value, t);
+            return value == null || DBNull.Value.Equals(value) ? default(T) : (T) Convert.ChangeType(value, t);
         }
 
         public static T GetValue<T>(this IDataReader self, string name) where T : struct
@@ -50,7 +50,7 @@
             object obj = self[name];
             if (obj == Convert.DBNull)
                 throw new AbpException($"Unexpected DBNull value. [Name: {name}]");
-            return (T)obj;
+            return (T) obj;
         }
 
         public static T GetValue<T>(this IDataReader self, string name, T defaultValue) where T : struct
@@ -58,7 +58,7 @@
             object obj = self[name];
             if (obj == Convert.DBNull)
                 return defaultValue;
-            return (T)obj;
+            return (T) obj;
         }
     }
 }

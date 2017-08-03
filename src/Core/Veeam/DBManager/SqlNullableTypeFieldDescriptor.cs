@@ -4,7 +4,6 @@
     using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
     using Common.Extensions;
 
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
@@ -38,7 +37,7 @@
             Type t = typeof(TNullable);
             t = Nullable.GetUnderlyingType(t) ?? t;
 
-            return value == null ? default(TNullable) : (TNullable)Convert.ChangeType(value, t);
+            return value == null ? default(TNullable) : (TNullable) Convert.ChangeType(value, t);
         }
 
         /// <inheritdoc />
@@ -48,7 +47,5 @@
             //var val = reader.GetNullable(FieldName, (TStruct?)(object)defaultValue);
             //return (TNullable) Convert.ChangeType(val, typeof(TNullable));
         }
-
-
     }
 }

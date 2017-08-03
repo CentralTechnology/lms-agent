@@ -46,7 +46,12 @@
                     break;
             }
             throw new NotSupportedException($"Enum underlying type: {(object) typeCode}, Database field type: {(object) dbType}");
-        }       
+        }
+
+        public static ISqlFieldDescriptor<DateTime?> DateTimeNullable(string fieldName)
+        {
+            return new SqlNullableTypeFieldDescriptor<DateTime?, DateTime>(fieldName, SqlDbType.DateTime);
+        }
 
         public static ISqlFieldDescriptor<int> Int(string fieldName)
         {
@@ -75,14 +80,9 @@
             return fieldType.ToString().ToLower();
         }
 
-        public static ISqlFieldDescriptor<DateTime?> DateTimeNullable(string fieldName)
-        {
-            return (ISqlFieldDescriptor<DateTime?>)new SqlNullableTypeFieldDescriptor<DateTime?, DateTime>(fieldName, SqlDbType.DateTime);
-        }
-
         public static ISqlFieldDescriptor<Guid> UniqueIdentifier(string fieldName)
         {
-            return (ISqlFieldDescriptor<Guid>)new SqlValueTypeFieldDescriptor<Guid>(fieldName, SqlDbType.UniqueIdentifier);
+            return new SqlValueTypeFieldDescriptor<Guid>(fieldName, SqlDbType.UniqueIdentifier);
         }
     }
 }
