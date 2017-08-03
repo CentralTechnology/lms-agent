@@ -62,7 +62,7 @@
             }
 
             // search in: LocalMachine_32
-            key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
             if (key != null)
             {
                 foreach (string keyName in key.GetSubKeyNames())
@@ -86,7 +86,7 @@
             }
 
             // search in: LocalMachine_64
-            key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
             if (key != null)
             {
                 foreach (string keyName in key.GetSubKeyNames())

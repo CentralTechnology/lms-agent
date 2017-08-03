@@ -1,6 +1,7 @@
 ﻿namespace Core.Common.Extensions
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using Abp;
     using Administration;
@@ -14,6 +15,7 @@
 
         public static async Task CollectInformation(this Veeam veeam)
         {
+
             veeam.LicenseType = LicenseManager.GetProperty<LicenseTypeEx>("License type");
             veeam.ProgramVersion = VeeamManager.VeeamVersion();
 
@@ -42,7 +44,8 @@
 
         private static void CollectVmInformation90(this Veeam veeam)
         {
-            throw new NotImplementedException();
+            veeam.vSphere = VeeamManager.GetAllVmInfos(EPlatform.EVmware).Count(item => item.State == EVmLicensingStatus.Managed);
+            veeam.HyperV = VeeamManager.GetAllVmInfos(EPlatform.EHyperV).Count(item => item.State == EVmLicensingStatus.Managed);
         }
 
         private static void CollectVmInformation95(this Veeam veeam)
@@ -72,6 +75,24 @@
             {
                 throw new AbpException($"Invalid Account: {veeam.TenantId}");
             }
+        }
+
+        public static Type NullableVersion(this Type sourceType)
+        {
+            if (sourceType == null)
+            {
+                // Throw System.ArgumentNullException or return null, your preference
+            }
+            else if (sourceType == typeof(void))
+            { // Special Handling - known cases where Exceptions would be thrown
+                return null; // There is no Nullable version of void
+            }
+
+            return !sourceType.IsValueType
+                || (sourceType.IsGenericType
+                    && sourceType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    ? sourceType
+                    : typeof(Nullable<>).MakeGenericType(sourceType);
         }
     }
 }

@@ -73,6 +73,16 @@
         public static string MakeSqlType(SqlDbType fieldType)
         {
             return fieldType.ToString().ToLower();
-        }        
+        }
+
+        public static ISqlFieldDescriptor<DateTime?> DateTimeNullable(string fieldName)
+        {
+            return (ISqlFieldDescriptor<DateTime?>)new SqlNullableTypeFieldDescriptor<DateTime?, DateTime>(fieldName, SqlDbType.DateTime);
+        }
+
+        public static ISqlFieldDescriptor<Guid> UniqueIdentifier(string fieldName)
+        {
+            return (ISqlFieldDescriptor<Guid>)new SqlValueTypeFieldDescriptor<Guid>(fieldName, SqlDbType.UniqueIdentifier);
+        }
     }
 }

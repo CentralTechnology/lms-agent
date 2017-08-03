@@ -1,12 +1,14 @@
 ﻿namespace Core.Veeam
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Net.Sockets;
     using Abp;
+    using Abp.Extensions;
     using Administration;
     using Common.Constants;
     using Common.Extensions;
@@ -14,13 +16,35 @@
     using Factory;
     using Microsoft.Win32;
     using NLog;
-    using Abp.Extensions;
 
     public class VeeamManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly IPerVmStoredProceduresMapping PerVmTrialQueriesMapping = new CPerVmTrialStoredProceduresMapping();
         private static readonly IPerVmStoredProceduresMapping PerVmQueriesMapping = new CPerVmStoredProceduresMapping();
+        private static readonly ISqlFieldDescriptor<Guid> ObjectIdField = SqlFieldDescriptor.UniqueIdentifier("object_id");
+        private static readonly ISqlFieldDescriptor<int> PlatformField = SqlFieldDescriptor.Int("platform");
+        private static readonly ISqlFieldDescriptor<DateTime?> FirstStartTimeField = SqlFieldDescriptor.DateTimeNullable("first_start_time");
+        private static readonly ISqlFieldDescriptor<DateTime?> LastStartTimeField = SqlFieldDescriptor.DateTimeNullable("last_start_time");
+
+        private VmLicensingInfo FromReader(IDataReader reader)
+        {
+            return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform) PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
+        }
+
+        public List<VmLicensingInfo> GetAllVmInfos(EPlatform platform)
+        {
+            var vmLicensingInfoList = new List<VmLicensingInfo>();
+            using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
+            {
+                while (dataReader.Read())
+                {
+                    vmLicensingInfoList.Add(FromReader(dataReader));
+                }
+            }
+
+            return vmLicensingInfoList;
+        }
 
         [SuppressMessage("ReSharper", "JoinNullCheckWithUsage")]
         public string GetConnectionString()
@@ -82,6 +106,7 @@
 
         public bool VeeamInstalled()
         {
+            return true;
             try
             {
                 return Constants.VeeamApplicationName.IsApplictionInstalled();
@@ -96,6 +121,7 @@
 
         public bool VeeamOnline()
         {
+            return true;
             IPAddress localhost = IPAddress.Parse("127.0.0.1");
 
             using (var tcpClient = new TcpClient())
@@ -116,6 +142,7 @@
 
         public string VeeamVersion()
         {
+            return "9.0.0.0";
             string veeamVersion = Constants.VeeamApplicationName.GetApplicationVersion().ToString();
             if (veeamVersion.IsNullOrEmpty())
             {

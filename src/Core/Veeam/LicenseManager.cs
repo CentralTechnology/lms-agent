@@ -3,13 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security;
     using System.Text;
     using Abp;
     using Common.Extensions;
     using Microsoft.Win32;
+    using NLog;
 
     public class LicenseManager
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private Dictionary<string, string> _lic;
         private string _licenseFile;
 
@@ -80,20 +83,28 @@
 
         internal string LoadFromRegistry()
         {
-            RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Veeam\Veeam Backup and Replication");
-            if (key == null)
+            try
             {
-                throw new AbpException("Unable to locate the Veeam registry hive. Please make sure Veeam is installed correctly.");
+                RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Veeam\Veeam Backup and Replication");
+                if (key == null)
+                {
+                    throw new AbpException("Unable to locate the Veeam registry hive. Please make sure Veeam is installed correctly.");
+                }
+
+                var license = key.GetSearchValue<byte[]>("license", "Lic1");
+
+                if (license == null)
+                {
+                    throw new AbpException("Unable to retrieve the Veeam license from the registry. Please make sure Veeam is installed correctly.");
+                }
+
+                return Encoding.UTF8.GetString(license);
             }
-
-            var license = key.GetSearchValue<byte[]>("license", "Lic1");
-
-            if (license == null)
+            catch (SecurityException ex)
             {
-                throw new AbpException("Unable to retrieve the Veeam license from the registry. Please make sure Veeam is installed correctly.");
+                Logger.Error(ex.Message);
+                throw;
             }
-
-            return Encoding.UTF8.GetString(license);
         }
     }
 }

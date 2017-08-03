@@ -71,4 +71,11 @@
         Enterprise,
         EnterprisePlus
     }
+
+    public enum EVmLicensingStatus
+    {
+        NotRegistered,
+        Expired,
+        Managed,
+    }
 }

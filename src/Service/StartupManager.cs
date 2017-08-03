@@ -8,6 +8,7 @@
     using Core.Common.Constants;
     using Core.Common.Extensions;
     using Core.Factory;
+    using Core.Veeam;
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
@@ -18,6 +19,7 @@
         protected ProfileClient ProfileClient = new ProfileClient();
         protected RavenClient RavenClient = new RavenClient(Constants.SentryDSN);
         protected SettingManager SettingManager = new SettingManager();
+        protected VeeamManager VeeamManager = new VeeamManager();
 
         public void Init()
         {
@@ -98,7 +100,7 @@
             Logger.Info("Dermining whether to monitor veeam...");
 
             // check if veeam is installed
-            bool veeamInstalled = VeeamFactory.VeeamManager().VeeamInstalled();
+            bool veeamInstalled = VeeamManager.VeeamInstalled();
             if (!veeamInstalled)
             {
                 Logger.Warn("Check Veeam Installed: FAIL");
@@ -108,7 +110,7 @@
             Logger.Info("Check Veeam Installed: OK");
 
             // check veeam is online
-            bool veeamOnline = VeeamFactory.VeeamManager().VeeamOnline();
+            bool veeamOnline = VeeamManager.VeeamOnline();
             if (!veeamOnline)
             {
                 Logger.Warn("Check Veeam Online: FAIL");
@@ -118,7 +120,7 @@
             Logger.Info("Check Veeam Online: OK");
 
             // check the veeam version
-            string veeamVersion = VeeamFactory.VeeamManager().VeeamVersion();
+            string veeamVersion = VeeamManager.VeeamVersion();
             if (veeamVersion == null)
             {
                 Logger.Warn("Check Veeam Version: FAIL");

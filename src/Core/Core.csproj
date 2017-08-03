@@ -249,6 +249,7 @@
     <Compile Include="Veeam\LicenseManager.cs" />
     <Compile Include="Veeam\VeeamManager.cs" />
     <Compile Include="Veeam\VeeamOrchestrator.cs" />
+    <Compile Include="Veeam\VmLicensingInfo.cs" />
     <Compile Include="Veeam\VmsCounterInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
     using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using Common.Extensions;
 
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
@@ -29,16 +30,25 @@
             return DbAccessor.MakeParam(64 + FieldName, value, FieldType);
         }
 
+        /// <inheritdoc />
         public TNullable Read(IDataReader reader)
         {
-            throw new NotImplementedException();
-            //return (TNullable)reader.GetNullable(FieldName, new TStruct?());
+            object value = reader.GetNullable<TStruct?>(FieldName);
+
+            Type t = typeof(TNullable);
+            t = Nullable.GetUnderlyingType(t) ?? t;
+
+            return value == null ? default(TNullable) : (TNullable)Convert.ChangeType(value, t);
         }
 
+        /// <inheritdoc />
         public TNullable Read(IDataReader reader, TNullable defaultValue)
         {
             throw new NotImplementedException();
-            //return (TNullable)(ValueType)reader.GetNullable(FieldName, (TStruct?)(object)defaultValue);
+            //var val = reader.GetNullable(FieldName, (TStruct?)(object)defaultValue);
+            //return (TNullable) Convert.ChangeType(val, typeof(TNullable));
         }
+
+
     }
 }
