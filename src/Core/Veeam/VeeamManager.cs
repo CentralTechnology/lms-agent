@@ -14,14 +14,13 @@
     using Factory;
     using Microsoft.Win32;
     using NLog;
+    using Abp.Extensions;
 
     public class VeeamManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly IPerVmStoredProceduresMapping PerVmTrialQueriesMapping = new CPerVmTrialStoredProceduresMapping();
         private static readonly IPerVmStoredProceduresMapping PerVmQueriesMapping = new CPerVmStoredProceduresMapping();
-        private static readonly ISqlFieldDescriptor<int> PlatformField = SqlFieldDescriptor.Int("platform");
-        private static readonly ISqlFieldDescriptor<bool> IsTrialField = SqlFieldDescriptor.Bit("is_trial");
 
         [SuppressMessage("ReSharper", "JoinNullCheckWithUsage")]
         public string GetConnectionString()
@@ -97,7 +96,6 @@
 
         public bool VeeamOnline()
         {
-            return true;
             IPAddress localhost = IPAddress.Parse("127.0.0.1");
 
             using (var tcpClient = new TcpClient())
@@ -118,9 +116,8 @@
 
         public string VeeamVersion()
         {
-            return "9.5.0.1038";
             string veeamVersion = Constants.VeeamApplicationName.GetApplicationVersion().ToString();
-            if (veeamVersion == null)
+            if (veeamVersion.IsNullOrEmpty())
             {
                 SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, string.Empty);
                 return null;
