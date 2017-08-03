@@ -13,7 +13,7 @@
         {
             if (adminAccess == Guid.Parse(Constants.AdminAccess))
             {
-                Menu.Add(new Option("Admin", () => Console.WriteLine("Admin")));
+                Menu.Add(new Option("Admin", () => Console.WriteLine(@"Admin")));
             }
 
             Menu.Add(new Option("Run", () => program.NavigateTo<RunPage>()));

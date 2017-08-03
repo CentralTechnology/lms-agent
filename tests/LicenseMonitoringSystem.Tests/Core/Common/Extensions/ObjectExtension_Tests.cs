@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LicenseMonitoringSystem.Tests.Core.Common.Extensions
+﻿namespace LicenseMonitoringSystem.Tests.Core.Common.Extensions
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
     using global::Core.Common.Extensions;
     using Shouldly;
     using Xunit;
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class ObjectExtension_Tests
     {
         [Fact]
@@ -23,7 +20,7 @@ namespace LicenseMonitoringSystem.Tests.Core.Common.Extensions
 
             "2.0".To<double>().ShouldBe(2.0);
             "0.2".To<double>().ShouldBe(0.2);
-            (2.0).To<int>().ShouldBe(2);
+            2.0.To<int>().ShouldBe(2);
 
             "false".To<bool>().ShouldBeOfType<bool>().ShouldBe(false);
             "True".To<bool>().ShouldBeOfType<bool>().ShouldBe(true);

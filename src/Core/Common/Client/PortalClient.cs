@@ -14,7 +14,6 @@
         public PortalClient()
         {
             BaseUrl = Constants.BaseServiceUrl;
-            ;
         }
 
         public string BaseUrl { get; set; }

@@ -5,7 +5,7 @@
 
     public abstract class Page
     {
-        public Page(string title, Program program)
+        protected Page(string title, Program program)
         {
             Title = title;
             Program = program;
@@ -20,8 +20,11 @@
             {
                 string breadcrumb = null;
                 foreach (string title in Program.History.Select(page => page.Title).Reverse())
+                {
                     breadcrumb += title + " > ";
-                breadcrumb = breadcrumb.Remove(breadcrumb.Length - 3);
+                }
+
+                breadcrumb = breadcrumb?.Remove(breadcrumb.Length - 3);
                 Console.WriteLine(breadcrumb);
             }
             else

@@ -51,7 +51,7 @@ namespace ServiceTimer
         /// <summary>
         ///     Get all of the signals used for transitioning between states
         /// </summary>
-        private WaitHandle[] _getSignals
+        private WaitHandle[] GetSignals
         {
             get
             {
@@ -61,9 +61,9 @@ namespace ServiceTimer
                 {
                     foreach (WorkerCollectionItem i in _workers)
                     {
-                        if (i.Worker?.signalEvent != null)
+                        if (i.Worker?.SignalEvent != null)
                         {
-                            handleArray.Add(i.Worker.signalEvent);
+                            handleArray.Add(i.Worker.SignalEvent);
                         }
                     }
                 }
@@ -86,7 +86,7 @@ namespace ServiceTimer
             // Provide the worker with a handler to the function that 
             //  allows it to evaluate the state of this service
 
-            worker.getServiceStateHandler = getServiceState;
+            worker.GetServiceStateHandler = GetServiceState;
 
             // If this service is using a logger, set a logger for the worker too
             if (_log != null)
@@ -111,7 +111,7 @@ namespace ServiceTimer
         /// </summary>
         private void _resetSignals()
         {
-            foreach (WaitHandle waitHandle in _getSignals)
+            foreach (WaitHandle waitHandle in GetSignals)
             {
                 var h = (ManualResetEvent) waitHandle;
                 h.Reset();
@@ -131,7 +131,7 @@ namespace ServiceTimer
             _log?.Info(logmessages.ServiceSignalsWait);
 #endif
 
-            WaitHandle.WaitAll(_getSignals);
+            WaitHandle.WaitAll(GetSignals);
 
 #if BASELOG
             _log?.Info(logmessages.ServiceSignalsSet);
@@ -164,7 +164,7 @@ namespace ServiceTimer
         ///     with the delegate declared immediately above
         /// </summary>
         /// <returns></returns>
-        internal ServiceState getServiceState()
+        internal ServiceState GetServiceState()
         {
             lock (_serviceStateLock)
             {
@@ -295,6 +295,6 @@ namespace ServiceTimer
         ///     to get the state of the service
         /// </summary>
         /// <returns></returns>
-        internal delegate ServiceState getServiceStateDelegate();
+        internal delegate ServiceState GetServiceStateDelegate();
     }
 }

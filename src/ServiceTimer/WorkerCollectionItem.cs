@@ -10,7 +10,7 @@
 
         internal WorkerCollectionItem(TimerWorker worker)
         {
-            worker.signalEvent = new ManualResetEvent(false);
+            worker.SignalEvent = new ManualResetEvent(false);
 
             Worker = worker;
         }

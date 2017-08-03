@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LicenseMonitoringSystem.Tests
+﻿namespace LicenseMonitoringSystem.Tests
 {
+    using System;
+    using System.Threading.Tasks;
     using global::Core.EntityFramework;
 
     public abstract class LicenseMonitoringSystemTestBase

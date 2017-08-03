@@ -1,4 +1,4 @@
-﻿namespace Core.Common
+﻿namespace Core.Common.Extensions
 {
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;

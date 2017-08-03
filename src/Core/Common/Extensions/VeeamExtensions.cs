@@ -59,25 +59,6 @@
             veeam.HyperV = evaluation ? hypervCounterInfo.TrialVmsCount : hypervCounterInfo.NonTrialVmsCount;
         }
 
-        public static Type NullableVersion(this Type sourceType)
-        {
-            if (sourceType == null)
-            {
-                // Throw System.ArgumentNullException or return null, your preference
-            }
-            else if (sourceType == typeof(void))
-            {
-                // Special Handling - known cases where Exceptions would be thrown
-                return null; // There is no Nullable version of void
-            }
-
-            return !sourceType.IsValueType
-                || sourceType.IsGenericType
-                && sourceType.GetGenericTypeDefinition() == typeof(Nullable<>)
-                    ? sourceType
-                    : typeof(Nullable<>).MakeGenericType(sourceType);
-        }
-
         public static void Validate(this Veeam veeam)
         {
             if (veeam.ExpirationDate == default(DateTime))

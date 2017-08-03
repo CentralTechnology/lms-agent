@@ -5,12 +5,12 @@
 
     public sealed class SqlExtendableReferenceTypeFieldDescriptor<T> : SqlReferenceTypeFieldDescriptor<T> where T : class
     {
-        private readonly int MaxSize;
+        private readonly int _maxSize;
 
         public SqlExtendableReferenceTypeFieldDescriptor(string fieldName, SqlDbType fieldType, int maxSize)
             : base(fieldName, fieldType)
         {
-            MaxSize = maxSize;
+            _maxSize = maxSize;
         }
 
         public override string MakeSqlType()
@@ -18,11 +18,11 @@
             switch (FieldType)
             {
                 case SqlDbType.NVarChar:
-                    return "nvarchar(" + MaxSize + ")";
+                    return "nvarchar(" + _maxSize + ")";
                 case SqlDbType.VarBinary:
-                    return "varbinary(" + MaxSize + ")";
+                    return "varbinary(" + _maxSize + ")";
                 case SqlDbType.VarChar:
-                    return "varchar(" + MaxSize + ")";
+                    return "varchar(" + _maxSize + ")";
                 default:
                     throw new NotSupportedException(FieldType.ToString());
             }

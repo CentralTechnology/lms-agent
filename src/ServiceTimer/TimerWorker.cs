@@ -101,7 +101,7 @@ namespace ServiceTimer
         /// <summary>
         ///     Delegate call back to the service to check on its state
         /// </summary>
-        internal TimerServiceBase.getServiceStateDelegate getServiceStateHandler { get; set; }
+        internal TimerServiceBase.GetServiceStateDelegate GetServiceStateHandler { get; set; }
 
         /// <summary>
         ///     Log
@@ -111,13 +111,13 @@ namespace ServiceTimer
         /// <summary>
         ///     Check if the state of the service is something other than "Running"
         /// </summary>
-        protected bool ServiceStateRequiresStop => getServiceStateHandler() != TimerServiceBase.ServiceState.Running;
+        protected bool ServiceStateRequiresStop => GetServiceStateHandler() != TimerServiceBase.ServiceState.Running;
 
         /// <summary>
         ///     The signal used by this worker when the Service is waiting for the worker
         ///     to handle a change in state
         /// </summary>
-        internal ManualResetEvent signalEvent { get; set; }
+        internal ManualResetEvent SignalEvent { get; set; }
 
         private void _doWork(TimerWorkerInfo info)
         {
@@ -210,7 +210,7 @@ namespace ServiceTimer
             // Query the state of the service
 
             TimerServiceBase.ServiceState state
-                = getServiceStateHandler();
+                = GetServiceStateHandler();
 
             // Handle the state appropriately...
 
@@ -298,7 +298,7 @@ namespace ServiceTimer
                     {
                         _paused = true;
 
-                        signalEvent.Set();
+                        SignalEvent.Set();
 
                         doWork = false;
 
@@ -333,7 +333,7 @@ namespace ServiceTimer
                 }
                 finally
                 {
-                    signalEvent.Set();
+                    SignalEvent.Set();
 
                     doWork = false;
 
@@ -367,7 +367,7 @@ namespace ServiceTimer
                 }
                 finally
                 {
-                    signalEvent.Set();
+                    SignalEvent.Set();
 
                     doWork = false;
 
@@ -455,7 +455,7 @@ namespace ServiceTimer
         {
             // With a value of 0, no work would ever be done
             if (workOnElapseCount < 1)
-                throw new ArgumentOutOfRangeException("workOnElapseCount");
+                throw new ArgumentOutOfRangeException(nameof(workOnElapseCount));
 
             // The timer interval is initially set to timerInterval + delayOnStart, so that any 
             //  delay is initially observed; after its first elapse the timer will fall back 
@@ -537,7 +537,7 @@ namespace ServiceTimer
 
         // Always implement Dispose correctly and in accordance with best practise
 
-        private bool disposed;
+        private bool _disposed;
 
         public void Dispose()
         {
@@ -550,7 +550,7 @@ namespace ServiceTimer
         // Protected implementation of Dispose pattern. 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
                 return;
 
             if (disposing)
@@ -565,7 +565,7 @@ namespace ServiceTimer
             }
             // Free any unmanaged objects here. 
             //
-            disposed = true;
+            _disposed = true;
         }
 
         #endregion

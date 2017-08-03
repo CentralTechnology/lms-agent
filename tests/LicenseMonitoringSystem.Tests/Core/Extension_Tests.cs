@@ -2,11 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using global::Core.Common.Extensions;
     using global::Core.Models;
     using Shouldly;
     using Xunit;
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class Extension_Tests
     {
         [Fact]
@@ -14,7 +16,7 @@
         {
             // arrange
             var users = new DefaultUserList();
-            var uploadId = 123456;
+            int uploadId = 123456;
 
             // act
             users.ApplyUploadId(uploadId);
@@ -31,7 +33,7 @@
             var localUsers = new ComparisonUserList();
 
             // act
-            var usersToCreate = remoteUsers.FilterCreate<LicenseUser, Guid>(localUsers);
+            List<LicenseUser> usersToCreate = remoteUsers.FilterCreate<LicenseUser, Guid>(localUsers);
 
             // assert
             usersToCreate.ShouldBeEmpty();
@@ -45,7 +47,7 @@
             var localUsers = new DefaultUserList();
 
             // act
-            var usersToCreate = remoteUsers.FilterCreate<LicenseUser, Guid>(localUsers);
+            List<LicenseUser> usersToCreate = remoteUsers.FilterCreate<LicenseUser, Guid>(localUsers);
 
             // assert
             usersToCreate.Count.ShouldBe(3);
@@ -62,7 +64,7 @@
             var localUsers = new ComparisonUserList();
 
             // act
-            var usersToDelete = remoteUsers.FilterDelete<LicenseUser, Guid>(localUsers);
+            List<LicenseUser> usersToDelete = remoteUsers.FilterDelete<LicenseUser, Guid>(localUsers);
 
             // assert
             usersToDelete.Count.ShouldBe(3);
@@ -79,7 +81,7 @@
             var localUsers = new ComparisonUserList();
 
             // act
-            var usersToUpdate = remoteUsers.FilterUpdate<LicenseUser, Guid>(localUsers);
+            List<LicenseUser> usersToUpdate = remoteUsers.FilterUpdate<LicenseUser, Guid>(localUsers);
 
             // assert
             usersToUpdate.Count.ShouldBe(2);
@@ -124,7 +126,11 @@
         {
             AddRange(new List<LicenseUser>
             {
-                User1, User2, User3, User4, User5
+                User1,
+                User2,
+                User3,
+                User4,
+                User5
             });
         }
     }
@@ -135,7 +141,8 @@
         {
             AddRange(new List<LicenseUser>
             {
-                DefaultUserList.User4, DefaultUserList.User5
+                DefaultUserList.User4,
+                DefaultUserList.User5
             });
         }
     }
