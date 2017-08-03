@@ -1,20 +1,20 @@
 ﻿namespace Core.Common.Client
 {
     using System.Threading.Tasks;
-    using Abp.Dependency;
     using Abp.WebApi.Client;
+    using Constants;
 
     /// <summary>
     ///     Class used for standard api calls
     /// </summary>
-    public class PortalClient : ITransientDependency
+    public class PortalClient
     {
-        private readonly IAbpWebApiClient _abpWebApiClient;
+        private readonly AbpWebApiClient _abpWebApiClient = new AbpWebApiClient();
 
-        public PortalClient(IAbpWebApiClient abpWebApiClient)
+        public PortalClient()
         {
-            BaseUrl = LmsConstants.BaseServiceUrl;
-            _abpWebApiClient = abpWebApiClient;
+            BaseUrl = Constants.BaseServiceUrl;
+            ;
         }
 
         public string BaseUrl { get; set; }

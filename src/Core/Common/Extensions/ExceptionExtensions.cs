@@ -1,31 +1,42 @@
-﻿namespace Core.Common.Extensions
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Core.Common.Extensions
 {
-    using Abp.Dependency;
-    using Castle.Core.Logging;
+    using Client.OData;
     using Newtonsoft.Json;
+    using NLog;
     using Simple.OData.Client;
 
     public static class ExceptionExtensions
     {
-        public static void HandleWebRequestException(WebRequestException ex)
+        public static void Handle(this WebRequestException ex, Logger logger)
         {
-            using (IDisposableDependencyObjectWrapper<ILogger> logger = IocManager.Instance.ResolveAsDisposable<ILogger>())
+            try
             {
-                bool valid = ex.Response.IsValidJson();
-                if (!valid)
+                var rootException = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
+                if (rootException != null)
                 {
-                    logger.Object.Error(ex.Message);
-                    logger.Object.Debug(ex.ToString());
-                    return;
+                    var inner = rootException.Error.InnerError;
+                    if (inner != null)
+                    {
+                        logger.Error($"Code: {ex.Code}");
+                        logger.Error($"Message: {inner.Message}");
+                    }
+                    else
+                    {
+                        logger.Error($"Code: {ex.Code}");
+                        logger.Error($"Message: {rootException.Error.Message}");
+                    }
                 }
-
-                dynamic response = JsonConvert.DeserializeObject(ex.Response);
-                if (response != null)
-                {
-                    logger.Object.Error($"Status: {response.error?.code} \t Message: {response.error?.message}");
-
-                    logger.Object.Debug("Error during WebRequest", ex);
-                }
+            }
+            catch (Exception exc)
+            {
+                logger.Error(exc);
+                throw;
             }
         }
     }

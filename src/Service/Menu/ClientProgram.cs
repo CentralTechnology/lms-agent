@@ -3,11 +3,8 @@
     using System;
     using EasyConsole;
     using Pages;
-    using Pages.Client;
-    using Pages.Tools;
-    using Pages.Tools.Account;
-    using Pages.Tools.Debug;
-    using Pages.Tools.Device;
+    using Pages.Options;
+    using Pages.Run;
 
     class ClientProgram : Program
     {
@@ -15,11 +12,13 @@
             : base("License Monitoring System", true)
         {
             AddPage(new MainPage(this, adminAccess));
-            AddPage(new AccountPage(this));
-            AddPage(new DevicePage(this));
-            AddPage(new DebugPage(this));
-            AddPage(new ClientPage(this));
-            AddPage(new ToolsPage(this));
+
+            AddPage(new RunPage(this));
+
+            AddPage(new OptionsPage(this));
+            AddPage(new GeneralPage(this));
+            AddPage(new UsersPage(this));
+            AddPage(new VeeamPage(this));
 
             SetPage<MainPage>();
         }
