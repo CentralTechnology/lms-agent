@@ -80,7 +80,7 @@ Installation time=30606421:-779068240]]></License></Licenses>
         public void GetPropertyNoThrow_ShouldReturnDateTime_WhenUsedWithTypeParameter()
         {
             // act
-            var sutDate = _vlm.GetPropertyNoThrow<DateTime>("Expiration date");
+            DateTime sutDate = _vlm.GetPropertyNoThrow<DateTime>("Expiration date");
 
             // assert
             sutDate.ShouldBeOfType<DateTime>();
@@ -91,7 +91,7 @@ Installation time=30606421:-779068240]]></License></Licenses>
         public void GetPropertyNoThrow_ShouldReturnEnum_WhenUsedWithTypeParameter()
         {
             // act
-            var sutEnum = _vlm.GetPropertyNoThrow<LicenseEditions>("Edition");
+            LicenseEditions sutEnum = _vlm.GetPropertyNoThrow<LicenseEditions>("Edition");
 
             // assert
             sutEnum.ShouldBeOfType<LicenseEditions>();
