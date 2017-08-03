@@ -1,7 +1,6 @@
 ﻿namespace Core.Common.Extensions
 {
     using System;
-    using System.Collections.Generic;
     using Abp.Extensions;
     using Microsoft.Win32;
 
@@ -25,7 +24,7 @@
         /// <returns></returns>
         public static Version GetApplicationVersion(this string pName)
         {
-            var keys = new List<RegistryKey>
+            var keys = new []
             {
                 Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
                 RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
@@ -57,48 +56,21 @@
 #if DEBUG
             return new Guid("2a5d23dc-1b9a-9341-32c6-1160a5df7883");
 #endif
-            string deviceId;
-
-            // search in: LocalMachine_32
-            RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE");
-            if (key != null)
+            var keys = new[]
             {
-                foreach (string keyName in key.GetSubKeyNames())
-                {
-                    RegistryKey subKey = key.OpenSubKey(keyName);
-                    if (subKey != null)
-                    {
-                        deviceId = subKey.GetValue("DeviceID") as string;
-                        if (!deviceId.IsNullOrEmpty() || deviceId != null)
-                        {
-                            bool valid = Guid.TryParse(deviceId, out Guid csId);
-                            if (valid)
-                            {
-                                return csId;
-                            }
-                        }
-                    }
-                }
-            }
+                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE"),
+                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE")
+            };
 
-            // search in: LocalMachine_64
-            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE");
-            if (key != null)
+            foreach (var key in keys)
             {
-                foreach (string keyName in key.GetSubKeyNames())
+                var data = key.GetSubKeyValue(key.GetSubKeyNames(), pName, "DeviceID");
+                if (data.exist)
                 {
-                    RegistryKey subKey = key.OpenSubKey(keyName);
-                    if (subKey != null)
+                    bool valid = Guid.TryParse(data.value, out Guid csId);
+                    if (valid)
                     {
-                        deviceId = subKey.GetValue("DeviceID") as string;
-                        if (!deviceId.IsNullOrEmpty() || deviceId != null)
-                        {
-                            bool valid = Guid.TryParse(deviceId, out Guid csId);
-                            if (valid)
-                            {
-                                return csId;
-                            }
-                        }
+                        return csId;
                     }
                 }
             }
