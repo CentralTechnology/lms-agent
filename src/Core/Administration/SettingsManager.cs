@@ -49,24 +49,6 @@
             return GetSettingValueInternalAsync(name);
         }
 
-        private void SetLogLevel(LogLevel logLevel)
-        {
-            //IList<LoggingRule> rules = LogManager.Configuration.LoggingRules;
-            //var validator = new Regex(LmsConstants.LoggerTarget);
-
-            //foreach (LoggingRule rule in rules.Where(r => validator.IsMatch(r.Targets[0].Name)))
-            //{
-            //    rule.DisableLoggingForLevel(LogLevel.Debug);
-
-            //    if (!rule.IsLoggingEnabledForLevel(logLevel))
-            //    {
-            //        rule.EnableLoggingForLevel(logLevel);
-            //    }
-            //}
-
-            //LogManager.ReconfigExistingLoggers();
-        }
-
         #region Private methods
 
         private Task<string> GetSettingValueInternalAsync(string name)

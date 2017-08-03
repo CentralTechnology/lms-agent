@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
+    using Abp.Timing;
     using Administration;
     using Common.Client;
     using Common.Extensions;
@@ -48,8 +49,13 @@
 
             Logger.Info(veeam.ToString());
 
+            var uploadId = await VeeamClient.UploadId();
+            veeam.UploadId = uploadId;
+            veeam.CheckInTime = Clock.Now;
+            veeam.Status = CallInStatus.CalledIn;
+
             if (status == CallInStatus.NeverCalledIn)
-            {
+            {                
                 await VeeamClient.Add(veeam);
                 return;
             }

@@ -156,12 +156,12 @@
       <DependentUpon>logmessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Menu\ClientProgram.cs" />
-    <Compile Include="Menu\Pages\Client\ClientPage.cs" />
     <Compile Include="Menu\Pages\MainPage.cs" />
-    <Compile Include="Menu\Pages\Tools\Account\AccountPage.cs" />
-    <Compile Include="Menu\Pages\Tools\Debug\DebugPage.cs" />
-    <Compile Include="Menu\Pages\Tools\Device\DevicePage.cs" />
-    <Compile Include="Menu\Pages\Tools\ToolsPage.cs" />
+    <Compile Include="Menu\Pages\Options\GeneralPage.cs" />
+    <Compile Include="Menu\Pages\Options\OptionsPage.cs" />
+    <Compile Include="Menu\Pages\Options\UsersPage.cs" />
+    <Compile Include="Menu\Pages\Options\VeeamPage.cs" />
+    <Compile Include="Menu\Pages\Run\RunPage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StartupManager.cs" />

@@ -1,5 +1,7 @@
 ﻿namespace EasyConsole
 {
+    using System;
+
     public abstract class MenuPage : Page
     {
         protected MenuPage(string title, Program program, params Option[] options)
@@ -22,6 +24,14 @@
             this.AddBackOption();
 
             Menu.Display();
+        }
+
+        protected void ActionComplete<TPage>()
+            where TPage : Page
+        {
+            Output.WriteLine(Environment.NewLine);
+            Input.ReadString("Press [Enter]");
+            Program.NavigateTo<TPage>();
         }
     }
 }

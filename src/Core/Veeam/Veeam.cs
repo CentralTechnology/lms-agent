@@ -2,10 +2,13 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using Models;
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class Veeam
     {
+        public CallInStatus Status { get; set; }
+        public DateTime CheckInTime { get; set; }
         public string ClientVersion { get; set; }
         public LicenseEditions Edition { get; set; }
         public DateTime ExpirationDate { get; set; }
@@ -15,11 +18,12 @@
         public string ProgramVersion { get; set; }
         public string SupportId { get; set; }
         public int TenantId { get; set; }
+        public int UploadId { get; set; }
         public int vSphere { get; set; }
 
         public override string ToString()
         {
-            return $"Edition: {Edition}  License: {LicenseType}  Version: {ProgramVersion}  Hyper-V: {HyperV}  VMWare:{vSphere}";
+            return $"Edition: {Edition}  License: {LicenseType}  Version: {ProgramVersion}  Hyper-V: {HyperV}  VMWare: {vSphere}";
         }
     }
 

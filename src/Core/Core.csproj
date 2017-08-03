@@ -198,6 +198,7 @@
     <Compile Include="Common\Client\SupportUploadClient.cs" />
     <Compile Include="Common\Client\VeeamClient.cs" />
     <Compile Include="Common\Constants\Constants.cs" />
+    <Compile Include="Common\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Common\Extensions\IDataReaderExtensions.cs" />
     <Compile Include="Common\Extensions\VeeamExtensions.cs" />
     <Compile Include="Common\Extensions\DirectoryEntryExtensions.cs" />
@@ -222,7 +223,6 @@
       <DependentUpon>201707140955114_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Migrations\SeedData\InitialDbBuilder.cs" />
     <Compile Include="Models\LicenseGroup.cs" />
     <Compile Include="Models\LicenseUser.cs" />
     <Compile Include="Models\ManagedSupport.cs" />

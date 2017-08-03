@@ -1,5 +1,6 @@
 ﻿namespace Core.Migrations
 {
+    using System;
     using System.Data.Entity.Migrations;
     using Administration;
     using EntityFramework;
@@ -15,9 +16,8 @@
         protected override void Seed(AgentDbContext context)
         {
             // default configuration
-            context.Settings.Add(new Setting(SettingNames.AutotaskAccountId, string.Empty));
-            context.Settings.Add(new Setting(SettingNames.CentrastageDeviceId, string.Empty));
-            context.Settings.Add(new Setting(SettingNames.DebugMode, false.ToString()));
+            context.Settings.Add(new Setting(SettingNames.AutotaskAccountId, default(int).ToString()));
+            context.Settings.Add(new Setting(SettingNames.CentrastageDeviceId, default(Guid).ToString()));
             context.Settings.Add(new Setting(SettingNames.MonitorUsers, false.ToString()));
             context.Settings.Add(new Setting(SettingNames.MonitorVeeam, false.ToString()));
             context.Settings.Add(new Setting(SettingNames.PrimaryDomainControllerOverride, false.ToString()));

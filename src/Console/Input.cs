@@ -46,7 +46,7 @@
             string input = Console.ReadLine();
             int value;
 
-            while (!int.TryParse(input, out value))
+            while (!Int32.TryParse(input, out value))
             {
                 Output.DisplayPrompt("Please enter an integer");
                 input = Console.ReadLine();
@@ -59,6 +59,27 @@
         {
             Output.DisplayPrompt(prompt);
             return Console.ReadLine();
+        }
+
+        public static Guid ReadGuid(string prompt)
+        {
+            Output.DisplayPrompt(prompt);
+
+            return ReadGuid();
+        }
+
+        public static Guid ReadGuid()
+        {
+            string consoleInput = Console.ReadLine();
+            Guid value;
+
+            while (!Guid.TryParse(consoleInput, out value))
+            {
+                Output.DisplayPrompt("Please enter a guid");
+                consoleInput = Console.ReadLine();
+            }
+
+            return value;
         }
     }
 }

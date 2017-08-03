@@ -4,6 +4,7 @@
     using Abp;
     using Abp.Threading;
     using Core.Administration;
+    using Core.Common.Client;
     using Core.Common.Constants;
     using Core.Common.Extensions;
     using Core.Factory;
@@ -14,12 +15,9 @@
     public class StartupManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        protected RavenClient RavenClient;
-
-        public StartupManager()
-        {
-            RavenClient = new RavenClient(Constants.SentryDSN);
-        }
+        protected ProfileClient ProfileClient = new ProfileClient();
+        protected RavenClient RavenClient = new RavenClient(Constants.SentryDSN);
+        protected SettingManager SettingManager = new SettingManager();
 
         public void Init()
         {
@@ -120,7 +118,7 @@
             Logger.Info("Check Veeam Online: OK");
 
             // check the veeam version
-            var veeamVersion = VeeamFactory.VeeamManager().VeeamVersion();
+            string veeamVersion = VeeamFactory.VeeamManager().VeeamVersion();
             if (veeamVersion == null)
             {
                 Logger.Warn("Check Veeam Version: FAIL");
@@ -134,31 +132,53 @@
         private void ValidateApiCredentials()
         {
             // get the centrastage device id
-            Logger.Info("Getting the centrastage device id...");
+            Logger.Info("Validating api credentials...");
 
-            var deviceId = Constants.CentraStage.GetCentrastageId();
-            if (deviceId == null)
+            Guid deviceId;
+            var storedDevice = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
+            if (storedDevice == default(Guid))
             {
-                Logger.Warn("Get centrastage device id: FAIL");
-                throw new AbpException("Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
+                Guid? reportedDevice = Constants.CentraStage.GetCentrastageId();
+
+                if (reportedDevice == null)
+                {
+                    Logger.Warn("Check Centrastage: FAIL");
+                    throw new AbpException("Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
+                }
+
+                SettingManager.ChangeSetting(SettingNames.CentrastageDeviceId, reportedDevice.ToString());
+                deviceId = reportedDevice.To<Guid>();
+            }
+            else
+            {
+                deviceId = storedDevice;
             }
 
-            Logger.Info($"Get centrastage device id: {deviceId}");
-            SettingFactory.SettingsManager().ChangeSetting(SettingNames.CentrastageDeviceId, deviceId.ToString());
+            Logger.Info("Check Centrastage: OK");
+            Logger.Info($"Device: {deviceId}");
 
-            // get the autotask account id
-            Logger.Info("Getting the autotask account id id...");
-
-            var accountId = AsyncHelper.RunSync(() => ClientFactory.ProfileClient().GetAccountByDeviceId((Guid)deviceId));
-
-            if (accountId == 0)
+            int accountId;
+            int storedAccount = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
+            if (storedAccount == default(int))
             {
-                Logger.Warn("Get autotask account id: FAIL");
-                throw new AbpException("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
+                int reportedAccount = AsyncHelper.RunSync(() => ProfileClient.GetAccountByDeviceId(deviceId));
+
+                if (reportedAccount == default(int))
+                {
+                    Logger.Warn("Check Account: FAIL");
+                    throw new AbpException("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
+                }
+
+                SettingFactory.SettingsManager().ChangeSetting(SettingNames.AutotaskAccountId, reportedAccount.ToString());
+                accountId = reportedAccount.To<int>();
+            }
+            else
+            {
+                accountId = storedAccount;
             }
 
-            Logger.Info($"Get autotask account id: {accountId}");
-            SettingFactory.SettingsManager().ChangeSetting(SettingNames.AutotaskAccountId, accountId.ToString());
+            Logger.Info("Check Account: OK");
+            Logger.Info($"Account: {accountId}");
         }
     }
 }

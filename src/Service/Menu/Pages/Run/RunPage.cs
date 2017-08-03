@@ -1,0 +1,85 @@
+﻿namespace Service.Menu.Pages.Run
+{
+    using System;
+    using Abp.Threading;
+    using Core;
+    using Core.Administration;
+    using Core.Common.Constants;
+    using Core.Common.Extensions;
+    using Core.Factory;
+    using Core.Veeam;
+    using EasyConsole;
+    using NLog;
+    using SharpRaven;
+    using SharpRaven.Data;
+
+    public class RunPage : MenuPage
+    {
+        private static readonly SettingManager SettingManager = new SettingManager();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected RavenClient RavenClient;
+
+        public RunPage(Program program)
+            : base("Run", program)
+        {
+            RavenClient = new RavenClient(Constants.SentryDSN);
+
+            bool monitorUsers = SettingManager.GetSettingValue<bool>(SettingNames.MonitorUsers);
+            if (monitorUsers)
+            {
+                Menu.Add(new Option("User Monitoring", () =>
+                {
+                    Logger.Info("User monitoring begin...");
+
+                    try
+                    {
+                        AsyncHelper.RunSync(() => new OrchestratorManager().UserMonitor());
+
+                        Logger.Info("************ User Monitoring Successful ************");
+                    }
+                    catch (Exception ex)
+                    {
+                        RavenClient.Capture(new SentryEvent(ex));
+                        Logger.Error(ex.Message);
+                        Logger.Error("************ User Monitoring Failed ************");
+                    }
+                    finally
+                    {
+                        Input.ReadString("Press [Enter]");
+                        program.NavigateTo<RunPage>();
+                    }
+
+                    Input.ReadString("Press [Enter]");
+                    program.NavigateTo<RunPage>();
+                }));
+            }
+
+            bool monitorVeeam = SettingManager.GetSettingValue<bool>(SettingNames.MonitorVeeam);
+            if (monitorVeeam)
+            {
+                Menu.Add(new Option("Veeam Monitoring", () =>
+                {
+                    Logger.Info("Veeam monitoring begin...");
+
+                    try
+                    {
+                        AsyncHelper.RunSync(() => new VeeamOrchestrator().Start());
+
+                        Logger.Info("************ Veeam Monitoring Successful ************");
+                    }
+                    catch (Exception ex)
+                    {
+                        RavenClient.Capture(new SentryEvent(ex));
+                        Logger.Error(ex.Message);
+                        Logger.Error("************ Veeam Monitoring Failed ************");
+                    }
+                    finally
+                    {
+                        Input.ReadString("Press [Enter]");
+                        program.NavigateTo<RunPage>();
+                    }
+                }));
+            }
+        }
+    }
+}

@@ -47,7 +47,7 @@
 
         private static void CollectVmInformation95(this Veeam veeam)
         {
-            bool evaluation = veeam.LicenseType != LicenseTypeEx.Evalution;
+            bool evaluation = veeam.LicenseType == LicenseTypeEx.Evalution;
 
             VmsCounterInfo vSphereCounterInfo = VeeamManager.GetVmsCounters(EPlatform.EVmware, evaluation);
             VmsCounterInfo hypervCounterInfo = VeeamManager.GetVmsCounters(EPlatform.EHyperV, evaluation);

@@ -74,7 +74,7 @@
         public VmsCounterInfo GetVmsCounters(EPlatform platform, bool useTrialStrategy)
         {
             var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
-            using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, PlatformField.MakeParam((int) platform)).CreateDataReader())
+            using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
             {
                 dataReader.Read();
                 return new VmsCounterInfo(dataReader.GetValue<int>("vm_active"), dataReader.GetValue<int>("vm_trial"));
