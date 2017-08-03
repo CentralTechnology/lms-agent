@@ -66,20 +66,34 @@ Installation time=30606421:-779068240]]></License></Licenses>
         }
 
         [Fact]
-        public void GetPropertyNoThrow_ShouldReturnCorrectType_WhenUsedWithTypeParameter()
+        public void GetPropertyNoThrow_ShouldReturnInt_WhenUsedWithTypeParameter()
         {
             // act
             int sutInt = _vlm.GetPropertyNoThrow<int>("Managed VMs (Hyper-V)");
-            var sutDate = _vlm.GetPropertyNoThrow<DateTime>("Expiration date");
-            var sutEnum = _vlm.GetPropertyNoThrow<LicenseEditions>("Edition");
 
             // assert
             sutInt.ShouldBeOfType<int>();
             sutInt.ShouldBe(0);
+        }
 
+        [Fact]
+        public void GetPropertyNoThrow_ShouldReturnDateTime_WhenUsedWithTypeParameter()
+        {
+            // act
+            var sutDate = _vlm.GetPropertyNoThrow<DateTime>("Expiration date");
+
+            // assert
             sutDate.ShouldBeOfType<DateTime>();
             sutDate.ShouldBe(new DateTime(2017, 11, 30));
+        }
 
+        [Fact]
+        public void GetPropertyNoThrow_ShouldReturnEnum_WhenUsedWithTypeParameter()
+        {
+            // act
+            var sutEnum = _vlm.GetPropertyNoThrow<LicenseEditions>("Edition");
+
+            // assert
             sutEnum.ShouldBeOfType<LicenseEditions>();
             sutEnum.ShouldBe(LicenseEditions.Enterprise);
         }
