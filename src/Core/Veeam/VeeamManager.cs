@@ -106,7 +106,6 @@
 
         public bool VeeamInstalled()
         {
-            return true;
             try
             {
                 return Constants.VeeamApplicationName.IsApplictionInstalled();
@@ -121,7 +120,6 @@
 
         public bool VeeamOnline()
         {
-            return true;
             IPAddress localhost = IPAddress.Parse("127.0.0.1");
 
             using (var tcpClient = new TcpClient())
@@ -142,7 +140,6 @@
 
         public string VeeamVersion()
         {
-            return "9.0.0.0";
             string veeamVersion = Constants.VeeamApplicationName.GetApplicationVersion().ToString();
             if (veeamVersion.IsNullOrEmpty())
             {
