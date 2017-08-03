@@ -2,10 +2,8 @@
 {
     using System;
     using Abp.Threading;
-    using Core.Common.Constants;
     using Core.Factory;
     using ServiceTimer;
-    using SharpRaven;
     using SharpRaven.Data;
 
     internal class VeeamMonitorWorker : TimerWorker
@@ -23,7 +21,6 @@
         /// <inheritdoc />
         protected override void StartWork(TimerWorkerInfo info)
         {
-            
         }
 
         /// <inheritdoc />
@@ -41,7 +38,7 @@
             {
                 RavenClient.Capture(new SentryEvent(ex));
                 Logger.Error(ex.Message);
-                Logger.Error("************ Veeam Monitoring Failed ************");                
+                Logger.Error("************ Veeam Monitoring Failed ************");
             }
         }
     }

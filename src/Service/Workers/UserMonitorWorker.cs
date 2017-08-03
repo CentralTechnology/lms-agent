@@ -2,21 +2,19 @@
 {
     using System;
     using Abp.Threading;
-    using Core.Common.Constants;
     using Core.Factory;
     using ServiceTimer;
-    using SharpRaven;
     using SharpRaven.Data;
 
     internal class UserMonitorWorker : TimerWorker
     {
         /// <summary>
-        /// 30 second start up delay
-        /// 10 second check
-        /// 90*10/60 = 15 min execute
+        ///     30 second start up delay
+        ///     10 second check
+        ///     90*10/60 = 20 min execute
         /// </summary>
         internal UserMonitorWorker()
-            : base(30000, 10000, 90)
+            : base(30000, 10000, 120)
         {
         }
 
