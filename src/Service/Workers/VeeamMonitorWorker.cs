@@ -16,7 +16,7 @@
         ///     180*10/60 = 30 min execute
         /// </summary>
         internal VeeamMonitorWorker()
-            : base(30000, 10000, 2)
+            : base(30000, 10000, 180)
         {
         }
 
