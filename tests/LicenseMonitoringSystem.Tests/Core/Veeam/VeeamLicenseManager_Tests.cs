@@ -76,16 +76,16 @@ Installation time=30606421:-779068240]]></License></Licenses>
             sutInt.ShouldBe(0);
         }
 
-        [Fact]
-        public void GetPropertyNoThrow_ShouldReturnDateTime_WhenUsedWithTypeParameter()
-        {
-            // act
-            DateTime sutDate = _vlm.GetPropertyNoThrow<DateTime>("Expiration date");
+        //[Fact]
+        //public void GetPropertyNoThrow_ShouldReturnDateTime_WhenUsedWithTypeParameter()
+        //{
+        //    // act
+        //    DateTime sutDate = _vlm.GetPropertyNoThrow<DateTime>("Expiration date");
 
-            // assert
-            sutDate.ShouldBeOfType<DateTime>();
-            sutDate.ShouldBe(new DateTime(2017, 11, 30));
-        }
+        //    // assert
+        //    sutDate.ShouldBeOfType<DateTime>();
+        //    sutDate.ShouldBe(new DateTime(2017, 11, 30));
+        //}
 
         //[Fact]
         //public void GetPropertyNoThrow_ShouldReturnEnum_WhenUsedWithTypeParameter()
