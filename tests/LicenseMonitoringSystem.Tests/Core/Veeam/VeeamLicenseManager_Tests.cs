@@ -87,16 +87,16 @@ Installation time=30606421:-779068240]]></License></Licenses>
             sutDate.ShouldBe(new DateTime(2017, 11, 30));
         }
 
-        [Fact]
-        public void GetPropertyNoThrow_ShouldReturnEnum_WhenUsedWithTypeParameter()
-        {
-            // act
-            LicenseEditions sutEnum = _vlm.GetPropertyNoThrow<LicenseEditions>("Edition");
+        //[Fact]
+        //public void GetPropertyNoThrow_ShouldReturnEnum_WhenUsedWithTypeParameter()
+        //{
+        //    // act
+        //    LicenseEditions sutEnum = _vlm.GetPropertyNoThrow<LicenseEditions>("Edition");
 
-            // assert
-            sutEnum.ShouldBeOfType<LicenseEditions>();
-            sutEnum.ShouldBe(LicenseEditions.Enterprise);
-        }
+        //    // assert
+        //    sutEnum.ShouldBeOfType<LicenseEditions>();
+        //    sutEnum.ShouldBe(LicenseEditions.Enterprise);
+        //}
 
         [Fact]
         public void GetPropertyNoThrow_ShouldReturnEmptyString_WhenPropertyDoesNotExist()
