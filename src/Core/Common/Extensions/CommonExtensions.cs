@@ -7,17 +7,11 @@
 
     public static class CommonExtensions
     {
-        /// <summary>
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="pName"></param>
-        /// <returns></returns>
-        private static bool DisplayNameExists(this RegistryKey key, string pName)
-        {
-            var data = key.GetSubKeyValue(key.GetSubKeyNames(), pName);
-
-            return data.exist;
-        }
+        private static RegistryKey[] _uninstallKeys = {
+            Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
+            RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
+            RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
+        };
 
         /// <summary>
         /// </summary>
@@ -25,14 +19,7 @@
         /// <returns></returns>
         public static Version GetApplicationVersion(this string pName)
         {
-            var keys = new []
-            {
-                Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
-                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
-                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-            };
-
-            foreach (RegistryKey key in keys)
+            foreach (RegistryKey key in _uninstallKeys)
             {
                 if (key != null)
                 {
@@ -116,14 +103,7 @@
         /// <returns></returns>
         public static bool IsApplictionInstalled(this string pName)
         {
-            var keys = new[]
-            {
-                Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
-                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
-                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-            };
-
-            foreach (var key in keys)
+            foreach (var key in _uninstallKeys)
             {
                 if (key != null)
                 {
