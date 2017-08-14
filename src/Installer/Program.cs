@@ -9,7 +9,7 @@
 
     class Script
     {
-        static (string msi, Version version) BuildMsi()
+        static string BuildMsi()
         {
             File service;
             var project = new Project("LMS",
@@ -60,13 +60,15 @@
                 ThirdFailureActionType = FailureActionType.restart,
                 Vital = true
             };
-            
-            return (Compiler.BuildMsi(project), project.Version);
+
+            return Compiler.BuildMsi(project);
         }
 
         static void Main(string[] args)
         {
-            var product = BuildMsi();
+            string product = BuildMsi();
+
+            string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             var bootstrapper = new Bundle(Constants.ServiceDisplayName)
             {
@@ -74,7 +76,7 @@
                 OutDir = "bin/%Configuration%",
                 OutFileName = "LMS.Setup",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
-                Version = product.version,
+                Version = new Version(version),
                 Chain = new List<ChainItem>
                 {
                     new PackageGroupRef("NetFx452Redist"),
@@ -98,13 +100,13 @@
                         SourceFile = "../Resources/SQLCompact/SSCERuntime_x64-ENU.exe",
                         Vital = true
                     },
-                    new MsiPackage(product.msi)
+                    new MsiPackage(product)
                     {
                         DisplayInternalUI = true
                     }
                 }
             };
-            
+
             bootstrapper.Build();
         }
     }
