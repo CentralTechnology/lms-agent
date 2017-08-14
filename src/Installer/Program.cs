@@ -15,7 +15,7 @@
             File service;
             var project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
-                    new DirPermission("LocalSystem", GenericPermission.Write | GenericPermission.Execute),
+                    new DirPermission("Local System", GenericPermission.All),
                     service = new File(@"%SolutionDir%/Service/bin/%Configuration%/LMS.exe"),
                     new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe"))))
             {
@@ -41,7 +41,7 @@
 
             project.SetVersionFrom("LMS.exe");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
-
+            
             service.ServiceInstaller = new ServiceInstaller
             {
                 DelayedAutoStart = true,
@@ -80,15 +80,18 @@
                 Chain = new List<ChainItem>
                 {
                     new PackageGroupRef("NetFx452Redist"),
-                    new ExePackage("../Resources/DotNetFramework/NDP452-KB2901907-x86-x64-AllOS-ENU.exe")
+                    new ExePackage
                     {
+                        DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED",
                         Id = "NetFx452FullExe",
+                        InstallCondition = "(VersionNT >= v6.0 OR VersionNT64 >= v6.0)",
+                        InstallCommand = "/q /norestart",
                         Compressed = true,
+                        SourceFile = "../Resources/DotNetFramework/NDP452-KB2901907-x86-x64-AllOS-ENU.exe",
                         PerMachine = true,
                         Permanent = true,
-                        InstallCommand = "/q /norestart",
-                        DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED"
-                    },
+                        Vital = true,                                               
+                   },
                     new MsiPackage(productMsi) {DisplayInternalUI = true}
                 }
             };
