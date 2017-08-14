@@ -3,6 +3,7 @@
     using System;
     using Abp.Extensions;
     using Microsoft.Win32;
+    using System.Linq;
 
     public static class CommonExtensions
     {
@@ -64,15 +65,21 @@
 
             foreach (var key in keys)
             {
-                var data = key.GetSubKeyValue(key.GetSubKeyNames(), pName, "DeviceID");
-                if (data.exist)
+                try
                 {
-                    bool valid = Guid.TryParse(data.value, out Guid csId);
-                    if (valid)
+                    var data = key.GetSubKeyValue(key.GetSubKeyNames(), pName, "DeviceID");
+                    if (data.exist)
                     {
-                        return csId;
+                        bool valid = Guid.TryParse(data.value, out Guid csId);
+                        if (valid)
+                        {
+                            return csId;
+                        }
                     }
                 }
+                catch (NullReferenceException)
+                {
+                }                
             }
 
             return null;
@@ -80,27 +87,18 @@
 
         private static (bool exist, string value) GetSubKeyValue(this RegistryKey key, string[] subKeyNames, string pName, string requestValue = null)
         {
-            foreach (string keyName in subKeyNames)
+            foreach (string keyName in subKeyNames.Where(skn => skn.Equals(pName, StringComparison.OrdinalIgnoreCase)))
             {
                 RegistryKey subkey = key.OpenSubKey(keyName);
                 if (subkey != null)
                 {
-                    string displayName = subkey.GetValue("DisplayName") as string;
-                    if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
+                    string value = subkey.GetValue(requestValue) as string;
+                    if (value.IsNullOrEmpty() || value == null)
                     {
-                        if (requestValue == null)
-                        {
-                            return (true, string.Empty);
-                        }
-
-                        string value = subkey.GetValue(requestValue) as string;
-                        if (value.IsNullOrEmpty() || value == null)
-                        {
-                            return (false, string.Empty);
-                        }
-
-                        return (true, value);
+                        return (false, string.Empty);
                     }
+
+                    return (true, value);
                 }
             }
 
