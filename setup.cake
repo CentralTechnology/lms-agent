@@ -41,6 +41,6 @@ BuildParameters.SetParameters(context: Context,
 
 ToolSettings.SetToolSettings(context: Context,
                              buildPlatformTarget: PlatformTarget.x64,
-							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(context.Environment.WorkingDirectory) + "/tests/LicenseMonitoringSystem.Tests/*.cs" } );
+							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/LicenseMonitoringSystem.Tests/*.cs" } );
 
 Build.Run();
