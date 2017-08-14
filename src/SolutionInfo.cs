@@ -8,3 +8,5 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCompany("Central Technology Ltd")]
 
 [assembly: InternalsVisibleTo("LicenseMonitoringSystem.Tests")]
+
+[assembly: AssemblyVersion("1.0.0.0")]

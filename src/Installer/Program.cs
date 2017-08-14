@@ -6,7 +6,6 @@
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;
-    using Assembly = System.Reflection.Assembly;
 
     class Script
     {
@@ -15,9 +14,10 @@
             File service;
             var project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
-                    new DirPermission("Local System", GenericPermission.All),
+                    new DirPermission("LocalSystem", GenericPermission.All),
                     service = new File(@"%SolutionDir%/Service/bin/%Configuration%/LMS.exe"),
-                    new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe"))))
+                    new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe")))
+            )
             {
                 ControlPanelInfo = new ProductInfo
                 {
@@ -41,7 +41,7 @@
 
             project.SetVersionFrom("LMS.exe");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
-            
+
             service.ServiceInstaller = new ServiceInstaller
             {
                 DelayedAutoStart = true,
@@ -68,7 +68,7 @@
         {
             string productMsi = BuildMsi();
 
-            string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? "1.0.0.0";
 
             var bootstrapper = new Bundle(Constants.ServiceDisplayName)
             {
@@ -84,15 +84,26 @@
                     {
                         DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED",
                         Id = "NetFx452FullExe",
-                        InstallCondition = "(VersionNT >= v6.0 OR VersionNT64 >= v6.0)",
                         InstallCommand = "/q /norestart",
                         Compressed = true,
                         SourceFile = "../Resources/DotNetFramework/NDP452-KB2901907-x86-x64-AllOS-ENU.exe",
                         PerMachine = true,
                         Permanent = true,
-                        Vital = true,                                               
-                   },
-                    new MsiPackage(productMsi) {DisplayInternalUI = true}
+                        Vital = true
+                    },
+                    new ExePackage
+                    {
+                        Compressed = true,
+                        InstallCommand = "/i /qb",
+                        PerMachine = true,
+                        Permanent = true,
+                        SourceFile = "../Resources/SQLCompact/SSCERuntime_x64-ENU.exe",
+                        Vital = true
+                    },
+                    new MsiPackage(productMsi)
+                    {
+                        DisplayInternalUI = true
+                    }
                 }
             };
 
