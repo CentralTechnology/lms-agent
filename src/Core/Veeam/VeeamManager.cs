@@ -109,7 +109,7 @@
         {
             try
             {
-                return Constants.VeeamApplicationName.IsApplictionInstalled();
+                return CommonExtensions.IsApplictionInstalled(Constants.VeeamApplicationName);
             }
             catch (Exception ex)
             {
@@ -141,7 +141,7 @@
 
         public string VeeamVersion()
         {
-            string veeamVersion = Constants.VeeamApplicationName.GetApplicationVersion().ToString();
+            string veeamVersion = CommonExtensions.GetApplicationVersion(Constants.VeeamApplicationName).ToString();
             if (veeamVersion.IsNullOrEmpty())
             {
                 SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, string.Empty);

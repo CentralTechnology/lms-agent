@@ -4,10 +4,11 @@
     using Abp.Extensions;
     using Microsoft.Win32;
     using System.Linq;
+    using Abp;
 
     public static class CommonExtensions
     {
-        private static RegistryKey[] _uninstallKeys = {
+        private static readonly RegistryKey[] UninstallKeys = {
             Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
             RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
             RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
@@ -17,13 +18,13 @@
         /// </summary>
         /// <param name="pName"></param>
         /// <returns></returns>
-        public static Version GetApplicationVersion(this string pName)
+        public static Version GetApplicationVersion(string pName)
         {
-            foreach (RegistryKey key in _uninstallKeys)
+            foreach (RegistryKey key in UninstallKeys)
             {
                 if (key != null)
                 {
-                    (bool exist, string value) data = key.GetSubKeyValue(key.GetSubKeyNames(), pName, "DisplayVersion");
+                    (bool exist, string value) data = key.GetSubKeyValue(key.GetSubKeyNames(), new NameValue("DisplayName", pName), requestedValue: "DisplayVersion");
                     if (data.exist)
                     {
                         return new Version(data.value);
@@ -54,7 +55,7 @@
             {
                 try
                 {
-                    var data = key.GetSubKeyValue(key.GetSubKeyNames(), pName, "DeviceID");
+                    var data = key.GetSubKeyValue(key.GetSubKeyNames(), requestedKeyName: "CentraStage", requestedValue:"DeviceID");
                     if (data.exist)
                     {
                         bool valid = Guid.TryParse(data.value, out Guid csId);
@@ -72,25 +73,57 @@
             return null;
         }
 
-        private static (bool exist, string value) GetSubKeyValue(this RegistryKey key, string[] subKeyNames, string pName, string requestValue = null)
+        private static (bool exist, string value) GetSubKeyValue(this RegistryKey key, string[] subKeyNames, NameValue filterBy = null, string requestedKeyName = null, string requestedValue = null)
         {
-            if (requestValue.IsNullOrEmpty())
+            if (requestedValue.IsNullOrEmpty())
             {
-                requestValue = "DisplayName";
+                requestedValue = "DisplayName";
             }
 
-            foreach (string keyName in subKeyNames.Where(skn => skn.Equals(pName, StringComparison.OrdinalIgnoreCase)))
+            if (requestedKeyName == null)
             {
-                RegistryKey subkey = key.OpenSubKey(keyName);
-                if (subkey != null)
+                foreach (string keyName in subKeyNames)
                 {
-                    string value = subkey.GetValue(requestValue) as string;
-                    if (value.IsNullOrEmpty() || value == null)
+                    RegistryKey subkey = key.OpenSubKey(keyName);
+                    if (subkey != null)
                     {
-                        return (false, string.Empty);
-                    }
+                        if (filterBy == null)
+                        {
+                            string value = subkey.GetValue(requestedValue) as string;
+                            if (value != null)
+                            {
+                                return (true, value);
+                            }
+                        }
+                        else
+                        {
+                            string filterByValue = subkey.GetValue(filterBy.Name) as string;
+                            if (filterBy.Value.Equals(filterByValue, StringComparison.OrdinalIgnoreCase))
+                            {
+                                string value = subkey.GetValue(requestedValue) as string;
+                                if (value != null)
+                                {
+                                    return (true, value);
+                                }
+                            }
+                        }
 
-                    return (true, value);
+                    }
+                }
+            }
+            else
+            {
+                foreach (string keyName in subKeyNames.Where(skn => skn.Equals(requestedKeyName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    RegistryKey subkey = key.OpenSubKey(keyName);
+                    if (subkey != null)
+                    {
+                        string value = subkey.GetValue(requestedValue) as string;
+                        if (value != null && !value.IsNullOrEmpty())
+                        {
+                            return (true, value);
+                        }                        
+                    }
                 }
             }
 
@@ -101,13 +134,13 @@
         /// </summary>
         /// <param name="pName"></param>
         /// <returns></returns>
-        public static bool IsApplictionInstalled(this string pName)
+        public static bool IsApplictionInstalled(string pName)
         {
-            foreach (var key in _uninstallKeys)
+            foreach (var key in UninstallKeys)
             {
                 if (key != null)
                 {
-                    var data = key.GetSubKeyValue(key.GetSubKeyNames(), pName);
+                    var data = key.GetSubKeyValue(key.GetSubKeyNames(), new NameValue("DisplayName", pName));
                     if (data.exist)
                     {
                         return true;
