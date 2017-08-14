@@ -138,7 +138,7 @@
 
             Guid deviceId;
             var storedDevice = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
-            if (storedDevice != default(Guid))
+            if (storedDevice == default(Guid))
             {
                 Guid? reportedDevice = Constants.CentraStage.GetCentrastageId();
 
