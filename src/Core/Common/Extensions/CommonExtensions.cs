@@ -87,6 +87,11 @@
 
         private static (bool exist, string value) GetSubKeyValue(this RegistryKey key, string[] subKeyNames, string pName, string requestValue = null)
         {
+            if (requestValue.IsNullOrEmpty())
+            {
+                requestValue = "DisplayName";
+            }
+
             foreach (string keyName in subKeyNames.Where(skn => skn.Equals(pName, StringComparison.OrdinalIgnoreCase)))
             {
                 RegistryKey subkey = key.OpenSubKey(keyName);
@@ -111,37 +116,25 @@
         /// <returns></returns>
         public static bool IsApplictionInstalled(this string pName)
         {
-            // search in: CurrentUser
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-            if (key != null)
+            var keys = new[]
             {
-                if (key.DisplayNameExists(pName))
+                Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
+                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
+                RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
+            };
+
+            foreach (var key in keys)
+            {
+                if (key != null)
                 {
-                    return true;
+                    var data = key.GetSubKeyValue(key.GetSubKeyNames(), pName);
+                    if (data.exist)
+                    {
+                        return true;
+                    }
                 }
             }
 
-            // search in: LocalMachine_32
-            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-            if (key != null)
-            {
-                if (key.DisplayNameExists(pName))
-                {
-                    return true;
-                }
-            }
-
-            // search in: LocalMachine_64
-            key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-            if (key != null)
-            {
-                if (key.DisplayNameExists(pName))
-                {
-                    return true;
-                }
-            }
-
-            // NOT FOUND
             return false;
         }
     }
