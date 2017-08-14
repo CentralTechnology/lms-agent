@@ -40,6 +40,7 @@ BuildParameters.SetParameters(context: Context,
 							shouldExecuteGitLink: false);
 
 ToolSettings.SetToolSettings(context: Context,
-                             buildPlatformTarget: PlatformTarget.x64);
+                             buildPlatformTarget: PlatformTarget.x64,
+							 dupFinderExcludePattern: "/tests/LicenseMonitoringSystem.Tests/*.cs");
 
 Build.Run();
