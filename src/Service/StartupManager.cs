@@ -29,12 +29,12 @@
             try
             {
                 bool monUsers = MonitorUsers();
-                SettingFactory.SettingsManager().ChangeSetting(SettingNames.MonitorUsers, monUsers.ToString());
+                SettingManager.ChangeSetting(SettingNames.MonitorUsers, monUsers.ToString());
                 Logger.Info(monUsers ? "Monitoring Users" : "Not Monitoring Users");
                 Console.WriteLine(Environment.NewLine);
 
                 bool monVeeam = MonitorVeeam();
-                SettingFactory.SettingsManager().ChangeSetting(SettingNames.MonitorVeeam, monVeeam.ToString());
+                SettingManager.ChangeSetting(SettingNames.MonitorVeeam, monVeeam.ToString());
                 Logger.Info(monUsers ? "Monitoring Veeam" : "Not Monitoring Veeam");
                 Console.WriteLine(Environment.NewLine);
             }

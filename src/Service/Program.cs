@@ -2,6 +2,7 @@
 {
     using Abp.Timing;
     using Core.Common.Constants;
+    using SharpRaven.Data;
     using Topshelf;
 
     class Runner
@@ -11,7 +12,7 @@
         /// </summary>
         static void Main(string[] args)
         {
-            Clock.Provider = ClockProviders.Utc;
+            Clock.Provider = ClockProviders.Utc;          
 
             HostFactory.Run(x =>
             {
