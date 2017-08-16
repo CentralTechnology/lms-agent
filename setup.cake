@@ -42,6 +42,6 @@ BuildParameters.SetParameters(context: Context,
 ToolSettings.SetToolSettings(context: Context,
                              buildPlatformTarget: PlatformTarget.x64,
 							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/LicenseMonitoringSystem.Tests/*.cs" },
-							 TestCoverageFilter = "+[Core*]* +[Service*]*");
+							 testCoverageFilter = "+[Core*]* +[Service*]*");
 
 Build.Run();
