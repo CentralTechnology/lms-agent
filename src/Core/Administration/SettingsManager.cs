@@ -1,163 +1,30 @@
 ﻿namespace Core.Administration
 {
     using System;
-    using System.Collections.Generic;
-    using System.Configuration;
+    using System.Data.Entity;
+    using System.Data.Entity.Migrations;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
-    using System.Text.RegularExpressions;
-    using Abp;
-    using Abp.Dependency;
-    using Abp.Domain.Services;
-    using Abp.Threading;
-    using Castle.Core.Logging;
-    using Common;
-    using Common.Client;
-    using Common.Enum;
-    using Common.Extensions;
+    using System.Threading.Tasks;
+    using Common.Constants;
+    using EntityFramework;
     using NLog;
-    using NLog.Config;
+    using SharpRaven;
+    using SharpRaven.Data;
 
-    public class SettingsManager : DomainService, ISettingsManager
+    public class SettingManager
     {
-        /// <inheritdoc />
-        public SettingsData Update(SettingsData settings)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected RavenClient RavenClient;
+
+        public SettingManager()
         {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-            Logger.Debug("Removing config.");
-            config.Sections.Remove(LmsConstants.SettingsSection);
-
-            Logger.Debug("Updating config.");
-            config.Sections.Add(LmsConstants.SettingsSection, settings);
-
-            Logger.Debug("Saving config.");
-            config.Save();
-
-            Logger.Debug("Config updated!");
-
-            // added because SettingsData class cannot be serialized easily as it inherits from the Configuration
-            var settingViewModel = new
-            {
-                settings.AccountId,
-                settings.DeviceId,
-                settings.Monitors
-            };
-
-            Logger.Debug($"New config: {settingViewModel.Dump()}");
-            return settings;
+            RavenClient = new RavenClient(Constants.SentryDSN);
         }
 
-        /// <inheritdoc />
-        public SettingsData Read()
+        public async Task ChangeSettingAsync(string name, string value)
         {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var configData = (SettingsData) config.GetSection(LmsConstants.SettingsSection);
-
-            return configData;
-        }
-
-        /// <inheritdoc />
-        public LoggerLevel UpdateLoggerLevel(bool enableDebug)
-        {
-            Logger.Debug(enableDebug ? "Debug mode enabled." : "Debug mode disabled");
-            SetLogLevel(enableDebug ? LogLevel.Debug : LogLevel.Info);
-
-            return ReadLoggerLevel();
-        }
-
-        /// <inheritdoc />
-        public LoggerLevel ReadLoggerLevel()
-        {
-            IList<LoggingRule> rules = LogManager.Configuration.LoggingRules;
-            var validator = new Regex(LmsConstants.LoggerTarget);
-
-            foreach (LoggingRule rule in rules.Where(r => validator.IsMatch(r.Targets[0].Name)))
-            {
-                if (rule.IsLoggingEnabledForLevel(LogLevel.Debug))
-                {
-                    return LoggerLevel.Debug;
-                }
-
-                if (rule.IsLoggingEnabledForLevel(LogLevel.Info))
-                {
-                    return LoggerLevel.Info;
-                }
-
-                if (rule.IsLoggingEnabledForLevel(LogLevel.Warn))
-                {
-                    return LoggerLevel.Warn;
-                }
-
-                if (rule.IsLoggingEnabledForLevel(LogLevel.Error))
-                {
-                    return LoggerLevel.Error;
-                }
-
-                if (rule.IsLoggingEnabledForLevel(LogLevel.Fatal))
-                {
-                    return LoggerLevel.Fatal;
-                }
-            }
-
-            return LoggerLevel.Info;
-        }
-
-        /// <inheritdoc />
-        public void Validate()
-        {
-            SettingsData config = Read();
-
-            if (config.DeviceId == new Guid())
-            {
-                Logger.Warn("Centrastage device id is not set.");
-#if DEBUG
-                var deviceId = new Guid("5B7CB593-4BC1-24A0-EB59-76107F1E5255");
-
-#else
-var deviceId = GetDeviceId();
-#endif
-
-                config = Update(new SettingsData
-                {
-                    AccountId = config.AccountId,
-                    DeviceId = deviceId,
-                    Monitors = config.Monitors
-                });
-
-                Logger.Info($"Centrastage device id: {config.DeviceId}");
-            }
-
-            if (config.AccountId == 0)
-            {
-                Logger.Warn("Account id is not set.");
-                int accountId = GetAccountId(config.DeviceId);
-
-                config = Update(new SettingsData
-                {
-                    AccountId = accountId,
-                    DeviceId = config.DeviceId,
-                    Monitors = config.Monitors
-                });
-
-                Logger.Info($"Account id: {config.AccountId}");
-            }
-
-            if (Monitor.None.HasFlag(config.Monitors))
-            {
-                Logger.Warn("No actions are set to be monitored.");
-                var defaultMonitor = Monitor.Users;
-
-                config = Update(new SettingsData
-                {
-                    AccountId = config.AccountId,
-                    DeviceId = config.DeviceId,
-                    Monitors = defaultMonitor
-                });
-            }
-
-            Logger.Debug("Configuration is valid.");
+            await InsertOrUpdateSettingValueAsync(name, value);
         }
 
         /// <inheritdoc />
@@ -169,69 +36,60 @@ var deviceId = GetDeviceId();
             }
             catch (Exception ex)
             {
+                RavenClient.Capture(new SentryEvent(ex));
                 Logger.Error("Unable to determine client version.");
-                Logger.Debug(ex.ToString());
+                Logger.Debug(ex);
             }
 
             return string.Empty;
         }
 
-        private int GetAccountId(Guid deviceId)
+        public Task<string> GetSettingValueAsync(string name)
         {
-            using (IDisposableDependencyObjectWrapper<ProfileClient> client = IocManager.Instance.ResolveAsDisposable<ProfileClient>())
+            return GetSettingValueInternalAsync(name);
+        }
+
+        #region Private methods
+
+        private Task<string> GetSettingValueInternalAsync(string name)
+        {
+            using (var context = new AgentDbContext())
             {
-                // ReSharper disable once AccessToDisposedClosure
-                return AsyncHelper.RunSync(() => client.Object.GetAccountByDeviceId(deviceId));
+                return context.Settings.Where(s => s.Name.Equals(name)).Select(s => s.Value).FirstOrDefaultAsync();
             }
         }
 
-        private Guid GetDeviceId()
+        private Task<Setting> GetSettingInternalAsync(string name)
         {
-            byte[] id;
-
-            try
+            using (var context = new AgentDbContext())
             {
-                id = Encoding.UTF8.GetBytes(RegistryExtentions.GetRegistryValue(LmsConstants.DeviceIdKeyPath, LmsConstants.DeviceIdKeyName).ToString());
+                return context.Settings.Where(s => s.Name.Equals(name)).FirstOrDefaultAsync();
             }
-            catch (Exception ex)
-            {
-                Logger.Error("Unable to obtain the centrastage device id from the registry. Please manually enter this in the settings.json file.");
-                Logger.Debug(ex.ToString());
-                throw;
-            }
-
-            if (id == null)
-            {
-                throw new AbpException("Unable to obtain the centrastage device id from the registry. Please manually enter this in the settings.json file.");
-            }
-
-            string registryValue = Encoding.UTF8.GetString(id);
-            Guid deviceId;
-            bool valid = Guid.TryParse(registryValue, out deviceId);
-            if (valid)
-            {
-                return deviceId;
-            }
-
-            throw new AbpException("Unable to validate the centrastage device id from the registry.");
         }
 
-        private void SetLogLevel(LogLevel logLevel)
+        private async Task<Setting> InsertOrUpdateSettingValueAsync(string name, string value)
         {
-            IList<LoggingRule> rules = LogManager.Configuration.LoggingRules;
-            var validator = new Regex(LmsConstants.LoggerTarget);
+            Setting setting = await GetSettingInternalAsync(name);
 
-            foreach (LoggingRule rule in rules.Where(r => validator.IsMatch(r.Targets[0].Name)))
+            using (var context = new AgentDbContext())
             {
-                rule.DisableLoggingForLevel(LogLevel.Debug);
-
-                if (!rule.IsLoggingEnabledForLevel(logLevel))
+                // if its not stored in the database, then insert it
+                if (setting == null)
                 {
-                    rule.EnableLoggingForLevel(logLevel);
+                    setting = new Setting(name, value);
                 }
+                else
+                {
+                    setting.Value = value;
+                }
+
+                context.Settings.AddOrUpdate(setting);
+                await context.SaveChangesAsync();
             }
 
-            LogManager.ReconfigExistingLoggers();
+            return setting;
         }
+
+        #endregion
     }
 }

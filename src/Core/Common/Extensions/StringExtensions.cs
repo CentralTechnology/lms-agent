@@ -39,10 +39,10 @@
 
             var sb = new StringBuilder();
 
-            string dash = new String('-', defaultWidth);
+            string dash = new string('-', defaultWidth);
             int titleWidth = defaultWidth - (title.Length + 6);
 
-            string titleLine = new String(' ', titleWidth / 2);
+            string titleLine = new string(' ', titleWidth / 2);
 
             sb.Append(Environment.NewLine);
             sb.AppendLine(dash);

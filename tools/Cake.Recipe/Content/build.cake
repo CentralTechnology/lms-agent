@@ -125,7 +125,8 @@ BuildParameters.Tasks.RestoreTask = Task("Restore")
             {
                 "https://www.nuget.org/api/v2",
                 "https://www.myget.org/F/cake-contrib/api/v2"
-            }
+            },
+			ToolPath = "./.nuget/NuGet.exe"
         });
 });
 

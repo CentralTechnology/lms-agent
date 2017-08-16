@@ -1,9 +1,27 @@
-﻿using System;
-
-namespace EasyConsole
+﻿namespace EasyConsole
 {
+    using System;
+
     public static class Input
     {
+        public static TEnum ReadEnum<TEnum>(string prompt) where TEnum : struct, IConvertible, IComparable, IFormattable
+        {
+            Type type = typeof(TEnum);
+
+            if (!type.IsEnum)
+                throw new ArgumentException("TEnum must be an enumerated type");
+
+            Output.WriteLine(prompt);
+            var menu = new Menu();
+
+            TEnum choice = default(TEnum);
+            foreach (object value in Enum.GetValues(type))
+                menu.Add(Enum.GetName(type, value), () => { choice = (TEnum) value; });
+            menu.Display();
+
+            return choice;
+        }
+
         public static int ReadInt(string prompt, int min, int max)
         {
             Output.DisplayPrompt(prompt);
@@ -28,7 +46,7 @@ namespace EasyConsole
             string input = Console.ReadLine();
             int value;
 
-            while (!int.TryParse(input, out value))
+            while (!Int32.TryParse(input, out value))
             {
                 Output.DisplayPrompt("Please enter an integer");
                 input = Console.ReadLine();
@@ -43,22 +61,25 @@ namespace EasyConsole
             return Console.ReadLine();
         }
 
-        public static TEnum ReadEnum<TEnum>(string prompt) where TEnum : struct, IConvertible, IComparable, IFormattable
+        public static Guid ReadGuid(string prompt)
         {
-            Type type = typeof(TEnum);
+            Output.DisplayPrompt(prompt);
 
-            if (!type.IsEnum)
-                throw new ArgumentException("TEnum must be an enumerated type");
+            return ReadGuid();
+        }
 
-            Output.WriteLine(prompt);
-            Menu menu = new Menu();
+        public static Guid ReadGuid()
+        {
+            string consoleInput = Console.ReadLine();
+            Guid value;
 
-            TEnum choice = default(TEnum);
-            foreach (var value in Enum.GetValues(type))
-                menu.Add(Enum.GetName(type, value), () => { choice = (TEnum)value; });
-            menu.Display();
+            while (!Guid.TryParse(consoleInput, out value))
+            {
+                Output.DisplayPrompt("Please enter a guid");
+                consoleInput = Console.ReadLine();
+            }
 
-            return choice;
+            return value;
         }
     }
 }

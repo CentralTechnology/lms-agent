@@ -5,17 +5,14 @@
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
     using System.Linq;
-    using Abp.Domain.Services;
     using Common;
     using Common.Extensions;
     using Models;
+    using NLog;
 
-    public class UserManager : DomainService, IUserManager
+    public class UserManager
     {
-        public List<LicenseUser> GetUsersAndGroups()
-        {
-            return AllUsers();
-        }
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         ///     Returns a list of all the users from Active Directory.
@@ -93,6 +90,11 @@
             }
 
             return localUsers;
+        }
+
+        public List<LicenseUser> GetUsersAndGroups()
+        {
+            return AllUsers();
         }
     }
 }

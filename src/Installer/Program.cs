@@ -2,53 +2,22 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
-    using Service;
+    using Core.Common.Constants;
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;
 
     class Script
     {
-        static void Main(string[] args)
-        {
-            string productMsi = BuildMsi();
-
-            var version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? typeof(ServiceModule).Assembly.GetName().Version.ToString();
-
-            Bundle bootstrapper = new Bundle(LicenseMonitoringSystemService.ServiceDisplayName)
-            {
-                Manufacturer = "Central Technology Ltd",
-                OutDir = "bin/%Configuration%",
-                OutFileName = "LMS.Setup",
-                UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
-                Version = new Version(version),
-                Chain = new List<ChainItem>
-                {
-                    new PackageGroupRef("NetFx452Redist"),
-                    new ExePackage("../Resources/DotNetFramework/NDP452-KB2901907-x86-x64-AllOS-ENU.exe")
-                    {
-                        Id = "NetFx452FullExe",
-                        Compressed = true,
-                        PerMachine = true,
-                        Permanent = true,
-                        InstallCommand = "/q /norestart",
-                        DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED"
-                    },
-                    new MsiPackage(productMsi) {DisplayInternalUI = true}
-                }
-            };
-
-            bootstrapper.Build();
-        }
         static string BuildMsi()
         {
             File service;
-            Project project = new Project("LMS",
+            var project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
-                    new DirPermission("LocalSystem", GenericPermission.Write | GenericPermission.Execute),
+                    new DirPermission("LocalSystem", GenericPermission.All),
                     service = new File(@"%SolutionDir%/Service/bin/%Configuration%/LMS.exe"),
-                    new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe"))))
+                    new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe")))
+            )
             {
                 ControlPanelInfo = new ProductInfo
                 {
@@ -63,7 +32,7 @@
                     Schedule = UpgradeSchedule.afterInstallInitialize,
                     DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
                 },
-                Name = LicenseMonitoringSystemService.ServiceDisplayName,
+                Name = Constants.ServiceDisplayName,
                 OutDir = "bin/%Configuration%",
                 Platform = Platform.x64,
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
@@ -76,10 +45,10 @@
             service.ServiceInstaller = new ServiceInstaller
             {
                 DelayedAutoStart = true,
-                Description = LicenseMonitoringSystemService.ServiceDescription,
-                DisplayName = LicenseMonitoringSystemService.ServiceDisplayName,
+                Description = Constants.ServiceDescription,
+                DisplayName = Constants.ServiceDisplayName,
                 FirstFailureActionType = FailureActionType.restart,
-                Name = LicenseMonitoringSystemService.ServiceName,
+                Name = Constants.ServiceName,
                 RemoveOn = SvcEvent.Uninstall_Wait,
                 ResetPeriodInDays = 1,
                 RestartServiceDelayInSeconds = 30,
@@ -93,6 +62,52 @@
             };
 
             return Compiler.BuildMsi(project);
+        }
+
+        static void Main(string[] args)
+        {
+            string product = BuildMsi();
+
+            string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            var bootstrapper = new Bundle(Constants.ServiceDisplayName)
+            {
+                Manufacturer = "Central Technology Ltd",
+                OutDir = "bin/%Configuration%",
+                OutFileName = "LMS.Setup",
+                UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
+                Version = new Version(version),
+                Chain = new List<ChainItem>
+                {
+                    new PackageGroupRef("NetFx452Redist"),
+                    new ExePackage
+                    {
+                        DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED",
+                        Id = "NetFx452FullExe",
+                        InstallCommand = "/q /norestart",
+                        Compressed = true,
+                        SourceFile = "../Resources/DotNetFramework/NDP452-KB2901907-x86-x64-AllOS-ENU.exe",
+                        PerMachine = true,
+                        Permanent = true,
+                        Vital = true
+                    },
+                    new ExePackage
+                    {
+                        Compressed = true,
+                        InstallCommand = "/i /qb",
+                        PerMachine = true,
+                        Permanent = true,
+                        SourceFile = "../Resources/SQLCompact/SSCERuntime_x64-ENU.exe",
+                        Vital = true
+                    },
+                    new MsiPackage(product)
+                    {
+                        DisplayInternalUI = true
+                    }
+                }
+            };
+
+            bootstrapper.Build();
         }
     }
 }

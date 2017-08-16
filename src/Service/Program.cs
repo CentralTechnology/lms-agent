@@ -1,9 +1,8 @@
 ﻿namespace Service
 {
-    using Abp;
     using Abp.Timing;
-    using Abp.Topshelf;
-    using Castle.Facilities.Logging;
+    using Core.Common.Constants;
+    using SharpRaven.Data;
     using Topshelf;
 
     class Runner
@@ -13,34 +12,30 @@
         /// </summary>
         static void Main(string[] args)
         {
-            Clock.Provider = ClockProviders.Utc;
+            Clock.Provider = ClockProviders.Utc;          
 
-            using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<ServiceModule>())
+            HostFactory.Run(x =>
             {
-                bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseNLog().WithConfig("NLog.config"));
-                bootstrapper.Initialize();
-
-                HostFactory.Run(serviceConfig =>
+                x.Service<LmsService>(sc =>
                 {
-                    // ReSharper disable once AccessToDisposedClosure
-                    serviceConfig.UseAbp(bootstrapper);
-                    serviceConfig.RunAsLocalSystem();
-                    serviceConfig.SetServiceName(LicenseMonitoringSystemService.ServiceName);
-                    serviceConfig.SetDisplayName(LicenseMonitoringSystemService.ServiceDisplayName);
-                    serviceConfig.SetDescription(LicenseMonitoringSystemService.ServiceDescription);
-                    serviceConfig.StartAutomaticallyDelayed();
+                    sc.ConstructUsing(() => new LmsService());
 
-                    serviceConfig.Service<LicenseMonitoringSystemService>(serviceInstance =>
-                    {
-                        serviceInstance.ConstructUsingAbp();
+                    sc.WhenStarted(s => s.Start());
+                    sc.WhenStopped(s => s.Stop());
 
-                        serviceInstance.WhenStarted(execute => execute.Start());
+                    sc.WhenPaused(s => s.Pause());
+                    sc.WhenContinued(s => s.Continue());
 
-                        serviceInstance.WhenStopped(execute => execute.Stop());
-                    });
-
+                    sc.WhenShutdown(s => s.Shutdown());
                 });
-            }
+
+                x.UseNLog();
+                x.RunAsLocalSystem();
+                x.SetServiceName(Constants.ServiceName);
+                x.SetDisplayName(Constants.ServiceDisplayName);
+                x.SetDescription(Constants.ServiceDescription);
+                x.StartAutomatically();
+            });
         }
     }
 }

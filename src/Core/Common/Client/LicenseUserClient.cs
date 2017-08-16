@@ -4,17 +4,19 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Abp.Domain.Services;
     using Extensions;
     using Models;
+    using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class LicenseUserClient : DomainService, ILicenseUserClient
+    public class LicenseUserClient
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public async Task Add(List<LicenseUser> users)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < users.Count; index++)
             {
@@ -37,11 +39,6 @@
                         user.WhenCreated
                     }).InsertEntryAsync();
                 }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to create user: {user.DisplayName}.");
-                    ExceptionExtensions.HandleWebRequestException(ex);
-                }
                 catch (Exception ex)
                 {
                     Logger.Error($"Unable to create user: {user.DisplayName}.");
@@ -51,9 +48,27 @@
             }
         }
 
+        public async Task<List<LicenseUser>> GetAll()
+        {
+            try
+            {
+                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
+                IEnumerable<LicenseUser> users = await client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
+                List<LicenseUser> licenseUsers = users.ToList();
+                Logger.Debug($"{licenseUsers.Count} users returned from the api.");
+                return licenseUsers;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed to obtain a list of users from the api.");
+                Logger.Debug(ex);
+                return null;
+            }
+        }
+
         public async Task Remove(List<LicenseUser> users)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < users.Count; index++)
             {
@@ -63,11 +78,6 @@
                 {
                     Logger.Debug($"Removing user: {user.DisplayName}");
                     await client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
-                }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to remove user: {user.DisplayName}.");
-                    ExceptionExtensions.HandleWebRequestException(ex);
                 }
                 catch (Exception ex)
                 {
@@ -80,7 +90,7 @@
 
         public async Task Update(List<LicenseUser> users)
         {
-            var client = new ODataClient(new ODataLicenseClientSettings());
+            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
 
             for (int index = 0; index < users.Count; index++)
             {
@@ -101,40 +111,12 @@
                         user.WhenCreated
                     }).UpdateEntryAsync();
                 }
-                catch (WebRequestException ex)
-                {
-                    Logger.Error($"Unable to update user: {user.DisplayName}.");
-                    ExceptionExtensions.HandleWebRequestException(ex);
-                }
                 catch (Exception ex)
                 {
                     Logger.Error($"Unable to update user: {user.DisplayName}.");
                     Logger.Debug($"User: {user.Dump()}");
                     Logger.Debug(ex.ToString());
                 }
-            }
-        }
-
-        public async Task<List<LicenseUser>> GetAll()
-        {
-            try
-            {
-                var client = new ODataClient(new ODataLicenseClientSettings());
-                IEnumerable<LicenseUser> users = await client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
-                List<LicenseUser> licenseUsers = users.ToList();
-                Logger.Debug($"{licenseUsers.Count} users returned from the api.");
-                return licenseUsers;
-            }
-            catch (WebRequestException ex)
-            {
-                ExceptionExtensions.HandleWebRequestException(ex);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to obtain a list of users from the api.");
-                Logger.DebugFormat("Exception: ", ex);
-                return null;
             }
         }
     }
