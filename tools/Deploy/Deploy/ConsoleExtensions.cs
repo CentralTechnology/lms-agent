@@ -19,7 +19,7 @@ namespace Deploy
         public static void Information(string message)
         {
             var oldColor = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine(message);
             Console.ForegroundColor = oldColor;
         }

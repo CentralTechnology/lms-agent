@@ -1,20 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Deploy.ConsoleExtensions;
+﻿using static Deploy.ConsoleExtensions;
 
 namespace Deploy
 {
+    using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.Net;
+    using System.Linq;
+    using System.Reflection;
+    using System.Resources;
+    using System.Text;
+    using System.Threading.Tasks;
     using Core.Common.Extensions;
     using Octokit;
 
     class Program
     {
+        public static GitHubClient Client { get; set; }
+        public static string LogFilename { get; set; }
+
+        public static string SetupFilename { get; set; }
+
+        public static void CopyStream(Stream input, Stream output)
+        {
+            input.CopyTo(output);
+        }
+
+        static async Task Install(Release latest)
+        {
+            int assetId = latest.Assets.Where(x => x.Name == "LMS.Setup.exe").Select(x => x.Id).SingleOrDefault();
+
+            ReleaseAsset asset = await Client.Repository.Release.GetAsset("CentralTechnology", "lms-agent", assetId);
+
+            Information("Downloading the new version");
+            try
+            {
+                IApiResponse<byte[]> response = await Client.Connection.Get<byte[]>(new Uri(asset.Url), new Dictionary<string, string>(), "application/octet-stream");
+
+                using (var streamReader = new MemoryStream(response.Body))
+                {
+                    using (FileStream output = File.OpenWrite(SetupFilename))
+                    {
+                        CopyStream(streamReader, output);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                Error("Download failed");
+                throw;
+            }
+
+            Information("Installing the new version");
+            try
+            {
+                Process proc = Process.Start(SetupFilename, string.Format("/install /quiet /log {0}", LogFilename));
+                if (proc == null)
+                {
+                    throw new NullReferenceException("Unable to launch the installer process");
+                }
+
+                proc.WaitForExit();
+            }
+            catch (Exception)
+            {
+                Error("Installation failed");
+                throw;
+            }
+
+            Success("Installation complete");
+        }
+
         static void Main(string[] args)
         {
             Information("Starting deployment....");
@@ -22,7 +78,6 @@ namespace Deploy
             try
             {
                 MainAsync(args).GetAwaiter().GetResult();
-                Console.ReadLine();
             }
             catch (Exception ex)
             {
@@ -36,29 +91,30 @@ namespace Deploy
 
         static async Task MainAsync(string[] args)
         {
-            var filename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
-            var logname = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
+            SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
+            LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
+
+            var resourceManager = new ResourceManager("Deploy.Integration", Assembly.GetExecutingAssembly());
 
             Information("Getting credentials");
 
-            var username = Environment.GetEnvironmentVariable("GITHUB_USERNAME") ?? "centraltechdev";
-
+            string username = Encoding.UTF8.GetString(Convert.FromBase64String(resourceManager.GetString("GITHUB_USERNAME")));
             if (username == null)
             {
                 throw new NullReferenceException("Github username is not set");
             }
-            var password = Environment.GetEnvironmentVariable("GITHUB_PASSWORD") ?? "fling-pgP6yH";
 
+            string password = Encoding.UTF8.GetString(Convert.FromBase64String(resourceManager.GetString("GITHUB_PASSWORD")));
             if (password == null)
             {
                 throw new NullReferenceException("Github username is not set");
             }
 
-            var client = new GitHubClient(new ProductHeaderValue("lms-deploy"));
+            Client = new GitHubClient(new ProductHeaderValue("lms-deploy"));
             var basicAuth = new Credentials(username, password);
-            client.Credentials = basicAuth;
+            Client.Credentials = basicAuth;
 
-            var latest = await client.Repository.Release.GetLatest("CentralTechnology", "lms-agent");
+            Release latest = await Client.Repository.Release.GetLatest("CentralTechnology", "lms-agent");
             Version latestVersion;
             try
             {
@@ -74,7 +130,13 @@ namespace Deploy
             Information(string.Format("Version Installed: {0}", installedVersion));
             Information(string.Format("Version Available: {0}", latestVersion));
 
-            var versionResult = latestVersion.CompareTo(installedVersion);
+            if (installedVersion == null)
+            {
+                await Install(latest);
+                return;
+            }
+
+            int versionResult = installedVersion.CompareTo(latestVersion);
 
             if (versionResult == 0)
             {
@@ -82,64 +144,20 @@ namespace Deploy
                 return;
             }
 
-            if (versionResult > 0)
+            if (versionResult < 0)
             {
                 Information("Update Required");
 
-                var assetId = latest.Assets.Where(x => x.Name == "LMS.Setup.exe").Select(x => x.Id).SingleOrDefault();
-
-                ReleaseAsset asset = await client.Repository.Release.GetAsset("CentralTechnology", "lms-agent", assetId);
-
-                Information("Downloading the new version");
-                try
-                {
-                    var response = await client.Connection.Get<byte[]>(new Uri(asset.Url), new Dictionary<string, string>(), "application/octet-stream");
-
-                    using (var streamReader = new MemoryStream(response.Body))
-                    {
-                        using (var output = File.OpenWrite(filename))
-                        {
-                            CopyStream(streamReader, output);
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    Error("Download failed");
-                    throw;
-                }
-
-                Information("Installing the new version");
-                try
-                {
-                    var proc = Process.Start(filename, string.Format("/install /quiet /log {0}", logname));
-                    proc.WaitForExit();
-                }
-                catch (Exception)
-                {
-                    Error("Installation failed");
-                    throw;
-                }
-
-                Success("Installed complete");
+                await Install(latest);
 
                 return;
             }
 
-            if (versionResult < 0)
+            if (versionResult > 0)
             {
                 Information("Somehow the installed version is newer than whats available");
                 Information("Can't really do much about that");
-                return;
             }
-
-            
-            Console.ReadLine();
-        }
-
-        public static void CopyStream(Stream input, Stream output)
-        {
-            input.CopyTo(output);
         }
     }
 }
