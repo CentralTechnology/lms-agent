@@ -11,32 +11,95 @@ namespace Deploy
     using System.Resources;
     using System.Text;
     using System.Threading.Tasks;
+    using Abp.Threading;
     using Core.Common.Extensions;
     using Octokit;
+    using Octokit.Internal;
 
     class Program
     {
-        public static GitHubClient Client { get; set; }
-        public static string LogFilename { get; set; }
+        static readonly string LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
 
-        public static string SetupFilename { get; set; }
+        static readonly string owner = "CentralTechnology";
+        static readonly string name = "lms-agent";
+        static readonly string SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
+
+        static InMemoryCredentialStore _credentials;
+        private static GitHubClient _client;
+
+        static readonly ResourceManager ResourceManager = new ResourceManager("Deploy.Integration", Assembly.GetExecutingAssembly());
 
         public static void CopyStream(Stream input, Stream output)
         {
             input.CopyTo(output);
         }
 
-        static async Task Install(Release latest)
+        static void Deploy()
         {
-            int assetId = latest.Assets.Where(x => x.Name == "LMS.Setup.exe").Select(x => x.Id).SingleOrDefault();
+            Release release = AsyncHelper.RunSync(() => _client.Repository.Release.GetLatest(owner, name));
 
-            ReleaseAsset asset = await Client.Repository.Release.GetAsset("CentralTechnology", "lms-agent", assetId);
-
-            Information("Downloading the new version");
+            Version latestVersion;
             try
             {
-                IApiResponse<byte[]> response = await Client.Connection.Get<byte[]>(new Uri(asset.Url), new Dictionary<string, string>(), "application/octet-stream");
+                latestVersion = new Version(release.TagName);
+            }
+            catch (FormatException)
+            {
+                throw new FormatException("GitHub tag name is not in the correct format");
+            }
 
+            Version installedVersion = CommonExtensions.GetApplicationVersion("License Monitoring System");
+
+            Information(string.Format("Version Installed: {0}", installedVersion));
+            Information(string.Format("Version Available: {0}", latestVersion));
+
+            if (installedVersion == null || installedVersion.CompareTo(latestVersion) < 0)
+            {
+                GetAsset(release);
+            }
+
+            if (installedVersion != null && installedVersion.CompareTo(latestVersion) > 0)
+            {
+                Information("Somehow the installed version is newer than whats available");
+                Information("Can't really do much about that");
+                return;
+            }
+
+            if (installedVersion != null && installedVersion.CompareTo(latestVersion) == 0)
+            {
+                Information("No update required.");
+            }
+        }
+
+        static void GetAsset(Release release)
+        {
+            int assetId = release.Assets.Where(x => x.Name == "LMS.Setup.exe").Select(x => x.Id).SingleOrDefault();
+
+            ReleaseAsset asset = AsyncHelper.RunSync(() => _client.Repository.Release.GetAsset(owner, name, assetId));
+
+            IApiResponse<byte[]> response;
+            try
+            {
+                Information(string.Format("Downloading: {0}", release.TagName));
+                response = AsyncHelper.RunSync(() => _client.Connection.Get<byte[]>(new Uri(asset.Url), new Dictionary<string, string>(), "application/octet-stream"));
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (ex.CancellationToken.IsCancellationRequested)
+                {
+                    Error("Download failed - Cancelled by end user");
+                }
+                else
+                {
+                    Error("Download failed - Http Timeout (most likely)");
+                }
+
+                throw;
+            }
+
+            Information("Saving the new version");
+            try
+            {
                 using (var streamReader = new MemoryStream(response.Body))
                 {
                     using (FileStream output = File.OpenWrite(SetupFilename))
@@ -47,7 +110,7 @@ namespace Deploy
             }
             catch (Exception)
             {
-                Error("Download failed");
+                Error("Saving failed");
                 throw;
             }
 
@@ -75,9 +138,26 @@ namespace Deploy
         {
             Information("Starting deployment....");
 
+            Information("Getting credentials");
+
+            string username = Encoding.UTF8.GetString(Convert.FromBase64String(ResourceManager.GetString("GITHUB_USERNAME")));
+            if (username == null)
+            {
+                throw new NullReferenceException("Github username is not set");
+            }
+
+            string password = Encoding.UTF8.GetString(Convert.FromBase64String(ResourceManager.GetString("GITHUB_PASSWORD")));
+            if (password == null)
+            {
+                throw new NullReferenceException("Github username is not set");
+            }
+
+            _credentials = new InMemoryCredentialStore(new Credentials(username, password));
+            _client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"), _credentials);
+
             try
             {
-                MainAsync(args).GetAwaiter().GetResult();
+                Deploy();
             }
             catch (Exception ex)
             {
@@ -87,77 +167,6 @@ namespace Deploy
             }
 
             Success("************ Deployment  Successful ************");
-        }
-
-        static async Task MainAsync(string[] args)
-        {
-            SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
-            LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
-
-            var resourceManager = new ResourceManager("Deploy.Integration", Assembly.GetExecutingAssembly());
-
-            Information("Getting credentials");
-
-            string username = Encoding.UTF8.GetString(Convert.FromBase64String(resourceManager.GetString("GITHUB_USERNAME")));
-            if (username == null)
-            {
-                throw new NullReferenceException("Github username is not set");
-            }
-
-            string password = Encoding.UTF8.GetString(Convert.FromBase64String(resourceManager.GetString("GITHUB_PASSWORD")));
-            if (password == null)
-            {
-                throw new NullReferenceException("Github username is not set");
-            }
-
-            Client = new GitHubClient(new ProductHeaderValue("lms-deploy"));
-            var basicAuth = new Credentials(username, password);
-            Client.Credentials = basicAuth;
-
-            Release latest = await Client.Repository.Release.GetLatest("CentralTechnology", "lms-agent");
-            Version latestVersion;
-            try
-            {
-                latestVersion = new Version(latest.TagName);
-            }
-            catch (FormatException)
-            {
-                throw new FormatException("GitHub tag name is not in the correct format");
-            }
-
-            Version installedVersion = CommonExtensions.GetApplicationVersion("License Monitoring System");
-
-            Information(string.Format("Version Installed: {0}", installedVersion));
-            Information(string.Format("Version Available: {0}", latestVersion));
-
-            if (installedVersion == null)
-            {
-                await Install(latest);
-                return;
-            }
-
-            int versionResult = installedVersion.CompareTo(latestVersion);
-
-            if (versionResult == 0)
-            {
-                Information("No update required.");
-                return;
-            }
-
-            if (versionResult < 0)
-            {
-                Information("Update Required");
-
-                await Install(latest);
-
-                return;
-            }
-
-            if (versionResult > 0)
-            {
-                Information("Somehow the installed version is newer than whats available");
-                Information("Can't really do much about that");
-            }
         }
     }
 }
