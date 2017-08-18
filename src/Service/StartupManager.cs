@@ -35,7 +35,7 @@
 
                 bool monVeeam = MonitorVeeam();
                 SettingManager.ChangeSetting(SettingNames.MonitorVeeam, monVeeam.ToString());
-                Logger.Info(monUsers ? "Monitoring Veeam" : "Not Monitoring Veeam");
+                Logger.Info(monVeeam ? "Monitoring Veeam" : "Not Monitoring Veeam");
                 Console.WriteLine(Environment.NewLine);
             }
             catch (Exception ex)
