@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
-    using Common.Constants;
     using EntityFramework;
     using NLog;
     using SharpRaven;
@@ -19,7 +18,7 @@
 
         public SettingManager()
         {
-            RavenClient = new RavenClient(Constants.SentryDSN);
+            RavenClient = Sentry.RavenClient.New();
         }
 
         public async Task ChangeSettingAsync(string name, string value)

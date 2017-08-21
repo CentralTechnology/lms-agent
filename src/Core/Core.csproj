@@ -204,6 +204,7 @@
     <Compile Include="Common\Constants\Constants.cs" />
     <Compile Include="Common\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Common\Extensions\IDataReaderExtensions.cs" />
+    <Compile Include="Common\Extensions\TypeExtensions.cs" />
     <Compile Include="Common\Extensions\VeeamExtensions.cs" />
     <Compile Include="Common\Extensions\DirectoryEntryExtensions.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.cs" />
@@ -215,6 +216,8 @@
     <Compile Include="Common\Extensions\StringExtensions.cs" />
     <Compile Include="Common\Extensions\UserFlagExtensions.cs" />
     <Compile Include="Common\Extensions\PrincipleExtensions.cs" />
+    <Compile Include="Common\Helpers\AppVersionHelper.cs" />
+    <Compile Include="Common\Helpers\DebuggingService.cs" />
     <Compile Include="DirectoryServices\DirectoryServicesManager.cs" />
     <Compile Include="EntityFramework\AgentDbContext.cs" />
     <Compile Include="Factory\ClientFactory.cs" />
@@ -232,6 +235,7 @@
     <Compile Include="Models\ManagedSupport.cs" />
     <Compile Include="OrchestratorManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sentry\RavenClient.cs" />
     <Compile Include="Users\UserManager.cs" />
     <Compile Include="Users\UserOrchestrator.cs" />
     <Compile Include="Factory\VeeamFactory.cs" />
