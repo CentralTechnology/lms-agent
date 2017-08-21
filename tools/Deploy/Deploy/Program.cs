@@ -15,6 +15,7 @@ namespace Deploy
     using Core.Common.Extensions;
     using Octokit;
     using Octokit.Internal;
+    using Version = SemVer.Version;
 
     class Program
     {
@@ -48,24 +49,34 @@ namespace Deploy
                 throw new FormatException("GitHub tag name is not in the correct format");
             }
 
-            Version installedVersion = CommonExtensions.GetApplicationVersion("License Monitoring System");
+            Version installedVersion;
+            try
+            {
+                System.Version appVersion = CommonExtensions.GetApplicationVersion("License Monitoring System");
+                installedVersion = new Version(appVersion.Major, appVersion.Minor, appVersion.Build);
+            }
+            catch (Exception)
+            {
+                Information("Unable to determine the version of the agent installed. So i'm going to make one up.");
+                installedVersion = new Version("1.0.0");
+            }
 
             Information(string.Format("Version Installed: {0}", installedVersion));
             Information(string.Format("Version Available: {0}", latestVersion));
 
-            if (installedVersion == null || installedVersion.CompareTo(latestVersion) < 0)
+            if (installedVersion.CompareTo(latestVersion) < 0)
             {
                 GetAsset(release);
             }
 
-            if (installedVersion != null && installedVersion.CompareTo(latestVersion) > 0)
+            if (installedVersion.CompareTo(latestVersion) > 0)
             {
                 Information("Somehow the installed version is newer than whats available");
                 Information("Can't really do much about that");
                 return;
             }
 
-            if (installedVersion != null && installedVersion.CompareTo(latestVersion) == 0)
+            if (installedVersion.CompareTo(latestVersion) == 0)
             {
                 Information("No update required.");
             }
