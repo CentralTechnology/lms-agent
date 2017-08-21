@@ -1,6 +1,7 @@
 ﻿namespace Service.Workers
 {
     using System;
+    using System.IO;
     using Abp.Threading;
     using Core.Factory;
     using ServiceTimer;
@@ -8,6 +9,9 @@
 
     internal class VeeamMonitorWorker : TimerWorker
     {
+        private const string FailedMessage = "************ Veeam Monitoring Failed ************";
+        private const string SuccessMessage = "************ Veeam Monitoring Successful ************";
+
         /// <summary>
         ///     30 second start up delay
         ///     10 second check
@@ -32,13 +36,23 @@
             {
                 AsyncHelper.RunSync(() => OrchestratorFactory.VeeamOrchestrator().Start());
 
-                Logger.Info("************ Veeam Monitoring Successful ************");
+                Logger.Info(SuccessMessage);
+            }
+            catch (IOException ex)
+            {
+                // chances are the reason this is thrown is because the client is low on disk space.
+                // therefore we output to console instead of the logger.
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(FailedMessage);
+                Console.ResetColor();
             }
             catch (Exception ex)
             {
                 RavenClient.Capture(new SentryEvent(ex));
                 Logger.Error(ex.Message);
-                Logger.Error("************ Veeam Monitoring Failed ************");
+                Logger.Error(FailedMessage);
             }
         }
     }
