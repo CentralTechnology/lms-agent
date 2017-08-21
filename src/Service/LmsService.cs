@@ -18,7 +18,11 @@
 
             Log.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
             
-            StartupManager.Init();
+            var started = StartupManager.Init();
+            if (!started)
+            {
+                return false;
+            }
 
             if (Environment.UserInteractive)
             {

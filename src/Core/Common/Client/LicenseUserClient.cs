@@ -17,7 +17,7 @@
         public async Task Add(List<LicenseUser> users)
         {
             var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-
+            
             for (int index = 0; index < users.Count; index++)
             {
                 LicenseUser user = users[index];

@@ -4,6 +4,7 @@
     using System.IO;
     using Abp.Threading;
     using Core.Factory;
+    using Core.Veeam;
     using ServiceTimer;
     using SharpRaven.Data;
 
@@ -11,7 +12,7 @@
     {
         private const string FailedMessage = "************ Veeam Monitoring Failed ************";
         private const string SuccessMessage = "************ Veeam Monitoring Successful ************";
-
+        protected VeeamManager VeeamManager;
         /// <summary>
         ///     30 second start up delay
         ///     10 second check
@@ -20,6 +21,7 @@
         internal VeeamMonitorWorker()
             : base(30000, 10000, 180)
         {
+            VeeamManager = new VeeamManager();
         }
 
         /// <inheritdoc />
@@ -34,6 +36,15 @@
 
             try
             {
+                bool veeamOnline = VeeamManager.VeeamOnline();
+                if (!veeamOnline)
+                {
+                    Logger.Error("Cannot contact the Veeam server. Please make sure all the Veeam services are started.");
+                    Logger.Error("We cannot go on like this.");
+                    Logger.Error(FailedMessage);
+                    return;
+                }
+
                 AsyncHelper.RunSync(() => OrchestratorFactory.VeeamOrchestrator().Start());
 
                 Logger.Info(SuccessMessage);

@@ -12,6 +12,7 @@
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
+    using Simple.OData.Client;
 
     public class StartupManager
     {
@@ -21,7 +22,7 @@
         protected SettingManager SettingManager = new SettingManager();
         protected VeeamManager VeeamManager = new VeeamManager();
 
-        public void Init()
+        public bool Init()
         {
             Logger.Info("Running initialisation...");
             Console.WriteLine(Environment.NewLine);
@@ -48,6 +49,12 @@
             {
                 ValidateApiCredentials();
             }
+            catch (WebRequestException ex)
+            {
+                Logger.Error(ex.Message);
+                Logger.Error("************ Initialisation  Failed ************");
+                return false;
+            }
             catch (Exception ex)
             {
                 RavenClient.Capture(new SentryEvent(ex));
@@ -57,6 +64,7 @@
             }
 
             Logger.Info("************ Initialisation  Successful ************");
+            return true;
         }
 
         private bool MonitorUsers()
@@ -163,9 +171,9 @@
             int storedAccount = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
             if (storedAccount == default(int))
             {
-                int reportedAccount = AsyncHelper.RunSync(() => ProfileClient.GetAccountByDeviceId(deviceId));
+                int? reportedAccount = AsyncHelper.RunSync(() => ProfileClient.GetAccountByDeviceId(deviceId));
 
-                if (reportedAccount == default(int))
+                if (reportedAccount == null)
                 {
                     Logger.Warn("Check Account: FAIL");
                     throw new AbpException("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
