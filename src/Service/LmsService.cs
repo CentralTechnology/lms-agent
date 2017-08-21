@@ -3,6 +3,7 @@
     using System;
     using Core.Administration;
     using Core.Common.Extensions;
+    using Core.Common.Helpers;
     using Menu;
     using ServiceTimer;
     using Workers;
@@ -15,6 +16,8 @@
         {
             DefaultLog();
 
+            Log.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
+            
             StartupManager.Init();
 
             if (Environment.UserInteractive)
