@@ -1,6 +1,5 @@
 ﻿namespace Core.Common.Client
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -19,31 +18,33 @@
 
         public async Task Add(List<LicenseUser> users)
         {
-            for (int index = 0; index < users.Count; index++)
+            foreach (LicenseUser user in users)
             {
-                LicenseUser user = users[index];
+                await Add(user);
+            }
+        }
 
-                try
+        public async Task Add(LicenseUser user)
+        {
+            try
+            {
+                await Client.For<LicenseUser>().Set(new
                 {
-                    await Client.For<LicenseUser>().Set(new
-                    {
-                        user.DisplayName,
-                        user.Email,
-                        user.Enabled,
-                        user.FirstName,
-                        user.Id,
-                        user.LastLoginDate,
-                        user.ManagedSupportId,
-                        user.Surname,
-                        user.WhenCreated
-                    }).InsertEntryAsync();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to create user: {user.DisplayName}.");
-                    Logger.Debug($"User: {user.Dump()}");
-                    Logger.Debug(ex.ToString());
-                }
+                    user.DisplayName,
+                    user.Email,
+                    user.Enabled,
+                    user.FirstName,
+                    user.Id,
+                    user.LastLoginDate,
+                    user.ManagedSupportId,
+                    user.Surname,
+                    user.WhenCreated
+                }).InsertEntryAsync();
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error($"Error creating user: {user.DisplayName}");
+                ex.Handle(Logger);
             }
         }
 
@@ -51,71 +52,64 @@
         {
             try
             {
-                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                IEnumerable<LicenseUser> users = await client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
-                List<LicenseUser> licenseUsers = users.ToList();
-                Logger.Debug($"{licenseUsers.Count} users returned from the api.");
-                return licenseUsers;
+                IEnumerable<LicenseUser> users = await Client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
+                return users.ToList();
             }
-            catch (Exception ex)
+            catch (WebRequestException ex)
             {
-                Logger.Error("Failed to obtain a list of users from the api.");
-                Logger.Debug(ex);
+                ex.Handle(Logger);
                 return null;
             }
         }
 
         public async Task Remove(List<LicenseUser> users)
         {
-            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-
-            for (int index = 0; index < users.Count; index++)
+            foreach (LicenseUser user in users)
             {
-                LicenseUser user = users[index];
+                await Remove(user);
+            }
+        }
 
-                try
-                {
-                    Logger.Debug($"Removing user: {user.DisplayName}");
-                    await client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to delete user: {user.DisplayName}");
-                    Logger.Debug($"User: {user.Dump()}");
-                    Logger.Debug(ex.ToString());
-                }
+        public async Task Remove(LicenseUser user)
+        {
+            try
+            {
+                await Client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error($"Error removing user: {user.DisplayName}");
+                ex.Handle(Logger);
             }
         }
 
         public async Task Update(List<LicenseUser> users)
         {
-            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-
-            for (int index = 0; index < users.Count; index++)
+            foreach (LicenseUser user in users)
             {
-                LicenseUser user = users[index];
+                await Update(user);
+            }
+        }
 
-                try
+        public async Task Update(LicenseUser user)
+        {
+            try
+            {
+                await Client.For<LicenseUser>().Key(user.Id).Set(new
                 {
-                    Logger.Debug($"Updating user: {user.DisplayName}");
-
-                    await client.For<LicenseUser>().Key(user.Id).Set(new
-                    {
-                        user.DisplayName,
-                        user.Email,
-                        user.Enabled,
-                        user.FirstName,
-                        user.LastLoginDate,
-                        user.Surname,
-                        user.WhenCreated
-                    }).UpdateEntryAsync();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to update user: {user.DisplayName}.");
-                    Logger.Debug($"User: {user.Dump()}");
-                    Logger.Debug(ex.ToString());
-                }
+                    user.DisplayName,
+                    user.Email,
+                    user.Enabled,
+                    user.FirstName,
+                    user.LastLoginDate,
+                    user.Surname,
+                    user.WhenCreated
+                }).UpdateEntryAsync();
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error($"Error updating user: {user.DisplayName}");
+                ex.Handle(Logger);
             }
         }
     }

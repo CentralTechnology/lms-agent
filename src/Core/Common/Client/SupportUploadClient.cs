@@ -4,85 +4,53 @@ namespace Core.Common.Client
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Abp.Timing;
-    using Factory;
+    using Extensions;
     using Models;
-    using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class SupportUploadClient
+    public class SupportUploadClient : LmsClientBase
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        /// <inheritdoc />
+        public SupportUploadClient() : base(new ODataPortalAuthenticationClientSettings())
+        {
+        }
 
         public async Task<ManagedSupport> Add(ManagedSupport upload)
         {
-                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                return await client.For<ManagedSupport>().Set(upload).InsertEntryAsync();
+            return await Client.For<ManagedSupport>().Set(upload).InsertEntryAsync();
         }
 
-        public async Task<ManagedSupport> Get(int id)
+        public async Task<int?> GetIdByDeviceId(Guid deviceId)
         {
-            try
-            {
-                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                ManagedSupport upload = await client.For<ManagedSupport>().Key(id).Expand(s => s.Users).FindEntryAsync();
-                return upload;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"Unable to get upload with id: {id}");
-                Logger.Debug(ex.ToString());
-                return null;
-            }
+            return await Client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int?>();
         }
 
         public async Task<int> GetNewUploadId()
         {
-            try
-            {
-                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                return await client.For<ManagedSupport>().Function("NewUploadId").ExecuteAsScalarAsync<int>();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to get a new upload id");
-                Logger.Debug(ex.ToString());
-
-                // default return from the api
-                return 0;
-            }
+            return await Client.For<ManagedSupport>().Function("NewUploadId").ExecuteAsScalarAsync<int>();
         }
 
         public async Task<CallInStatus> GetStatusByDeviceId(Guid deviceId)
         {
             try
             {
-                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                return await client.For<ManagedSupport>().Function("GetCallInStatus").Set(new {deviceId}).ExecuteAsScalarAsync<CallInStatus>();
+                return await Client.For<ManagedSupport>().Function("GetCallInStatus").Set(new {deviceId}).ExecuteAsScalarAsync<CallInStatus>();
             }
-            catch (Exception ex)
+            catch (WebRequestException ex)
             {
-                Logger.Error($"Status: {ex.Message}");
-                Logger.Error($"Failed to get the call in status for device: {deviceId}");
-                Logger.Debug(ex.ToString());
+                Logger.Error("Error getting the current upload status.");
+                ex.Handle(Logger);
 
-                // by default return not called in, its not the end of the world if they call in twice
                 return CallInStatus.NotCalledIn;
             }
-        }
-
-        public async Task<int?> GetUploadIdByDeviceId(Guid deviceId)
-        {
-                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                return await client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int?>();
         }
 
         public async Task<List<LicenseUser>> GetUsers(int uploadId)
         {
             try
             {
-                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                ManagedSupport upload = await client.For<ManagedSupport>()
+                ManagedSupport upload = await Client.For<ManagedSupport>()
                     .Key(uploadId)
                     .Expand(x => x.Users)
                     .FindEntryAsync();
@@ -90,10 +58,10 @@ namespace Core.Common.Client
                 // return a new list if null, could just be the first check in
                 return upload.Users ?? new List<LicenseUser>();
             }
-            catch (Exception ex)
+            catch (WebRequestException ex)
             {
-                Logger.Error($"Failed to get the users for upload: {uploadId}");
-                Logger.Debug(ex.ToString());
+                Logger.Error($"Error getting users for upload: {uploadId}");
+                ex.Handle(Logger);
                 return null;
             }
         }
@@ -102,13 +70,11 @@ namespace Core.Common.Client
         {
             int uploadId = await GetNewUploadId();
 
-            string version = SettingFactory.SettingsManager().GetClientVersion();
-            Logger.Debug($"Current client version: {version}");
+            string version = SettingManager.GetClientVersion();
 
             try
             {
-                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                await client.For<ManagedSupport>().Key(id).Set(new
+                await Client.For<ManagedSupport>().Key(id).Set(new
                 {
                     CheckInTime = Clock.Now,
                     ClientVersion = version,
@@ -117,10 +83,10 @@ namespace Core.Common.Client
                     UploadId = uploadId
                 }).UpdateEntryAsync();
             }
-            catch (Exception ex)
+            catch (WebRequestException ex)
             {
-                Logger.Error($"Failed to update upload: {id}");
-                Logger.Debug(ex.ToString());
+                Logger.Error("Error calling in.");
+                ex.Handle(Logger);
             }
         }
     }

@@ -4,103 +4,78 @@
     using System.Threading.Tasks;
     using Extensions;
     using Models;
-    using NLog;
     using OData;
     using Simple.OData.Client;
     using Veeam;
 
-    public class VeeamClient
+    public class VeeamClient : LmsClientBase
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly ODataClient _client;
-
+        /// <inheritdoc />
         public VeeamClient()
+            : base(new ODataPortalAuthenticationClientSettings())
         {
-            _client = new ODataClient(new ODataPortalAuthenticationClientSettings());
         }
 
         public async Task Add(Veeam veeam)
         {
-            try
-            {
-                await _client.For<Veeam>()
-                    .Set(new
-                    {
-                        veeam.CheckInTime,
-                        veeam.ClientVersion,
-                        veeam.Edition,
-                        veeam.ExpirationDate,
-                        veeam.HyperV,
-                        veeam.Id,
-                        veeam.LicenseType,
-                        veeam.ProgramVersion,
-                        veeam.Status,
-                        veeam.SupportId,
-                        veeam.TenantId,
-                        veeam.UploadId,
-                        veeam.vSphere
-                    }).InsertEntryAsync().ConfigureAwait(false);
-            }
-            catch (WebRequestException ex)
-            {
-                ex.Handle(Logger);
-                throw;
-            }
+            await Client.For<Veeam>()
+                .Set(new
+                {
+                    veeam.CheckInTime,
+                    veeam.ClientVersion,
+                    veeam.Edition,
+                    veeam.ExpirationDate,
+                    veeam.HyperV,
+                    veeam.Id,
+                    veeam.LicenseType,
+                    veeam.ProgramVersion,
+                    veeam.Status,
+                    veeam.SupportId,
+                    veeam.TenantId,
+                    veeam.UploadId,
+                    veeam.vSphere
+                }).InsertEntryAsync();
         }
 
         public async Task<CallInStatus> GetStatus(Guid key)
         {
             try
             {
-                return await _client.For<Veeam>().Function("GetCallInStatus").Set(new {key}).ExecuteAsScalarAsync<CallInStatus>();
+                return await Client.For<Veeam>().Function("GetCallInStatus").Set(new {key}).ExecuteAsScalarAsync<CallInStatus>();
             }
             catch (WebRequestException ex)
             {
+                Logger.Error("Error getting the current upload status.");
                 ex.Handle(Logger);
-                throw;
+
+                return CallInStatus.NotCalledIn;
             }
         }
 
         public async Task Update(Veeam veeam)
         {
-            try
-            {
-                await _client.For<Veeam>()
-                    .Key(veeam.Id)
-                    .Set(new
-                    {
-                        veeam.CheckInTime,
-                        veeam.ClientVersion,
-                        veeam.Edition,
-                        veeam.ExpirationDate,
-                        veeam.HyperV,
-                        veeam.LicenseType,
-                        veeam.ProgramVersion,
-                        veeam.SupportId,
-                        veeam.TenantId,
-                        veeam.Status,
-                        veeam.UploadId,
-                        veeam.vSphere
-                    }).UpdateEntryAsync().ConfigureAwait(false);
-            }
-            catch (WebRequestException ex)
-            {
-                ex.Handle(Logger);
-                throw;
-            }
+            await Client.For<Veeam>()
+                .Key(veeam.Id)
+                .Set(new
+                {
+                    veeam.CheckInTime,
+                    veeam.ClientVersion,
+                    veeam.Edition,
+                    veeam.ExpirationDate,
+                    veeam.HyperV,
+                    veeam.LicenseType,
+                    veeam.ProgramVersion,
+                    veeam.SupportId,
+                    veeam.TenantId,
+                    veeam.Status,
+                    veeam.UploadId,
+                    veeam.vSphere
+                }).UpdateEntryAsync();
         }
 
         public async Task<int> UploadId()
         {
-            try
-            {
-                return await _client.For<Veeam>().Function("NewUploadId").ExecuteAsScalarAsync<int>().ConfigureAwait(false);
-            }
-            catch (WebRequestException ex)
-            {
-                ex.Handle(Logger);
-                throw;
-            }
+            return await Client.For<Veeam>().Function("NewUploadId").ExecuteAsScalarAsync<int>();
         }
     }
 }

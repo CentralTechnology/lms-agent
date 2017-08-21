@@ -1,5 +1,6 @@
 ﻿namespace Core.Common.Client
 {
+    using Administration;
     using NLog;
     using OData;
     using SharpRaven;
@@ -10,6 +11,7 @@
         protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected ODataClient Client;
         protected RavenClient RavenClient = Sentry.RavenClient.New();
+        protected SettingManager SettingManager = new SettingManager();
 
         public LmsClientBase(ODataCommonClientSettings settings)
         {

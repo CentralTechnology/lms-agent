@@ -1,61 +1,59 @@
 ﻿namespace Core.Common.Client
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Extensions;
     using Models;
-    using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class LicenseUserGroupClient
+    public class LicenseUserGroupClient : LmsClientBase
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        /// <inheritdoc />
+        public LicenseUserGroupClient()
+            : base(new ODataPortalAuthenticationClientSettings())
+        {
+        }
 
         public async Task Add(List<LicenseUser> users, LicenseGroup group)
         {
-            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-
-            for (int index = 0; index < users.Count; index++)
+            foreach (LicenseUser user in users)
             {
-                LicenseUser user = users[index];
+                await Add(user, group);
+            }
+        }
 
-                try
-                {
-                    Logger.Debug($"Adding user: {user.DisplayName} to group: {group}");
-
-                    await client.For<LicenseUser>().Key(user.Id).LinkEntryAsync(group, "Groups");
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to add {user.DisplayName} to {group.Name}");
-                    Logger.Debug($"User: {user.Dump()}");
-                    Logger.Debug(ex.ToString());
-                }
+        public async Task Add(LicenseUser user, LicenseGroup group)
+        {
+            try
+            {
+                await Client.For<LicenseUser>().Key(user.Id).LinkEntryAsync(group, "Groups");
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error($"Error adding user: {user.DisplayName} to group: {group.Name}");
+                ex.Handle(Logger);
             }
         }
 
         public async Task Remove(List<LicenseUser> users, LicenseGroup group)
         {
-            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-
-            for (int index = 0; index < users.Count; index++)
+            foreach (LicenseUser user in users)
             {
-                LicenseUser user = users[index];
+                await Remove(user, group);
+            }
+        }
 
-                try
-                {
-                    Logger.Debug($"Removing user: {user.DisplayName} from group: {group}");
-
-                    await client.For<LicenseUser>().Key(user.Id).UnlinkEntryAsync(group, "Groups");
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to remove {user.DisplayName} from {group.Name}");
-                    Logger.Debug($"User: {user.Dump()}");
-                    Logger.Debug(ex.ToString());
-                }
+        public async Task Remove(LicenseUser user, LicenseGroup group)
+        {
+            try
+            {
+                await Client.For<LicenseUser>().Key(user.Id).UnlinkEntryAsync(group, "Groups");
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error($"Error removing user: {user.DisplayName} from group: {group.Name}");
+                ex.Handle(Logger);
             }
         }
     }

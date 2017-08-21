@@ -21,9 +21,9 @@
         private static readonly LicenseGroupClient LicenseGroupClient = new LicenseGroupClient();
         private static readonly LicenseUserGroupClient LicenseUserGroupClient = new LicenseUserGroupClient();
 
-        public async Task CallIn(int uploadId)
+        public async Task CallIn(int id)
         {
-            await SupportUploadClient.Update(uploadId);
+            await SupportUploadClient.Update(id);
         }
 
         public async Task ProcessGroups(List<LicenseUser> users)
@@ -161,30 +161,32 @@
                     break;
             }
 
-            int? uploadId = await SupportUploadClient.GetUploadIdByDeviceId(deviceId);
-            if (uploadId == null)
+            int? managedSupportId = await SupportUploadClient.GetIdByDeviceId(deviceId);
+            if (managedSupportId == null)
             {
-                uploadId = await SupportUploadClient.GetNewUploadId();
-                await SupportUploadClient.Add(new ManagedSupport
+                var uploadId = await SupportUploadClient.GetNewUploadId();
+                var managedSupport = await SupportUploadClient.Add(new ManagedSupport
                 {
                     CheckInTime = Clock.Now,
                     DeviceId = deviceId,
                     Hostname = Environment.MachineName,
                     IsActive = true,
                     Status = CallInStatus.NotCalledIn,
-                    UploadId = (int) uploadId
+                    UploadId = uploadId
                 });
+
+                managedSupportId = managedSupport.Id;
             }
 
             Logger.Info("Collecting information...this could take some time.");
 
-            List<LicenseUser> users = await ProcessUsers((int) uploadId);
+            List<LicenseUser> users = await ProcessUsers((int) managedSupportId);
 
             await ProcessGroups(users);
 
             await ProcessUserGroups(users);
 
-            await CallIn((int) uploadId);
+            await CallIn((int) managedSupportId);
         }
     }
 }
