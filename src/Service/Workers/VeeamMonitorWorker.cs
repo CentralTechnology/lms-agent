@@ -45,7 +45,7 @@
                     return;
                 }
 
-                AsyncHelper.RunSync(() => OrchestratorFactory.VeeamOrchestrator().Start());
+                AsyncHelper.RunSync(() => new VeeamOrchestrator().Start());
 
                 Logger.Info(SuccessMessage);
             }

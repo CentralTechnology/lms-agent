@@ -4,6 +4,7 @@
     using System.IO;
     using Abp.Threading;
     using Core.Factory;
+    using Core.Users;
     using ServiceTimer;
     using SharpRaven.Data;
 
@@ -34,7 +35,7 @@
 
             try
             {
-                AsyncHelper.RunSync(() => OrchestratorFactory.Orchestrator().UserMonitor());
+                AsyncHelper.RunSync(() => new UserOrchestrator().Start());
 
                 Logger.Info(SuccessMessage);
             }

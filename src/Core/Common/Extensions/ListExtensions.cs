@@ -7,7 +7,7 @@
 
     public static class ListExtensions
     {
-        public static List<LicenseUser> ApplyUploadId(this List<LicenseUser> source, int uploadId)
+        public static List<LicenseUser> ApplyUploadId(List<LicenseUser> source, int uploadId)
         {
             return source.Select(u =>
             {

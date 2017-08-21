@@ -6,27 +6,26 @@
     using System.Threading.Tasks;
     using Extensions;
     using Models;
-    using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class LicenseUserClient
+    public class LicenseUserClient : LmsClientBase
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        /// <inheritdoc />
+        public LicenseUserClient()
+            : base(new ODataPortalAuthenticationClientSettings())
+        {
+        }
 
         public async Task Add(List<LicenseUser> users)
         {
-            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-            
             for (int index = 0; index < users.Count; index++)
             {
                 LicenseUser user = users[index];
 
                 try
                 {
-                    Logger.Debug($"Creating user: {user.DisplayName}");
-
-                    await client.For<LicenseUser>().Set(new
+                    await Client.For<LicenseUser>().Set(new
                     {
                         user.DisplayName,
                         user.Email,

@@ -15,7 +15,7 @@
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly VeeamClient VeeamClient = new VeeamClient();
 
-        public async Task<CallInStatus> GetStatus()
+        private async Task<CallInStatus> GetStatus()
         {
             Guid device = await SettingFactory.SettingsManager().GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
             return await VeeamClient.GetStatus(device);

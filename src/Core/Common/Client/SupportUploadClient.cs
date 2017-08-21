@@ -16,17 +16,8 @@ namespace Core.Common.Client
 
         public async Task<ManagedSupport> Add(ManagedSupport upload)
         {
-            try
-            {
                 var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
                 return await client.For<ManagedSupport>().Set(upload).InsertEntryAsync();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Failed to add upload");
-                Logger.Debug(ex.ToString());
-                return null;
-            }
         }
 
         public async Task<ManagedSupport> Get(int id)
@@ -80,19 +71,10 @@ namespace Core.Common.Client
             }
         }
 
-        public async Task<int> GetUploadIdByDeviceId(Guid deviceId)
+        public async Task<int?> GetUploadIdByDeviceId(Guid deviceId)
         {
-            try
-            {
                 var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                return await client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int>();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"Failed to get the upload id for device: {deviceId}");
-                Logger.Debug(ex.ToString());
-                throw;
-            }
+                return await client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int?>();
         }
 
         public async Task<List<LicenseUser>> GetUsers(int uploadId)
