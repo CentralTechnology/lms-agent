@@ -145,20 +145,10 @@
 
             CallInStatus status = await SupportUploadClient.GetStatusByDeviceId(deviceId);
 
-            switch (status)
+            status.FriendlyMessage(Logger);
+            if (status == CallInStatus.CalledIn)
             {
-                case CallInStatus.CalledIn:
-                    Logger.Info("Client is called in - Skipping.");
-                    return;
-                case CallInStatus.NotCalledIn:
-                    Logger.Info("Client has not called in.");
-                    break;
-                case CallInStatus.NeverCalledIn:
-                    Logger.Info("Client has never called in.");
-                    break;
-                default:
-                    Logger.Info("Client has never called in.");
-                    break;
+                return;
             }
 
             int? managedSupportId = await SupportUploadClient.GetIdByDeviceId(deviceId);

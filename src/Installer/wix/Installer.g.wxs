@@ -6,7 +6,7 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="a93d9783-609e-4424-b795-d5a993b00457" Name="License Monitoring System" Language="1033" Codepage="Windows-1252" Version="!(bind.FileVersion.LMS.exe)" UpgradeCode="adac7706-188b-42e7-922b-50786779042a" Manufacturer="Central Technology Ltd">
+  <Product Id="2b129533-235d-410f-b087-cfb611cd6815" Name="License Monitoring System" Language="1033" Codepage="Windows-1252" Version="!(bind.FileVersion.LMS.exe)" UpgradeCode="adac7706-188b-42e7-922b-50786779042a" Manufacturer="Central Technology Ltd">
     <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" Languages="1033" InstallScope="perMachine" />
     <Media Id="1" Cabinet="License_Monitoring_System.cab" EmbedCab="yes" />
 
@@ -16,7 +16,7 @@
       <Directory Id="ProgramFiles64Folder" Name="ProgramFiles64Folder">
         <Directory Id="INSTALLDIR" Name="License Monitoring System">
 
-          <Component Id="Component.LMS.exe" Guid="a93d9783-609e-4424-b795-d5a96dc90354" Win64="yes">
+          <Component Id="Component.LMS.exe" Guid="2b129533-235d-410f-b087-cfb6ebe66712" Win64="yes">
             <File Id="LMS.exe" Source="..\Service\bin\Debug\LMS.exe" />
 
             <ServiceInstall Id="LicenseMonitoringSystem" Name="LicenseMonitoringSystem" DisplayName="License Monitoring System" Description="A tool used to monitor various licenses." Type="ownProcess" Start="auto" ErrorControl="normal" Vital="yes">
@@ -29,23 +29,23 @@
             <ServiceControl Id="RemoveLicenseMonitoringSystem" Name="LicenseMonitoringSystem" Remove="uninstall" Wait="yes" />
           </Component>
 
-          <Component Id="Component.Configuration.sdf" Guid="a93d9783-609e-4424-b795-d5a951609f40" Win64="yes">
+          <Component Id="Component.Configuration.sdf" Guid="2b129533-235d-410f-b087-cfb6cf7d03fe" Win64="yes">
             <File Id="Configuration.sdf" Source="..\Service\bin\Debug\Configuration.sdf" />
           </Component>
 
-          <Component Id="Component.LMS.exe.config" Guid="a93d9783-609e-4424-b795-d5a9ba5c2e2b" Win64="yes">
+          <Component Id="Component.LMS.exe.config" Guid="2b129533-235d-410f-b087-cfb6387992e9" Win64="yes">
             <File Id="LMS.exe.config" Source="..\Service\bin\Debug\LMS.exe.config" />
           </Component>
 
-          <Component Id="Component.LMS.pdb" Guid="a93d9783-609e-4424-b795-d5a98c51739c" Win64="yes">
+          <Component Id="Component.LMS.pdb" Guid="2b129533-235d-410f-b087-cfb60a6ed75a" Win64="yes">
             <File Id="LMS.pdb" Source="..\Service\bin\Debug\LMS.pdb" />
           </Component>
 
-          <Component Id="Component.NLog.config" Guid="a93d9783-609e-4424-b795-d5a9293b1d07" Win64="yes">
+          <Component Id="Component.NLog.config" Guid="2b129533-235d-410f-b087-cfb6a75881c5" Win64="yes">
             <File Id="NLog.config" Source="..\Service\bin\Debug\NLog.config" />
           </Component>
 
-          <Component Id="ComponentDirPermission" Guid="a93d9783-609e-4424-b795-d5a9f1504c54" Win64="yes" KeyPath="yes">
+          <Component Id="ComponentDirPermission" Guid="2b129533-235d-410f-b087-cfb66f6db012" Win64="yes" KeyPath="yes">
             <CreateFolder>
               <PermissionEx User="LocalSystem" GenericAll="yes" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
             </CreateFolder>
