@@ -16,6 +16,8 @@
         {
             Logger = LogManager.GetCurrentClassLogger();
             SettingManager = SettingFactory.SettingsManager();
+
+            RenewHttpConnection = true;
         }
 
         protected static Guid DeviceId { get; set; }

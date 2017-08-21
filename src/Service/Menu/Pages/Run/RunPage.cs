@@ -2,9 +2,9 @@
 {
     using System;
     using Abp.Threading;
-    using Core;
     using Core.Administration;
     using Core.Common.Extensions;
+    using Core.Users;
     using Core.Veeam;
     using EasyConsole;
     using NLog;
@@ -31,7 +31,7 @@
 
                     try
                     {
-                        AsyncHelper.RunSync(() => new OrchestratorManager().UserMonitor());
+                        AsyncHelper.RunSync(() => new UserOrchestrator().Start());
 
                         Logger.Info("************ User Monitoring Successful ************");
                     }

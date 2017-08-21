@@ -1,44 +1,44 @@
 ﻿namespace Core.Common.Client
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Extensions;
     using Models;
-    using NLog;
     using OData;
     using Simple.OData.Client;
 
-    public class LicenseGroupClient
+    public class LicenseGroupClient : LmsClientBase
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        /// <inheritdoc />
+        public LicenseGroupClient()
+            : base(new ODataPortalAuthenticationClientSettings())
+        {
+        }
 
         public async Task Add(List<LicenseGroup> groups)
         {
-            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-
-            for (int index = 0; index < groups.Count; index++)
+            foreach (LicenseGroup group in groups)
             {
-                LicenseGroup group = groups[index];
+                await Add(group);
+            }
+        }
 
-                try
+        public async Task Add(LicenseGroup group)
+        {
+            try
+            {
+                await Client.For<LicenseGroup>().Set(new
                 {
-                    Logger.Debug($"Creating group: {group.Name}");
-
-                    await client.For<LicenseGroup>().Set(new
-                    {
-                        group.Id,
-                        group.Name,
-                        group.WhenCreated
-                    }).InsertEntryAsync();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to create group: {group.Name}.");
-                    Logger.Debug($"Group: {group.Dump()}");
-                    Logger.Debug(ex.ToString());
-                }
+                    group.Id,
+                    group.Name,
+                    group.WhenCreated
+                }).InsertEntryAsync();
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error($"Error creating group: {group.Id}");
+                ex.Handle(Logger);
             }
         }
 
@@ -46,65 +46,59 @@
         {
             try
             {
-                var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-                IEnumerable<LicenseGroup> groups = await client.For<LicenseGroup>().FindEntriesAsync();
+                IEnumerable<LicenseGroup> groups = await Client.For<LicenseGroup>().FindEntriesAsync();
                 return groups.ToList();
             }
-            catch (Exception ex)
+            catch (WebRequestException ex)
             {
-                Logger.Error("Failed to obtain a list of groups from the api.");
-                Logger.Debug(ex.ToString());
+                ex.Handle(Logger);
                 return null;
             }
         }
 
         public async Task Remove(List<LicenseGroup> groups)
         {
-            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-
-            for (int index = 0; index < groups.Count; index++)
+            foreach (LicenseGroup group in groups)
             {
-                LicenseGroup group = groups[index];
+                await Remove(group);
+            }
+        }
 
-                try
-                {
-                    Logger.Debug($"Removing group: {group.Name}");
-
-                    await client.For<LicenseGroup>().Key(group.Id).DeleteEntryAsync();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to remove group: {group.Name}.");
-                    Logger.Debug($"Group: {group.Dump()}");
-                    Logger.Debug(ex.ToString());
-                }
+        public async Task Remove(LicenseGroup group)
+        {
+            try
+            {
+                await Client.For<LicenseGroup>().Key(group.Id).DeleteEntryAsync();
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error($"Error removing group: {group.Id}");
+                ex.Handle(Logger);
             }
         }
 
         public async Task Update(List<LicenseGroup> groups)
         {
-            var client = new ODataClient(new ODataPortalAuthenticationClientSettings());
-
-            for (int index = 0; index < groups.Count; index++)
+            foreach (LicenseGroup group in groups)
             {
-                LicenseGroup group = groups[index];
+                await Update(group);
+            }
+        }
 
-                try
+        public async Task Update(LicenseGroup group)
+        {
+            try
+            {
+                await Client.For<LicenseGroup>().Key(group.Id).Set(new
                 {
-                    Logger.Debug($"Updating group: {group.Name}");
-
-                    await client.For<LicenseGroup>().Key(group.Id).Set(new
-                    {
-                        group.Name,
-                        group.WhenCreated
-                    }).UpdateEntryAsync();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to update group: {group.Name}.");
-                    Logger.Debug($"Group: {group.Dump()}");
-                    Logger.Debug(ex.ToString());
-                }
+                    group.Name,
+                    group.WhenCreated
+                }).UpdateEntryAsync();
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error($"Error updating group: {group.Id}");
+                ex.Handle(Logger);
             }
         }
     }

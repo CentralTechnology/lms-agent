@@ -18,13 +18,11 @@
                     InnerError inner = rootException.Error.InnerError;
                     if (inner != null)
                     {
-                        logger.Error($"Code: {ex.Code}");
-                        logger.Error($"Message: {inner.Message}");
+                        logger.Error($"Code: {ex.Code}  Message: {inner.Message}");
                     }
                     else
                     {
-                        logger.Error($"Code: {ex.Code}");
-                        logger.Error($"Message: {rootException.Error.Message}");
+                        logger.Error($"Code: {ex.Code}  Message: {rootException.Error.Message}");
                     }
                 }
             }

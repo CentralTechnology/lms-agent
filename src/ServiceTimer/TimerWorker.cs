@@ -6,10 +6,14 @@
 namespace ServiceTimer
 {
     using System;
+    using System.IO;
     using System.Threading;
-    using Core.Common.Constants;
+    using System.Threading.Tasks;
+    using Core.Common.Extensions;
     using NLog;
     using SharpRaven;
+    using SharpRaven.Data;
+    using Simple.OData.Client;
 
     /// <summary>
     ///     Inherit from this class to create your concrete worker class. IDisposable because
@@ -17,8 +21,6 @@ namespace ServiceTimer
     /// </summary>
     public abstract class TimerWorker : IDisposable
     {
-        protected RavenClient RavenClient;
-
         /// <summary>
         ///     Storing a count of the number of times the timer has elapsed
         /// </summary>
@@ -66,6 +68,8 @@ namespace ServiceTimer
         /// </summary>
         private uint _workOnElapseCount;
 
+        protected RavenClient RavenClient;
+
         private TimerWorker()
         {
             // Hide the default constructor
@@ -98,6 +102,8 @@ namespace ServiceTimer
             _TimerWorker(delayOnStart, timerInterval, workOnElapseCount);
         }
 
+        public string FailedMessage { get; set; }
+
         /// <summary>
         ///     Delegate call back to the service to check on its state
         /// </summary>
@@ -119,6 +125,8 @@ namespace ServiceTimer
         /// </summary>
         internal ManualResetEvent SignalEvent { get; set; }
 
+        public string SuccessMessage { get; set; }
+
         private void _doWork(TimerWorkerInfo info)
         {
 #if BASELOG
@@ -137,7 +145,41 @@ namespace ServiceTimer
                     StartWork(info);
                 }
 
-                Work(info);
+                try
+                {
+                    Work(info);
+                }
+                catch (TaskCanceledException ex)
+                {
+                    if (ex.CancellationToken.IsCancellationRequested)
+                    {
+                        Logger.Error(ex.Message);
+                    }
+                    else
+                    {
+                        Logger.Error("Http request timeout.");
+                    }
+                }
+                catch (WebRequestException ex)
+                {
+                    ex.Handle(Logger);
+                }
+                catch (IOException ex)
+                {
+                    // chances are the reason this is thrown is because the client is low on disk space.
+                    // therefore we output to console instead of the logger.
+
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(FailedMessage);
+                    Console.ResetColor();
+                }
+                catch (Exception ex)
+                {
+                    RavenClient.Capture(new SentryEvent(ex));
+                    Logger.Error(ex.Message);
+                    Logger.Error(FailedMessage);
+                }
             }
             catch (Exception ex)
             {
@@ -388,8 +430,6 @@ namespace ServiceTimer
         /// <param name="e"></param>
         private void _timerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            bool workOnElapse = false;
-            bool workOnState = false;
             bool stopWorker = false;
 
             try
@@ -406,12 +446,10 @@ namespace ServiceTimer
 
                 // Handle the elapsed counter and assess if it is time to call 
                 // the Work method
-
-                TimerWorkerInfo info = _ElapseIncrement(out workOnElapse);
+                TimerWorkerInfo info = _ElapseIncrement(out bool workOnElapse);
 
                 // Query the service state and handle it as necessary
-
-                _QueryAndHandleServiceState(info, out workOnState, out stopWorker);
+                _QueryAndHandleServiceState(info, out bool workOnState, out stopWorker);
 
                 // Call the work method to do any work, if now is the right time
                 if (!stopWorker
