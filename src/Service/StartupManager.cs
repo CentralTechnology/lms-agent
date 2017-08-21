@@ -17,7 +17,7 @@
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected ProfileClient ProfileClient = new ProfileClient();
-        protected RavenClient RavenClient = new RavenClient(Constants.SentryDSN);
+        protected RavenClient RavenClient = Core.Sentry.RavenClient.New();
         protected SettingManager SettingManager = new SettingManager();
         protected VeeamManager VeeamManager = new VeeamManager();
 
