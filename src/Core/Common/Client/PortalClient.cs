@@ -32,17 +32,10 @@
 
         public virtual async Task DeleteAsync(string url, int? timeout = null)
         {
-            await DeleteAsync<object>(url, timeout);
+            await DeleteAsync(url, null, timeout);
         }
 
-        public virtual async Task<TResult> DeleteAsync<TResult>(string url, int? timeout = null)
-            where TResult : class
-        {
-            return await DeleteAsync<TResult>(url, null, timeout);
-        }
-
-        public virtual async Task<TResult> DeleteAsync<TResult>(string url, object input, int? timeout = null)
-            where TResult : class
+        public virtual async Task DeleteAsync(string url, object input, int? timeout = null)
         {
             var cookieContainer = new CookieContainer();
             using (var handler = new HttpClientHandler {CookieContainer = cookieContainer})
@@ -70,14 +63,6 @@
                         {
                             throw new AbpException("Could not made request to " + url + "! StatusCode: " + response.StatusCode + ", ReasonPhrase: " + response.ReasonPhrase);
                         }
-
-                        var ajaxResponse = JsonString2Object<AjaxResponse<TResult>>(await response.Content.ReadAsStringAsync());
-                        if (!ajaxResponse.Success)
-                        {
-                            throw new AbpRemoteCallException(ajaxResponse.Error);
-                        }
-
-                        return ajaxResponse.Result;
                     }
                 }
             }
@@ -113,7 +98,7 @@
 
         public async Task RemoveUserFromGroup(Guid user, Guid group)
         {
-            string url = $"{BaseUrl}odata/v1/LicenseUsers({user})/Groups/$ref?$id={BaseUrl}odata/v1/LicenseGroups({group})";
+            string url = $"{BaseUrl}/odata/v1/LicenseUsers({user})/Groups/$ref?$id={BaseUrl}/odata/v1/LicenseGroups({group})";
 
             int accountId = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
             var deviceId = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);

@@ -85,7 +85,7 @@
 
                 List<LicenseUser> usersToBeAdded = usersThatWereMembers.FilterCreate<LicenseUser, Guid>(usersThatAreMembers);
 
-                if (usersToBeAdded.Count > 0)
+                if (usersToBeAdded.Any())
                 {
                     await licenseUserGroupClient.Add(usersToBeAdded, localGroup);
                 }
@@ -93,9 +93,14 @@
                 var usersThatAreMembersIds = new HashSet<Guid>(usersThatAreMembers.Select(m => m.Id));
                 List<LicenseUser> usersToBeRemoved = usersThatWereMembers.Where(u => !usersThatAreMembersIds.Contains(u.Id)).ToList();
 
-                if (usersToBeRemoved.Count > 0)
+                if (usersToBeRemoved.Any())
                 {
                     await licenseUserGroupClient.Remove(usersToBeRemoved, localGroup);
+                }
+
+                if (usersToBeAdded.Any() || usersToBeRemoved.Any())
+                {
+                    Logger.Info($"Groups: {localGroup.Name}  Users Add: {usersToBeAdded.Count} Users Remove: {usersToBeRemoved.Count}");
                 }
             }
         }
