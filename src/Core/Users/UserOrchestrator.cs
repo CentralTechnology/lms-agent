@@ -131,7 +131,7 @@
 
             var localUserIds = new HashSet<Guid>(localUsers.Select(lu => lu.Id));
             List<LicenseUser> usersToDelete = apiUsers.Where(a => !localUserIds.Contains(a.Id)).ToList();
-            Logger.Info($"Delete Users: {usersToDelete}");
+            Logger.Info($"Delete Users: {usersToDelete.Count}");
 
             if (usersToDelete.Count > 0)
             {

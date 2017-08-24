@@ -11,7 +11,6 @@ namespace ServiceTimer
     using System.Threading.Tasks;
     using Core.Common.Extensions;
     using Core.Startup;
-    using Core.StartUp;
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
