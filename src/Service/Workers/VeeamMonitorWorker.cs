@@ -1,13 +1,13 @@
 ﻿namespace Service.Workers
 {
-    using System;
     using Abp.Threading;
-    using Core.Factory;
+    using Core.Veeam;
     using ServiceTimer;
-    using SharpRaven.Data;
 
     internal class VeeamMonitorWorker : TimerWorker
     {
+        protected VeeamManager VeeamManager;
+
         /// <summary>
         ///     30 second start up delay
         ///     10 second check
@@ -16,6 +16,9 @@
         internal VeeamMonitorWorker()
             : base(30000, 10000, 180)
         {
+            FailedMessage = "************ Veeam Monitoring Failed ************";
+            SuccessMessage = "************ Veeam Monitoring Successful ************";
+            VeeamManager = new VeeamManager();
         }
 
         /// <inheritdoc />
@@ -28,18 +31,18 @@
         {
             Logger.Info("Veeam monitoring begin...");
 
-            try
+            bool veeamOnline = VeeamManager.VeeamOnline();
+            if (!veeamOnline)
             {
-                AsyncHelper.RunSync(() => OrchestratorFactory.VeeamOrchestrator().Start());
+                Logger.Error("Cannot contact the Veeam server. Please make sure all the Veeam services are started.");
+                Logger.Error("We cannot go on like this.");
+                Logger.Error(FailedMessage);
+                return;
+            }
 
-                Logger.Info("************ Veeam Monitoring Successful ************");
-            }
-            catch (Exception ex)
-            {
-                RavenClient.Capture(new SentryEvent(ex));
-                Logger.Error(ex.Message);
-                Logger.Error("************ Veeam Monitoring Failed ************");
-            }
+            AsyncHelper.RunSync(() => new VeeamOrchestrator().Start());
+
+            Logger.Info(SuccessMessage);
         }
     }
 }

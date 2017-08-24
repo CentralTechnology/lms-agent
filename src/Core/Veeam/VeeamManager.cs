@@ -130,10 +130,8 @@
                     tcpClient.Connect(localhost, 9392);
                     return true;
                 }
-                catch (SocketException ex)
+                catch (SocketException)
                 {
-                    Logger.Error("Unable to contact the local Veeam server. Please make sure the services are started.");
-                    Logger.Debug(ex);
                     return false;
                 }
             }

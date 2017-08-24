@@ -19,7 +19,7 @@
             int uploadId = 123456;
 
             // act
-            users.ApplyUploadId(uploadId);
+            ListExtensions.ApplyUploadId(users,uploadId);
 
             // assert
             users.ShouldAllBe(x => x.ManagedSupportId.Equals(uploadId));

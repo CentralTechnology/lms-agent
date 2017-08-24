@@ -4,7 +4,6 @@
     using System.DirectoryServices.AccountManagement;
     using System.DirectoryServices.ActiveDirectory;
     using System.Net.NetworkInformation;
-    using Common.Constants;
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
@@ -16,7 +15,7 @@
 
         public DirectoryServicesManager()
         {
-            RavenClient = new RavenClient(Constants.SentryDSN);
+            RavenClient = Sentry.RavenClient.New();
         }
 
         public bool DomainExist()

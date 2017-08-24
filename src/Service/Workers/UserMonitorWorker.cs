@@ -1,10 +1,8 @@
 ﻿namespace Service.Workers
 {
-    using System;
     using Abp.Threading;
-    using Core.Factory;
+    using Core.Users;
     using ServiceTimer;
-    using SharpRaven.Data;
 
     internal class UserMonitorWorker : TimerWorker
     {
@@ -16,6 +14,8 @@
         internal UserMonitorWorker()
             : base(30000, 10000, 120)
         {
+            FailedMessage = "************ User Monitoring Failed ************";
+            SuccessMessage = "************ User Monitoring Successful ************";
         }
 
         /// <inheritdoc />
@@ -28,18 +28,9 @@
         {
             Logger.Info("User monitoring begin...");
 
-            try
-            {
-                AsyncHelper.RunSync(() => OrchestratorFactory.Orchestrator().UserMonitor());
+            AsyncHelper.RunSync(() => new UserOrchestrator().Start());
 
-                Logger.Info("************ User Monitoring Successful ************");
-            }
-            catch (Exception ex)
-            {
-                RavenClient.Capture(new SentryEvent(ex));
-                Logger.Error(ex.Message);
-                Logger.Error("************ User Monitoring Failed ************");
-            }
+            Logger.Info(SuccessMessage);
         }
     }
 }

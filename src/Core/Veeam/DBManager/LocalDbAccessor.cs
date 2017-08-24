@@ -3,7 +3,6 @@
     using System;
     using System.Data;
     using System.Data.SqlClient;
-    using Common.Constants;
     using SharpRaven;
     using SharpRaven.Data;
 
@@ -14,7 +13,7 @@
 
         public LocalDbAccessor(string connectionString)
         {
-            RavenClient = new RavenClient(Constants.SentryDSN);
+            RavenClient = Sentry.RavenClient.New();
 
             if (string.IsNullOrEmpty(connectionString))
             {

@@ -1,42 +1,13 @@
 #---------------------------------#
-#  Build Script                   #
+#  Shared Configuration           #
 #---------------------------------#
 image: Visual Studio 2017
-build_script:
-  - ps: .\build.ps1 -Target AppVeyor
-
-#---------------------------------#
-# Tests
-#---------------------------------#
 
 test: off
-
-#---------------------------------#
-#        Branches to build        #
-#---------------------------------#
-
-branches:
-  only:
-    - master
-    - dev
-    - /release/.*/
-    - /hotfix/.*/
-
-#---------------------------------#
-#  Build Cache                    #
-#---------------------------------#
 
 cache:
 - src\packages -> src\**\packages.config
 
-#---------------------------------#
-#    environment configuration    #
-#---------------------------------#
-
-hosts:
-    api.nuget.org: 93.184.221.200
-
-# environment variables
 environment:
     GITHUB_USERNAME:
         secure: 5/1fTn1ujG9fgBeJU0NFbA==
@@ -46,3 +17,45 @@ environment:
         secure: bv3OAkxTvWkMKa10ZThe0yv0SjwX1bjh/Yfvq1gjkiU=
     CODECOV_REPO_TOKEN:
         secure: 7eQZghNqRnwThS9R9qZ46YZL4j1wDXEBA1l7lTOQ6QxtWBZFv4VxLA52qIV1FPmc
+
+#---------------------------------#
+#  Branch Specific Configuration  #
+#---------------------------------#
+
+for:
+-
+    branches:
+        only:
+            - master
+
+    skip_tags: true
+
+    build_script:
+        - ps: .\build.ps1 -Target ReleaseNotes
+
+-
+    branches:
+        only:
+            - master
+
+    skip_non_tags: true
+
+    build_script:
+        - ps: .\build.ps1 -Target AppVeyor
+
+-
+    branches:
+        only:
+            - dev
+
+    build_script:
+        - ps: .\build.ps1 -Target AppVeyor
+
+-
+    branches:
+        only:
+            - /release/.*/
+            - /hotfix/.*/
+
+    build_script:
+        - ps: .\build.ps1

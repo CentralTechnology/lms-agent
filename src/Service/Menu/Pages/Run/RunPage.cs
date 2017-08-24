@@ -2,11 +2,9 @@
 {
     using System;
     using Abp.Threading;
-    using Core;
     using Core.Administration;
-    using Core.Common.Constants;
     using Core.Common.Extensions;
-    using Core.Factory;
+    using Core.Users;
     using Core.Veeam;
     using EasyConsole;
     using NLog;
@@ -22,7 +20,7 @@
         public RunPage(Program program)
             : base("Run", program)
         {
-            RavenClient = new RavenClient(Constants.SentryDSN);
+            RavenClient = Core.Sentry.RavenClient.New();
 
             bool monitorUsers = SettingManager.GetSettingValue<bool>(SettingNames.MonitorUsers);
             if (monitorUsers)
@@ -33,7 +31,7 @@
 
                     try
                     {
-                        AsyncHelper.RunSync(() => new OrchestratorManager().UserMonitor());
+                        AsyncHelper.RunSync(() => new UserOrchestrator().Start());
 
                         Logger.Info("************ User Monitoring Successful ************");
                     }

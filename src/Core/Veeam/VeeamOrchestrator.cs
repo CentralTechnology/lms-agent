@@ -15,7 +15,7 @@
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly VeeamClient VeeamClient = new VeeamClient();
 
-        public async Task<CallInStatus> GetStatus()
+        private async Task<CallInStatus> GetStatus()
         {
             Guid device = await SettingFactory.SettingsManager().GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
             return await VeeamClient.GetStatus(device);
@@ -25,20 +25,10 @@
         {
             CallInStatus status = await GetStatus();
 
-            switch (status)
+            status.FriendlyMessage(Logger);
+            if (status == CallInStatus.CalledIn)
             {
-                case CallInStatus.CalledIn:
-                    Logger.Info("Client is called in - Skipping.");
-                    return;
-                case CallInStatus.NotCalledIn:
-                    Logger.Info("Client has not called in.");
-                    break;
-                case CallInStatus.NeverCalledIn:
-                    Logger.Info("Client has never called in.");
-                    break;
-                default:
-                    Logger.Info("Client has never called in.");
-                    break;
+                return;
             }
 
             var veeam = new Veeam();

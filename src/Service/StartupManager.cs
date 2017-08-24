@@ -12,16 +12,17 @@
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
+    using Simple.OData.Client;
 
     public class StartupManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected ProfileClient ProfileClient = new ProfileClient();
-        protected RavenClient RavenClient = new RavenClient(Constants.SentryDSN);
+        protected RavenClient RavenClient = Core.Sentry.RavenClient.New();
         protected SettingManager SettingManager = new SettingManager();
         protected VeeamManager VeeamManager = new VeeamManager();
 
-        public void Init()
+        public bool Init()
         {
             Logger.Info("Running initialisation...");
             Console.WriteLine(Environment.NewLine);
@@ -35,7 +36,7 @@
 
                 bool monVeeam = MonitorVeeam();
                 SettingManager.ChangeSetting(SettingNames.MonitorVeeam, monVeeam.ToString());
-                Logger.Info(monUsers ? "Monitoring Veeam" : "Not Monitoring Veeam");
+                Logger.Info(monVeeam ? "Monitoring Veeam" : "Not Monitoring Veeam");
                 Console.WriteLine(Environment.NewLine);
             }
             catch (Exception ex)
@@ -48,6 +49,12 @@
             {
                 ValidateApiCredentials();
             }
+            catch (WebRequestException ex)
+            {
+                Logger.Error(ex.Message);
+                Logger.Error("************ Initialisation  Failed ************");
+                return false;
+            }
             catch (Exception ex)
             {
                 RavenClient.Capture(new SentryEvent(ex));
@@ -57,6 +64,7 @@
             }
 
             Logger.Info("************ Initialisation  Successful ************");
+            return true;
         }
 
         private bool MonitorUsers()
@@ -109,16 +117,6 @@
 
             Logger.Info("Check Veeam Installed: OK");
 
-            // check veeam is online
-            bool veeamOnline = VeeamManager.VeeamOnline();
-            if (!veeamOnline)
-            {
-                Logger.Warn("Check Veeam Online: FAIL");
-                return false;
-            }
-
-            Logger.Info("Check Veeam Online: OK");
-
             // check the veeam version
             string veeamVersion = VeeamManager.VeeamVersion();
             if (veeamVersion == null)
@@ -163,9 +161,9 @@
             int storedAccount = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
             if (storedAccount == default(int))
             {
-                int reportedAccount = AsyncHelper.RunSync(() => ProfileClient.GetAccountByDeviceId(deviceId));
+                int? reportedAccount = AsyncHelper.RunSync(() => ProfileClient.GetAccountByDeviceId(deviceId));
 
-                if (reportedAccount == default(int))
+                if (reportedAccount == null)
                 {
                     Logger.Warn("Check Account: FAIL");
                     throw new AbpException("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");

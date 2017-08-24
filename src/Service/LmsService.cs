@@ -3,6 +3,7 @@
     using System;
     using Core.Administration;
     using Core.Common.Extensions;
+    using Core.Common.Helpers;
     using Menu;
     using ServiceTimer;
     using Workers;
@@ -15,7 +16,13 @@
         {
             DefaultLog();
 
-            StartupManager.Init();
+            Log.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
+            
+            var started = StartupManager.Init();
+            if (!started)
+            {
+                return false;
+            }
 
             if (Environment.UserInteractive)
             {
