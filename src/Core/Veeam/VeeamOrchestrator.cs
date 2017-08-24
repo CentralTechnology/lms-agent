@@ -25,12 +25,6 @@
         {
             CallInStatus status = await GetStatus();
 
-            status.FriendlyMessage(Logger);
-            if (status == CallInStatus.CalledIn)
-            {
-                return;
-            }
-
             var veeam = new Veeam();
 
             Logger.Info("Collecting information...this could take some time.");
