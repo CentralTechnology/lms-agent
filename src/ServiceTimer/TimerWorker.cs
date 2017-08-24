@@ -10,6 +10,7 @@ namespace ServiceTimer
     using System.Threading;
     using System.Threading.Tasks;
     using Core.Common.Extensions;
+    using Core.Startup;
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
@@ -68,7 +69,15 @@ namespace ServiceTimer
         /// </summary>
         private uint _workOnElapseCount;
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected RavenClient RavenClient;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected StartupManager StartupManager;
 
         private TimerWorker()
         {
@@ -87,6 +96,7 @@ namespace ServiceTimer
         protected TimerWorker(double timerInterval, uint workOnElapseCount)
         {
             RavenClient = Core.Sentry.RavenClient.New();
+            StartupManager = new StartupManager();
             _TimerWorker(0, timerInterval, workOnElapseCount);
         }
 
@@ -99,6 +109,7 @@ namespace ServiceTimer
         protected TimerWorker(double delayOnStart, double timerInterval, uint workOnElapseCount)
         {
             RavenClient = Core.Sentry.RavenClient.New();
+            StartupManager = new StartupManager();
             _TimerWorker(delayOnStart, timerInterval, workOnElapseCount);
         }
 

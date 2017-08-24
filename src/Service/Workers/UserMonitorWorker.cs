@@ -27,6 +27,10 @@
         protected override void Work(TimerWorkerInfo info)
         {
             Logger.Info("User monitoring begin...");
+            if (!StartupManager.ValidateCredentials())
+            {
+                return;
+            }
 
             AsyncHelper.RunSync(() => new UserOrchestrator().Start());
 

@@ -4,21 +4,22 @@
     using Core.Administration;
     using Core.Common.Extensions;
     using Core.Common.Helpers;
+    using Core.Startup;
     using Menu;
     using ServiceTimer;
     using Workers;
 
     public class LmsService : TimerServiceBase
     {
-        private static readonly StartupManager StartupManager = new StartupManager();
         private static readonly SettingManager SettingManager = new SettingManager();
         public override bool Start()
         {
             DefaultLog();
 
             Log.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
-            
-            var started = StartupManager.Init();
+
+            StartupManager startupManager = new StartupManager();
+            var started = startupManager.Init();
             if (!started)
             {
                 return false;

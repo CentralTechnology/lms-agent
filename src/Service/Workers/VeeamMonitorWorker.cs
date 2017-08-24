@@ -31,6 +31,11 @@
         {
             Logger.Info("Veeam monitoring begin...");
 
+            if (!StartupManager.ValidateCredentials())
+            {
+                return;
+            }
+
             bool veeamOnline = VeeamManager.VeeamOnline();
             if (!veeamOnline)
             {

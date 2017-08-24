@@ -14,33 +14,30 @@
     public class UserOrchestrator
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly SupportUploadClient SupportUploadClient = new SupportUploadClient();
         private static readonly SettingManager SettingManager = new SettingManager();
-        private static readonly UserManager UserManager = new UserManager();
-        private static readonly LicenseUserClient LicenseUserClient = new LicenseUserClient();
-        private static readonly LicenseGroupClient LicenseGroupClient = new LicenseGroupClient();
-        private static readonly LicenseUserGroupClient LicenseUserGroupClient = new LicenseUserGroupClient();
 
         public async Task CallIn(int id)
         {
-            await SupportUploadClient.Update(id);
+            var supportUploadClient = new SupportUploadClient();
+            await supportUploadClient.Update(id);
         }
 
         public async Task ProcessGroups(List<LicenseUser> users)
         {
             Logger.Info(Environment.NewLine);
+            var licenseGroupClient = new LicenseGroupClient();
 
             List<LicenseGroup> localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
             Logger.Info($"Local groups found: {localGroups.Count}");
 
-            List<LicenseGroup> apiGroups = await LicenseGroupClient.GetAll();
+            List<LicenseGroup> apiGroups = await licenseGroupClient.GetAll();
 
             List<LicenseGroup> groupsToCreate = apiGroups.FilterCreate<LicenseGroup, Guid>(localGroups);
             Logger.Info($"New Groups: {groupsToCreate.Count}");
 
             if (groupsToCreate.Count > 0)
             {
-                await LicenseGroupClient.Add(groupsToCreate);
+                await licenseGroupClient.Add(groupsToCreate);
             }
 
             List<LicenseGroup> groupsToUpdate = apiGroups.Except(localGroups).ToList();
@@ -48,7 +45,7 @@
 
             if (groupsToUpdate.Count > 0)
             {
-                await LicenseGroupClient.Update(groupsToUpdate);
+                await licenseGroupClient.Update(groupsToUpdate);
             }
 
             var localGroupIds = new HashSet<Guid>(localGroups.Select(lg => lg.Id));
@@ -57,17 +54,19 @@
 
             if (groupsToDelete.Count > 0)
             {
-                await LicenseGroupClient.Remove(groupsToDelete);
+                await licenseGroupClient.Remove(groupsToDelete);
             }
         }
 
         public async Task ProcessUserGroups(List<LicenseUser> users)
         {
             Logger.Info(Environment.NewLine);
+            var licenseUserClient = new LicenseUserClient();
+            var licenseUserGroupClient = new LicenseUserGroupClient();
 
             List<LicenseGroup> localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
 
-            List<LicenseUser> apiUsers = await LicenseUserClient.GetAll();
+            List<LicenseUser> apiUsers = await licenseUserClient.GetAll();
 
             foreach (LicenseUser apiUser in apiUsers)
             {
@@ -88,7 +87,7 @@
 
                 if (usersToBeAdded.Count > 0)
                 {
-                    await LicenseUserGroupClient.Add(usersToBeAdded, localGroup);
+                    await licenseUserGroupClient.Add(usersToBeAdded, localGroup);
                 }
 
                 var usersThatAreMembersIds = new HashSet<Guid>(usersThatAreMembers.Select(m => m.Id));
@@ -96,7 +95,7 @@
 
                 if (usersToBeRemoved.Count > 0)
                 {
-                    await LicenseUserGroupClient.Remove(usersToBeRemoved, localGroup);
+                    await licenseUserGroupClient.Remove(usersToBeRemoved, localGroup);
                 }
             }
         }
@@ -104,11 +103,14 @@
         public async Task<List<LicenseUser>> ProcessUsers(int uploadId)
         {
             Logger.Info(Environment.NewLine);
+            var licenseUserClient = new LicenseUserClient();
+            var supportUploadClient = new SupportUploadClient();
+            var userManager = new UserManager();
 
-            List<LicenseUser> localUsers = UserManager.GetUsersAndGroups();
+            List<LicenseUser> localUsers = userManager.GetUsersAndGroups();
             Logger.Info($"Local users found: {localUsers.Count}");
 
-            List<LicenseUser> apiUsers = await SupportUploadClient.GetUsers(uploadId);
+            List<LicenseUser> apiUsers = await supportUploadClient.GetUsers(uploadId);
 
             List<LicenseUser> usersToCreate = apiUsers.FilterCreate<LicenseUser, Guid>(localUsers);
             Logger.Info($"New Users: {usersToCreate.Count}");
@@ -116,7 +118,7 @@
             if (usersToCreate.Any())
             {
                 List<LicenseUser> newUsers = ListExtensions.ApplyUploadId(usersToCreate, uploadId);
-                await LicenseUserClient.Add(newUsers);
+                await licenseUserClient.Add(newUsers);
             }
 
             List<LicenseUser> usersToUpdate = apiUsers.Except(localUsers).ToList();
@@ -124,16 +126,16 @@
 
             if (usersToUpdate.Count > 0)
             {
-                await LicenseUserClient.Update(usersToUpdate);
+                await licenseUserClient.Update(usersToUpdate);
             }
 
             var localUserIds = new HashSet<Guid>(localUsers.Select(lu => lu.Id));
             List<LicenseUser> usersToDelete = apiUsers.Where(a => !localUserIds.Contains(a.Id)).ToList();
-            Logger.Info($"Delete Users: {usersToDelete}");
+            Logger.Info($"Delete Users: {usersToDelete.Count}");
 
             if (usersToDelete.Count > 0)
             {
-                await LicenseUserClient.Remove(usersToDelete);
+                await licenseUserClient.Remove(usersToDelete);
             }
 
             return localUsers;
@@ -141,21 +143,15 @@
 
         public async Task Start()
         {
+            var supportUploadClient = new SupportUploadClient();
+
             Guid deviceId = await SettingManager.GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
 
-            CallInStatus status = await SupportUploadClient.GetStatusByDeviceId(deviceId);
-
-            status.FriendlyMessage(Logger);
-            if (status == CallInStatus.CalledIn)
-            {
-                return;
-            }
-
-            int? managedSupportId = await SupportUploadClient.GetIdByDeviceId(deviceId);
+            int? managedSupportId = await supportUploadClient.GetIdByDeviceId(deviceId);
             if (managedSupportId == null)
             {
-                var uploadId = await SupportUploadClient.GetNewUploadId();
-                var managedSupport = await SupportUploadClient.Add(new ManagedSupport
+                int uploadId = await supportUploadClient.GetNewUploadId();
+                ManagedSupport managedSupport = await supportUploadClient.Add(new ManagedSupport
                 {
                     CheckInTime = Clock.Now,
                     DeviceId = deviceId,
