@@ -117,16 +117,6 @@
 
             Logger.Info("Check Veeam Installed: OK");
 
-            // check veeam is online
-            bool veeamOnline = VeeamManager.VeeamOnline();
-            if (!veeamOnline)
-            {
-                Logger.Warn("Check Veeam Online: FAIL");
-                return false;
-            }
-
-            Logger.Info("Check Veeam Online: OK");
-
             // check the veeam version
             string veeamVersion = VeeamManager.VeeamVersion();
             if (veeamVersion == null)
