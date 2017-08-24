@@ -97,8 +97,6 @@ BuildParameters.Tasks.ShowInfoTask = Task("Show-Info")
     Information("Solution DirectoryPath: {0}", MakeAbsolute((DirectoryPath)BuildParameters.SolutionDirectoryPath));
     Information("Source DirectoryPath: {0}", MakeAbsolute(BuildParameters.SourceDirectoryPath));
     Information("Build DirectoryPath: {0}", MakeAbsolute(BuildParameters.Paths.Directories.Build));
-
-	Information("Public Repository: {0}", BuildParameters.IsPublicRepository);
 });
 
 BuildParameters.Tasks.CleanTask = Task("Clean")
@@ -116,17 +114,11 @@ BuildParameters.Tasks.RestoreTask = Task("Restore")
 {
     Information("Restoring {0}...", BuildParameters.SolutionFilePath);
 
-    // TODO Use parameter for Cake Contrib feed from environment variable, similar to BuildParameters.MyGet.SourceUrl
     NuGetRestore(
         BuildParameters.SolutionFilePath,
         new NuGetRestoreSettings
         {
-            Source = new List<string>
-            {
-                "https://www.nuget.org/api/v2",
-                "https://www.myget.org/F/cake-contrib/api/v2"
-            },
-			ToolPath = "./.nuget/NuGet.exe"
+            Source = BuildParameters.NuGetSources
         });
 });
 
@@ -135,11 +127,12 @@ BuildParameters.Tasks.DotNetCoreRestoreTask = Task("DotNetCore-Restore")
 {
     DotNetCoreRestore(BuildParameters.SolutionFilePath.FullPath, new DotNetCoreRestoreSettings
     {
-        Verbose = false,
-        Sources = new [] {
-            "https://api.nuget.org/v3/index.json",
-            "https://www.myget.org/F/cake-contrib/api/v3/index.json"
-        }
+        Sources = BuildParameters.NuGetSources,
+        ArgumentCustomization = args => args
+            .Append("/p:Version={0}", BuildParameters.Version.SemVersion)
+            .Append("/p:AssemblyVersion={0}", BuildParameters.Version.Version)
+            .Append("/p:FileVersion={0}", BuildParameters.Version.Version)
+            .Append("/p:AssemblyInformationalVersion={0}", BuildParameters.Version.InformationalVersion)
     });
 });
 
