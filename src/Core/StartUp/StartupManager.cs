@@ -1,4 +1,4 @@
-﻿namespace Core.StartUp
+﻿namespace Core.Startup
 {
     using System;
     using Abp.Threading;
@@ -126,7 +126,7 @@
             return true;
         }
 
-        protected void ValidateAutotask()
+        protected bool ValidateAutotask()
         {
             try
             {
@@ -143,7 +143,7 @@
                     {
                         Logger.Warn("Check Account: FAIL");
                         Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
-                        return;
+                        return false;
                     }
 
                     SettingFactory.SettingsManager().ChangeSetting(SettingNames.AutotaskAccountId, reportedAccount.ToString());
@@ -156,11 +156,13 @@
 
                 Logger.Info("Check Account: OK");
                 Logger.Info($"Account: {accountId}");
+                return true;
             }
             catch (Exception)
             {
                 Logger.Warn("Check Account: FAIL");
                 Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
+                return false;
             }
         }
 
@@ -201,15 +203,12 @@
             }
         }
 
-        protected void ValidateCredentials()
+        public bool ValidateCredentials()
         {
             Logger.Info("Validating api credentials...");
 
             bool centraStage = ValidateCentraStage();
-            if (centraStage)
-            {
-                ValidateAutotask();
-            }
+            return centraStage && ValidateAutotask();
         }
     }
 }
