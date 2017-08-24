@@ -232,6 +232,7 @@
     <Compile Include="Models\ManagedSupport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sentry\RavenClient.cs" />
+    <Compile Include="Startup\StartupManager.cs" />
     <Compile Include="Users\UserManager.cs" />
     <Compile Include="Users\UserOrchestrator.cs" />
     <Compile Include="Factory\VeeamFactory.cs" />

@@ -9,10 +9,12 @@
 
     public class LicenseUserGroupClient : LmsClientBase
     {
+        protected PortalClient PortalClient { get; set; }
         /// <inheritdoc />
         public LicenseUserGroupClient()
             : base(new ODataPortalAuthenticationClientSettings())
         {
+            PortalClient = new PortalClient();
         }
 
         public async Task Add(List<LicenseUser> users, LicenseGroup group)
@@ -48,7 +50,7 @@
         {
             try
             {
-                await Client.For<LicenseUser>().Key(user.Id).UnlinkEntryAsync(group, "Groups");
+                await PortalClient.RemoveUserFromGroup(user.Id, group.Id);
             }
             catch (WebRequestException ex)
             {
