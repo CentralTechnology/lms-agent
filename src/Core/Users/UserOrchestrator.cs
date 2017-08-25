@@ -89,7 +89,7 @@
 
                 List<LicenseUser> usersToBeAdded = GetUsersOrGroupsToCreate(usersThatWereMembers, usersThatAreMembers);
 
-                if (usersToBeAdded.Count > 0 )
+                if (usersToBeAdded.Count > 0)
                 {
                     await licenseUserGroupClient.Add(usersToBeAdded, localGroup);
                 }
@@ -129,7 +129,7 @@
             }
 
 
-            List<LicenseUser> usersToUpdate = GetUsersOrGroupsToUpdate<LicenseUser,LicenseUserCompareLogic>(localUsers, apiUsers);
+            List<LicenseUser> usersToUpdate = GetUsersOrGroupsToUpdate<LicenseUser, LicenseUserCompareLogic>(localUsers, apiUsers);
             Logger.Info($"Update Users: {usersToUpdate.Count}");
 
             if (usersToUpdate.Count > 0)
@@ -192,7 +192,9 @@
                 var result = compLogic.Compare(localEntity, apiEntity);
                 if (!result.AreEqual)
                 {
-                    entitiesToUpdate.Add(localEntity);
+                    Logger.Debug($"Entity: {localEntity.Id} requires an update.");
+                    Logger.Debug(result.DifferencesString);
+                    entitiesToUpdate.Add(localEntity);                  
                 }
             }
 
@@ -245,13 +247,15 @@
 
             Guid deviceId = await SettingManager.GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
 
-            int? managedSupportId = await supportUploadClient.GetIdByDeviceId(deviceId);
-            if (managedSupportId == null)
+            int managedSupportId = await supportUploadClient.GetIdByDeviceId(deviceId);
+            if (managedSupportId == default(int))
             {
                 int uploadId = await supportUploadClient.GetNewUploadId();
+                Logger.Info("Upload ID: " + uploadId.Dump());
                 ManagedSupport managedSupport = await supportUploadClient.Add(new ManagedSupport
                 {
                     CheckInTime = Clock.Now,
+                    ClientVersion = SettingManager.GetClientVersion(),
                     DeviceId = deviceId,
                     Hostname = Environment.MachineName,
                     IsActive = true,
@@ -259,18 +263,19 @@
                     UploadId = uploadId
                 });
 
+                Logger.Debug(managedSupport.Dump());
                 managedSupportId = managedSupport.Id;
             }
 
             Logger.Info("Collecting information...this could take some time.");
 
-            List<LicenseUser> users = await ProcessUsers((int)managedSupportId);
+            List<LicenseUser> users = await ProcessUsers(managedSupportId);
 
             await ProcessGroups(users);
 
             await ProcessUserGroups(users);
 
-            await CallIn((int)managedSupportId);
+            await CallIn(managedSupportId);
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Abp.Timing;
     using global::Core.Models;
     using global::Core.Users;
     using global::Core.Users.Compare;
@@ -180,7 +181,111 @@
         }
 
         [Fact]
-        public void GetUsersToUpdate_ShouldReturn5Users()
+        public void GetUsersOrGroupsToUpdate_ShouldReturn3Users_AllProperties()
+        {
+            // assign
+            var localUsers = new List<LicenseUser>
+            {
+                new LicenseUser
+                {
+                    DisplayName = "John Doe",
+                    Email = "john.doe@example.com",
+                    Enabled = true, FirstName = "John",
+                    Groups = new List<LicenseGroup>{ new LicenseGroup{ Id = Guid.Parse("567b377c-6563-4f01-8ce1-dc7280ea228f"), Name = "Group1", WhenCreated = Clock.Now.AddDays(-1) }},
+                    Id = Guid.Parse("594d8c64-37a9-4fa7-957c-2452653e32da"),
+                    LastLoginDate = Clock.Now.AddHours(-1),
+                    ManagedSupportId = 0,
+                    SamAccountName = "john.doe",
+                    Surname = "Doe",
+                    WhenCreated = new DateTime(2015,12,2)
+                },
+                new LicenseUser
+                {
+                    DisplayName = "Joe Scott",
+                    Email = "joe.scott@example.co.uk",
+                    Enabled = true,
+                    FirstName = "Joe",
+                    Groups = new List<LicenseGroup>{ new LicenseGroup { Id = Guid.Parse("f67964d0-7fe4-4af2-b95e-bdd5d21d6143"), Name = "Group1", WhenCreated = Clock.Now.AddMonths(-8)} },
+                    Id = Guid.Parse("36250b2f-7c56-4d07-9f01-4d2320139dc5"),
+                    LastLoginDate = new DateTime(2017,08,25,11,47,36),
+                    SamAccountName = "joe.scott",
+                    Surname = "Scott",
+                    WhenCreated = new DateTime(2012,08,24)
+                },
+                new LicenseUser
+                {
+                    DisplayName = "Walter Bishop",
+                    Email = "walter.bishop@finge.co.uk",
+                    Enabled = false,
+                    FirstName = "Walter",
+                    Id = Guid.Parse("c832fb2d-bdf0-49fb-a299-1d5c1c6b5d75"),
+                    LastLoginDate = null,
+                    SamAccountName = "walter.bishop",
+Surname = "Bishop",
+WhenCreated = Clock.Now
+                },
+                new LicenseUser {DisplayName = "Jessica Remote", Id = Guid.Parse("33a320cb-51a2-4ab1-9d7e-81e593b2d1b7")},
+                new LicenseUser {DisplayName = "September Phone", Id = Guid.Parse("3dcbcd03-c726-4f60-a0a1-8c1a10be36a7")}
+            };
+
+            var apiUsers = new List<LicenseUser>
+            {
+                // change of login date
+                new LicenseUser
+                {
+                    DisplayName = "John Doe",
+                    Email = "john.doe@example.com",
+                    Enabled = true, FirstName = "John",
+                    Groups = new List<LicenseGroup>{ new LicenseGroup{ Id = Guid.Parse("567b377c-6563-4f01-8ce1-dc7280ea228f"), Name = "Group1", WhenCreated = Clock.Now.AddDays(-1) }},
+                    Id = Guid.Parse("594d8c64-37a9-4fa7-957c-2452653e32da"),
+                    LastLoginDate = Clock.Now.AddMinutes(-1),
+                    ManagedSupportId = 0,
+                    SamAccountName = "john.doe",
+                    Surname = "Doe",
+                    WhenCreated = new DateTime(2015,12,2)
+                },
+
+                // no change
+                new LicenseUser
+                {
+                    DisplayName = "Joe Scott",
+                    Email = "joe.scott@example.co.uk",
+                    Enabled = true,
+                    FirstName = "Joe",
+                    Groups = new List<LicenseGroup>{ new LicenseGroup { Id = Guid.Parse("f67964d0-7fe4-4af2-b95e-bdd5d21d6143"), Name = "Group1", WhenCreated = Clock.Now.AddMonths(-8)} },
+                    Id = Guid.Parse("36250b2f-7c56-4d07-9f01-4d2320139dc5"),
+                    LastLoginDate = new DateTime(2017,08,25,11,47,36),
+                    SamAccountName = "joe.scott",
+                    Surname = "Scott",
+                    WhenCreated = new DateTime(2012,08,24)
+                },
+
+                // enabled = true
+                new LicenseUser
+                {
+                    DisplayName = "Walter Bishop",
+                    Email = "walter.bishop@finge.co.uk",
+                    Enabled = true,
+                    FirstName = "Walter",
+                    Id = Guid.Parse("c832fb2d-bdf0-49fb-a299-1d5c1c6b5d75"),
+                    LastLoginDate = null,
+                    SamAccountName = "walter.bishop",
+                    Surname = "Bishop",
+                    WhenCreated = Clock.Now
+                },
+                new LicenseUser {DisplayName = "Jessica Remote2", Id = Guid.Parse("33a320cb-51a2-4ab1-9d7e-81e593b2d1b7")},
+                new LicenseUser {DisplayName = "September Phone", Id = Guid.Parse("3dcbcd03-c726-4f60-a0a1-8c1a10be36a7")}
+            };
+
+            // act
+            List<LicenseUser> usersToUpdate = _userOrchestrator.ExposeGetUsersOrGroupsToUpdate<LicenseUser, LicenseUserCompareLogic>(localUsers, apiUsers);
+
+            // asset
+            usersToUpdate.Count.ShouldBe(3);
+        }
+
+        [Fact]
+        public void GetUsersOrGroupsToUpdate_ShouldReturn5Users()
         {
             // assign
             var localUsers = new List<LicenseUser>
@@ -209,7 +314,7 @@
         }
 
         [Fact]
-        public void GetUsersToUpdate_ShouldReturnEmptyList()
+        public void GetUsersOrGroupsToUpdate_ShouldReturnEmptyList()
         {
             // assign
             var localUsers = new List<LicenseUser>
@@ -238,7 +343,7 @@
         }
 
         [Fact]
-        public void GetUsersToUpdate_ShouldReturnEmptyList_WhenSourceValuesAreNull()
+        public void GetUsersOrGroupsToUpdate_ShouldReturnEmptyList_WhenSourceValuesAreNull()
         {
             // act
             List<LicenseUser> usersToUpdate = _userOrchestrator.ExposeGetUsersOrGroupsToUpdate<LicenseUser, LicenseUserCompareLogic>(null, null);
