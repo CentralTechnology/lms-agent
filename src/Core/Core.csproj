@@ -237,6 +237,7 @@
     <Compile Include="Sentry\RavenClient.cs" />
     <Compile Include="Startup\StartupManager.cs" />
     <Compile Include="Users\Compare\LicenseUserCompareLogic.cs" />
+    <Compile Include="Users\Entities\LicenseBase.cs" />
     <Compile Include="Users\UserHelper.cs" />
     <Compile Include="Users\UserManager.cs" />
     <Compile Include="Users\UserOrchestrator.cs" />

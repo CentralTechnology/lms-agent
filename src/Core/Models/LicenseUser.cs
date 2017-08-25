@@ -4,8 +4,9 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using Abp.Domain.Entities;
+    using Users.Entities;
 
-    public class LicenseUser : Entity<Guid>
+    public class LicenseUser : LicenseBase
     {
         [MaxLength(256)]
         public string DisplayName { get; set; }
