@@ -121,7 +121,6 @@
   <ItemGroup>
     <Compile Include="ConnectionStrings.cs" />
     <Compile Include="Core\Common\Extensions\ObjectExtension_Tests.cs" />
-    <Compile Include="Core\Extension_Tests.cs" />
     <Compile Include="Core\Users\LicenseUser_Tests.cs" />
     <Compile Include="Core\Users\UserOrchestrator_Tests.cs" />
     <Compile Include="Core\Veeam\VeeamLicenseManager_Tests.cs" />

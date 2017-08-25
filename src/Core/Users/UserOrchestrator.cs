@@ -87,15 +87,14 @@
                 List<LicenseUser> usersThatWereMembers = apiUsers.Where(u => u.Groups.Any(g => g.Id == localGroup.Id)).ToList();
                 List<LicenseUser> usersThatAreMembers = users.Where(u => u.Groups.Any(g => g.Id == localGroup.Id)).ToList();
 
-                List<LicenseUser> usersToBeAdded = usersThatWereMembers.FilterCreate<LicenseUser, Guid>(usersThatAreMembers);
+                List<LicenseUser> usersToBeAdded = GetUsersOrGroupsToCreate(usersThatWereMembers, usersThatAreMembers);
 
                 if (usersToBeAdded.Count > 0 )
                 {
                     await licenseUserGroupClient.Add(usersToBeAdded, localGroup);
                 }
 
-                var usersThatAreMembersIds = new HashSet<Guid>(usersThatAreMembers.Select(m => m.Id));
-                List<LicenseUser> usersToBeRemoved = usersThatWereMembers.Where(u => !usersThatAreMembersIds.Contains(u.Id)).ToList();
+                List<LicenseUser> usersToBeRemoved = GetUsersOrGroupsToDelete(usersThatAreMembers, usersThatWereMembers);
 
                 if (usersToBeRemoved.Count > 0)
                 {
@@ -200,23 +199,23 @@
             return entitiesToUpdate;
         }
 
-        protected List<TEntity> GetUsersOrGroupsToCreate<TEntity>(List<TEntity> local, List<TEntity> api, int uploadId = 0)
+        protected List<TEntity> GetUsersOrGroupsToCreate<TEntity>(List<TEntity> localEntities, List<TEntity> apiEntities, int uploadId = 0)
             where TEntity : LicenseBase
         {
-            if (local == null)
+            if (localEntities == null)
             {
                 return new List<TEntity>();
             }
 
             List<TEntity> newEntities;
 
-            if (api != null && api.Count > 0)
+            if (apiEntities != null && apiEntities.Count > 0)
             {
-                newEntities = local.Where(lu => api.All(au => au.Id != lu.Id)).ToList();
+                newEntities = localEntities.Where(lu => apiEntities.All(au => au.Id != lu.Id)).ToList();
             }
             else
             {
-                newEntities = local;
+                newEntities = localEntities;
             }
 
             if (typeof(TEntity) != typeof(LicenseUser))
