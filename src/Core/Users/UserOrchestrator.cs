@@ -8,6 +8,7 @@
     using Administration;
     using Common.Client;
     using Common.Extensions;
+    using Compare;
     using Models;
     using NLog;
 
@@ -117,16 +118,16 @@
 
             List<LicenseUser> apiUsers = await supportUploadClient.GetUsers(uploadId);
 
-            List<LicenseUser> usersToCreate = apiUsers.FilterCreate<LicenseUser, Guid>(localUsers);
-            Logger.Info($"New Users: {usersToCreate.Count}");
+            var newUsers = GetUsersToCreate(localUsers, apiUsers, uploadId);
+            Logger.Info($"New Users: {newUsers.Count}");
 
-            if (usersToCreate.Any())
-            {
-                List<LicenseUser> newUsers = ListExtensions.ApplyUploadId(usersToCreate, uploadId);
+            if (newUsers.Count > 0)
+            {                
                 await licenseUserClient.Add(newUsers);
             }
 
-            List<LicenseUser> usersToUpdate = apiUsers.Except(localUsers).ToList();
+
+            List<LicenseUser> usersToUpdate = GetUsersToUpdate(localUsers, apiUsers);
             Logger.Info($"Update Users: {usersToUpdate.Count}");
 
             if (usersToUpdate.Count > 0)
@@ -134,8 +135,8 @@
                 await licenseUserClient.Update(usersToUpdate);
             }
 
-            var localUserIds = new HashSet<Guid>(localUsers.Select(lu => lu.Id));
-            List<LicenseUser> usersToDelete = apiUsers.Where(a => !localUserIds.Contains(a.Id)).ToList();
+
+            List<LicenseUser> usersToDelete = GetUsersToDelete(localUsers, apiUsers);
             Logger.Info($"Delete Users: {usersToDelete.Count}");
 
             if (usersToDelete.Count > 0)
@@ -144,6 +145,79 @@
             }
 
             return localUsers;
+        }
+
+        protected List<LicenseUser> GetUsersToDelete(List<LicenseUser> localUsers, List<LicenseUser> apiUsers)
+        {
+            if (localUsers == null || apiUsers == null)
+            {
+                return new List<LicenseUser>();
+            }
+
+            if (apiUsers.Count == 0)
+            {
+                return new List<LicenseUser>();
+            }
+
+            var localUserIds = new HashSet<Guid>(localUsers.Select(lu => lu.Id));
+
+            apiUsers.RemoveAll(au => localUserIds.Contains(au.Id));
+
+            return apiUsers;
+        }
+
+        protected List<LicenseUser> GetUsersToUpdate(List<LicenseUser> localUsers, List<LicenseUser> apiUsers)
+        {
+            if (localUsers == null || apiUsers == null || apiUsers.Count == 0)
+            {
+                return new List<LicenseUser>();
+            }
+
+            var usersToUpdate = new List<LicenseUser>();
+            var compLogic = new LicenseUserCompareLogic();
+
+            foreach (var apiUser in apiUsers)
+            {
+                var localUser = localUsers.FirstOrDefault(lu => lu.Id == apiUser.Id);
+                if (localUser == null)
+                {
+                    continue;
+                }
+
+                var result = compLogic.Compare(localUser, apiUser);
+                if (!result.AreEqual)
+                {
+                    usersToUpdate.Add(localUser);
+                }
+            }
+
+            return usersToUpdate;
+        }
+
+        protected List<LicenseUser> GetUsersToCreate(List<LicenseUser> localUsers, List<LicenseUser> apiUsers, int uploadId)
+        {
+            if (localUsers == null)
+            {
+                return new List<LicenseUser>();
+            }
+
+            List<LicenseUser> newUsers;
+
+            if (apiUsers != null && apiUsers.Count > 0)
+            {
+                newUsers = localUsers.Where(lu => apiUsers.All(au => au.Id != lu.Id)).ToList();
+            }
+            else
+            {
+                newUsers = localUsers;
+            }
+
+            if (newUsers.Count > 0)
+            {
+                newUsers.ForEach(lu => lu.ManagedSupportId = uploadId);
+            }
+
+            return newUsers;   
         }
 
         public async Task Start()
