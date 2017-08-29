@@ -7,6 +7,7 @@ namespace Core.Common.Client.OData
     using Administration;
     using Constants;
     using Extensions;
+    using Helpers;
 
     public class ODataPortalAuthenticationClientSettings : ODataCommonClientSettings
     {
@@ -43,14 +44,9 @@ namespace Core.Common.Client.OData
 
         private void ValidateAccountId()
         {
-            if (AccountId == 0)
+            if (AccountId == default(int))
             {
-                AccountId = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
-
-                if (AccountId == 0)
-                {
-                    throw new AbpException("Cannot perform web request when account id is 0");
-                }
+                AccountId = SettingManagerHelper.AccountId;
             }
         }
     }

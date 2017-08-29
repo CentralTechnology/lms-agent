@@ -219,6 +219,7 @@
     <Compile Include="Common\Extensions\PrincipleExtensions.cs" />
     <Compile Include="Common\Helpers\AppVersionHelper.cs" />
     <Compile Include="Common\Helpers\DebuggingService.cs" />
+    <Compile Include="Common\Helpers\SettingManagerHelper.cs" />
     <Compile Include="DirectoryServices\DirectoryServicesManager.cs" />
     <Compile Include="EntityFramework\AgentDbContext.cs" />
     <Compile Include="Factory\ClientFactory.cs" />

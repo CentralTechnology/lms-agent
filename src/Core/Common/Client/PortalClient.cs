@@ -12,6 +12,7 @@
     using Administration;
     using Constants;
     using Extensions;
+    using Helpers;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
 
@@ -145,27 +146,17 @@
 
         private void ValidateAccountId()
         {
-            if (AccountId == 0)
+            if (AccountId == default(int))
             {
-                AccountId = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
-
-                if (AccountId == 0)
-                {
-                    throw new AbpException("Cannot perform web request when account id is 0");
-                }
+                AccountId = SettingManagerHelper.AccountId;
             }
         }
 
         private void ValidateDeviceId()
         {
-            if (DeviceId == Guid.Empty)
+            if (DeviceId == default(Guid))
             {
-                DeviceId = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
-
-                if (DeviceId == Guid.Empty)
-                {
-                    throw new AbpException($"Cannot perform web request when device id is {Guid.Empty}");
-                }
+                DeviceId = SettingManagerHelper.DeviceId;
             }
         }
     }
