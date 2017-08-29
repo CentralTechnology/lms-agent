@@ -205,6 +205,7 @@
     <Compile Include="Common\Constants\Constants.cs" />
     <Compile Include="Common\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Common\Extensions\IDataReaderExtensions.cs" />
+    <Compile Include="Common\Extensions\RavenClientExtensions.cs" />
     <Compile Include="Common\Extensions\TypeExtensions.cs" />
     <Compile Include="Common\Extensions\VeeamExtensions.cs" />
     <Compile Include="Common\Extensions\DirectoryEntryExtensions.cs" />
