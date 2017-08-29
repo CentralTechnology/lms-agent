@@ -186,7 +186,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Administration\SettingsManager.cs" />
+    <Compile Include="Administration\SettingManager.cs" />
     <Compile Include="Common\Caster.cs" />
     <Compile Include="Common\Client\LicenseGroupClient.cs" />
     <Compile Include="Common\Client\LicenseUserClient.cs" />
