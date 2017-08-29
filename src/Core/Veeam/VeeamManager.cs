@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
@@ -30,21 +31,30 @@
 
         private VmLicensingInfo FromReader(IDataReader reader)
         {
-            return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform) PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
+            return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform)PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
         }
 
         public List<VmLicensingInfo> GetAllVmInfos(EPlatform platform)
         {
-            var vmLicensingInfoList = new List<VmLicensingInfo>();
-            using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
+            try
             {
-                while (dataReader.Read())
+                var vmLicensingInfoList = new List<VmLicensingInfo>();
+                using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
                 {
-                    vmLicensingInfoList.Add(FromReader(dataReader));
+                    while (dataReader.Read())
+                    {
+                        vmLicensingInfoList.Add(FromReader(dataReader));
+                    }
                 }
-            }
 
-            return vmLicensingInfoList;
+                return vmLicensingInfoList;
+            }
+            catch (Win32Exception ex)
+            {
+                Logger.Error(ex.Message);
+                Logger.Debug(ex);
+                return new List<VmLicensingInfo>();
+            }
         }
 
         [SuppressMessage("ReSharper", "JoinNullCheckWithUsage")]
@@ -82,14 +92,23 @@
 
         public int GetProtectedVmCount()
         {
-            var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
-
-            using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", Constants.VeeamProtectedVmCountDays)).CreateDataReader())
+            try
             {
-                if (dataReader.Read())
+                var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
+
+                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", Constants.VeeamProtectedVmCountDays)).CreateDataReader())
                 {
-                    return (int) dataReader["vm_count"];
+                    if (dataReader.Read())
+                    {
+                        return (int)dataReader["vm_count"];
+                    }
                 }
+            }
+            catch (Win32Exception ex)
+            {
+                Logger.Error(ex.Message);
+                Logger.Debug(ex);
+                return 0;
             }
 
             return 0;
@@ -97,11 +116,20 @@
 
         public VmsCounterInfo GetVmsCounters(EPlatform platform, bool useTrialStrategy)
         {
-            var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
-            using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
+            try
             {
-                dataReader.Read();
-                return new VmsCounterInfo(dataReader.GetValue<int>("vm_active"), dataReader.GetValue<int>("vm_trial"));
+                var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
+                using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
+                {
+                    dataReader.Read();
+                    return new VmsCounterInfo(dataReader.GetValue<int>("vm_active"), dataReader.GetValue<int>("vm_trial"));
+                }
+            }
+            catch (Win32Exception ex)
+            {
+                Logger.Error(ex.Message);
+                Logger.Debug(ex);
+                return new VmsCounterInfo(0,0);
             }
         }
 
