@@ -7,6 +7,7 @@ namespace ServiceTimer
 {
     using System;
     using System.IO;
+    using System.Net.Http;
     using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
@@ -160,6 +161,11 @@ namespace ServiceTimer
                 try
                 {
                     Work(info);
+                }
+                catch (HttpRequestException ex)
+                {
+                    Logger.Error("Unable to connect to the api.");
+                    Logger.Debug(ex);
                 }
                 catch (SocketException ex)
                 {
