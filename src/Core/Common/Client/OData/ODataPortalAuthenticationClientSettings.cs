@@ -3,10 +3,7 @@ namespace Core.Common.Client.OData
     using System;
     using System.Net.Http;
     using System.Net.Http.Headers;
-    using Abp;
-    using Administration;
     using Constants;
-    using Extensions;
     using Helpers;
 
     public class ODataPortalAuthenticationClientSettings : ODataCommonClientSettings

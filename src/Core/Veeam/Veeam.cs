@@ -42,7 +42,7 @@
     public enum LicenseTypeEx
     {
         Empty,
-        Evalution,
+        Evaluation,
         Full,
         NFR,
         Perpetual,
@@ -62,5 +62,11 @@
         NotRegistered,
         Expired,
         Managed
+    }
+
+    public enum ELicenseGeneration
+    {
+        Old,
+        V9,
     }
 }
