@@ -117,6 +117,10 @@
 
             List<LicenseUser> localUsers = userManager.GetUsersAndGroups();
             Logger.Info($"Local users found: {localUsers.Count}");
+            if (localUsers.Count == 0)
+            {
+                return localUsers;
+            }
 
             List<LicenseUser> apiUsers = await supportUploadClient.GetUsers(uploadId);
 
@@ -270,6 +274,10 @@
             Logger.Info("Collecting information...this could take some time.");
 
             List<LicenseUser> users = await ProcessUsers(managedSupportId);
+            if (users.Count == 0)
+            {
+                return;
+            }
 
             await ProcessGroups(users);
 

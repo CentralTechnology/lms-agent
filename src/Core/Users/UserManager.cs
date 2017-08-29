@@ -5,13 +5,12 @@
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
     using System.Linq;
-    using Abp.Timing;
-    using Common;
+    using System.Runtime.InteropServices;
+    using Abp.Extensions;
     using Common.Extensions;
     using Dto;
     using Models;
     using NLog;
-    using Abp.Extensions;
 
     public class UserManager
     {
@@ -36,8 +35,8 @@
                 {
                     Logger.Debug("Searching groups.");
 
-                    List<GroupPrincipalOutput> groups = new List<GroupPrincipalOutput>();
-                    foreach (var found in groupSearch.FindAll())
+                    var groups = new List<GroupPrincipalOutput>();
+                    foreach (Principal found in groupSearch.FindAll())
                     {
                         try
                         {
@@ -47,27 +46,27 @@
                             {
                                 continue;
                             }
-                            if (adGroup.IsSecurityGroup == null || (bool)!adGroup.IsSecurityGroup)
+                            if (adGroup.IsSecurityGroup == null || (bool) !adGroup.IsSecurityGroup)
                             {
                                 continue;
                             }
 
-                            List<Guid> members = new List<Guid>();
+                            var members = new List<Guid>();
                             try
                             {
-                                members = adGroup.Members.Where(m => m.Guid != null).Select(m => (Guid)m.Guid).ToList();
+                                members = adGroup.Members.Where(m => m.Guid != null).Select(m => (Guid) m.Guid).ToList();
                             }
                             catch (PrincipalOperationException ex)
                             {
                                 Logger.Error($"Failed to get members from group: {(adGroup.DisplayName.IsNullOrEmpty() ? adGroup.SamAccountName : adGroup.DisplayName)}. " +
                                     "Most likely cause is that the group contains members which are no longer part of the domain. " +
-                                   "Please investigate the group members in Active Directory.");
+                                    "Please investigate the group members in Active Directory.");
                                 Logger.Debug(ex);
                             }
 
                             groups.Add(new GroupPrincipalOutput
                             {
-                                Id = (Guid)adGroup.Guid,
+                                Id = (Guid) adGroup.Guid,
                                 Members = members,
                                 Name = adGroup.Name,
                                 WhenCreated = DateTime.Parse(adGroup.GetProperty("whenCreated"))
@@ -119,25 +118,23 @@
                             catch (Exception ex)
                             {
                                 Logger.Error($"There was an error getting: {user.DisplayName}");
-                                Logger.Debug(ex.ToString());
+                                Logger.Debug(ex);
                             }
                         }
                     }
-
-
-
-
                 }
-
-
-
-
+            }
+            catch (COMException ex)
+            {
+                Logger.Error("There was a problem getting the users from Active Directory");
+                Logger.Debug(ex);
+                return new List<LicenseUser>();
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug(ex.Dump());
-                throw;
+                Logger.Debug(ex);
+                return new List<LicenseUser>();
             }
 
             return localUsers;
