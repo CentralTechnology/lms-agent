@@ -25,10 +25,13 @@
                         logger.Error($"Code: {ex.Code}  Message: {rootException.Error.Message}");
                     }
                 }
+
+                logger.Debug(ex);
             }
             catch (Exception exc)
             {
                 logger.Error(exc);
+                logger.Debug(exc);
                 throw;
             }
         }

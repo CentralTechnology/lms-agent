@@ -7,6 +7,7 @@ namespace ServiceTimer
 {
     using System;
     using System.IO;
+    using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
     using Core.Common.Extensions;
@@ -160,15 +161,22 @@ namespace ServiceTimer
                 {
                     Work(info);
                 }
+                catch (SocketException ex)
+                {
+                    Logger.Error("Unable to connect to the api.");
+                    Logger.Debug(ex);
+                }
                 catch (TaskCanceledException ex)
                 {
                     if (ex.CancellationToken.IsCancellationRequested)
                     {
                         Logger.Error(ex.Message);
+                        Logger.Debug(ex);
                     }
                     else
                     {
                         Logger.Error("Http request timeout.");
+                        Logger.Debug(ex);
                     }
                 }
                 catch (WebRequestException ex)
