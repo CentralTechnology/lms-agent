@@ -8,11 +8,11 @@
     using System.Threading.Tasks;
     using Abp;
     using Abp.Extensions;
-    using Abp.Web.Models;
     using Abp.WebApi.Client;
     using Administration;
     using Constants;
     using Extensions;
+    using Helpers;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
 
@@ -23,12 +23,17 @@
     {
         private readonly AbpWebApiClient _abpWebApiClient = new AbpWebApiClient();
         protected readonly SettingManager SettingManager = new SettingManager();
+
         public PortalClient()
         {
             BaseUrl = Constants.BaseServiceUrl;
         }
 
+        private static int AccountId { get; set; }
+        private static string Token { get; set; }
+
         public string BaseUrl { get; set; }
+        private static Guid DeviceId { get; set; }
 
         public virtual async Task DeleteAsync(string url, int? timeout = null)
         {
@@ -49,11 +54,14 @@
                         client.BaseAddress = new Uri(BaseUrl);
                     }
 
+                    client.DefaultRequestHeaders.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     foreach (NameValue header in _abpWebApiClient.RequestHeaders)
                     {
                         client.DefaultRequestHeaders.Add(header.Name, header.Value);
                     }
+
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Device", DeviceId.ToString("D").ToUpper());
 
                     using (HttpResponseMessage response = await client.DeleteAsync(url))
                     {
@@ -65,6 +73,14 @@
                         }
                     }
                 }
+            }
+        }
+
+        private async Task ValidateToken()
+        {
+            if (Token.IsNullOrEmpty())
+            {
+                Token = await GetTokenCookie();
             }
         }
 
@@ -98,13 +114,11 @@
 
         public async Task RemoveUserFromGroup(Guid user, Guid group)
         {
+            await Validate();
+
             string url = $"{BaseUrl}/odata/v1/LicenseUsers({user})/Groups/$ref?$id={BaseUrl}/odata/v1/LicenseGroups({group})";
 
-            int accountId = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
-            var deviceId = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
-
-            _abpWebApiClient.RequestHeaders.Add(new NameValue("Authorization", $"Device {deviceId.ToString("D").ToUpper()}"));
-            _abpWebApiClient.RequestHeaders.Add(new NameValue("AccountId", accountId.ToString()));
+            _abpWebApiClient.RequestHeaders.Add(new NameValue("AccountId", AccountId.ToString()));            
 
             await DeleteAsync(url);
         }
@@ -118,6 +132,31 @@
                 {
                     _abpWebApiClient.ResponseHeaders.Add(new NameValue(header.Key, headerValue));
                 }
+            }
+        }
+
+        private async Task Validate()
+        {
+            ValidateAccountId();
+
+            ValidateDeviceId();
+
+            await ValidateToken();
+        }
+
+        private void ValidateAccountId()
+        {
+            if (AccountId == default(int))
+            {
+                AccountId = SettingManagerHelper.AccountId;
+            }
+        }
+
+        private void ValidateDeviceId()
+        {
+            if (DeviceId == default(Guid))
+            {
+                DeviceId = SettingManagerHelper.DeviceId;
             }
         }
     }

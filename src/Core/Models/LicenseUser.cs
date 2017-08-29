@@ -4,9 +4,14 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using Abp.Domain.Entities;
+    using Abp.Timing;
+    using Users.Entities;
 
-    public class LicenseUser : Entity<Guid>
+    public class LicenseUser : LicenseBase
     {
+        private DateTime _whenCreated;
+        private DateTime? _lastLoginDate;
+
         [MaxLength(256)]
         public string DisplayName { get; set; }
 
@@ -20,7 +25,21 @@
 
         public List<LicenseGroup> Groups { get; set; }
 
-        public DateTime? LastLoginDate { get; set; }
+        public DateTime? LastLoginDate
+        {
+            get => _lastLoginDate;
+            set
+            {
+                if (value == null)
+                {
+                    _lastLoginDate = null;
+                }
+                else
+                {
+                    _lastLoginDate = Clock.Normalize(DateTime.Parse(value.ToString()));
+                }
+            }
+        }
 
         public int ManagedSupportId { get; set; }
 
@@ -30,7 +49,11 @@
         [MaxLength(64)]
         public string Surname { get; set; }
 
-        public DateTime WhenCreated { get; set; }
+        public DateTime WhenCreated
+        {
+            get => _whenCreated;
+            set => _whenCreated = Clock.Normalize(value);
+        }
     }
 
     [Flags]

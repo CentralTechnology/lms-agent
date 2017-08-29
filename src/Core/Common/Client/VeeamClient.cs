@@ -23,13 +23,13 @@
                 {
                     veeam.CheckInTime,
                     veeam.ClientVersion,
-                    veeam.Edition,
+                    Edition = ((int)veeam.Edition).ToString(),
                     veeam.ExpirationDate,
                     veeam.HyperV,
                     veeam.Id,
-                    veeam.LicenseType,
+                    LicenseType = ((int)veeam.LicenseType).ToString(),
                     veeam.ProgramVersion,
-                    veeam.Status,
+                    Status = ((int)veeam.Status).ToString(),
                     veeam.SupportId,
                     veeam.TenantId,
                     veeam.UploadId,
@@ -41,7 +41,7 @@
         {
             try
             {
-                return await Client.For<Veeam>().Function("GetCallInStatus").Set(new {key}).ExecuteAsScalarAsync<CallInStatus>();
+                return await Client.For<Veeam>().Function("GetCallInStatus").Set(new { key }).ExecuteAsScalarAsync<CallInStatus>();
             }
             catch (WebRequestException ex)
             {
@@ -60,14 +60,14 @@
                 {
                     veeam.CheckInTime,
                     veeam.ClientVersion,
-                    veeam.Edition,
+                    Edition = ((int)veeam.Edition).ToString(),
                     veeam.ExpirationDate,
                     veeam.HyperV,
-                    veeam.LicenseType,
+                    LicenseType = ((int)veeam.LicenseType).ToString(),
                     veeam.ProgramVersion,
                     veeam.SupportId,
                     veeam.TenantId,
-                    veeam.Status,
+                    Status = ((int)veeam.Status).ToString(),
                     veeam.UploadId,
                     veeam.vSphere
                 }).UpdateEntryAsync();

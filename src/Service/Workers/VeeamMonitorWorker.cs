@@ -1,6 +1,7 @@
 ﻿namespace Service.Workers
 {
     using Abp.Threading;
+    using Core.Common.Extensions;
     using Core.Veeam;
     using ServiceTimer;
 
@@ -29,6 +30,8 @@
         /// <inheritdoc />
         protected override void Work(TimerWorkerInfo info)
         {
+            RavenClient.AddTag("operation", "veeam");
+
             Logger.Info("Veeam monitoring begin...");
 
             if (!StartupManager.ValidateCredentials())

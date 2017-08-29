@@ -37,9 +37,22 @@
                     user.Id,
                     user.LastLoginDate,
                     user.ManagedSupportId,
+                    user.SamAccountName,
                     user.Surname,
                     user.WhenCreated
                 }).InsertEntryAsync();
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (ex.CancellationToken.IsCancellationRequested)
+                {
+                    Logger.Error($"Error creating: {user.DisplayName} - {ex.Message}");
+                    Logger.Debug(ex.Dump());
+                }
+                else
+                {
+                    Logger.Error($"Error creating: {user.DisplayName} - Http request timeout.");
+                }
             }
             catch (WebRequestException ex)
             {
@@ -102,6 +115,7 @@
                     user.Enabled,
                     user.FirstName,
                     user.LastLoginDate,
+                    user.SamAccountName,
                     user.Surname,
                     user.WhenCreated
                 }).UpdateEntryAsync();

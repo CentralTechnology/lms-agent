@@ -1,6 +1,7 @@
 ﻿namespace Service.Workers
 {
     using Abp.Threading;
+    using Core.Common.Extensions;
     using Core.Users;
     using ServiceTimer;
 
@@ -26,6 +27,8 @@
         /// <inheritdoc />
         protected override void Work(TimerWorkerInfo info)
         {
+            RavenClient.AddTag("operation", "users");
+
             Logger.Info("User monitoring begin...");
             if (!StartupManager.ValidateCredentials())
             {

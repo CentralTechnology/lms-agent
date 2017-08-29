@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using Abp;
     using Administration;
+    using NLog;
     using Veeam;
     using Veeam.Backup.Common;
 
@@ -13,10 +14,21 @@
         private static readonly LicenseManager LicenseManager = new LicenseManager();
         private static readonly VeeamManager VeeamManager = new VeeamManager();
         private static readonly SettingManager SettingManager = new SettingManager();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public static async Task CollectInformation(this Veeam veeam)
         {
-            veeam.LicenseType = LicenseManager.GetProperty<LicenseTypeEx>("License type");
+            try
+            {
+                veeam.LicenseType = VeeamLicense.TypeEx;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("There was an error while getting the license information from the registry. We'll therefore assume its an evaluation license.");
+                Logger.Debug(ex);
+                veeam.LicenseType = LicenseTypeEx.Evaluation;               
+            }
+            
             veeam.ProgramVersion = VeeamManager.VeeamVersion();
 
             if (veeam.ProgramVersion.StartsWith("9.0"))
@@ -33,10 +45,10 @@
             }
 
             veeam.ClientVersion = SettingManager.GetClientVersion();
-            veeam.Edition = LicenseManager.GetProperty<LicenseEditions>("Edition");
-            veeam.ExpirationDate = LicenseManager.GetProperty<DateTime>("Expiration date");
+            veeam.Edition = VeeamLicense.Edition;
+            veeam.ExpirationDate = VeeamLicense.ExpirationDate;
             veeam.Id = await SettingManager.GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
-            veeam.SupportId = LicenseManager.GetPropertyNoThrow("Support ID");
+            veeam.SupportId = VeeamLicense.SupportId;
             veeam.TenantId = await SettingManager.GetSettingValueAsync<int>(SettingNames.AutotaskAccountId);
 
             veeam.Validate();
@@ -50,7 +62,7 @@
 
         private static void CollectVmInformation95(this Veeam veeam)
         {
-            bool evaluation = veeam.LicenseType == LicenseTypeEx.Evalution;
+            bool evaluation = veeam.LicenseType == LicenseTypeEx.Evaluation;
 
             VmsCounterInfo vSphereCounterInfo = VeeamManager.GetVmsCounters(EPlatform.EVmware, evaluation);
             VmsCounterInfo hypervCounterInfo = VeeamManager.GetVmsCounters(EPlatform.EHyperV, evaluation);

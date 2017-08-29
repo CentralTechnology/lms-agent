@@ -21,9 +21,9 @@ namespace Core.Common.Client
             return await Client.For<ManagedSupport>().Set(upload).InsertEntryAsync();
         }
 
-        public async Task<int?> GetIdByDeviceId(Guid deviceId)
+        public async Task<int> GetIdByDeviceId(Guid deviceId)
         {
-            return await Client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int?>();
+            return await Client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int>();
         }
 
         public async Task<int> GetNewUploadId()

@@ -7,6 +7,7 @@
     using Administration;
     using Extensions;
     using Factory;
+    using Helpers;
     using NLog;
     using Simple.OData.Client;
 
@@ -29,14 +30,9 @@
 
         protected void ValidateDeviceId()
         {
-            if (DeviceId == Guid.Empty)
+            if (DeviceId == default(Guid))
             {
-                DeviceId = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
-
-                if (DeviceId == Guid.Empty)
-                {
-                    throw new AbpException($"Cannot perform web request when device id is {Guid.Empty}");
-                }
+                DeviceId = SettingManagerHelper.DeviceId;
             }
         }
 

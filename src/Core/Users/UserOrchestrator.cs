@@ -8,6 +8,9 @@
     using Administration;
     using Common.Client;
     using Common.Extensions;
+    using Compare;
+    using Entities;
+    using KellermanSoftware.CompareNetObjects;
     using Models;
     using NLog;
 
@@ -32,7 +35,7 @@
 
             List<LicenseGroup> apiGroups = await licenseGroupClient.GetAll();
 
-            List<LicenseGroup> groupsToCreate = apiGroups.FilterCreate<LicenseGroup, Guid>(localGroups);
+            List<LicenseGroup> groupsToCreate = GetUsersOrGroupsToCreate(localGroups, apiGroups);
             Logger.Info($"New Groups: {groupsToCreate.Count}");
 
             if (groupsToCreate.Count > 0)
@@ -40,7 +43,8 @@
                 await licenseGroupClient.Add(groupsToCreate);
             }
 
-            List<LicenseGroup> groupsToUpdate = apiGroups.Except(localGroups).ToList();
+
+            List<LicenseGroup> groupsToUpdate = GetUsersOrGroupsToUpdate<LicenseGroup, CompareLogic>(localGroups, apiGroups);
             Logger.Info($"Update Groups: {groupsToUpdate.Count}");
 
             if (groupsToUpdate.Count > 0)
@@ -48,8 +52,8 @@
                 await licenseGroupClient.Update(groupsToUpdate);
             }
 
-            var localGroupIds = new HashSet<Guid>(localGroups.Select(lg => lg.Id));
-            List<LicenseGroup> groupsToDelete = apiGroups.Where(a => !localGroupIds.Contains(a.Id)).ToList();
+
+            List<LicenseGroup> groupsToDelete = GetUsersOrGroupsToDelete(localGroups, apiGroups);
             Logger.Info($"Delete Groups: {groupsToDelete.Count}");
 
             if (groupsToDelete.Count > 0)
@@ -80,25 +84,24 @@
 
             foreach (LicenseGroup localGroup in localGroups)
             {
-                List<LicenseUser> usersThatWereMembers = apiUsers.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
-                List<LicenseUser> usersThatAreMembers = users.Where(u => u.Groups.Any(g => g.Id.Equals(localGroup.Id))).ToList();
+                List<LicenseUser> usersThatWereMembers = apiUsers.Where(u => u.Groups.Any(g => g.Id == localGroup.Id)).ToList();
+                List<LicenseUser> usersThatAreMembers = users.Where(u => u.Groups.Any(g => g.Id == localGroup.Id)).ToList();
 
-                List<LicenseUser> usersToBeAdded = usersThatWereMembers.FilterCreate<LicenseUser, Guid>(usersThatAreMembers);
+                List<LicenseUser> usersToBeAdded = GetUsersOrGroupsToCreate(usersThatWereMembers, usersThatAreMembers);
 
-                if (usersToBeAdded.Any())
+                if (usersToBeAdded.Count > 0)
                 {
                     await licenseUserGroupClient.Add(usersToBeAdded, localGroup);
                 }
 
-                var usersThatAreMembersIds = new HashSet<Guid>(usersThatAreMembers.Select(m => m.Id));
-                List<LicenseUser> usersToBeRemoved = usersThatWereMembers.Where(u => !usersThatAreMembersIds.Contains(u.Id)).ToList();
+                List<LicenseUser> usersToBeRemoved = GetUsersOrGroupsToDelete(usersThatAreMembers, usersThatWereMembers);
 
-                if (usersToBeRemoved.Any())
+                if (usersToBeRemoved.Count > 0)
                 {
                     await licenseUserGroupClient.Remove(usersToBeRemoved, localGroup);
                 }
 
-                if (usersToBeAdded.Any() || usersToBeRemoved.Any())
+                if (usersToBeAdded.Count > 0 || usersToBeRemoved.Count > 0)
                 {
                     Logger.Info($"Groups: {localGroup.Name}  Users Add: {usersToBeAdded.Count} Users Remove: {usersToBeRemoved.Count}");
                 }
@@ -114,19 +117,23 @@
 
             List<LicenseUser> localUsers = userManager.GetUsersAndGroups();
             Logger.Info($"Local users found: {localUsers.Count}");
+            if (localUsers.Count == 0)
+            {
+                return localUsers;
+            }
 
             List<LicenseUser> apiUsers = await supportUploadClient.GetUsers(uploadId);
 
-            List<LicenseUser> usersToCreate = apiUsers.FilterCreate<LicenseUser, Guid>(localUsers);
-            Logger.Info($"New Users: {usersToCreate.Count}");
+            var newUsers = GetUsersOrGroupsToCreate(localUsers, apiUsers, uploadId);
+            Logger.Info($"New Users: {newUsers.Count}");
 
-            if (usersToCreate.Any())
+            if (newUsers.Count > 0)
             {
-                List<LicenseUser> newUsers = ListExtensions.ApplyUploadId(usersToCreate, uploadId);
                 await licenseUserClient.Add(newUsers);
             }
 
-            List<LicenseUser> usersToUpdate = apiUsers.Except(localUsers).ToList();
+
+            List<LicenseUser> usersToUpdate = GetUsersOrGroupsToUpdate<LicenseUser, LicenseUserCompareLogic>(localUsers, apiUsers);
             Logger.Info($"Update Users: {usersToUpdate.Count}");
 
             if (usersToUpdate.Count > 0)
@@ -134,8 +141,8 @@
                 await licenseUserClient.Update(usersToUpdate);
             }
 
-            var localUserIds = new HashSet<Guid>(localUsers.Select(lu => lu.Id));
-            List<LicenseUser> usersToDelete = apiUsers.Where(a => !localUserIds.Contains(a.Id)).ToList();
+
+            List<LicenseUser> usersToDelete = GetUsersOrGroupsToDelete(localUsers, apiUsers);
             Logger.Info($"Delete Users: {usersToDelete.Count}");
 
             if (usersToDelete.Count > 0)
@@ -146,19 +153,113 @@
             return localUsers;
         }
 
+        protected List<TEntity> GetUsersOrGroupsToDelete<TEntity>(List<TEntity> localEntities, List<TEntity> apiEntities)
+            where TEntity : LicenseBase
+        {
+            if (localEntities == null || apiEntities == null)
+            {
+                return new List<TEntity>();
+            }
+
+            if (apiEntities.Count == 0)
+            {
+                return new List<TEntity>();
+            }
+
+            var localEntityIds = new HashSet<Guid>(localEntities.Select(lu => lu.Id));
+
+            apiEntities.RemoveAll(au => localEntityIds.Contains(au.Id));
+
+            return apiEntities;
+        }
+
+        protected List<TEntity> GetUsersOrGroupsToUpdate<TEntity, TCompareLogic>(List<TEntity> localEntities, List<TEntity> apiEntities)
+            where TEntity : LicenseBase
+            where TCompareLogic : CompareLogic, new()
+        {
+            if (localEntities == null || apiEntities == null || apiEntities.Count == 0)
+            {
+                return new List<TEntity>();
+            }
+
+            var entitiesToUpdate = new List<TEntity>();
+            var compLogic = new TCompareLogic();
+
+            foreach (var apiEntity in apiEntities)
+            {
+                var localEntity = localEntities.FirstOrDefault(lu => lu.Id == apiEntity.Id);
+                if (localEntity == null)
+                {
+                    continue;
+                }
+
+                var result = compLogic.Compare(localEntity, apiEntity);
+                if (!result.AreEqual)
+                {
+                    Logger.Debug($"Entity: {localEntity.Id} requires an update.");
+                    Logger.Debug(result.DifferencesString);
+                    entitiesToUpdate.Add(localEntity);                  
+                }
+            }
+
+            return entitiesToUpdate;
+        }
+
+        protected List<TEntity> GetUsersOrGroupsToCreate<TEntity>(List<TEntity> localEntities, List<TEntity> apiEntities, int uploadId = 0)
+            where TEntity : LicenseBase
+        {
+            if (localEntities == null)
+            {
+                return new List<TEntity>();
+            }
+
+            List<TEntity> newEntities;
+
+            if (apiEntities != null && apiEntities.Count > 0)
+            {
+                newEntities = localEntities.Where(lu => apiEntities.All(au => au.Id != lu.Id)).ToList();
+            }
+            else
+            {
+                newEntities = localEntities;
+            }
+
+            if (typeof(TEntity) != typeof(LicenseUser))
+            {
+                return newEntities;
+            }
+
+            if (newEntities.Count <= 0)
+            {
+                return newEntities;
+            }
+
+            if (uploadId == default(int))
+            {
+                return newEntities;
+            }
+
+            List<LicenseUser> newUsers = newEntities.Cast<LicenseUser>().ToList();
+            newUsers.ForEach(lu => lu.ManagedSupportId = uploadId);
+
+            return newUsers.Cast<TEntity>().ToList();
+        }
+
         public async Task Start()
         {
             var supportUploadClient = new SupportUploadClient();
 
             Guid deviceId = await SettingManager.GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
 
-            int? managedSupportId = await supportUploadClient.GetIdByDeviceId(deviceId);
-            if (managedSupportId == null)
+            int managedSupportId = await supportUploadClient.GetIdByDeviceId(deviceId);
+            if (managedSupportId == default(int))
             {
                 int uploadId = await supportUploadClient.GetNewUploadId();
+                Logger.Info("Upload ID: " + uploadId.Dump());
                 ManagedSupport managedSupport = await supportUploadClient.Add(new ManagedSupport
                 {
                     CheckInTime = Clock.Now,
+                    ClientVersion = SettingManager.GetClientVersion(),
                     DeviceId = deviceId,
                     Hostname = Environment.MachineName,
                     IsActive = true,
@@ -166,18 +267,23 @@
                     UploadId = uploadId
                 });
 
+                Logger.Debug(managedSupport.Dump());
                 managedSupportId = managedSupport.Id;
             }
 
             Logger.Info("Collecting information...this could take some time.");
 
-            List<LicenseUser> users = await ProcessUsers((int) managedSupportId);
+            List<LicenseUser> users = await ProcessUsers(managedSupportId);
+            if (users.Count == 0)
+            {
+                return;
+            }
 
             await ProcessGroups(users);
 
             await ProcessUserGroups(users);
 
-            await CallIn((int) managedSupportId);
+            await CallIn(managedSupportId);
         }
     }
 }

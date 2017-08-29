@@ -7,6 +7,9 @@ namespace ServiceTimer
 {
     using System;
     using System.IO;
+    using System.Net;
+    using System.Net.Http;
+    using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
     using Core.Common.Extensions;
@@ -160,16 +163,42 @@ namespace ServiceTimer
                 {
                     Work(info);
                 }
+                catch (HttpRequestException ex)
+                {
+                    Logger.Error("Unable to connect to the api.");
+                    Logger.Debug(ex);
+                }
+                catch (SocketException ex)
+                {
+                    Logger.Error("Unable to connect to the api.");
+                    Logger.Debug(ex);
+                }
                 catch (TaskCanceledException ex)
                 {
                     if (ex.CancellationToken.IsCancellationRequested)
                     {
                         Logger.Error(ex.Message);
+                        Logger.Debug(ex);
                     }
                     else
                     {
                         Logger.Error("Http request timeout.");
+                        Logger.Debug(ex);
                     }
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status == WebExceptionStatus.NameResolutionFailure)
+                    {
+                        Logger.Error(ex.Message);                        
+                        Logger.Error(FailedMessage);
+                        Logger.Debug(ex);
+                        return;
+                    }
+
+                    RavenClient.Capture(new SentryEvent(ex));
+                    Logger.Error(ex.Message);
+                    Logger.Error(FailedMessage);
                 }
                 catch (WebRequestException ex)
                 {
