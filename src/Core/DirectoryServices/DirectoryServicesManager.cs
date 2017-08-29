@@ -5,18 +5,10 @@
     using System.DirectoryServices.ActiveDirectory;
     using System.Net.NetworkInformation;
     using NLog;
-    using SharpRaven;
-    using SharpRaven.Data;
 
     public class DirectoryServicesManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        protected RavenClient RavenClient;
-
-        public DirectoryServicesManager()
-        {
-            RavenClient = Sentry.RavenClient.New();
-        }
 
         public bool DomainExist()
         {
@@ -27,7 +19,7 @@
                 context = new PrincipalContext(ContextType.Domain);
                 return true;
             }
-            catch (Exception ex)
+            catch (ActiveDirectoryOperationException ex)
             {
                 Logger.Debug(ex);
                 return false;
@@ -52,9 +44,8 @@
 
                 return pdc.Name.Equals(currentMachine, StringComparison.OrdinalIgnoreCase);
             }
-            catch (Exception ex)
+            catch (ActiveDirectoryOperationException ex)
             {
-                RavenClient.Capture(new SentryEvent(ex));
                 Logger.Debug(ex);
                 return false;
             }
