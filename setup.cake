@@ -42,6 +42,6 @@ BuildParameters.SetParameters(context: Context,
 ToolSettings.SetToolSettings(context: Context,
                              buildPlatformTarget: PlatformTarget.x64,
 							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs"},
-							 testCoverageFilter: "+[Core*]* +[Service*]*");
+							 testCoverageFilter: "+[Core*]* +[Service*]* -[Octokit]* -[Deploy]*");
 
 Build.Run();
