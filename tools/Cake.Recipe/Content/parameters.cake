@@ -8,7 +8,7 @@ public static class BuildParameters
     public static bool IsRunningOnAppVeyor { get; private set; }
     public static bool IsPullRequest { get; private set; }
     public static bool IsMainRepository { get; private set; }
-	public static bool IsPublicRepository {get; private set; }
+    public static bool IsPublicRepository {get; private set; }
     public static bool IsMasterBranch { get; private set; }
     public static bool IsDevelopBranch { get; private set; }
     public static bool IsReleaseBranch { get; private set; }
@@ -37,6 +37,8 @@ public static class BuildParameters
     public static FilePath SolutionFilePath { get; private set; }
     public static DirectoryPath SourceDirectoryPath { get; private set; }
     public static DirectoryPath SolutionDirectoryPath { get; private set; }
+    public static DirectoryPath TestDirectoryPath { get; private set; }
+    public static string TestFilePattern { get; private set; }
     public static string Title { get; private set; }
     public static string ResharperSettingsFileName { get; private set; }
     public static string RepositoryOwner { get; private set; }
@@ -78,6 +80,9 @@ public static class BuildParameters
     public static string WebBaseEditUrl { get; private set; }
 
     public static FilePath NuSpecFilePath { get; private set; }
+
+    public static FilePath NugetConfig { get; private set; }
+    public static ICollection<string> NuGetSources { get; private set; }
 
     static BuildParameters()
     {
@@ -206,7 +211,7 @@ public static class BuildParameters
         context.Information("IsLocalBuild: {0}", IsLocalBuild);
         context.Information("IsPullRequest: {0}", IsPullRequest);
         context.Information("IsMainRepository: {0}", IsMainRepository);
-		context.Information("IsPublicRepository: {0}", IsPublicRepository);
+        context.Information("IsPublicRepository: {0}", IsPublicRepository);
         context.Information("IsTagged: {0}", IsTagged);
         context.Information("IsMasterBranch: {0}", IsMasterBranch);
         context.Information("IsDevelopBranch: {0}", IsDevelopBranch);
@@ -238,6 +243,8 @@ public static class BuildParameters
         context.Information("WebLinkRoot: {0}", WebLinkRoot);
         context.Information("WebBaseEditUrl: {0}", WebBaseEditUrl);
         context.Information("NuSpecFilePath: {0}", NuSpecFilePath);
+        context.Information("NugetConfig: {0} ({1})", NugetConfig, context.FileExists(NugetConfig));
+        context.Information("NuGetSources: {0}", string.Join(", ", NuGetSources));
     }
 
     public static void SetParameters(
@@ -248,6 +255,8 @@ public static class BuildParameters
         FilePath solutionFilePath = null,
         DirectoryPath solutionDirectoryPath = null,
         DirectoryPath rootDirectoryPath = null,
+        DirectoryPath testDirectoryPath = null,
+        string testFilePattern = null,
         string resharperSettingsFileName = null,
         string repositoryOwner = null,
         string repositoryName = null,
@@ -283,7 +292,10 @@ public static class BuildParameters
         string webLinkRoot = null,
         string webBaseEditUrl = null,
         FilePath nuspecFilePath = null,
-		bool isPublicRepository = true)
+        bool isPublicRepository = true,
+        FilePath nugetConfig = null,
+        ICollection<string> nuGetSources = null
+        )
     {
         if (context == null)
         {
@@ -295,6 +307,8 @@ public static class BuildParameters
         SolutionFilePath = solutionFilePath ?? SourceDirectoryPath.CombineWithFilePath(Title + ".sln");
         SolutionDirectoryPath = solutionDirectoryPath ?? SourceDirectoryPath.Combine(Title);
         RootDirectoryPath = rootDirectoryPath ?? context.MakeAbsolute(context.Environment.WorkingDirectory);
+        TestDirectoryPath = testDirectoryPath ?? sourceDirectoryPath;
+        TestFilePattern = testFilePattern;
         ResharperSettingsFileName = resharperSettingsFileName ?? string.Format("{0}.sln.DotSettings", Title);
         RepositoryOwner = repositoryOwner ?? string.Empty;
         RepositoryName = repositoryName ?? Title;
@@ -329,6 +343,30 @@ public static class BuildParameters
 
         NuSpecFilePath = nuspecFilePath ?? context.MakeAbsolute((FilePath)"./Cake.Recipe/Cake.Recipe.nuspec");
 
+        NugetConfig = context.MakeAbsolute(nugetConfig ?? (FilePath)"./NuGet.Config");
+        NuGetSources = nuGetSources;
+        if (nuGetSources == null)
+        {
+            if (context.FileExists(NugetConfig))
+            {
+                NuGetSources = (
+                                    from configuration in System.Xml.Linq.XDocument.Load(NugetConfig.FullPath).Elements("configuration")
+                                    from packageSources in configuration.Elements("packageSources")
+                                    from add in packageSources.Elements("add")
+                                    from value in add.Attributes("value")
+                                    select value.Value
+                                ).ToArray();
+            }
+            else
+            {
+                // TODO Use parameter for Cake Contrib feed from environment variable, similar to BuildParameters.MyGet.SourceUrl
+                NuGetSources = new []{
+                    "https://api.nuget.org/v3/index.json",
+                    "https://www.myget.org/F/cake-contrib/api/v3/index.json"
+                };
+            }
+        }
+
         Target = context.Argument("target", "Default");
         Configuration = context.Argument("configuration", "Release");
         IsLocalBuild = buildSystem.IsLocalBuild;
@@ -337,7 +375,7 @@ public static class BuildParameters
         IsRunningOnAppVeyor = buildSystem.AppVeyor.IsRunningOnAppVeyor;
         IsPullRequest = buildSystem.AppVeyor.Environment.PullRequest.IsPullRequest;
         IsMainRepository = StringComparer.OrdinalIgnoreCase.Equals(string.Concat(repositoryOwner, "/", repositoryName), buildSystem.AppVeyor.Environment.Repository.Name);
-		IsPublicRepository = isPublicRepository;
+        IsPublicRepository = isPublicRepository;
         IsMasterBranch = StringComparer.OrdinalIgnoreCase.Equals("master", buildSystem.AppVeyor.Environment.Repository.Branch);
         IsDevelopBranch = StringComparer.OrdinalIgnoreCase.Equals("develop", buildSystem.AppVeyor.Environment.Repository.Branch);
         IsReleaseBranch = buildSystem.AppVeyor.Environment.Repository.Branch.StartsWith("release", StringComparison.OrdinalIgnoreCase);

@@ -54,6 +54,11 @@ BuildParameters.Tasks.UploadAppVeyorArtifactsTask = Task("Upload-AppVeyor-Artifa
 	{
 		AppVeyor.UploadArtifact(package, new AppVeyorUploadArtifactsSettings().SetDeploymentName("LMS.exe"));
 	}
+
+	foreach(var package in GetFiles(BuildParameters.Paths.Directories.DeploymentPackages + "/LMS.Deploy.exe"))
+	{
+		AppVeyor.UploadArtifact(package, new AppVeyorUploadArtifactsSettings().SetDeploymentName("Deploy.exe"));
+	}
 });
 
 BuildParameters.Tasks.ClearAppVeyorCacheTask = Task("Clear-AppVeyor-Cache")

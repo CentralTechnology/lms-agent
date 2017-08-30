@@ -13,6 +13,8 @@ using System.Runtime.InteropServices;
 
 namespace Octokit
 {
+    using System.Reflection;
+
     // NOTE: Every request method must go through the `RunRequest` code path. So if you need to add a new method
     //       ensure it goes through there. :)
     /// <summary>
@@ -717,7 +719,7 @@ namespace Octokit
                 Environment.Is64BitOperatingSystem ? "amd64" : "x86",
 #endif
                 CultureInfo.CurrentCulture.Name,
-                AssemblyVersionInformation.Version);
+                Assembly.GetAssembly(typeof(Connection)).GetName().Version);
         }
     }
 }

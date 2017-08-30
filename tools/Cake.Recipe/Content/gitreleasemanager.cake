@@ -79,6 +79,14 @@ BuildParameters.Tasks.PublishGitHubReleaseTask = Task("Publish-GitHub-Release")
 				}
 			}
 
+			if(DirectoryExists(BuildParameters.Paths.Directories.DeploymentPackages))
+			{
+				foreach(var package in GetFiles(BuildParameters.Paths.Directories.DeploymentPackages + "/LMS.Deploy.exe"))
+				{
+					GitReleaseManagerAddAssets(BuildParameters.GitHub.UserName, BuildParameters.GitHub.Password, BuildParameters.RepositoryOwner, BuildParameters.RepositoryName, BuildParameters.Version.Milestone, package.ToString());
+				}
+			}
+
             GitReleaseManagerClose(BuildParameters.GitHub.UserName, BuildParameters.GitHub.Password, BuildParameters.RepositoryOwner, BuildParameters.RepositoryName, BuildParameters.Version.Milestone);
         }
         else

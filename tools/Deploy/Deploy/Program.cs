@@ -5,7 +5,6 @@ namespace Deploy
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -13,7 +12,6 @@ namespace Deploy
     using System.Reflection;
     using System.Resources;
     using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Win32;
     using Nito.AsyncEx;
@@ -206,7 +204,7 @@ namespace Deploy
             }
 
             _credentials = new InMemoryCredentialStore(new Credentials(username, password));
-            _client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"), _credentials);          
+            _client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"), _credentials);
 
             try
             {
@@ -436,6 +434,4 @@ namespace Deploy
         /// </summary>
         public T Value { get; set; }
     }
-
-
 }

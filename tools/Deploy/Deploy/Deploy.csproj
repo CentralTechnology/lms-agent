@@ -105,7 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Octokit\Octokit.csproj">
-      <Project>{d7c4a139-a13a-49a2-a437-c6c6dfc6fa2b}</Project>
+      <Project>{9d523842-d4cb-498a-a7ee-40a24e030e97}</Project>
       <Name>Octokit</Name>
     </ProjectReference>
   </ItemGroup>
