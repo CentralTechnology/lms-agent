@@ -711,8 +711,8 @@ namespace Octokit
                 format,
                 productInformation,
 #if !HAS_ENVIRONMENT
-                RuntimeInformation.OSDescription,
-                RuntimeInformation.OSArchitecture.ToString().ToLowerInvariant(),
+                Environment.OSVersion.Platform,
+                Environment.Is64BitOperatingSystem ? "amd64" : "x86",
 #else
                 Environment.OSVersion.Platform,
                 Environment.OSVersion.Version.ToString(3),
