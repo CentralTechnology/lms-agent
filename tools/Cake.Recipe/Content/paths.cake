@@ -54,6 +54,8 @@ public class BuildPaths
 		// artifact
 		var installerPackages = publishedApplicationsDirectory + "/Installer";
 		var installerFile = ((DirectoryPath)installerPackages).CombineWithFilePath("LMS.Setup.exe");
+		var deploymentPackages = publishedApplicationsDirectory + "/Deploy";
+		var deploymentFile = ((DirectoryPath)deploymentPackages).CombineWithFilePath("LMS.Deploy.exe");
 
         var buildDirectories = new BuildDirectories(
             buildDirectoryPath,
@@ -81,7 +83,8 @@ public class BuildPaths
             testCoverageDirectory,
             nuGetPackagesOutputDirectory,
             chocolateyPackagesOutputDirectory,
-			installerPackages
+			installerPackages,
+			deploymentPackages
             );
 
         var buildFiles = new BuildFiles(
@@ -90,7 +93,8 @@ public class BuildPaths
             testCoverageOutputFilePath,
             solutionInfoFilePath,
             buildLogFilePath,
-			installerFile
+			installerFile,
+			deploymentFile
             );
 
         return new BuildPaths
@@ -113,13 +117,16 @@ public class BuildFiles
 
 	public FilePath InstallerFile { get; private set; }
 
+	public FilePath DeploymentFile { get; private set; }
+
     public BuildFiles(
         ICakeContext context,
         FilePath[] repoFilesPaths,
         FilePath testCoverageOutputFilePath,
         FilePath solutionInfoFilePath,
         FilePath buildLogFilePath,
-		FilePath installerFile
+		FilePath installerFile,
+		FilePath deploymentFile
         )
     {
         RepoFilesPaths = Filter(context, repoFilesPaths);
@@ -127,6 +134,7 @@ public class BuildFiles
         SolutionInfoFilePath = solutionInfoFilePath;
         BuildLogFilePath = buildLogFilePath;
 		InstallerFile = installerFile;
+		DeploymentFile = deploymentFile;
     }
 
     private static FilePath[] Filter(ICakeContext context, FilePath[] files)
@@ -172,6 +180,7 @@ public class BuildDirectories
     public DirectoryPath ChocolateyPackages { get; private set; }
     public ICollection<DirectoryPath> ToClean { get; private set; }
 	public DirectoryPath InstallerPackages {get;private set;}
+	public DirectoryPath DeploymentPackages { get; private set; }
 
     public BuildDirectories(
         DirectoryPath build,
@@ -199,7 +208,8 @@ public class BuildDirectories
         DirectoryPath testCoverage,
         DirectoryPath nuGetPackages,
         DirectoryPath chocolateyPackages,
-		DirectoryPath installerPackages
+		DirectoryPath installerPackages,
+		DirectoryPath deploymentPackages
         )
     {
         Build = build;
@@ -228,6 +238,7 @@ public class BuildDirectories
         NuGetPackages = nuGetPackages;
         ChocolateyPackages = chocolateyPackages;
 		InstallerPackages = installerPackages;
+		DeploymentPackages = deploymentPackages;
 
         ToClean = new[] {
             Build,
