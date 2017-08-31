@@ -9,6 +9,8 @@ namespace Core.Models
     {
         private DateTime _whenCreated;
 
+        public bool IsDeleted { get; set; }
+
         [MaxLength(64)]
         public string Name { get; set; }
 

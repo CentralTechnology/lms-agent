@@ -42,11 +42,20 @@
             }
         }
 
-        public async Task<List<LicenseGroup>> GetAll()
+        public async Task<List<LicenseGroup>> GetAll(ODataExpression<LicenseGroup> filter = null)
         {
             try
             {
-                IEnumerable<LicenseGroup> groups = await Client.For<LicenseGroup>().FindEntriesAsync();
+                IEnumerable<LicenseGroup> groups;
+                if (filter == null)
+                {
+                    groups = await Client.For<LicenseGroup>().FindEntriesAsync();
+                }
+                else
+                {
+                    groups = await Client.For<LicenseGroup>().Filter(lg => !lg.IsDeleted).FindEntriesAsync();
+                }
+                 
                 return groups.ToList();
             }
             catch (WebRequestException ex)

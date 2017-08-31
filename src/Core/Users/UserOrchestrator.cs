@@ -13,6 +13,7 @@
     using KellermanSoftware.CompareNetObjects;
     using Models;
     using NLog;
+    using Simple.OData.Client;
 
     public class UserOrchestrator
     {
@@ -52,7 +53,11 @@
                 await licenseGroupClient.Update(groupsToUpdate);
             }
 
-
+            /*
+             * We need groups that are not already deleted. Otherwise we will be deleting groups that are already deleted,
+             * wasting api calls.
+             */
+            apiGroups = await licenseGroupClient.GetAll(new ODataExpression<LicenseGroup>(lg => !lg.IsDeleted));
             List<LicenseGroup> groupsToDelete = GetUsersOrGroupsToDelete(localGroups, apiGroups);
             Logger.Info($"Delete Groups: {groupsToDelete.Count}");
 
