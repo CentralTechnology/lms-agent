@@ -3,14 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using Abp.Domain.Entities;
     using Abp.Timing;
     using Users.Entities;
 
     public class LicenseUser : LicenseBase
     {
-        private DateTime _whenCreated;
         private DateTime? _lastLoginDate;
+        private DateTime _whenCreated;
 
         [MaxLength(256)]
         public string DisplayName { get; set; }
@@ -24,6 +23,8 @@
         public string FirstName { get; set; }
 
         public List<LicenseGroup> Groups { get; set; }
+
+        public bool IsDeleted { get; set; }
 
         public DateTime? LastLoginDate
         {

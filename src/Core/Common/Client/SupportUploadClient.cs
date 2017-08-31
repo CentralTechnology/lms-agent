@@ -1,7 +1,6 @@
 namespace Core.Common.Client
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Abp.Timing;
     using Extensions;
@@ -43,26 +42,6 @@ namespace Core.Common.Client
                 ex.Handle(Logger);
 
                 return CallInStatus.NotCalledIn;
-            }
-        }
-
-        public async Task<List<LicenseUser>> GetUsers(int uploadId)
-        {
-            try
-            {
-                ManagedSupport upload = await Client.For<ManagedSupport>()
-                    .Key(uploadId)
-                    .Expand(x => x.Users)
-                    .FindEntryAsync();
-
-                // return a new list if null, could just be the first check in
-                return upload.Users ?? new List<LicenseUser>();
-            }
-            catch (WebRequestException ex)
-            {
-                Logger.Error($"Error getting users for upload: {uploadId}");
-                ex.Handle(Logger);
-                return null;
             }
         }
 

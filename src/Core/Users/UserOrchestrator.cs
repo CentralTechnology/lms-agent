@@ -26,6 +26,98 @@
             await supportUploadClient.Update(id);
         }
 
+        protected List<TEntity> GetUsersOrGroupsToCreate<TEntity>(List<TEntity> localEntities, List<TEntity> apiEntities, int uploadId = 0)
+            where TEntity : LicenseBase
+        {
+            if (localEntities == null)
+            {
+                return new List<TEntity>();
+            }
+
+            List<TEntity> newEntities;
+
+            if (apiEntities != null && apiEntities.Count > 0)
+            {
+                newEntities = localEntities.Where(lu => apiEntities.All(au => au.Id != lu.Id)).ToList();
+            }
+            else
+            {
+                newEntities = localEntities;
+            }
+
+            if (typeof(TEntity) != typeof(LicenseUser))
+            {
+                return newEntities;
+            }
+
+            if (newEntities.Count <= 0)
+            {
+                return newEntities;
+            }
+
+            if (uploadId == default(int))
+            {
+                return newEntities;
+            }
+
+            List<LicenseUser> newUsers = newEntities.Cast<LicenseUser>().ToList();
+            newUsers.ForEach(lu => lu.ManagedSupportId = uploadId);
+
+            return newUsers.Cast<TEntity>().ToList();
+        }
+
+        protected List<TEntity> GetUsersOrGroupsToDelete<TEntity>(List<TEntity> localEntities, List<TEntity> apiEntities)
+            where TEntity : LicenseBase
+        {
+            if (localEntities == null || apiEntities == null)
+            {
+                return new List<TEntity>();
+            }
+
+            if (apiEntities.Count == 0)
+            {
+                return new List<TEntity>();
+            }
+
+            var localEntityIds = new HashSet<Guid>(localEntities.Select(lu => lu.Id));
+
+            apiEntities.RemoveAll(au => localEntityIds.Contains(au.Id));
+
+            return apiEntities;
+        }
+
+        protected List<TEntity> GetUsersOrGroupsToUpdate<TEntity, TCompareLogic>(List<TEntity> localEntities, List<TEntity> apiEntities)
+            where TEntity : LicenseBase
+            where TCompareLogic : CompareLogic, new()
+        {
+            if (localEntities == null || apiEntities == null || apiEntities.Count == 0)
+            {
+                return new List<TEntity>();
+            }
+
+            var entitiesToUpdate = new List<TEntity>();
+            var compLogic = new TCompareLogic();
+
+            foreach (TEntity apiEntity in apiEntities)
+            {
+                TEntity localEntity = localEntities.FirstOrDefault(lu => lu.Id == apiEntity.Id);
+                if (localEntity == null)
+                {
+                    continue;
+                }
+
+                ComparisonResult result = compLogic.Compare(localEntity, apiEntity);
+                if (!result.AreEqual)
+                {
+                    Logger.Debug($"Entity: {localEntity.Id} requires an update.");
+                    Logger.Debug(result.DifferencesString);
+                    entitiesToUpdate.Add(localEntity);
+                }
+            }
+
+            return entitiesToUpdate;
+        }
+
         public async Task ProcessGroups(List<LicenseUser> users)
         {
             Logger.Info(Environment.NewLine);
@@ -43,7 +135,6 @@
             {
                 await licenseGroupClient.Add(groupsToCreate);
             }
-
 
             List<LicenseGroup> groupsToUpdate = GetUsersOrGroupsToUpdate<LicenseGroup, CompareLogic>(localGroups, apiGroups);
             Logger.Info($"Update Groups: {groupsToUpdate.Count}");
@@ -117,7 +208,6 @@
         {
             Logger.Info(Environment.NewLine);
             var licenseUserClient = new LicenseUserClient();
-            var supportUploadClient = new SupportUploadClient();
             var userManager = new UserManager();
 
             List<LicenseUser> localUsers = userManager.GetUsersAndGroups();
@@ -127,16 +217,15 @@
                 return localUsers;
             }
 
-            List<LicenseUser> apiUsers = await supportUploadClient.GetUsers(uploadId);
+            List<LicenseUser> apiUsers = await licenseUserClient.GetAll(new ODataExpression<LicenseUser>(lu => lu.ManagedSupportId == uploadId));
 
-            var newUsers = GetUsersOrGroupsToCreate(localUsers, apiUsers, uploadId);
+            List<LicenseUser> newUsers = GetUsersOrGroupsToCreate(localUsers, apiUsers, uploadId);
             Logger.Info($"New Users: {newUsers.Count}");
 
             if (newUsers.Count > 0)
             {
                 await licenseUserClient.Add(newUsers);
             }
-
 
             List<LicenseUser> usersToUpdate = GetUsersOrGroupsToUpdate<LicenseUser, LicenseUserCompareLogic>(localUsers, apiUsers);
             Logger.Info($"Update Users: {usersToUpdate.Count}");
@@ -146,8 +235,12 @@
                 await licenseUserClient.Update(usersToUpdate);
             }
 
-
-            List<LicenseUser> usersToDelete = GetUsersOrGroupsToDelete(localUsers, apiUsers);
+            /*
+             * We need users that are not already deleted. Otherwise we will be deleting users that are already deleted,
+             * wasting api calls. The reason for the new list is we need to return the original full list for other operations.
+             */
+            List<LicenseUser> filteredUsers = await licenseUserClient.GetAll(new ODataExpression<LicenseUser>(lu => lu.ManagedSupportId == uploadId && !lu.IsDeleted));
+            List<LicenseUser> usersToDelete = GetUsersOrGroupsToDelete(localUsers, filteredUsers);
             Logger.Info($"Delete Users: {usersToDelete.Count}");
 
             if (usersToDelete.Count > 0)
@@ -156,98 +249,6 @@
             }
 
             return localUsers;
-        }
-
-        protected List<TEntity> GetUsersOrGroupsToDelete<TEntity>(List<TEntity> localEntities, List<TEntity> apiEntities)
-            where TEntity : LicenseBase
-        {
-            if (localEntities == null || apiEntities == null)
-            {
-                return new List<TEntity>();
-            }
-
-            if (apiEntities.Count == 0)
-            {
-                return new List<TEntity>();
-            }
-
-            var localEntityIds = new HashSet<Guid>(localEntities.Select(lu => lu.Id));
-
-            apiEntities.RemoveAll(au => localEntityIds.Contains(au.Id));
-
-            return apiEntities;
-        }
-
-        protected List<TEntity> GetUsersOrGroupsToUpdate<TEntity, TCompareLogic>(List<TEntity> localEntities, List<TEntity> apiEntities)
-            where TEntity : LicenseBase
-            where TCompareLogic : CompareLogic, new()
-        {
-            if (localEntities == null || apiEntities == null || apiEntities.Count == 0)
-            {
-                return new List<TEntity>();
-            }
-
-            var entitiesToUpdate = new List<TEntity>();
-            var compLogic = new TCompareLogic();
-
-            foreach (var apiEntity in apiEntities)
-            {
-                var localEntity = localEntities.FirstOrDefault(lu => lu.Id == apiEntity.Id);
-                if (localEntity == null)
-                {
-                    continue;
-                }
-
-                var result = compLogic.Compare(localEntity, apiEntity);
-                if (!result.AreEqual)
-                {
-                    Logger.Debug($"Entity: {localEntity.Id} requires an update.");
-                    Logger.Debug(result.DifferencesString);
-                    entitiesToUpdate.Add(localEntity);                  
-                }
-            }
-
-            return entitiesToUpdate;
-        }
-
-        protected List<TEntity> GetUsersOrGroupsToCreate<TEntity>(List<TEntity> localEntities, List<TEntity> apiEntities, int uploadId = 0)
-            where TEntity : LicenseBase
-        {
-            if (localEntities == null)
-            {
-                return new List<TEntity>();
-            }
-
-            List<TEntity> newEntities;
-
-            if (apiEntities != null && apiEntities.Count > 0)
-            {
-                newEntities = localEntities.Where(lu => apiEntities.All(au => au.Id != lu.Id)).ToList();
-            }
-            else
-            {
-                newEntities = localEntities;
-            }
-
-            if (typeof(TEntity) != typeof(LicenseUser))
-            {
-                return newEntities;
-            }
-
-            if (newEntities.Count <= 0)
-            {
-                return newEntities;
-            }
-
-            if (uploadId == default(int))
-            {
-                return newEntities;
-            }
-
-            List<LicenseUser> newUsers = newEntities.Cast<LicenseUser>().ToList();
-            newUsers.ForEach(lu => lu.ManagedSupportId = uploadId);
-
-            return newUsers.Cast<TEntity>().ToList();
         }
 
         public async Task Start()
