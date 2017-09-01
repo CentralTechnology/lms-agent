@@ -187,8 +187,6 @@ namespace Deploy
 
             Information("Getting credentials");
 
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-
             ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => true;
 
             string username = Encoding.UTF8.GetString(Convert.FromBase64String(ResourceManager.GetString("GITHUB_USERNAME") ?? throw new InvalidOperationException()));

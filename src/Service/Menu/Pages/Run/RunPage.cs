@@ -37,8 +37,7 @@
                     }
                     catch (Exception ex)
                     {
-                        RavenClient.Capture(new SentryEvent(ex));
-                        Logger.Error(ex.Message);
+                        ex.Handle();
                         Logger.Error("************ User Monitoring Failed ************");
                     }
                     finally
@@ -67,8 +66,7 @@
                     }
                     catch (Exception ex)
                     {
-                        RavenClient.Capture(new SentryEvent(ex));
-                        Logger.Error(ex.Message);
+                        ex.Handle();
                         Logger.Error("************ Veeam Monitoring Failed ************");
                     }
                     finally

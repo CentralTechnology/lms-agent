@@ -61,11 +61,25 @@
             }
         }
 
-        public async Task<List<LicenseUser>> GetAll()
+        public async Task<List<LicenseUser>> GetAll(ODataExpression<LicenseUser> filter = null)
         {
             try
             {
-                IEnumerable<LicenseUser> users = await Client.For<LicenseUser>().Expand(u => u.Groups).FindEntriesAsync();
+                IEnumerable<LicenseUser> users;
+                if (filter == null)
+                {
+                    users = await Client.For<LicenseUser>()
+                        .Expand(u => u.Groups)
+                        .FindEntriesAsync();
+                }
+                else
+                {
+                    users = await Client.For<LicenseUser>()
+                        .Expand(u => u.Groups)
+                        .Filter(filter)
+                        .FindEntriesAsync();
+                }
+                
                 return users.ToList();
             }
             catch (WebRequestException ex)

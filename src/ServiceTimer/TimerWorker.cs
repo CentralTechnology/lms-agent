@@ -163,61 +163,9 @@ namespace ServiceTimer
                 {
                     Work(info);
                 }
-                catch (HttpRequestException ex)
-                {
-                    Logger.Error("Unable to connect to the api.");
-                    Logger.Debug(ex);
-                }
-                catch (SocketException ex)
-                {
-                    Logger.Error("Unable to connect to the api.");
-                    Logger.Debug(ex);
-                }
-                catch (TaskCanceledException ex)
-                {
-                    if (ex.CancellationToken.IsCancellationRequested)
-                    {
-                        Logger.Error(ex.Message);
-                        Logger.Debug(ex);
-                    }
-                    else
-                    {
-                        Logger.Error("Http request timeout.");
-                        Logger.Debug(ex);
-                    }
-                }
-                catch (WebException ex)
-                {
-                    if (ex.Status == WebExceptionStatus.NameResolutionFailure)
-                    {
-                        Logger.Error(ex.Message);                        
-                        Logger.Error(FailedMessage);
-                        Logger.Debug(ex);
-                        return;
-                    }
-
-                    RavenClient.Capture(new SentryEvent(ex));
-                    Logger.Error(ex.Message);
-                    Logger.Error(FailedMessage);
-                }
-                catch (WebRequestException ex)
-                {
-                    ex.Handle(Logger);
-                }
-                catch (IOException ex)
-                {
-                    // chances are the reason this is thrown is because the client is low on disk space.
-                    // therefore we output to console instead of the logger.
-
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine(FailedMessage);
-                    Console.ResetColor();
-                }
                 catch (Exception ex)
                 {
-                    RavenClient.Capture(new SentryEvent(ex));
-                    Logger.Error(ex.Message);
+                    ex.Handle();
                     Logger.Error(FailedMessage);
                 }
             }
