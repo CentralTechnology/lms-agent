@@ -5,6 +5,7 @@
     using System.ComponentModel;
     using System.Data;
     using System.Data.SqlClient;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Net.Sockets;
@@ -167,15 +168,19 @@
 
         public string VeeamVersion()
         {
-            string veeamVersion = CommonExtensions.GetApplicationVersion(Constants.VeeamApplicationName).ToString();
-            if (veeamVersion.IsNullOrEmpty())
+            try
             {
+                FileVersionInfo veeamFile = FileVersionInfo.GetVersionInfo(@"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe");
+                SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, veeamFile.FileVersion);
+                return veeamFile.FileVersion;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Unable to find the Veeam.Backup.Service executable. Unable to determine the correct program version.");
+                Logger.Debug(ex);
                 SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, string.Empty);
                 return null;
             }
-
-            SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, veeamVersion);
-            return veeamVersion;
         }
     }
 }

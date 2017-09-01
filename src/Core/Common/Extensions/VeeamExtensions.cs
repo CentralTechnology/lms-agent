@@ -11,7 +11,6 @@
 
     public static class VeeamExtensions
     {
-        private static readonly LicenseManager LicenseManager = new LicenseManager();
         private static readonly VeeamManager VeeamManager = new VeeamManager();
         private static readonly SettingManager SettingManager = new SettingManager();
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
