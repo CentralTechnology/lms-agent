@@ -115,6 +115,30 @@
             return 0;
         }
 
+        public int GetProtectedVmsCount(EPlatform platform)
+        {
+            try
+            {
+                var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
+
+                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmsCount", DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
+                {
+                    if (dataReader.Read())
+                    {
+                        return (int)dataReader["protected_vms_count"];
+                    }
+                }
+            }
+            catch (Win32Exception ex)
+            {
+                Logger.Error(ex.Message);
+                Logger.Debug(ex);
+                return 0;
+            }
+
+            return 0;
+        }
+
         public VmsCounterInfo GetVmsCounters(EPlatform platform, bool useTrialStrategy)
         {
             try
