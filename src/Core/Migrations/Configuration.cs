@@ -21,6 +21,8 @@
             context.Settings.Add(new Setting(SettingNames.MonitorUsers, false.ToString()));
             context.Settings.Add(new Setting(SettingNames.MonitorVeeam, false.ToString()));
             context.Settings.Add(new Setting(SettingNames.PrimaryDomainControllerOverride, false.ToString()));
+            context.Settings.Add(new Setting(SettingNames.VeeamOverride, false.ToString()));
+            context.Settings.Add(new Setting(SettingNames.UsersOverride, false.ToString()));
         }
     }
 }
