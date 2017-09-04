@@ -75,6 +75,13 @@
             Logger.Info("Dermining whether to monitor users...");
             try
             {
+                bool userOverride = SettingManager.GetSettingValue<bool>(SettingNames.UsersOverride);
+                if (userOverride)
+                {
+                    Logger.Warn("User monitoring has been manually disabled.");
+                    return false;
+                }
+
                 // check if a domain exists
                 bool domainExists = DirectoryServicesFactory.DirectoryServicesManager().DomainExist();
                 if (!domainExists)
@@ -119,6 +126,13 @@
             Logger.Info("Dermining whether to monitor veeam...");
             try
             {
+                bool veeamOverride = SettingManager.GetSettingValue<bool>(SettingNames.VeeamOverride);
+                if (veeamOverride)
+                {
+                    Logger.Warn("Veeam monitoring has been manually disabled.");
+                    return false;
+                }
+
                 var veeamManager = new VeeamManager();
 
                 // check if veeam is installed

@@ -1,5 +1,6 @@
 ﻿namespace Service.Menu.Pages.Options
 {
+    using System;
     using Core.Administration;
     using Core.Common.Extensions;
     using EasyConsole;
@@ -12,6 +13,14 @@
             : base("Users", program)
         {
             
+            Menu.Add("Manual Override", () =>
+            {
+                var enabled = SettingManager.GetSettingValue<bool>(SettingNames.UsersOverride);
+                SettingManager.ChangeSetting(SettingNames.UsersOverride, (!enabled).ToString());
+
+                Output.WriteLine(!enabled ? "Enabled" : "Disabled");
+                ActionComplete<UsersPage>();
+            });
 
             Menu.Add("PDC Override: ", () =>
             {
@@ -21,6 +30,7 @@
                 Output.WriteLine(!pdcOverride ? "Enabled" : "Disabled");
                 ActionComplete<UsersPage>();
             });
+
         }
     }
 }
