@@ -7,6 +7,7 @@
     using System.Data.SqlClient;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Net;
     using System.Net.Sockets;
     using Abp;
@@ -154,7 +155,7 @@
             {
                 Logger.Error(ex.Message);
                 Logger.Debug(ex);
-                return new VmsCounterInfo(0,0);
+                return new VmsCounterInfo(0, 0);
             }
         }
 
@@ -192,19 +193,35 @@
 
         public string VeeamVersion()
         {
+            FileVersionInfo veeamFile = null;
+
             try
             {
-                FileVersionInfo veeamFile = FileVersionInfo.GetVersionInfo(@"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe");
-                SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, veeamFile.FileVersion);
-                return veeamFile.FileVersion;
+                veeamFile = FileVersionInfo.GetVersionInfo(@"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe");
             }
-            catch (Exception ex)
+            catch (FileNotFoundException ex)
             {
-                Logger.Error("Unable to find the Veeam.Backup.Service executable. Unable to determine the correct program version.");
                 Logger.Debug(ex);
-                SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, string.Empty);
-                return null;
             }
+
+            if (veeamFile == null)
+            {
+                try
+                {
+                    // file path for veeam 9.0
+                    veeamFile = FileVersionInfo.GetVersionInfo(@"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe");
+                }
+                catch (FileNotFoundException ex)
+                {
+                    Logger.Error("Unable to find the Veeam.Backup.Service executable. Unable to determine the correct program version.");
+                    Logger.Debug(ex);
+                    SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, string.Empty);
+                    return null;
+                }
+            }
+
+            SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, veeamFile.FileVersion);
+            return veeamFile.FileVersion;
         }
     }
 }
