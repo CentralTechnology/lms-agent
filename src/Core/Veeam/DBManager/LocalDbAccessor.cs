@@ -58,10 +58,18 @@
                 {
                     connection.Dispose();
                 }
-            }
+            }            
             catch (Exception ex)
             {
-                RavenClient.Capture(new SentryEvent(ex));
+                if (ex is SqlException sqlException)
+                {
+
+                }
+                else
+                {
+                    RavenClient.Capture(new SentryEvent(ex));
+                }
+                
                 throw;
             }
         }

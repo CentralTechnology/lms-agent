@@ -1,6 +1,7 @@
 ﻿namespace Core.Common.Extensions
 {
     using System;
+    using System.Data.SqlClient;
     using System.IO;
     using System.Net;
     using System.Net.Http;
@@ -19,6 +20,23 @@
 
         public static void Handle(this Exception ex)
         {
+            if (ex is AggregateException aggEx)
+            {
+                if (aggEx.InnerException is WebRequestException innerWebRequestException)
+                {
+                    Logger.Error($"Code: {innerWebRequestException.Code}  Reason: {innerWebRequestException.Response}");
+                    Logger.Debug(innerWebRequestException);
+                    return;
+                }
+            }
+
+            if (ex is SqlException sqlException)
+            {
+                Logger.Error("There was a problem communicating with the Veeam database.");
+                Logger.Debug(sqlException);
+                return;
+            }
+
             if (ex is HttpRequestException httpRequestException)
             {
                 Logger.Error("There was a problem communicating with the api.");
@@ -42,6 +60,13 @@
                 }
                 else
                 {
+                    if (taskCanceledException.InnerException is WebRequestException taskCancelledWebRequestException)
+                    {
+                        Logger.Error($"Code: {taskCancelledWebRequestException.Code}  Reason: {taskCancelledWebRequestException.Response}");
+                        Logger.Debug(taskCancelledWebRequestException);
+                        return;
+                    }
+
                     Logger.Error("Http request timeout.");
                     Logger.Debug(taskCanceledException);
                 }
@@ -64,11 +89,12 @@
                 return;
             }
 
-            if(ex is WebRequestException webRequestException)
+            if (ex is WebRequestException webRequestException)
             {
                 if (webRequestException.Code == HttpStatusCode.Unauthorized)
                 {
-                    Logger.Error(webRequestException.Message);
+                    Logger.Error($"Code: {webRequestException.Code}  Reason: {webRequestException.Response}");
+                    Logger.Debug(webRequestException);
                     return;
                 }
 

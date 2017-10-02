@@ -1,8 +1,10 @@
-﻿namespace Core.Users
+﻿
+namespace Core.Users
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Abp.Timing;
     using Administration;
@@ -162,13 +164,17 @@
         public async Task ProcessUserGroups(List<LicenseUser> users)
         {
             Logger.Info(Environment.NewLine);
+            Logger.Info("Processing group memberships.");
             var licenseUserClient = new LicenseUserClient();
             var licenseUserGroupClient = new LicenseUserGroupClient();
 
+            Logger.Debug("Getting a list of local users and their groups.");
             List<LicenseGroup> localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
 
+            Logger.Debug("Getting a list of remote users and their groups.");
             List<LicenseUser> apiUsers = await licenseUserClient.GetAll();
 
+            Logger.Debug("Removing remote users that do not have any groups.");
             foreach (LicenseUser apiUser in apiUsers)
             {
                 if (apiUser.Groups != null)
@@ -186,8 +192,10 @@
 
                 List<LicenseUser> usersToBeAdded = GetUsersOrGroupsToCreate(usersThatWereMembers, usersThatAreMembers);
 
+                Logger.Debug($"Processing: {localGroup.Name}");
                 if (usersToBeAdded.Count > 0)
                 {
+                    Logger.Debug("Adding users");
                     await licenseUserGroupClient.Add(usersToBeAdded, localGroup);
                 }
 
@@ -195,6 +203,7 @@
 
                 if (usersToBeRemoved.Count > 0)
                 {
+                    Logger.Debug("Removing users");
                     await licenseUserGroupClient.Remove(usersToBeRemoved, localGroup);
                 }
 
