@@ -6,7 +6,6 @@
     using Administration;
     using Common.Client;
     using Common.Extensions;
-    using Factory;
     using Models;
     using NLog;
 
@@ -17,7 +16,7 @@
 
         private async Task<CallInStatus> GetStatus()
         {
-            Guid device = await SettingFactory.SettingsManager().GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
+            Guid device = await new SettingManager().GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
             return await VeeamClient.GetStatus(device);
         }
 

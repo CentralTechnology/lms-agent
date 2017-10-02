@@ -1,12 +1,9 @@
 ﻿namespace Core.Common.Client.OData
 {
     using System;
-    using Abp;
     using Abp.Extensions;
     using Abp.Threading;
     using Administration;
-    using Extensions;
-    using Factory;
     using Helpers;
     using NLog;
     using Simple.OData.Client;
@@ -16,7 +13,7 @@
         protected ODataCommonClientSettings()
         {
             Logger = LogManager.GetCurrentClassLogger();
-            SettingManager = SettingFactory.SettingsManager();
+            SettingManager = new SettingManager();
 
             RenewHttpConnection = true;
         }
@@ -40,7 +37,7 @@
         {
             if (Token.IsNullOrEmpty())
             {
-                Token = AsyncHelper.RunSync(() => ClientFactory.PortalClient().GetTokenCookie());
+                Token = AsyncHelper.RunSync(() => new PortalClient().GetTokenCookie());
             }
         }
     }

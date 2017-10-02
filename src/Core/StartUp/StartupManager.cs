@@ -6,7 +6,7 @@
     using Common.Client;
     using Common.Constants;
     using Common.Extensions;
-    using Factory;
+    using DirectoryServices;
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
@@ -47,7 +47,6 @@
                 SettingManager.ChangeSetting(SettingNames.MonitorUsers, monUsers.ToString());
                 Logger.Info(monUsers ? "Monitoring Users" : "Not Monitoring Users");
                 Console.WriteLine(Environment.NewLine);
-
             }
             catch (Exception ex)
             {
@@ -73,6 +72,7 @@
         private bool MonitorUsers()
         {
             Logger.Info("Dermining whether to monitor users...");
+            var directoryServicesManager = new DirectoryServicesManager();
             try
             {
                 bool userOverride = SettingManager.GetSettingValue<bool>(SettingNames.UsersOverride);
@@ -83,7 +83,7 @@
                 }
 
                 // check if a domain exists
-                bool domainExists = DirectoryServicesFactory.DirectoryServicesManager().DomainExist();
+                bool domainExists = directoryServicesManager.DomainExist();
                 if (!domainExists)
                 {
                     Logger.Warn("Check Domain: FAIL");
@@ -93,13 +93,13 @@
                 Logger.Info("Check Domain: OK");
 
                 // check if this is a primary domain controller
-                bool pdc = DirectoryServicesFactory.DirectoryServicesManager().PrimaryDomainController();
+                bool pdc = directoryServicesManager.PrimaryDomainController();
                 if (!pdc)
                 {
                     Logger.Warn("Check PDC: FAIL");
 
                     // check override is enabled
-                    bool pdcOverride = SettingFactory.SettingsManager().GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
+                    bool pdcOverride = SettingManager.GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
                     if (!pdcOverride)
                     {
                         Logger.Warn("Check PDC Override: FAIL");
@@ -185,7 +185,7 @@
                         return false;
                     }
 
-                    SettingFactory.SettingsManager().ChangeSetting(SettingNames.AutotaskAccountId, reportedAccount.ToString());
+                    SettingManager.ChangeSetting(SettingNames.AutotaskAccountId, reportedAccount.ToString());
                     accountId = reportedAccount.To<int>();
                 }
                 else
