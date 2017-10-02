@@ -13,6 +13,7 @@
     using KellermanSoftware.CompareNetObjects;
     using Models;
     using NLog;
+    using ServiceStack.Text;
     using Simple.OData.Client;
 
     public class UserOrchestrator

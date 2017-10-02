@@ -128,6 +128,9 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Text, Version=4.5.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Text.4.5.14\lib\net45\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="SharpRaven, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpRaven.2.2.0\lib\net45\SharpRaven.dll</HintPath>
     </Reference>
@@ -210,7 +213,6 @@
     <Compile Include="Common\Extensions\VeeamExtensions.cs" />
     <Compile Include="Common\Extensions\DirectoryEntryExtensions.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.cs" />
-    <Compile Include="Common\Extensions\GenericExtensions.cs" />
     <Compile Include="Common\Extensions\ObjectExtensions.cs" />
     <Compile Include="Common\Extensions\RegistryExtensions.cs" />
     <Compile Include="Common\Extensions\SettingManagerExtensions.cs" />

@@ -34,7 +34,7 @@
             catch (WebRequestException ex)
             {
                 Logger.Error($"Error adding user: {user.DisplayName} to group: {group.Name}");
-                ex.Handle(Logger);
+                ex.Handle();
             }
         }
 
@@ -55,7 +55,7 @@
             catch (WebRequestException ex)
             {
                 Logger.Error($"Error removing user: {user.DisplayName} from group: {group.Name}");
-                ex.Handle(Logger);
+                ex.Handle();
             }
         }
     }

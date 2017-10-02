@@ -11,6 +11,7 @@
     using Dto;
     using Models;
     using NLog;
+    using ServiceStack.Text;
 
     public class UserManager
     {

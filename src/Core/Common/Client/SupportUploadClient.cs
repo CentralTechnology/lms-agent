@@ -39,7 +39,7 @@ namespace Core.Common.Client
             catch (WebRequestException ex)
             {
                 Logger.Error("Error getting the current upload status.");
-                ex.Handle(Logger);
+                ex.Handle();
 
                 return CallInStatus.NotCalledIn;
             }
@@ -65,7 +65,7 @@ namespace Core.Common.Client
             catch (WebRequestException ex)
             {
                 Logger.Error("Error calling in.");
-                ex.Handle(Logger);
+                ex.Handle();
             }
         }
     }

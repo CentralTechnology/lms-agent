@@ -1,11 +1,13 @@
 ﻿namespace Core.Common.Client
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Extensions;
     using Models;
     using OData;
+    using ServiceStack.Text;
     using Simple.OData.Client;
 
     public class LicenseUserClient : LmsClientBase
@@ -42,22 +44,10 @@
                     user.WhenCreated
                 }).InsertEntryAsync();
             }
-            catch (TaskCanceledException ex)
-            {
-                if (ex.CancellationToken.IsCancellationRequested)
-                {
-                    Logger.Error($"Error creating: {user.DisplayName} - {ex.Message}");
-                    Logger.Debug(ex.Dump());
-                }
-                else
-                {
-                    Logger.Error($"Error creating: {user.DisplayName} - Http request timeout.");
-                }
-            }
             catch (WebRequestException ex)
             {
                 Logger.Error($"Error creating user: {user.DisplayName}");
-                ex.Handle(Logger);
+                ex.Handle();
             }
         }
 
@@ -84,7 +74,7 @@
             }
             catch (WebRequestException ex)
             {
-                ex.Handle(Logger);
+                ex.Handle();
                 return null;
             }
         }
@@ -106,7 +96,7 @@
             catch (WebRequestException ex)
             {
                 Logger.Error($"Error removing user: {user.DisplayName}");
-                ex.Handle(Logger);
+                ex.Handle();
             }
         }
 
@@ -137,7 +127,7 @@
             catch (WebRequestException ex)
             {
                 Logger.Error($"Error updating user: {user.DisplayName}");
-                ex.Handle(Logger);
+                ex.Handle();
             }
         }
     }

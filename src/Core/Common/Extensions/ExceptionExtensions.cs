@@ -7,8 +7,6 @@
     using System.Net.Sockets;
     using System.Security;
     using System.Threading.Tasks;
-    using Client.OData;
-    using Newtonsoft.Json;
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
@@ -18,34 +16,6 @@
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly RavenClient RavenClient = Sentry.RavenClient.New();
-
-        public static void Handle(this WebRequestException ex, Logger logger)
-        {
-            try
-            {
-                var rootException = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
-                if (rootException != null)
-                {
-                    InnerError inner = rootException.Error.InnerError;
-                    if (inner != null)
-                    {
-                        logger.Error($"Code: {ex.Code}  Message: {inner.Message}");
-                    }
-                    else
-                    {
-                        logger.Error($"Code: {ex.Code}  Message: {rootException.Error.Message}");
-                    }
-                }
-
-                logger.Debug(ex);
-            }
-            catch (Exception exc)
-            {
-                logger.Error(exc);
-                logger.Debug(exc);
-                throw;
-            }
-        }
 
         public static void Handle(this Exception ex)
         {
@@ -90,6 +60,21 @@
 
                 RavenClient.Capture(new SentryEvent(webException));
                 Logger.Error(webException.Message);
+                Logger.Debug(webException);
+                return;
+            }
+
+            if(ex is WebRequestException webRequestException)
+            {
+                if (webRequestException.Code == HttpStatusCode.Unauthorized)
+                {
+                    Logger.Error(webRequestException.Message);
+                    return;
+                }
+
+                RavenClient.Capture(new SentryEvent(webRequestException));
+                Logger.Error(webRequestException.Message);
+                Logger.Debug(webRequestException);
                 return;
             }
 
@@ -113,6 +98,7 @@
 
             RavenClient.Capture(new SentryEvent(ex));
             Logger.Error(ex.Message);
+            Logger.Debug(ex);
         }
     }
 }

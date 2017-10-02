@@ -46,7 +46,7 @@
             catch (WebRequestException ex)
             {
                 Logger.Error("Error getting the current upload status.");
-                ex.Handle(Logger);
+                ex.Handle();
 
                 return CallInStatus.NotCalledIn;
             }

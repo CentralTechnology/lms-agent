@@ -38,7 +38,7 @@
             catch (WebRequestException ex)
             {
                 Logger.Error($"Error creating group: {group.Id}");
-                ex.Handle(Logger);
+                ex.Handle();
             }
         }
 
@@ -60,7 +60,7 @@
             }
             catch (WebRequestException ex)
             {
-                ex.Handle(Logger);
+                ex.Handle();
                 return null;
             }
         }
@@ -82,7 +82,7 @@
             catch (WebRequestException ex)
             {
                 Logger.Error($"Error removing group: {group.Id}");
-                ex.Handle(Logger);
+                ex.Handle();
             }
         }
 
@@ -107,7 +107,7 @@
             catch (WebRequestException ex)
             {
                 Logger.Error($"Error updating group: {group.Id}");
-                ex.Handle(Logger);
+                ex.Handle();
             }
         }
     }
