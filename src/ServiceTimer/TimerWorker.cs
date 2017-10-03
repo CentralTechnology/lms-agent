@@ -98,7 +98,7 @@ namespace ServiceTimer
         /// <param name="workOnElapseCount"></param>
         protected TimerWorker(double timerInterval, uint workOnElapseCount)
         {
-            RavenClient = Core.Sentry.RavenClient.New();
+            RavenClient = Core.Sentry.RavenClient.Instance;
             StartupManager = new StartupManager();
             _TimerWorker(0, timerInterval, workOnElapseCount);
         }
@@ -111,7 +111,7 @@ namespace ServiceTimer
         /// <param name="workOnElapseCount"></param>
         protected TimerWorker(double delayOnStart, double timerInterval, uint workOnElapseCount)
         {
-            RavenClient = Core.Sentry.RavenClient.New();
+            RavenClient = Core.Sentry.RavenClient.Instance;
             StartupManager = new StartupManager();
             _TimerWorker(delayOnStart, timerInterval, workOnElapseCount);
         }

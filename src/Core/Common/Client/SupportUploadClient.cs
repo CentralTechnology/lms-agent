@@ -4,37 +4,44 @@ namespace Core.Common.Client
     using System.Threading.Tasks;
     using Abp.Timing;
     using Extensions;
+    using Helpers;
     using Models;
-    using OData;
+    using ServiceStack;
+    using ServiceStack.Text;
     using Simple.OData.Client;
 
-    public class SupportUploadClient : LmsClientBase
+    public class SupportUploadClient : PortalODataClientBase
     {
-        /// <inheritdoc />
-        public SupportUploadClient() : base(new ODataPortalAuthenticationClientSettings())
-        {
-        }
-
         public async Task<ManagedSupport> Add(ManagedSupport upload)
         {
-            return await Client.For<ManagedSupport>().Set(upload).InsertEntryAsync();
+            try
+            {
+                return await DefaultPolicy.ExecuteAsync(() => Client.For<ManagedSupport>().Set(upload).InsertEntryAsync());
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error("Error getting the current upload status.");
+                ex.Handle();
+
+                throw;
+            }
         }
 
         public async Task<int> GetIdByDeviceId(Guid deviceId)
         {
-            return await Client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int>();
+            return await DefaultPolicy.ExecuteAsync(() => Client.For<ManagedSupport>().Function("GetUploadId").Set(new {deviceId}).ExecuteAsScalarAsync<int>());
         }
 
         public async Task<int> GetNewUploadId()
         {
-            return await Client.For<ManagedSupport>().Function("NewUploadId").ExecuteAsScalarAsync<int>();
+            return await DefaultPolicy.ExecuteAsync(() => Client.For<ManagedSupport>().Function("NewUploadId").ExecuteAsScalarAsync<int>());
         }
 
         public async Task<CallInStatus> GetStatusByDeviceId(Guid deviceId)
         {
             try
             {
-                return await Client.For<ManagedSupport>().Function("GetCallInStatus").Set(new {deviceId}).ExecuteAsScalarAsync<CallInStatus>();
+                return await DefaultPolicy.ExecuteAsync(() => Client.For<ManagedSupport>().Function("GetCallInStatus").Set(new {deviceId}).ExecuteAsScalarAsync<CallInStatus>());
             }
             catch (WebRequestException ex)
             {
@@ -49,24 +56,28 @@ namespace Core.Common.Client
         {
             int uploadId = await GetNewUploadId();
 
-            string version = SettingManager.GetClientVersion();
+            string version = SettingManagerHelper.ClientVersion;
 
             try
             {
-                await Client.For<ManagedSupport>().Key(id).Set(new
-                {
-                    CheckInTime = Clock.Now,
-                    ClientVersion = version,
-                    Hostname = Environment.MachineName,
-                    Status = CallInStatus.CalledIn,
-                    UploadId = uploadId
-                }).UpdateEntryAsync();
+                await DefaultPolicy.ExecuteAsync(() => Client.For<ManagedSupport>()
+                .Key(id)
+                .Set(new
+                    {
+                        CheckInTime = new DateTimeOffset(Clock.Now),
+                        ClientVersion = version,
+                        Hostname = Environment.MachineName,
+                        Status = CallInStatus.CalledIn.ToString(),
+                        UploadId = uploadId.ToString()
+                    })
+                    .UpdateEntryAsync());
             }
             catch (WebRequestException ex)
             {
-                Logger.Error("Error calling in.");
-                ex.Handle();
+                Logger.Error($"{ex.Dump()}");
+                throw;
             }
+                
         }
     }
 }

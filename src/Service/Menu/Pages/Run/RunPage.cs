@@ -20,7 +20,7 @@
         public RunPage(Program program)
             : base("Run", program)
         {
-            RavenClient = Core.Sentry.RavenClient.New();
+            RavenClient = Core.Sentry.RavenClient.Instance;
 
             bool monitorUsers = SettingManager.GetSettingValue<bool>(SettingNames.MonitorUsers);
             if (monitorUsers)

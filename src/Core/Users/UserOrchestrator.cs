@@ -1,15 +1,15 @@
-﻿
-namespace Core.Users
+﻿namespace Core.Users
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
+    using Abp.Domain.Entities;
     using Abp.Timing;
     using Administration;
     using Common.Client;
     using Common.Extensions;
+    using Common.Helpers;
     using Compare;
     using Entities;
     using KellermanSoftware.CompareNetObjects;
@@ -29,23 +29,23 @@ namespace Core.Users
             await supportUploadClient.Update(id);
         }
 
-        protected List<TEntity> GetUsersOrGroupsToCreate<TEntity>(List<TEntity> localEntities, List<TEntity> apiEntities, int uploadId = 0)
+        protected List<TEntity> GetUsersOrGroupsToCreate<TEntity>(IEnumerable<TEntity> localEntities, IList<TEntity> apiEntities, int uploadId = 0)
             where TEntity : LicenseBase
         {
             if (localEntities == null)
             {
                 return new List<TEntity>();
             }
-
+           
             List<TEntity> newEntities;
 
-            if (apiEntities != null && apiEntities.Count > 0)
+            if (apiEntities != null && apiEntities.Any())
             {
                 newEntities = localEntities.Where(lu => apiEntities.All(au => au.Id != lu.Id)).ToList();
             }
             else
             {
-                newEntities = localEntities;
+                newEntities = new List<TEntity>(localEntities);
             }
 
             if (typeof(TEntity) != typeof(LicenseUser))
@@ -53,7 +53,7 @@ namespace Core.Users
                 return newEntities;
             }
 
-            if (newEntities.Count <= 0)
+            if (!newEntities.Any())
             {
                 return newEntities;
             }
@@ -63,13 +63,13 @@ namespace Core.Users
                 return newEntities;
             }
 
-            List<LicenseUser> newUsers = newEntities.Cast<LicenseUser>().ToList();
+            List<LicenseUser> newUsers = new List<LicenseUser>(newEntities.Cast<LicenseUser>());
             newUsers.ForEach(lu => lu.ManagedSupportId = uploadId);
 
             return newUsers.Cast<TEntity>().ToList();
         }
 
-        protected List<TEntity> GetUsersOrGroupsToDelete<TEntity>(List<TEntity> localEntities, List<TEntity> apiEntities)
+        protected List<TEntity> GetUsersOrGroupsToDelete<TEntity>(IEnumerable<TEntity> localEntities, List<TEntity> apiEntities)
             where TEntity : LicenseBase
         {
             if (localEntities == null || apiEntities == null)
@@ -77,7 +77,7 @@ namespace Core.Users
                 return new List<TEntity>();
             }
 
-            if (apiEntities.Count == 0)
+            if (!apiEntities.Any())
             {
                 return new List<TEntity>();
             }
@@ -89,11 +89,11 @@ namespace Core.Users
             return apiEntities;
         }
 
-        protected List<TEntity> GetUsersOrGroupsToUpdate<TEntity, TCompareLogic>(List<TEntity> localEntities, List<TEntity> apiEntities)
+        protected List<TEntity> GetUsersOrGroupsToUpdate<TEntity, TCompareLogic>(IList<TEntity> localEntities, IList<TEntity> apiEntities)
             where TEntity : LicenseBase
             where TCompareLogic : CompareLogic, new()
         {
-            if (localEntities == null || apiEntities == null || apiEntities.Count == 0)
+            if (localEntities == null || apiEntities == null || !apiEntities.Any())
             {
                 return new List<TEntity>();
             }
@@ -129,7 +129,8 @@ namespace Core.Users
             List<LicenseGroup> localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
             Logger.Info($"Local groups found: {localGroups.Count}");
 
-            List<LicenseGroup> apiGroups = await licenseGroupClient.GetAll();
+            IEnumerable<LicenseGroup> allGroups = await licenseGroupClient.GetAll();
+            var apiGroups = new List<LicenseGroup>(allGroups);
 
             List<LicenseGroup> groupsToCreate = GetUsersOrGroupsToCreate(localGroups, apiGroups);
             Logger.Info($"New Groups: {groupsToCreate.Count}");
@@ -142,7 +143,7 @@ namespace Core.Users
             List<LicenseGroup> groupsToUpdate = GetUsersOrGroupsToUpdate<LicenseGroup, CompareLogic>(localGroups, apiGroups);
             Logger.Info($"Update Groups: {groupsToUpdate.Count}");
 
-            if (groupsToUpdate.Count > 0)
+            if (groupsToUpdate.Any())
             {
                 await licenseGroupClient.Update(groupsToUpdate);
             }
@@ -151,11 +152,11 @@ namespace Core.Users
              * We need groups that are not already deleted. Otherwise we will be deleting groups that are already deleted,
              * wasting api calls.
              */
-            apiGroups = await licenseGroupClient.GetAll(new ODataExpression<LicenseGroup>(lg => !lg.IsDeleted));
-            List<LicenseGroup> groupsToDelete = GetUsersOrGroupsToDelete(localGroups, apiGroups);
+            IEnumerable<LicenseGroup> deleteGroups = await licenseGroupClient.GetAll(new ODataExpression<LicenseGroup>(lg => !lg.IsDeleted));
+            List<LicenseGroup> groupsToDelete = GetUsersOrGroupsToDelete(localGroups, deleteGroups.ToList());
             Logger.Info($"Delete Groups: {groupsToDelete.Count}");
 
-            if (groupsToDelete.Count > 0)
+            if (groupsToDelete.Any())
             {
                 await licenseGroupClient.Remove(groupsToDelete);
             }
@@ -171,26 +172,28 @@ namespace Core.Users
             Logger.Debug("Getting a list of local users and their groups.");
             List<LicenseGroup> localGroups = users.SelectMany(u => u.Groups).Distinct().ToList();
 
-            Logger.Debug("Getting a list of remote users and their groups.");
-            List<LicenseUser> apiUsers = await licenseUserClient.GetAll();
+            //Logger.Debug("Getting a list of remote users and their groups.");
+            //IEnumerable<LicenseUser> remoteUsers = await licenseUserClient.GetAll();
+            //var apiUsers = new List<LicenseUser>(remoteUsers);
 
-            Logger.Debug("Removing remote users that do not have any groups.");
-            foreach (LicenseUser apiUser in apiUsers)
-            {
-                if (apiUser.Groups != null)
-                {
-                    continue;
-                }
+            //Logger.Debug("Removing remote users that do not have any groups.");
+            //foreach (LicenseUser apiUser in apiUsers)
+            //{
+            //    if (apiUser.Groups != null)
+            //    {
+            //        continue;
+            //    }
 
-                apiUser.Groups = new List<LicenseGroup>();
-            }
+            //    apiUser.Groups = new List<LicenseGroup>();
+            //}
 
             foreach (LicenseGroup localGroup in localGroups)
             {
-                List<LicenseUser> usersThatWereMembers = apiUsers.Where(u => u.Groups.Any(g => g.Id == localGroup.Id)).ToList();
+                var usersThatWereMembers = await licenseUserClient.GetAll(new ODataExpression<LicenseUser>(u => u.Groups.Any(g => g.Id == localGroup.Id)));
+              //  List<LicenseUser> usersThatWereMembers = apiUsers.Where(u => u.Groups.Any(g => g.Id == localGroup.Id)).ToList();
                 List<LicenseUser> usersThatAreMembers = users.Where(u => u.Groups.Any(g => g.Id == localGroup.Id)).ToList();
 
-                List<LicenseUser> usersToBeAdded = GetUsersOrGroupsToCreate(usersThatWereMembers, usersThatAreMembers);
+                List<LicenseUser> usersToBeAdded = GetUsersOrGroupsToCreate(usersThatWereMembers, usersThatAreMembers).ToList();
 
                 Logger.Debug($"Processing: {localGroup.Name}");
                 if (usersToBeAdded.Count > 0)
@@ -199,15 +202,15 @@ namespace Core.Users
                     await licenseUserGroupClient.Add(usersToBeAdded, localGroup);
                 }
 
-                List<LicenseUser> usersToBeRemoved = GetUsersOrGroupsToDelete(usersThatAreMembers, usersThatWereMembers);
+                List<LicenseUser> usersToBeRemoved = GetUsersOrGroupsToDelete(usersThatAreMembers, usersThatWereMembers.ToList()).ToList();
 
-                if (usersToBeRemoved.Count > 0)
+                if (usersToBeRemoved.Any())
                 {
                     Logger.Debug("Removing users");
                     await licenseUserGroupClient.Remove(usersToBeRemoved, localGroup);
                 }
 
-                if (usersToBeAdded.Count > 0 || usersToBeRemoved.Count > 0)
+                if (usersToBeAdded.Any() || usersToBeRemoved.Any())
                 {
                     Logger.Info($"Groups: {localGroup.Name}  Users Add: {usersToBeAdded.Count} Users Remove: {usersToBeRemoved.Count}");
                 }
@@ -227,20 +230,21 @@ namespace Core.Users
                 return localUsers;
             }
 
-            List<LicenseUser> apiUsers = await licenseUserClient.GetAll(new ODataExpression<LicenseUser>(lu => lu.ManagedSupportId == uploadId));
+            IEnumerable<LicenseUser> remoteUsers = await licenseUserClient.GetAll(new ODataExpression<LicenseUser>(lu => lu.ManagedSupportId == uploadId));
+            var apiUsers = new List<LicenseUser>(remoteUsers);
 
             List<LicenseUser> newUsers = GetUsersOrGroupsToCreate(localUsers, apiUsers, uploadId);
             Logger.Info($"New Users: {newUsers.Count}");
 
-            if (newUsers.Count > 0)
+            if (newUsers.Any())
             {
                 await licenseUserClient.Add(newUsers);
             }
 
-            List<LicenseUser> usersToUpdate = GetUsersOrGroupsToUpdate<LicenseUser, LicenseUserCompareLogic>(localUsers, apiUsers);
+            List<LicenseUser> usersToUpdate = GetUsersOrGroupsToUpdate<LicenseUser, LicenseUserCompareLogic>(localUsers, apiUsers).ToList();
             Logger.Info($"Update Users: {usersToUpdate.Count}");
 
-            if (usersToUpdate.Count > 0)
+            if (usersToUpdate.Any())
             {
                 await licenseUserClient.Update(usersToUpdate);
             }
@@ -249,11 +253,11 @@ namespace Core.Users
              * We need users that are not already deleted. Otherwise we will be deleting users that are already deleted,
              * wasting api calls. The reason for the new list is we need to return the original full list for other operations.
              */
-            List<LicenseUser> filteredUsers = await licenseUserClient.GetAll(new ODataExpression<LicenseUser>(lu => lu.ManagedSupportId == uploadId && !lu.IsDeleted));
-            List<LicenseUser> usersToDelete = GetUsersOrGroupsToDelete(localUsers, filteredUsers);
+            IEnumerable<LicenseUser> filteredUsers = await licenseUserClient.GetAll(new ODataExpression<LicenseUser>(lu => lu.ManagedSupportId == uploadId && !lu.IsDeleted));
+            List<LicenseUser> usersToDelete = GetUsersOrGroupsToDelete(localUsers, filteredUsers.ToList());
             Logger.Info($"Delete Users: {usersToDelete.Count}");
 
-            if (usersToDelete.Count > 0)
+            if (usersToDelete.Any())
             {
                 await licenseUserClient.Remove(usersToDelete);
             }
@@ -275,7 +279,7 @@ namespace Core.Users
                 ManagedSupport managedSupport = await supportUploadClient.Add(new ManagedSupport
                 {
                     CheckInTime = Clock.Now,
-                    ClientVersion = SettingManager.GetClientVersion(),
+                    ClientVersion = SettingManagerHelper.ClientVersion,
                     DeviceId = deviceId,
                     Hostname = Environment.MachineName,
                     IsActive = true,

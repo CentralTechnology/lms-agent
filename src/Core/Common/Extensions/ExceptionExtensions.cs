@@ -16,7 +16,7 @@
     public static class ExceptionExtensions
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly RavenClient RavenClient = Sentry.RavenClient.New();
+        private static readonly RavenClient RavenClient = Sentry.RavenClient.Instance;
 
         public static void Handle(this Exception ex)
         {

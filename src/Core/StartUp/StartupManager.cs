@@ -6,6 +6,7 @@
     using Common.Client;
     using Common.Constants;
     using Common.Extensions;
+    using Common.Helpers;
     using DirectoryServices;
     using NLog;
     using SharpRaven;
@@ -17,7 +18,7 @@
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        protected RavenClient RavenClient = Sentry.RavenClient.New();
+        protected RavenClient RavenClient = Sentry.RavenClient.Instance;
         protected SettingManager SettingManager = new SettingManager();
 
         public bool Init()
@@ -170,10 +171,10 @@
             try
             {
                 var profileClient = new ProfileClient();
-                var deviceId = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
+                var deviceId = SettingManagerHelper.DeviceId;
 
                 int accountId;
-                int storedAccount = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
+                int storedAccount = SettingManagerHelper.AccountId;
                 if (storedAccount == default(int))
                 {
                     int? reportedAccount = AsyncHelper.RunSync(() => profileClient.GetAccountByDeviceId(deviceId));

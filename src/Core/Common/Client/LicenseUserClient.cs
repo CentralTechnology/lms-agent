@@ -1,24 +1,14 @@
 ﻿namespace Core.Common.Client
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Extensions;
     using Models;
-    using OData;
-    using ServiceStack.Text;
     using Simple.OData.Client;
 
-    public class LicenseUserClient : LmsClientBase
+    public class LicenseUserClient : PortalODataClientBase
     {
-        /// <inheritdoc />
-        public LicenseUserClient()
-            : base(new ODataPortalAuthenticationClientSettings())
-        {
-        }
-
         public async Task Add(List<LicenseUser> users)
         {
             foreach (LicenseUser user in users)
@@ -31,7 +21,7 @@
         {
             try
             {
-                await Client.For<LicenseUser>().Set(new
+                await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseUser>().Set(new
                 {
                     user.DisplayName,
                     user.Email,
@@ -43,7 +33,7 @@
                     user.SamAccountName,
                     user.Surname,
                     user.WhenCreated
-                }).InsertEntryAsync();
+                }).InsertEntryAsync());
             }
             catch (WebRequestException ex)
             {
@@ -52,35 +42,30 @@
             }
         }
 
-        public async Task<List<LicenseUser>> GetAll(ODataExpression<LicenseUser> filter = null)
+        public async Task<IList<LicenseUser>> GetAll(ODataExpression<LicenseUser> filter = null)
         {
             try
             {
-                IEnumerable<LicenseUser> users;
                 if (filter == null)
                 {
-                    users = await Client.For<LicenseUser>()
-                        .Expand(u => u.Groups)
-                        .FindEntriesAsync();
+                    return new List<LicenseUser>(await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseUser>()
+                        .Expand(u => u.Groups)                        
+                        .FindEntriesAsync()));
                 }
-                else
-                {
-                    users = await Client.For<LicenseUser>()
-                        .Expand(u => u.Groups)
-                        .Filter(filter)
-                        .FindEntriesAsync();
-                }
-                
-                return users.ToList();
+
+                return new List<LicenseUser>(await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseUser>()
+                    .Expand(u => u.Groups)
+                    .Filter(filter)                                     
+                    .FindEntriesAsync()));
             }
             catch (WebRequestException ex)
             {
                 ex.Handle();
-                return null;
+                throw;
             }
         }
 
-        public async Task Remove(List<LicenseUser> users)
+        public async Task Remove(IEnumerable<LicenseUser> users)
         {
             foreach (LicenseUser user in users)
             {
@@ -92,7 +77,7 @@
         {
             try
             {
-                await Client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync();
+                await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseUser>().Key(user.Id).DeleteEntryAsync());
             }
             catch (WebRequestException ex)
             {
@@ -101,7 +86,7 @@
             }
         }
 
-        public async Task Update(List<LicenseUser> users)
+        public async Task Update(IEnumerable<LicenseUser> users)
         {
             foreach (LicenseUser user in users)
             {
@@ -113,7 +98,7 @@
         {
             try
             {
-                await Client.For<LicenseUser>().Key(user.Id).Set(new
+                await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseUser>().Key(user.Id).Set(new
                 {
                     user.DisplayName,
                     user.Email,
@@ -123,7 +108,7 @@
                     user.SamAccountName,
                     user.Surname,
                     user.WhenCreated
-                }).UpdateEntryAsync();
+                }).UpdateEntryAsync());
             }
             catch (WebRequestException ex)
             {

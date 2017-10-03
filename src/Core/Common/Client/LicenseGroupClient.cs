@@ -8,15 +8,9 @@
     using OData;
     using Simple.OData.Client;
 
-    public class LicenseGroupClient : LmsClientBase
+    public class LicenseGroupClient : PortalODataClientBase
     {
-        /// <inheritdoc />
-        public LicenseGroupClient()
-            : base(new ODataPortalAuthenticationClientSettings())
-        {
-        }
-
-        public async Task Add(List<LicenseGroup> groups)
+        public async Task Add(IEnumerable<LicenseGroup> groups)
         {
             foreach (LicenseGroup group in groups)
             {
@@ -28,12 +22,12 @@
         {
             try
             {
-                await Client.For<LicenseGroup>().Set(new
+                await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseGroup>().Set(new
                 {
                     group.Id,
                     group.Name,
                     group.WhenCreated
-                }).InsertEntryAsync();
+                }).InsertEntryAsync());
             }
             catch (WebRequestException ex)
             {
@@ -42,21 +36,15 @@
             }
         }
 
-        public async Task<List<LicenseGroup>> GetAll(ODataExpression<LicenseGroup> filter = null)
+        public async Task<IEnumerable<LicenseGroup>> GetAll(ODataExpression<LicenseGroup> filter = null)
         {
             try
             {
-                IEnumerable<LicenseGroup> groups;
                 if (filter == null)
                 {
-                    groups = await Client.For<LicenseGroup>().FindEntriesAsync();
+                    return await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseGroup>().FindEntriesAsync());
                 }
-                else
-                {
-                    groups = await Client.For<LicenseGroup>().Filter(lg => !lg.IsDeleted).FindEntriesAsync();
-                }
-                 
-                return groups.ToList();
+                    return await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseGroup>().Filter(filter).FindEntriesAsync());
             }
             catch (WebRequestException ex)
             {
@@ -65,7 +53,7 @@
             }
         }
 
-        public async Task Remove(List<LicenseGroup> groups)
+        public async Task Remove(IEnumerable<LicenseGroup> groups)
         {
             foreach (LicenseGroup group in groups)
             {
@@ -77,7 +65,7 @@
         {
             try
             {
-                await Client.For<LicenseGroup>().Key(group.Id).DeleteEntryAsync();
+                await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseGroup>().Key(group.Id).DeleteEntryAsync());
             }
             catch (WebRequestException ex)
             {
@@ -86,7 +74,7 @@
             }
         }
 
-        public async Task Update(List<LicenseGroup> groups)
+        public async Task Update(IEnumerable<LicenseGroup> groups)
         {
             foreach (LicenseGroup group in groups)
             {
@@ -98,11 +86,11 @@
         {
             try
             {
-                await Client.For<LicenseGroup>().Key(group.Id).Set(new
+                await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseGroup>().Key(group.Id).Set(new
                 {
                     group.Name,
                     group.WhenCreated
-                }).UpdateEntryAsync();
+                }).UpdateEntryAsync());
             }
             catch (WebRequestException ex)
             {

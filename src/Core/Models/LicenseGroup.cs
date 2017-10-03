@@ -2,6 +2,7 @@ namespace Core.Models
 {
     using System;
     using System.ComponentModel.DataAnnotations;
+    using Abp.Domain.Entities;
     using Abp.Timing;
     using Users.Entities;
 

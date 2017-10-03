@@ -7,54 +7,46 @@
     using OData;
     using Simple.OData.Client;
 
-    public class LicenseUserGroupClient : LmsClientBase
+    public class LicenseUserGroupClient : PortalODataClientBase
     {
-        protected PortalClient PortalClient { get; set; }
-        /// <inheritdoc />
-        public LicenseUserGroupClient()
-            : base(new ODataPortalAuthenticationClientSettings())
-        {
-            PortalClient = new PortalClient();
-        }
-
-        public async Task Add(List<LicenseUser> users, LicenseGroup group)
+        public async Task Add(IEnumerable<LicenseUser> users, LicenseGroup licenseGroup)
         {
             foreach (LicenseUser user in users)
             {
-                await Add(user, group);
+                await Add(user, licenseGroup);
             }
         }
 
-        public async Task Add(LicenseUser user, LicenseGroup group)
+        public async Task Add(LicenseUser user, LicenseGroup licenseGroup)
         {
             try
             {
-                await Client.For<LicenseUser>().Key(user.Id).LinkEntryAsync(group, "Groups");
+                await DefaultPolicy.ExecuteAsync(() => Client.For<LicenseUser>().Key(user.Id).LinkEntryAsync(licenseGroup, "Groups"));
             }
             catch (WebRequestException ex)
             {
-                Logger.Error($"Error adding user: {user.DisplayName} to group: {group.Name}");
+                Logger.Error($"Error adding user: {user.DisplayName} to group: {licenseGroup.Name}");
                 ex.Handle();
             }
         }
 
-        public async Task Remove(List<LicenseUser> users, LicenseGroup group)
+        public async Task Remove(IEnumerable<LicenseUser> users, LicenseGroup licenseGroup)
         {
             foreach (LicenseUser user in users)
             {
-                await Remove(user, group);
+                await Remove(user, licenseGroup);
             }
         }
 
-        public async Task Remove(LicenseUser user, LicenseGroup group)
+        public async Task Remove(LicenseUser user, LicenseGroup licenseGroup)
         {
             try
             {
-                await PortalClient.RemoveUserFromGroup(user.Id, group.Id);
+                await DefaultPolicy.ExecuteAsync(() => new PortalClient().RemoveUserFromGroup(user.Id, licenseGroup.Id));
             }
             catch (WebRequestException ex)
             {
-                Logger.Error($"Error removing user: {user.DisplayName} from group: {group.Name}");
+                Logger.Error($"Error removing user: {user.DisplayName} from group: {licenseGroup.Name}");
                 ex.Handle();
             }
         }

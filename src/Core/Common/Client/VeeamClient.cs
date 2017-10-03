@@ -4,44 +4,38 @@
     using System.Threading.Tasks;
     using Extensions;
     using Models;
-    using OData;
+    using ServiceStack.Text;
     using Simple.OData.Client;
     using Veeam;
 
-    public class VeeamClient : LmsClientBase
+    public class VeeamClient : PortalODataClientBase
     {
-        /// <inheritdoc />
-        public VeeamClient()
-            : base(new ODataPortalAuthenticationClientSettings())
-        {
-        }
-
         public async Task Add(Veeam veeam)
         {
-            await Client.For<Veeam>()
+            await DefaultPolicy.ExecuteAsync(() => Client.For<Veeam>()
                 .Set(new
                 {
                     veeam.CheckInTime,
                     veeam.ClientVersion,
-                    Edition = ((int)veeam.Edition).ToString(),
+                    Edition = ((int) veeam.Edition).ToString(),
                     veeam.ExpirationDate,
                     veeam.HyperV,
                     veeam.Id,
-                    LicenseType = ((int)veeam.LicenseType).ToString(),
+                    LicenseType = ((int) veeam.LicenseType).ToString(),
                     veeam.ProgramVersion,
-                    Status = ((int)veeam.Status).ToString(),
+                    Status = ((int) veeam.Status).ToString(),
                     veeam.SupportId,
                     veeam.TenantId,
                     veeam.UploadId,
                     veeam.vSphere
-                }).InsertEntryAsync();
+                }).InsertEntryAsync());
         }
 
         public async Task<CallInStatus> GetStatus(Guid key)
         {
             try
             {
-                return await Client.For<Veeam>().Function("GetCallInStatus").Set(new { key }).ExecuteAsScalarAsync<CallInStatus>();
+                return await DefaultPolicy.ExecuteAsync(() => Client.For<Veeam>().Function("GetCallInStatus").Set(new {key}).ExecuteAsScalarAsync<CallInStatus>());
             }
             catch (WebRequestException ex)
             {
@@ -54,28 +48,37 @@
 
         public async Task Update(Veeam veeam)
         {
-            await Client.For<Veeam>()
-                .Key(veeam.Id)
-                .Set(new
-                {
-                    veeam.CheckInTime,
-                    veeam.ClientVersion,
-                    Edition = ((int)veeam.Edition).ToString(),
-                    veeam.ExpirationDate,
-                    veeam.HyperV,
-                    LicenseType = ((int)veeam.LicenseType).ToString(),
-                    veeam.ProgramVersion,
-                    veeam.SupportId,
-                    veeam.TenantId,
-                    Status = ((int)veeam.Status).ToString(),
-                    veeam.UploadId,
-                    veeam.vSphere
-                }).UpdateEntryAsync();
+            try
+            {
+                await DefaultPolicy.ExecuteAsync(() => Client.For<Veeam>()
+                    .Key(veeam.Id)
+                    .Set(new
+                    {
+                        veeam.CheckInTime,
+                        veeam.ClientVersion,
+                        Edition = ((int) veeam.Edition).ToString(),
+                        veeam.ExpirationDate,
+                        veeam.HyperV,
+                        LicenseType = ((int) veeam.LicenseType).ToString(),
+                        veeam.ProgramVersion,
+                        veeam.SupportId,
+                        veeam.TenantId,
+                        Status = ((int) veeam.Status).ToString(),
+                        veeam.UploadId,
+                        veeam.vSphere
+                    }).UpdateEntryAsync());
+            }
+            catch (WebRequestException ex)
+            {
+                Logger.Error($"Error updating: {veeam.Dump()}");
+                ex.Handle();
+                throw;
+            }
         }
 
         public async Task<int> UploadId()
         {
-            return await Client.For<Veeam>().Function("NewUploadId").ExecuteAsScalarAsync<int>();
+            return await DefaultPolicy.ExecuteAsync(() => Client.For<Veeam>().Function("NewUploadId").ExecuteAsScalarAsync<int>());
         }
     }
 }

@@ -13,7 +13,7 @@
 
         public LocalDbAccessor(string connectionString)
         {
-            RavenClient = Sentry.RavenClient.New();
+            RavenClient = Sentry.RavenClient.Instance;
 
             if (string.IsNullOrEmpty(connectionString))
             {

@@ -128,6 +128,9 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="Polly, Version=5.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Polly.5.3.1\lib\net45\Polly.dll</HintPath>
+    </Reference>
     <Reference Include="ServiceStack.Text, Version=4.5.14.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ServiceStack.Text.4.5.14\lib\net45\ServiceStack.Text.dll</HintPath>
     </Reference>
@@ -194,7 +197,7 @@
     <Compile Include="Common\Client\LicenseGroupClient.cs" />
     <Compile Include="Common\Client\LicenseUserClient.cs" />
     <Compile Include="Common\Client\LicenseUserGroupClient.cs" />
-    <Compile Include="Common\Client\LmsClientBase.cs" />
+    <Compile Include="Common\Client\PortalODataClientBase.cs" />
     <Compile Include="Common\Client\OData\InnerError.cs" />
     <Compile Include="Common\Client\OData\ODataCommonClientSettings.cs" />
     <Compile Include="Common\Client\OData\ODataPortalAuthenticationClientSettings.cs" />
@@ -202,6 +205,8 @@
     <Compile Include="Common\Client\OData\ODataResponse.cs" />
     <Compile Include="Common\Client\OData\ODataResponseWrapper.cs" />
     <Compile Include="Common\Client\PortalClient.cs" />
+    <Compile Include="Common\Client\PortalODataClient.cs" />
+    <Compile Include="Common\Client\PortalODataClientSettings.cs" />
     <Compile Include="Common\Client\ProfileClient.cs" />
     <Compile Include="Common\Client\SupportUploadClient.cs" />
     <Compile Include="Common\Client\VeeamClient.cs" />
@@ -288,6 +293,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

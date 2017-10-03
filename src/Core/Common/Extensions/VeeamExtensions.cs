@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using Abp;
     using Administration;
+    using Helpers;
     using NLog;
     using Veeam;
     using Veeam.Backup.Common;
@@ -33,7 +34,7 @@
             Version programVersion = Version.Parse(veeam.ProgramVersion);
 
             veeam.CollectVmInformation(programVersion);
-            veeam.ClientVersion = SettingManager.GetClientVersion();
+            veeam.ClientVersion = SettingManagerHelper.ClientVersion;
             veeam.Edition = VeeamLicense.Edition;
             veeam.ExpirationDate = VeeamLicense.ExpirationDate;
             veeam.Id = await SettingManager.GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
