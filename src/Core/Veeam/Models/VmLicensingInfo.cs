@@ -2,6 +2,7 @@
 {
     using System;
     using Backup.Common;
+    using Enums;
 
     public class VmLicensingInfo
     {

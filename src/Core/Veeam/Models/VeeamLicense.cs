@@ -3,7 +3,10 @@
     using System;
     using System.Globalization;
     using Abp.Extensions;
+    using Enums;
+    using Managers;
     using NLog;
+    using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
     public class VeeamLicense
     {

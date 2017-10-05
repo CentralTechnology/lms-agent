@@ -3,13 +3,13 @@
     using System.Collections.Generic;
     using KellermanSoftware.CompareNetObjects;
 
-    public class LicenseUserCompareLogic : CompareLogic
+    public class LicenseGroupCompareLogic : CompareLogic
     {
-        public LicenseUserCompareLogic()
+        public LicenseGroupCompareLogic()
         {
             Config = new ComparisonConfig
             {
-                MembersToIgnore = new List<string> {"Groups", "ManagedSupportId", "IsDeleted", "IsExcluded", "IsActive"},
+                MembersToIgnore = new List<string> {"Users", "DeletionTime", "IsDeleted"},
                 MaxMillisecondsDateDifference = 1000
             };
         }

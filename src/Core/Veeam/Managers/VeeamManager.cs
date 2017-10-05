@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam
+﻿namespace Core.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;

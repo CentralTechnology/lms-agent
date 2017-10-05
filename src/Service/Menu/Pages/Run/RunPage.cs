@@ -27,11 +27,12 @@
             {
                 Menu.Add(new Option("User Monitoring", () =>
                 {
+                    Console.Clear();
                     Logger.Info("User monitoring begin...");
 
                     try
                     {
-                        AsyncHelper.RunSync(() => new UserOrchestrator().Start());
+                        new UserOrchestrator().Start();
 
                         Logger.Info("************ User Monitoring Successful ************");
                     }
@@ -42,6 +43,7 @@
                     }
                     finally
                     {
+                        GC.Collect();
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }
@@ -56,11 +58,12 @@
             {
                 Menu.Add(new Option("Veeam Monitoring", () =>
                 {
+                    Console.Clear();
                     Logger.Info("Veeam monitoring begin...");
 
                     try
                     {
-                        AsyncHelper.RunSync(() => new VeeamOrchestrator().Start());
+                        new VeeamOrchestrator().Start();
 
                         Logger.Info("************ Veeam Monitoring Successful ************");
                     }
@@ -71,6 +74,7 @@
                     }
                     finally
                     {
+                        GC.Collect();
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }

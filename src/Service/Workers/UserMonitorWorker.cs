@@ -1,12 +1,13 @@
 ﻿namespace Service.Workers
 {
-    using Abp.Threading;
+    using System;
     using Core.Common.Extensions;
     using Core.Users;
     using ServiceTimer;
 
     internal class UserMonitorWorker : TimerWorker
     {
+        /// <inheritdoc />
         /// <summary>
         ///     30 second start up delay
         ///     10 second check
@@ -35,8 +36,12 @@
                 return;
             }
 
-            AsyncHelper.RunSync(() => new UserOrchestrator().Start());
+            using (var orchestrator = new UserOrchestrator())
+            {
+                orchestrator.Start();
+            }
 
+            Console.WriteLine(Environment.NewLine);
             Logger.Info(SuccessMessage);
         }
     }

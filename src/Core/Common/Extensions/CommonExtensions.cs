@@ -152,24 +152,5 @@
 
             return false;
         }
-
-        public static void FriendlyMessage(this CallInStatus status, Logger logger)
-        {
-            switch (status)
-            {
-                case CallInStatus.CalledIn:
-                    logger.Info("Client is called in - Skipping.");
-                    return;
-                case CallInStatus.NotCalledIn:
-                    logger.Info("Client has not called in.");
-                    return;
-                case CallInStatus.NeverCalledIn:
-                    logger.Info("Client has never called in.");
-                    return;
-                default:
-                    logger.Info("Client has never called in.");
-                    return;
-            }
-        }
     }
 }

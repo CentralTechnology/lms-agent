@@ -1,9 +1,7 @@
 ﻿namespace Core.Startup
 {
     using System;
-    using Abp.Threading;
     using Administration;
-    using Common.Client;
     using Common.Constants;
     using Common.Extensions;
     using Common.Helpers;
@@ -11,12 +9,13 @@
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
-    using Simple.OData.Client;
     using Veeam;
+    using Veeam.Managers;
 
     public class StartupManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected OData.PortalClient PortalClient = new OData.PortalClient();
 
         protected RavenClient RavenClient = Sentry.RavenClient.Instance;
         protected SettingManager SettingManager = new SettingManager();
@@ -29,10 +28,6 @@
             try
             {
                 ValidateCredentials();
-            }
-            catch (WebRequestException ex)
-            {
-                Logger.Error(ex.Message);
             }
             catch (Exception ex)
             {
@@ -170,16 +165,16 @@
         {
             try
             {
-                var profileClient = new ProfileClient();
-                var deviceId = SettingManagerHelper.DeviceId;
+                Guid deviceId = SettingManagerHelper.DeviceId;
 
                 int accountId;
                 int storedAccount = SettingManagerHelper.AccountId;
+
                 if (storedAccount == default(int))
                 {
-                    int? reportedAccount = AsyncHelper.RunSync(() => profileClient.GetAccountByDeviceId(deviceId));
+                    int reportedAccount = PortalClient.GetAccountIdByDeviceId(deviceId);
 
-                    if (reportedAccount == null)
+                    if (reportedAccount == default(int))
                     {
                         Logger.Warn("Check Account: FAIL");
                         Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
@@ -198,10 +193,12 @@
                 Logger.Info($"Account: {accountId}");
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Logger.Warn("Check Account: FAIL");
                 Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
+                Logger.Error(ex.Message);
+                Logger.Debug(ex);
                 return false;
             }
         }

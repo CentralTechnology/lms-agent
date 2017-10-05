@@ -19,7 +19,7 @@ namespace LicenseMonitoringSystem.Tests.Core.Users
         {
             var compareLogic = new LicenseUserCompareLogic();
 
-            var user1 = new LicenseUser
+            var user1 = new LicenseUser_Old
             {
                 DisplayName = "John Doe",
                 Email = "john.doe@example.com",
@@ -32,7 +32,7 @@ namespace LicenseMonitoringSystem.Tests.Core.Users
                 WhenCreated = new DateTime(2012,06,4)
             };
 
-            var user2 = new LicenseUser
+            var user2 = new LicenseUser_Old
             {
                 DisplayName = "John Doe",
                 Email = "john.doe@example.com",
@@ -55,7 +55,7 @@ namespace LicenseMonitoringSystem.Tests.Core.Users
         {
             var compareLogic = new LicenseUserCompareLogic();
 
-            var user1 = new LicenseUser
+            var user1 = new LicenseUser_Old
             {
                 DisplayName = "John Doe",
                 Email = "john.doe@example.com",
@@ -68,14 +68,14 @@ namespace LicenseMonitoringSystem.Tests.Core.Users
                 WhenCreated = new DateTime(2012, 06, 4)
             };
 
-            var user2 = new LicenseUser
+            var user2 = new LicenseUser_Old
             {
                 DisplayName = "John Doe",
                 Email = "john.doe@example.com",
                 Enabled = true,
                 FirstName = "John",
                 LastLoginDate = new DateTime(2017, 8, 25),
-                Groups = new List<LicenseGroup>(),
+                Groups = new List<LicenseGroup_Old>(),
                 Id = Guid.Parse("d03939b9-1f70-4c76-8cf0-ee121809591d"),
                 ManagedSupportId = 5787878,
                 SamAccountName = "john.doe",
@@ -93,7 +93,7 @@ namespace LicenseMonitoringSystem.Tests.Core.Users
         {
             var compareLogic = new LicenseUserCompareLogic();
 
-            var user1 = new LicenseUser
+            var user1 = new LicenseUser_Old
             {
                 DisplayName = "John Doe",
                 Email = "john.doe@example.com",
@@ -106,7 +106,7 @@ namespace LicenseMonitoringSystem.Tests.Core.Users
                 WhenCreated = new DateTime(2012, 06, 4)
             };
 
-            var user2 = new LicenseUser
+            var user2 = new LicenseUser_Old
             {
                 DisplayName = "John Smith",
                 Email = "john.smith@example.com",
