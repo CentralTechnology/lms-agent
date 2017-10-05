@@ -1,95 +1,84 @@
 ﻿namespace Core.Common.Extensions
 {
     using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Sockets;
     using System.Security;
-    using System.Threading.Tasks;
-    using Client.OData;
-    using Newtonsoft.Json;
+    using System.Text;
+    using Microsoft.OData.Client;
     using NLog;
     using SharpRaven;
     using SharpRaven.Data;
-    using Simple.OData.Client;
 
     public static class ExceptionExtensions
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly RavenClient RavenClient = Sentry.RavenClient.New();
+        private static readonly RavenClient RavenClient = Sentry.RavenClient.Instance;
 
-        public static void Handle(this WebRequestException ex, Logger logger)
+        public static string GetFullMessage(this Exception exception)
         {
-            try
-            {
-                var rootException = JsonConvert.DeserializeObject<ODataResponseWrapper>(ex.Response);
-                if (rootException != null)
-                {
-                    InnerError inner = rootException.Error.InnerError;
-                    if (inner != null)
-                    {
-                        logger.Error($"Code: {ex.Code}  Message: {inner.Message}");
-                    }
-                    else
-                    {
-                        logger.Error($"Code: {ex.Code}  Message: {rootException.Error.Message}");
-                    }
-                }
+            //return ex.InnerException == null
+            //    ? ex.Message
+            //    : ex.Message + " --> " + ex.InnerException.GetFullMessage();
 
-                logger.Debug(ex);
-            }
-            catch (Exception exc)
+            //if (ex == null)
+            //{
+            //    return string.Empty;
+            //}
+
+            //if (messages == "")
+            //{
+            //    return ex.Message;
+            //}
+
+            //var sb = new StringBuilder(messages);
+            //if (ex.InnerException != null)
+            //{
+            //    sb.AppendLine($"\r\nInnerException: {GetFullMessage(ex.InnerException)}");
+            //}
+
+            //return sb.ToString();
+
+            var messages = exception.FromHierarchy(ex => ex.InnerException)
+                .Select(ex => ex.Message);
+            return String.Join(Environment.NewLine, messages);
+        }
+
+        public static IEnumerable<TSource> FromHierarchy<TSource>(
+            this TSource source,
+            Func<TSource, TSource> nextItem,
+            Func<TSource, bool> canContinue)
+        {
+            for (var current = source; canContinue(current); current = nextItem(current))
             {
-                logger.Error(exc);
-                logger.Debug(exc);
-                throw;
+                yield return current;
             }
+        }
+
+        public static IEnumerable<TSource> FromHierarchy<TSource>(
+            this TSource source,
+            Func<TSource, TSource> nextItem)
+            where TSource : class
+        {
+            return FromHierarchy(source, nextItem, s => s != null);
         }
 
         public static void Handle(this Exception ex)
         {
-            if (ex is HttpRequestException httpRequestException)
+            if (ex is DataServiceClientException
+                || ex is SqlException
+                || ex is HttpRequestException
+                || ex is SocketException
+                || ex is WebException
+                || ex is SecurityException)
             {
-                Logger.Error("There was a problem communicating with the api.");
-                Logger.Debug(httpRequestException);
-                return;
-            }
-
-            if (ex is SocketException socketException)
-            {
-                Logger.Error("There was a problem communicating with the api.");
-                Logger.Debug(socketException);
-                return;
-            }
-
-            if (ex is TaskCanceledException taskCanceledException)
-            {
-                if (taskCanceledException.CancellationToken.IsCancellationRequested)
-                {
-                    Logger.Error(ex.Message);
-                    Logger.Debug(taskCanceledException);
-                }
-                else
-                {
-                    Logger.Error("Http request timeout.");
-                    Logger.Debug(taskCanceledException);
-                }
-
-                return;
-            }
-
-            if (ex is WebException webException)
-            {
-                if (webException.Status == WebExceptionStatus.NameResolutionFailure)
-                {
-                    Logger.Error(webException.Message);
-                    Logger.Debug(webException);
-                    return;
-                }
-
-                RavenClient.Capture(new SentryEvent(webException));
-                Logger.Error(webException.Message);
+                Logger.Error(ex.GetFullMessage());
+                Logger.Debug(ex.ToString());
                 return;
             }
 
@@ -104,15 +93,9 @@
                 return;
             }
 
-            if (ex is SecurityException securityException)
-            {
-                Logger.Error(securityException.Message);
-                Logger.Debug(securityException);
-                return;
-            }
-
-            RavenClient.Capture(new SentryEvent(ex));
             Logger.Error(ex.Message);
+            Logger.Debug(ex);
+            RavenClient.Capture(new SentryEvent(ex));
         }
     }
 }

@@ -89,20 +89,17 @@
     <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=3.9.0.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
       <HintPath>..\packages\CompareNETObjects.3.09.0.0\lib\net452\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.Edm, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Data.Edm.5.0.0.50403\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    <Reference Include="Microsoft.OData.Client, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.OData.Client.6.18.0\lib\net40\Microsoft.OData.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.OData, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Data.OData.5.0.0.50403\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    <Reference Include="Microsoft.OData.Core, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.OData.Core.6.18.0\lib\portable-net45+win+wpa81\Microsoft.OData.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.OData.Core, Version=6.17.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.OData.Core.6.17.0\lib\portable-net45+win+wpa81\Microsoft.OData.Core.dll</HintPath>
+    <Reference Include="Microsoft.OData.Edm, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.OData.Edm.6.18.0\lib\portable-net45+win+wpa81\Microsoft.OData.Edm.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.OData.Edm, Version=6.17.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.OData.Edm.6.17.0\lib\portable-net45+win+wpa81\Microsoft.OData.Edm.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Spatial, Version=6.17.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Spatial.6.17.0\lib\portable-net45+win+wpa81\Microsoft.Spatial.dll</HintPath>
+    <Reference Include="Microsoft.Spatial, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Spatial.6.18.0\lib\portable-net45+win+wpa81\Microsoft.Spatial.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
@@ -128,11 +125,14 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="Polly, Version=5.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Polly.5.3.1\lib\net45\Polly.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text, Version=4.5.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Text.4.5.14\lib\net45\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="SharpRaven, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpRaven.2.2.0\lib\net45\SharpRaven.dll</HintPath>
-    </Reference>
-    <Reference Include="Simple.OData.Client.Net40, Version=4.28.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Simple.OData.Client.4.28.0\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -161,9 +161,6 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Spatial, Version=5.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Spatial.5.7.0\lib\net40\System.Spatial.dll</HintPath>
-    </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -188,65 +185,49 @@
     </Compile>
     <Compile Include="Administration\SettingManager.cs" />
     <Compile Include="Common\Caster.cs" />
-    <Compile Include="Common\Client\LicenseGroupClient.cs" />
-    <Compile Include="Common\Client\LicenseUserClient.cs" />
-    <Compile Include="Common\Client\LicenseUserGroupClient.cs" />
-    <Compile Include="Common\Client\LmsClientBase.cs" />
-    <Compile Include="Common\Client\OData\InnerError.cs" />
-    <Compile Include="Common\Client\OData\ODataCommonClientSettings.cs" />
-    <Compile Include="Common\Client\OData\ODataPortalAuthenticationClientSettings.cs" />
-    <Compile Include="Common\Client\OData\ODataProfileClientSettings.cs" />
-    <Compile Include="Common\Client\OData\ODataResponse.cs" />
-    <Compile Include="Common\Client\OData\ODataResponseWrapper.cs" />
-    <Compile Include="Common\Client\PortalClient.cs" />
-    <Compile Include="Common\Client\ProfileClient.cs" />
-    <Compile Include="Common\Client\SupportUploadClient.cs" />
-    <Compile Include="Common\Client\VeeamClient.cs" />
+    <Compile Include="Common\Client\PortalWebApiClient.cs" />
     <Compile Include="Common\Constants\Constants.cs" />
     <Compile Include="Common\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Common\Extensions\IDataReaderExtensions.cs" />
     <Compile Include="Common\Extensions\RavenClientExtensions.cs" />
     <Compile Include="Common\Extensions\TypeExtensions.cs" />
+    <Compile Include="Common\Extensions\UserFlagExtensions.cs" />
     <Compile Include="Common\Extensions\VeeamExtensions.cs" />
     <Compile Include="Common\Extensions\DirectoryEntryExtensions.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.cs" />
-    <Compile Include="Common\Extensions\GenericExtensions.cs" />
     <Compile Include="Common\Extensions\ObjectExtensions.cs" />
     <Compile Include="Common\Extensions\RegistryExtensions.cs" />
     <Compile Include="Common\Extensions\SettingManagerExtensions.cs" />
     <Compile Include="Common\Extensions\StringExtensions.cs" />
-    <Compile Include="Common\Extensions\UserFlagExtensions.cs" />
     <Compile Include="Common\Extensions\PrincipleExtensions.cs" />
     <Compile Include="Common\Helpers\AppVersionHelper.cs" />
     <Compile Include="Common\Helpers\DebuggingService.cs" />
     <Compile Include="Common\Helpers\SettingManagerHelper.cs" />
+    <Compile Include="Connected Services\Portal\PortalProxy.cs" />
     <Compile Include="DirectoryServices\DirectoryServicesManager.cs" />
     <Compile Include="EntityFramework\AgentDbContext.cs" />
-    <Compile Include="Factory\ClientFactory.cs" />
-    <Compile Include="Factory\DirectoryServicesFactory.cs" />
-    <Compile Include="Factory\SettingFactory.cs" />
-    <Compile Include="Factory\UserFactory.cs" />
     <Compile Include="Migrations\201707140955114_Initial.cs" />
     <Compile Include="Migrations\201707140955114_Initial.Designer.cs">
       <DependentUpon>201707140955114_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\LicenseGroup.cs" />
-    <Compile Include="Models\LicenseUser.cs" />
-    <Compile Include="Models\ManagedSupport.cs" />
+    <Compile Include="Users\Compare\LicenseGroupCompareLogic.cs" />
+    <Compile Include="Users\Enums\Enums.cs" />
+    <Compile Include="Users\Models\LicenseGroupUpdateModel.cs" />
+    <Compile Include="Users\Models\LicenseUserUpdateModel.cs" />
+    <Compile Include="Users\Models\ManagedSupportUpdateModel.cs" />
+    <Compile Include="OData\PortalClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sentry\RavenClient.cs" />
     <Compile Include="Startup\StartupManager.cs" />
     <Compile Include="Users\Compare\LicenseUserCompareLogic.cs" />
     <Compile Include="Users\Dto\GroupPrincipalOutput.cs" />
     <Compile Include="Users\Entities\LicenseBase.cs" />
-    <Compile Include="Users\UserHelper.cs" />
-    <Compile Include="Users\UserManager.cs" />
+    <Compile Include="Users\Managers\UserManager.cs" />
     <Compile Include="Users\UserOrchestrator.cs" />
-    <Compile Include="Factory\VeeamFactory.cs" />
     <Compile Include="Veeam\Backup\Common\EPlatform.cs" />
-    <Compile Include="Veeam\CPerVmStoredProceduresMapping.cs" />
-    <Compile Include="Veeam\CPerVmTrialStoredProceduresMapping.cs" />
+    <Compile Include="Veeam\Mappings\CPerVmStoredProceduresMapping.cs" />
+    <Compile Include="Veeam\Mappings\CPerVmTrialStoredProceduresMapping.cs" />
     <Compile Include="Veeam\DBManager\DbAccessor.cs" />
     <Compile Include="Veeam\DBManager\ISqlFieldDescriptor.cs" />
     <Compile Include="Veeam\DBManager\ISqlFieldDescriptorOfType.cs" />
@@ -257,24 +238,22 @@
     <Compile Include="Veeam\DBManager\SqlNullableTypeFieldDescriptor.cs" />
     <Compile Include="Veeam\DBManager\SqlReferenceTypeFieldDescriptor.cs" />
     <Compile Include="Veeam\DBManager\SqlValueTypeFieldDescriptor.cs" />
-    <Compile Include="Veeam\IPerVmStoredProceduresMapping.cs" />
-    <Compile Include="Veeam\Veeam.cs" />
-    <Compile Include="Veeam\LicenseManager.cs" />
-    <Compile Include="Veeam\VeeamLicense.cs" />
-    <Compile Include="Veeam\VeeamManager.cs" />
+    <Compile Include="Veeam\Enums\Enums.cs" />
+    <Compile Include="Veeam\Mappings\IPerVmStoredProceduresMapping.cs" />
+    <Compile Include="Veeam\Models\VeeamUpdateModel.cs" />
+    <Compile Include="Veeam\Managers\LicenseManager.cs" />
+    <Compile Include="Veeam\Models\VeeamLicense.cs" />
+    <Compile Include="Veeam\Managers\VeeamManager.cs" />
     <Compile Include="Veeam\VeeamOrchestrator.cs" />
-    <Compile Include="Veeam\VmLicensingInfo.cs" />
-    <Compile Include="Veeam\VmsCounterInfo.cs" />
+    <Compile Include="Veeam\Models\VmLicensingInfo.cs" />
+    <Compile Include="Veeam\Models\VmsCounterInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Connected Services\Portal\ConnectedService.json" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\Administration\" />
-    <Folder Include="Models\Common\" />
-    <Folder Include="Uploads\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201707140955114_Initial.resx">
       <DependentUpon>201707140955114_Initial.cs</DependentUpon>
@@ -293,7 +272,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AppReadme\Compare-NET-Objects-Help.txt" />
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -5,17 +5,21 @@
     using System.Threading.Tasks;
     using Abp;
     using Administration;
+    using Helpers;
     using NLog;
     using Veeam;
     using Veeam.Backup.Common;
+    using Veeam.Enums;
+    using Veeam.Managers;
+    using LicenseTypeEx = Portal.LicenseMonitoringSystem.Veeam.Entities.LicenseTypeEx;
+    using Veeam = Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam;
 
     public static class VeeamExtensions
     {
         private static readonly VeeamManager VeeamManager = new VeeamManager();
-        private static readonly SettingManager SettingManager = new SettingManager();
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static async Task CollectInformation(this Veeam veeam)
+        public static void CollectInformation(this Veeam veeam)
         {
             try
             {
@@ -33,12 +37,12 @@
             Version programVersion = Version.Parse(veeam.ProgramVersion);
 
             veeam.CollectVmInformation(programVersion);
-            veeam.ClientVersion = SettingManager.GetClientVersion();
+            veeam.ClientVersion = SettingManagerHelper.ClientVersion;
             veeam.Edition = VeeamLicense.Edition;
             veeam.ExpirationDate = VeeamLicense.ExpirationDate;
-            veeam.Id = await SettingManager.GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
+            veeam.Id = SettingManagerHelper.DeviceId;
             veeam.SupportId = VeeamLicense.SupportId;
-            veeam.TenantId = await SettingManager.GetSettingValueAsync<int>(SettingNames.AutotaskAccountId);
+            veeam.TenantId = SettingManagerHelper.AccountId;
 
             veeam.Validate();
         }

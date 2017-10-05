@@ -13,34 +13,16 @@
 
     public class SettingManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected RavenClient RavenClient;
 
         public SettingManager()
         {
-            RavenClient = Sentry.RavenClient.New();
+            RavenClient = Sentry.RavenClient.Instance;
         }
 
         public async Task ChangeSettingAsync(string name, string value)
         {
             await InsertOrUpdateSettingValueAsync(name, value);
-        }
-
-        /// <inheritdoc />
-        public string GetClientVersion()
-        {
-            try
-            {
-                return Assembly.GetEntryAssembly().GetName().Version.ToString();
-            }
-            catch (Exception ex)
-            {
-                RavenClient.Capture(new SentryEvent(ex));
-                Logger.Error("Unable to determine client version.");
-                Logger.Debug(ex);
-            }
-
-            return string.Empty;
         }
 
         public Task<string> GetSettingValueAsync(string name)
