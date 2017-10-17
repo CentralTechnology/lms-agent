@@ -41,7 +41,7 @@ BuildParameters.SetParameters(context: Context,
 
 ToolSettings.SetToolSettings(context: Context,
                              buildPlatformTarget: PlatformTarget.x64,
-							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs"},
+							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/Core/Connected Services/**/*.cs"},
 							 testCoverageFilter: "+[Core*]* +[Service*]* -[Octokit]* -[Deploy]*");
 
 Build.Run();

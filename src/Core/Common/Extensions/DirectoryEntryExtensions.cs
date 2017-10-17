@@ -2,6 +2,7 @@
 {
     using System.DirectoryServices;
     using Models;
+    using Users.Enums;
 
     public static class DirectoryEntryExtensions
     {

@@ -20,18 +20,19 @@
         public RunPage(Program program)
             : base("Run", program)
         {
-            RavenClient = Core.Sentry.RavenClient.New();
+            RavenClient = Core.Sentry.RavenClient.Instance;
 
             bool monitorUsers = SettingManager.GetSettingValue<bool>(SettingNames.MonitorUsers);
             if (monitorUsers)
             {
                 Menu.Add(new Option("User Monitoring", () =>
                 {
+                    Console.Clear();
                     Logger.Info("User monitoring begin...");
 
                     try
                     {
-                        AsyncHelper.RunSync(() => new UserOrchestrator().Start());
+                        new UserOrchestrator().Start();
 
                         Logger.Info("************ User Monitoring Successful ************");
                     }
@@ -42,6 +43,7 @@
                     }
                     finally
                     {
+                        GC.Collect();
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }
@@ -56,11 +58,12 @@
             {
                 Menu.Add(new Option("Veeam Monitoring", () =>
                 {
+                    Console.Clear();
                     Logger.Info("Veeam monitoring begin...");
 
                     try
                     {
-                        AsyncHelper.RunSync(() => new VeeamOrchestrator().Start());
+                        new VeeamOrchestrator().Start();
 
                         Logger.Info("************ Veeam Monitoring Successful ************");
                     }
@@ -71,6 +74,7 @@
                     }
                     finally
                     {
+                        GC.Collect();
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }

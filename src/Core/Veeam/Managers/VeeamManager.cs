@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam
+﻿namespace Core.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -11,29 +11,28 @@
     using System.Net;
     using System.Net.Sockets;
     using Abp;
-    using Abp.Extensions;
     using Administration;
     using Backup.Common;
     using Common.Constants;
     using Common.Extensions;
     using DBManager;
-    using Factory;
     using Microsoft.Win32;
     using NLog;
 
     public class VeeamManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly IPerVmStoredProceduresMapping PerVmTrialQueriesMapping = new CPerVmTrialStoredProceduresMapping();
         private static readonly IPerVmStoredProceduresMapping PerVmQueriesMapping = new CPerVmStoredProceduresMapping();
         private static readonly ISqlFieldDescriptor<Guid> ObjectIdField = SqlFieldDescriptor.UniqueIdentifier("object_id");
         private static readonly ISqlFieldDescriptor<int> PlatformField = SqlFieldDescriptor.Int("platform");
         private static readonly ISqlFieldDescriptor<DateTime?> FirstStartTimeField = SqlFieldDescriptor.DateTimeNullable("first_start_time");
         private static readonly ISqlFieldDescriptor<DateTime?> LastStartTimeField = SqlFieldDescriptor.DateTimeNullable("last_start_time");
+        protected readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        protected readonly SettingManager SettingManager = new SettingManager();
 
         private VmLicensingInfo FromReader(IDataReader reader)
         {
-            return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform)PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
+            return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform) PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
         }
 
         public List<VmLicensingInfo> GetAllVmInfos(EPlatform platform)
@@ -41,7 +40,7 @@
             try
             {
                 var vmLicensingInfoList = new List<VmLicensingInfo>();
-                using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
+                using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
                 {
                     while (dataReader.Read())
                     {
@@ -96,13 +95,13 @@
         {
             try
             {
-                var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
+                var localDbAccessor = new LocalDbAccessor(GetConnectionString());
 
                 using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", Constants.VeeamProtectedVmCountDays)).CreateDataReader())
                 {
                     if (dataReader.Read())
                     {
-                        return (int)dataReader["vm_count"];
+                        return (int) dataReader["vm_count"];
                     }
                 }
             }
@@ -120,13 +119,13 @@
         {
             try
             {
-                var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
+                var localDbAccessor = new LocalDbAccessor(GetConnectionString());
 
-                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmsCount", DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
+                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmsCount", DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
                 {
                     if (dataReader.Read())
                     {
-                        return (int)dataReader["protected_vms_count"];
+                        return (int) dataReader["protected_vms_count"];
                     }
                 }
             }
@@ -144,8 +143,8 @@
         {
             try
             {
-                var localDbAccessor = new LocalDbAccessor(VeeamFactory.VeeamManager().GetConnectionString());
-                using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
+                var localDbAccessor = new LocalDbAccessor(GetConnectionString());
+                using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
                 {
                     dataReader.Read();
                     return new VmsCounterInfo(dataReader.GetValue<int>("vm_active"), dataReader.GetValue<int>("vm_trial"));
@@ -215,12 +214,12 @@
                 {
                     Logger.Error("Unable to find the Veeam.Backup.Service executable. Unable to determine the correct program version.");
                     Logger.Debug(ex);
-                    SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, string.Empty);
+                    SettingManager.ChangeSetting(SettingNames.VeeamVersion, string.Empty);
                     return null;
                 }
             }
 
-            SettingFactory.SettingsManager().ChangeSetting(SettingNames.VeeamVersion, veeamFile.FileVersion);
+            SettingManager.ChangeSetting(SettingNames.VeeamVersion, veeamFile.FileVersion);
             return veeamFile.FileVersion;
         }
     }

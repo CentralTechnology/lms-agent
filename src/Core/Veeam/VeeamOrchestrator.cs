@@ -1,50 +1,92 @@
 ﻿namespace Core.Veeam
 {
     using System;
-    using System.Threading.Tasks;
+    using System.Diagnostics;
     using Abp.Timing;
-    using Administration;
-    using Common.Client;
     using Common.Extensions;
-    using Factory;
+    using Common.Helpers;
     using Models;
     using NLog;
+    using OData;
+    using Portal.Common.Enums;
+    using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
-    public class VeeamOrchestrator
+    public class VeeamOrchestrator : IDisposable
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly VeeamClient VeeamClient = new VeeamClient();
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
+        protected PortalClient PortalClient = new PortalClient();
 
-        private async Task<CallInStatus> GetStatus()
+        bool _disposed;
+
+        public void Dispose()
         {
-            Guid device = await SettingFactory.SettingsManager().GetSettingValueAsync<Guid>(SettingNames.CentrastageDeviceId);
-            return await VeeamClient.GetStatus(device);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        public async Task Start()
+        protected virtual void Dispose(bool disposing)
         {
-            CallInStatus status = await GetStatus();
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    PortalClient = null;
+                }
+            }
 
-            var veeam = new Veeam();
+            _disposed = true;
+        }
+
+        public void Start()
+        {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            Logger.Info("Stopwatch started!");
+
+            Guid deviceId = SettingManagerHelper.DeviceId;
+            Veeam veeam = PortalClient.ListVeeamById(deviceId);
+            bool newVeeam = false;
+            if (veeam == null)
+            {
+                veeam = new Veeam();
+                newVeeam = true;
+            }
 
             Logger.Info("Collecting information...this could take some time.");
 
-            await veeam.CollectInformation();
+            veeam.CollectInformation();
 
-            Logger.Info(veeam.ToString());
+            Logger.Info($"Edition: {veeam.Edition}  License: {veeam.LicenseType}  Version: {veeam.ProgramVersion}  Hyper-V: {veeam.HyperV}  VMWare: {veeam.vSphere}");
 
-            int uploadId = await VeeamClient.UploadId();
-            veeam.UploadId = uploadId;
-            veeam.CheckInTime = Clock.Now;
+            // set additional properties
+            veeam.CheckInTime = new DateTimeOffset(Clock.Now);
             veeam.Status = CallInStatus.CalledIn;
+            veeam.UploadId = PortalClient.GenerateUploadId();
 
-            if (status == CallInStatus.NeverCalledIn)
+            if (newVeeam)
             {
-                await VeeamClient.Add(veeam);
-                return;
+                PortalClient.AddVeeam(veeam);
+            }
+            else
+            {
+                PortalClient.UpdateVeeam(veeam.Id, new VeeamUpdateModel
+                {
+                    CheckInTime = veeam.CheckInTime,
+                    ClientVersion = veeam.ClientVersion,
+                    Edition = veeam.Edition,
+                    ExpirationDate = veeam.ExpirationDate,
+                    HyperV = veeam.HyperV,
+                    ProgramVersion = veeam.ProgramVersion,
+                    Status = CallInStatus.CalledIn,
+                    SupportId = veeam.SupportId,
+                    UploadId = veeam.UploadId,
+                    vSphere = veeam.vSphere
+                });
             }
 
-            await VeeamClient.Update(veeam);
+            stopWatch.Stop();
+            Console.WriteLine(Environment.NewLine);
+            Logger.Info($"Time elapsed: {stopWatch.Elapsed:hh\\:mm\\:ss}");
         }
     }
 }

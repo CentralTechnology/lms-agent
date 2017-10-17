@@ -1,6 +1,7 @@
 ﻿namespace Core.Common.Extensions
 {
     using Models;
+    using Users.Enums;
 
     public static class UserFlagExtensions
     {

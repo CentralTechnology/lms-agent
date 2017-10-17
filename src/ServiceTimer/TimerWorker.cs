@@ -1,23 +1,15 @@
-﻿
-#if DEBUG
+﻿#if DEBUG
 #define BASELOG
 #endif
 
 namespace ServiceTimer
 {
     using System;
-    using System.IO;
-    using System.Net;
-    using System.Net.Http;
-    using System.Net.Sockets;
     using System.Threading;
-    using System.Threading.Tasks;
     using Core.Common.Extensions;
     using Core.Startup;
     using NLog;
     using SharpRaven;
-    using SharpRaven.Data;
-    using Simple.OData.Client;
 
     /// <summary>
     ///     Inherit from this class to create your concrete worker class. IDisposable because
@@ -73,12 +65,10 @@ namespace ServiceTimer
         private uint _workOnElapseCount;
 
         /// <summary>
-        /// 
         /// </summary>
         protected RavenClient RavenClient;
 
         /// <summary>
-        /// 
         /// </summary>
         protected StartupManager StartupManager;
 
@@ -98,7 +88,7 @@ namespace ServiceTimer
         /// <param name="workOnElapseCount"></param>
         protected TimerWorker(double timerInterval, uint workOnElapseCount)
         {
-            RavenClient = Core.Sentry.RavenClient.New();
+            RavenClient = Core.Sentry.RavenClient.Instance;
             StartupManager = new StartupManager();
             _TimerWorker(0, timerInterval, workOnElapseCount);
         }
@@ -111,7 +101,7 @@ namespace ServiceTimer
         /// <param name="workOnElapseCount"></param>
         protected TimerWorker(double delayOnStart, double timerInterval, uint workOnElapseCount)
         {
-            RavenClient = Core.Sentry.RavenClient.New();
+            RavenClient = Core.Sentry.RavenClient.Instance;
             StartupManager = new StartupManager();
             _TimerWorker(delayOnStart, timerInterval, workOnElapseCount);
         }
@@ -167,6 +157,10 @@ namespace ServiceTimer
                 {
                     ex.Handle();
                     Logger.Error(FailedMessage);
+                }
+                finally
+                {
+                    GC.Collect();
                 }
             }
             catch (Exception ex)
@@ -584,8 +578,7 @@ namespace ServiceTimer
                 _timer?.Dispose();
                 // Free any other managed objects here. 
                 //
-#if DEBUG
-                // Evidence that this gets disposed of in the logs
+#if DEBUG // Evidence that this gets disposed of in the logs
                 Logger?.Info($"Base disposed of managed resources occurred in type {GetType().Name}");
 #endif
             }
