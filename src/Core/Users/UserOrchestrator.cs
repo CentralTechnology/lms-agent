@@ -10,6 +10,7 @@
     using Common.Helpers;
     using Compare;
     using KellermanSoftware.CompareNetObjects;
+    using Managers;
     using Models;
     using NLog;
     using OData;
@@ -213,7 +214,7 @@
             Logger.Debug("PROCESS USERS BEGIN");
             Logger.Info("Collecting information from Active Directory.");
 
-            List<LicenseUser> adUsersAndGroups = UserManager.GetUsersAndGroups();
+            List<LicenseUser> adUsersAndGroups = UserManager.AllUsers().ToList();
             if (!adUsersAndGroups.Any())
             {
                 Logger.Warn("No Active Directory users could be found. Processing has been cancelled.");

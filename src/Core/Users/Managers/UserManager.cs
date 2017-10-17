@@ -1,4 +1,4 @@
-﻿namespace Core.Users
+﻿namespace Core.Users.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -6,12 +6,10 @@
     using System.DirectoryServices.AccountManagement;
     using System.Globalization;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using Abp.Extensions;
     using Common.Extensions;
     using Dto;
     using Microsoft.OData.Client;
-    using Models;
     using NLog;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using ServiceStack.Text;
@@ -24,10 +22,8 @@
         ///     Returns a list of all the users from Active Directory.
         /// </summary>
         /// <returns></returns>
-        private List<LicenseUser> AllUsers()
+        public IEnumerable<LicenseUser> AllUsers()
         {
-            var localUsers = new List<LicenseUser>();
-
             var context = new PrincipalContext(ContextType.Domain);
             Logger.Debug("Context created.");
 
@@ -95,46 +91,30 @@
                     {
                         var dirEntry = user.GetUnderlyingObject() as DirectoryEntry;
 
-                        try
-                        {
-                            var localGroups = groups.Where(g => g.Members.Any(m => m == user.Guid))
-                                .Select(g => new LicenseGroup
-                                {
-                                    Id = g.Id,
-                                    Name = g.Name,
-                                    WhenCreated = DateTimeOffset.Parse(g.WhenCreated.ToString(CultureInfo.InvariantCulture))
-                                });
-
-                            localUsers.Add(new LicenseUser
+                        var localGroups = groups.Where(g => g.Members.Any(m => m == user.Guid))
+                            .Select(g => new LicenseGroup
                             {
-                                DisplayName = user.DisplayName,
-                                Email = user.EmailAddress,
-                                Enabled = !dirEntry.IsAccountDisabled(),
-                                FirstName = user.GivenName,
-                                Groups = new DataServiceCollection<LicenseGroup>(localGroups, TrackingMode.None),
-                                Id = Guid.Parse(user.Guid.ToString()),
-                                LastLoginDate = user.LastLogon == null ? (DateTimeOffset?)null : DateTimeOffset.Parse(user.LastLogon.ToString()),
-                                SamAccountName = user.SamAccountName,
-                                Surname = user.Surname,
-                                WhenCreated = DateTimeOffset.Parse(user.GetProperty("whenCreated"))
+                                Id = g.Id,
+                                Name = g.Name,
+                                WhenCreated = DateTimeOffset.Parse(g.WhenCreated.ToString(CultureInfo.InvariantCulture))
                             });
-                        }
-                        catch (Exception ex)
+
+                        yield return new LicenseUser
                         {
-                            Logger.Error($"There was an error getting: {user.DisplayName}. Please make sure you are running this application with an elevated account.");
-                            Logger.Debug(ex);
-                            throw;
-                        }
+                            DisplayName = user.DisplayName,
+                            Email = user.EmailAddress,
+                            Enabled = !dirEntry.IsAccountDisabled(),
+                            FirstName = user.GivenName,
+                            Groups = new DataServiceCollection<LicenseGroup>(localGroups, TrackingMode.None),
+                            Id = Guid.Parse(user.Guid.ToString()),
+                            LastLoginDate = user.LastLogon == null ? (DateTimeOffset?)null : DateTimeOffset.Parse(user.LastLogon.ToString()),
+                            SamAccountName = user.SamAccountName,
+                            Surname = user.Surname,
+                            WhenCreated = DateTimeOffset.Parse(user.GetProperty("whenCreated"))
+                        };
                     }
                 }
             }
-
-            return localUsers;
-        }
-
-        public List<LicenseUser> GetUsersAndGroups()
-        {
-            return AllUsers();
         }
     }
 }
