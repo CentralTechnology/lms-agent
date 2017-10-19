@@ -3,8 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Net.Sockets;
     using Actions;
     using Common.Constants;
     using Common.Extensions;
@@ -15,6 +17,8 @@
     using Polly;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
+    using SharpRaven;
+    using SharpRaven.Data;
     using Tools;
     using Veeam.Models;
 
@@ -25,28 +29,72 @@
 
         protected Container Container = new Container(new Uri(Constants.DefaultServiceUrl));
 
-        protected Policy DefaultPolicy = Policy
-            .Handle<DataServiceClientException>()
-            .Or<DataServiceRequestException>()
-            .Or<WebException>()
-            .WaitAndRetry(new[]
+        private static readonly RavenClient RavenClient = Sentry.RavenClient.Instance;
+
+        protected void HandleRetryException(Exception ex)
+        {
+            switch (ex)
             {
-                TimeSpan.FromSeconds(10),
-                TimeSpan.FromSeconds(10),
-                TimeSpan.FromSeconds(15),
-                TimeSpan.FromSeconds(15),
-                TimeSpan.FromSeconds(30)
-            }, (exception, timeSpan, retryCount, context) =>
-            {
-                Logger.Error($"Retry {retryCount} of {context.PolicyKey} at {context.ExecutionKey}, due to: {exception.GetFullMessage()}.");
-                Logger.Debug(exception.ToString());
-            });
+                case DataServiceClientException dataServiceClient:
+                    if (dataServiceClient.StatusCode == 404)
+                    {
+                        Logger.Error($"{dataServiceClient.StatusCode} - {dataServiceClient.Message}");
+                        Logger.Debug(dataServiceClient.ToString());
+                        break;
+                    }
+
+                    Logger.Error("Portal api unavailable.");
+                    Logger.Debug(dataServiceClient.ToString());
+                    RavenClient.Capture(new SentryEvent(ex));
+
+                    break;
+                case SocketException socket:
+                    Logger.Error("Portal api unavailable.");
+                    Logger.Debug(socket.ToString());
+                    break;
+                case IOException io:
+                    Logger.Error("Portal api unavailable.");
+                    Logger.Debug(io.ToString());
+                    break;
+                case WebException web:
+                    Logger.Error("Portal api unavailable.");
+                    Logger.Debug(web.ToString());
+                    break;
+                default:
+                    Logger.Error(ex.Message);
+                    Logger.Debug(ex.ToString());
+                    RavenClient.Capture(new SentryEvent(ex));
+                    break;
+            }
+        }
+
+        protected Policy DefaultPolicy;
 
         public PortalClient()
         {
             Container.BuildingRequest += Container_BuildingRequest;
             Container.SendingRequest2 += Container_SendingRequest2;
             Container.Timeout = 600;
+
+            DefaultPolicy = Policy
+                .Handle<DataServiceClientException>()
+                .Or<DataServiceRequestException>()
+                .Or<WebException>()
+                .Or<SocketException>()
+                .Or<IOException>()
+                .WaitAndRetry(new[]
+                {
+                    TimeSpan.FromSeconds(15),
+                    TimeSpan.FromSeconds(30),
+                    TimeSpan.FromSeconds(60),
+                    TimeSpan.FromSeconds(300),
+                    TimeSpan.FromSeconds(600)
+                }, (exception, timeSpan, retryCount, context) =>
+                {
+                    HandleRetryException(exception);
+
+                    Logger.Error($"Retry {retryCount} of {context.PolicyKey} at {context.ExecutionKey}");
+                });
         }
 
         public void AddGroup(IEnumerable<LicenseGroup> licenseGroups)
