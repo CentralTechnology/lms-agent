@@ -229,8 +229,8 @@
             var usersToAdd = new ConcurrentBag<LicenseUser>();
             var usersToUpdate = new ConcurrentBag<LicenseUserUpdateModel>();
 
-            Parallel.ForEach(adUsersAndGroups, adUser =>
-            {
+            foreach (var adUser in adUsersAndGroups)
+                {
                 Logger.Debug($"Processing Active Directory user: {adUser.DisplayName} - {adUser.Id}");
                 adUser.ManagedSupportId = managedSupport.Id;
                 adUser.TenantId = managedSupport.TenantId;
@@ -241,14 +241,14 @@
                 {
                     Logger.Debug($"Creating new user: {adUser.DisplayName} - {adUser.Id}");
                     usersToAdd.Add(adUser);
-                    return;
+                    continue;
                 }
 
                 ComparisonResult result = userCompareLogic.Compare(adUser, remoteUser);
                 if (result.AreEqual)
                 {
                     Logger.Debug("No update required");
-                    return;
+                    continue;                  
                 }
 
                 Logger.Debug($"Updating existing user: {adUser.DisplayName} - {adUser.Id}");
@@ -265,7 +265,7 @@
                     Surname = adUser.Surname,
                     WhenCreated = adUser.WhenCreated
                 });
-            });
+            }
 
             PortalClient.AddUser(usersToAdd);
             PortalClient.UpdateUser(usersToUpdate);

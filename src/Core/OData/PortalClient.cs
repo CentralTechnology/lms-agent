@@ -77,7 +77,7 @@
             Container.Timeout = 600;
 
             DefaultPolicy = Policy
-                .Handle<DataServiceClientException>()
+                .Handle<DataServiceClientException>(e => e.StatusCode != 404)
                 .Or<DataServiceRequestException>()
                 .Or<WebException>()
                 .Or<SocketException>()
