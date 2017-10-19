@@ -22,28 +22,6 @@
 
         public static string GetFullMessage(this Exception exception)
         {
-            //return ex.InnerException == null
-            //    ? ex.Message
-            //    : ex.Message + " --> " + ex.InnerException.GetFullMessage();
-
-            //if (ex == null)
-            //{
-            //    return string.Empty;
-            //}
-
-            //if (messages == "")
-            //{
-            //    return ex.Message;
-            //}
-
-            //var sb = new StringBuilder(messages);
-            //if (ex.InnerException != null)
-            //{
-            //    sb.AppendLine($"\r\nInnerException: {GetFullMessage(ex.InnerException)}");
-            //}
-
-            //return sb.ToString();
-
             var messages = exception.FromHierarchy(ex => ex.InnerException)
                 .Select(ex => ex.Message);
             return String.Join(Environment.NewLine, messages);

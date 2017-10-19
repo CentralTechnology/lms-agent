@@ -131,6 +131,35 @@ namespace ServiceTimer
 
         public string SuccessMessage { get; set; }
 
+        protected void HandleException(Exception ex)
+        {
+            if (ex is AggregateException aggex)
+            {
+                foreach (var innerException in aggex.InnerExceptions)
+                {
+                    HandleExceptionInternal(innerException);
+                }
+            }
+            else
+            {
+                HandleExceptionInternal(ex);
+            }
+        }
+
+        protected void HandleExceptionInternal(Exception ex)
+        {
+            switch (ex)
+            {
+                default:
+                    RavenClient.Capture(new SharpRaven.Data.SentryEvent(ex));
+                    Logger.Error(ex.Message);
+                    Logger.Debug(ex.ToString());
+                    break;
+            }
+
+
+        }
+
         private void _doWork(TimerWorkerInfo info)
         {
 #if BASELOG
@@ -155,7 +184,7 @@ namespace ServiceTimer
                 }
                 catch (Exception ex)
                 {
-                    ex.Handle();
+                    HandleException(ex);
                     Logger.Error(FailedMessage);
                 }
                 finally
