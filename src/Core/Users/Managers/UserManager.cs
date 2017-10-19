@@ -62,6 +62,12 @@
                             Logger.Debug(ex);
                         }
 
+                        if (adGroup.Guid == null)
+                        {
+                            Logger.Debug($"Group: {adGroup.Name} does not have a valid GUID - skipping");
+                            continue;
+                        }
+
                         groups.Add(new GroupPrincipalOutput
                         {
                             Id = (Guid)adGroup.Guid,
@@ -96,7 +102,8 @@
                             {
                                 Id = g.Id,
                                 Name = g.Name,
-                                WhenCreated = DateTimeOffset.Parse(g.WhenCreated.ToString(CultureInfo.InvariantCulture))
+                                // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                                WhenCreated = DateTimeOffset.Parse(g.WhenCreated.ToString())
                             });
 
                         yield return new LicenseUser
