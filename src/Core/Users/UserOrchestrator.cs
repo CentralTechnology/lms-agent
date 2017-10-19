@@ -171,7 +171,7 @@
 
             Logger.Info("Synchronizing Active Directory group memberships with the api...This might take some time.");
 
-            Parallel.ForEach(adGroups, adGroup =>
+            foreach (var adGroup in adGroups)
             {
                 Logger.Debug($"Processing Active Directory group: {adGroup.Name} - {adGroup.Id}");
 
@@ -197,7 +197,7 @@
 
                     usersRemoved.Add(userToRemove);
                 }
-            });
+            }
 
             Console.WriteLine(Environment.NewLine);
             Logger.Info("     User Group Membership Summary");
