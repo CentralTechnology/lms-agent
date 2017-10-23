@@ -368,6 +368,9 @@
                 veeam.Status = updateModel.Status;
                 veeam.SupportId = updateModel.SupportId;
                 veeam.vSphere = updateModel.vSphere;
+
+                Container.UpdateObject(veeam);
+                Container.SaveChanges();
             }
         }
     }
