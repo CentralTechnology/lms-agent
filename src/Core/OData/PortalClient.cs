@@ -27,7 +27,10 @@
     {
         protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        protected Container Container = new Container(new Uri(Constants.DefaultServiceUrl));
+        protected Container Container = new Container(new Uri(Constants.DefaultServiceUrl))
+        {
+            IgnoreResourceNotFoundException = true
+        };
 
         private static readonly RavenClient RavenClient = Sentry.RavenClient.Instance;
 
@@ -133,6 +136,7 @@
             foreach (LicenseUser licenseUser in licenseUsers)
             {
                 Container.AddToLicenseUsers(licenseUser);
+
             }
 
             DataServiceResponse serviceResponse = Container.SaveChanges(SaveChangesOptions.BatchWithSingleChangeset);
