@@ -171,7 +171,7 @@
 
             Logger.Info("Synchronizing Active Directory group memberships with the api...This might take some time.");
 
-            foreach (var adGroup in adGroups)
+            Parallel.ForEach(adGroups, adGroup =>
             {
                 Logger.Debug($"Processing Active Directory group: {adGroup.Name} - {adGroup.Id}");
 
@@ -197,7 +197,7 @@
 
                     usersRemoved.Add(userToRemove);
                 }
-            }
+            });
 
             Console.WriteLine(Environment.NewLine);
             Logger.Info("     User Group Membership Summary");
@@ -220,17 +220,16 @@
                 Logger.Warn("No Active Directory users could be found. Processing has been cancelled.");
                 return new List<LicenseUser>();
             }
-
-            int deletedUsers = 0;
-
+          
             Logger.Info("Synchronizing Active Directory users with the api...This might take some time.");
             var userCompareLogic = new LicenseUserCompareLogic();
 
             var usersToAdd = new ConcurrentBag<LicenseUser>();
             var usersToUpdate = new ConcurrentBag<LicenseUserUpdateModel>();
 
-            foreach (var adUser in adUsersAndGroups)
-                {
+            Parallel.ForEach(adUsersAndGroups, adUser =>
+            {
+
                 Logger.Debug($"Processing Active Directory user: {adUser.DisplayName} - {adUser.Id}");
                 adUser.ManagedSupportId = managedSupport.Id;
                 adUser.TenantId = managedSupport.TenantId;
@@ -241,14 +240,14 @@
                 {
                     Logger.Debug($"Creating new user: {adUser.DisplayName} - {adUser.Id}");
                     usersToAdd.Add(adUser);
-                    continue;
+                    return;
                 }
 
                 ComparisonResult result = userCompareLogic.Compare(adUser, remoteUser);
                 if (result.AreEqual)
                 {
                     Logger.Debug("No update required");
-                    continue;                  
+                    return;
                 }
 
                 Logger.Debug($"Updating existing user: {adUser.DisplayName} - {adUser.Id}");
@@ -265,7 +264,7 @@
                     Surname = adUser.Surname,
                     WhenCreated = adUser.WhenCreated
                 });
-            }
+            });
 
             PortalClient.AddUser(usersToAdd);
             PortalClient.UpdateUser(usersToUpdate);
@@ -274,6 +273,7 @@
 
             apiUserIds.RemoveAll(a => adUsersAndGroups.Select(u => u.Id).Contains(a));
 
+            int deletedUsers = 0;
             foreach (Guid apiUserId in apiUserIds)
             {
                 Logger.Debug($"Deleting user: {apiUserId}");
