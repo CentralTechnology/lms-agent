@@ -11,21 +11,28 @@
 
     public class SettingManagerHelper
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly SettingManager SettingManager = new SettingManager();
-        private static int _accountId;
+        private readonly Logger _logger;
+        private readonly SettingManager _settingManager;
 
-        private static Guid _deviceId;
+        private int _accountId;
 
-        private static string _token;
+        private Guid _deviceId;
 
-        public static int AccountId
+        private string _token;
+
+        public SettingManagerHelper()
+        {
+            _logger = LogManager.GetCurrentClassLogger();
+            _settingManager = new SettingManager();
+        }
+
+        public virtual int AccountId
         {
             get
             {
                 if (_accountId == default(int))
                 {
-                    int dbLookup = SettingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
+                    int dbLookup = _settingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
 
                     _accountId = dbLookup;
                 }
@@ -34,7 +41,7 @@
             }
         }
 
-        public static string ClientVersion
+        public virtual string ClientVersion
         {
             get
             {
@@ -44,21 +51,21 @@
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Unable to determine client version.");
-                    Logger.Debug(ex);
+                    _logger.Error("Unable to determine client version.");
+                    _logger.Debug(ex);
                 }
 
                 return string.Empty;
             }
         }
 
-        public static Guid DeviceId
+        public virtual Guid DeviceId
         {
             get
             {
                 if (_deviceId == default(Guid))
                 {
-                    var dbLookup = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
+                    var dbLookup = _settingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
 
                     _deviceId = dbLookup;
                 }
@@ -67,7 +74,9 @@
             }
         }
 
-        public static string Token
+        public static SettingManagerHelper Instance { get; } = new SettingManagerHelper();
+
+        public virtual string Token
         {
             get
             {

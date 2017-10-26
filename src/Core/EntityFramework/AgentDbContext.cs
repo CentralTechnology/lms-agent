@@ -1,5 +1,6 @@
 ﻿namespace Core.EntityFramework
 {
+    using System.Data.Common;
     using System.Data.Entity;
     using Administration;
     using Migrations;
@@ -15,6 +16,11 @@
         public AgentDbContext(string nameOrConnectionString)
             : base(nameOrConnectionString)
         {
+        }
+
+        public AgentDbContext(DbConnection dbConnection) : base(dbConnection, true)
+        {
+            
         }
 
         public DbSet<Setting> Settings { get; set; }

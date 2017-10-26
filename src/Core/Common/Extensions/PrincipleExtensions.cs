@@ -7,8 +7,7 @@
     {
         public static string GetProperty(this Principal principal, string property)
         {
-            var directoryEntry = principal.GetUnderlyingObject() as DirectoryEntry;
-            if (directoryEntry == null)
+            if (!(principal.GetUnderlyingObject() is DirectoryEntry directoryEntry))
             {
                 return string.Empty;
             }

@@ -17,6 +17,7 @@
 
         public SettingManager()
         {
+
             RavenClient = Sentry.RavenClient.Instance;
         }
 

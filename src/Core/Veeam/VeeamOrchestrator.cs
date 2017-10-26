@@ -43,7 +43,7 @@
             stopWatch.Start();
             Logger.Info("Stopwatch started!");
 
-            Guid deviceId = SettingManagerHelper.DeviceId;
+            Guid deviceId = SettingManagerHelper.Instance.DeviceId;
             Veeam veeam = PortalClient.ListVeeamById(deviceId);
             bool newVeeam = false;
             if (veeam == null)

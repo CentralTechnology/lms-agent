@@ -3,14 +3,9 @@
     using Common.Constants;
     using Common.Helpers;
 
-    public sealed class RavenClient
+    public static class RavenClient
     {
         static RavenClient()
-        {
-            
-        }
-
-        private RavenClient()
         {
             
         }

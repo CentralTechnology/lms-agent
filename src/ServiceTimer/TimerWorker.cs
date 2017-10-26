@@ -5,9 +5,13 @@
 namespace ServiceTimer
 {
     using System;
+    using System.Net;
+    using System.Net.Sockets;
     using System.Threading;
+    using System.Threading.Tasks;
     using Core.Common.Extensions;
     using Core.Startup;
+    using Microsoft.OData.Client;
     using NLog;
     using SharpRaven;
 
@@ -150,6 +154,18 @@ namespace ServiceTimer
         {
             switch (ex)
             {
+                case SocketException socket:
+                    Logger.Error(socket.Message);
+                    Logger.Debug(socket.ToString());
+                    break;
+                case TaskCanceledException taskCancelled:
+                    Logger.Error(taskCancelled.Message);
+                    Logger.Debug(taskCancelled.ToString());
+                    break;
+                case WebException web:
+                    Logger.Error(web.Message);
+                    Logger.Debug(web.ToString());
+                    break;
                 default:
                     RavenClient.Capture(new SharpRaven.Data.SentryEvent(ex));
                     Logger.Error(ex.Message);
