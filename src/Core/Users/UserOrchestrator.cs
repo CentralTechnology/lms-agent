@@ -33,11 +33,7 @@
 
         protected List<LicenseUserSummary> AddUsersToGroup(LicenseGroup group, List<LicenseUser> localUsers)
         {
-            // we want to track changes now.
-            PortalClient = new PortalClient();
-
-            LicenseGroup remoteGroup = PortalClient.ListGroupById(group.Id);
-            PortalClient.Container.AttachTo("LicenseGroups", remoteGroup);
+            var remoteGroup = GetRemoteGroup(group.Id);
 
             List<LicenseUser> remoteUsers = PortalClient.ListAllUsersByGroupId(group.Id);
 
@@ -341,13 +337,20 @@
             return adUsersAndGroups;
         }
 
-        protected List<LicenseUserSummary> RemoveUsersFromGroup(LicenseGroup group, List<LicenseUser> localUsers)
+        protected LicenseGroup GetRemoteGroup(Guid groupId)
         {
             // we want to track changes now.
             PortalClient = new PortalClient();
 
-            LicenseGroup remoteGroup = PortalClient.ListGroupById(group.Id);
+            LicenseGroup remoteGroup = PortalClient.ListGroupById(groupId);
             PortalClient.Container.AttachTo("LicenseGroups", remoteGroup);
+
+            return remoteGroup;
+        }
+
+        protected List<LicenseUserSummary> RemoveUsersFromGroup(LicenseGroup group, List<LicenseUser> localUsers)
+        {
+            var remoteGroup = GetRemoteGroup(group.Id);
 
             List<LicenseUser> remoteUsers = PortalClient.ListAllUsersByGroupId(group.Id);
 
