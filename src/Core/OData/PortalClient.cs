@@ -86,9 +86,9 @@
 
         private static void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
         {
-            e.Headers.Add("AccountId", SettingManagerHelper.AccountId.ToString());
-            e.Headers.Add("XSRF-TOKEN", SettingManagerHelper.Token);
-            e.Headers.Add("Authorization", $"Device {SettingManagerHelper.DeviceId}");
+            e.Headers.Add("AccountId", SettingManagerHelper.Instance.AccountId.ToString());
+            e.Headers.Add("XSRF-TOKEN", SettingManagerHelper.Instance.Token);
+            e.Headers.Add("Authorization", $"Device {SettingManagerHelper.Instance.DeviceId}");
         }
 
         private static void Container_SendingRequest2(object sender, SendingRequest2EventArgs e) => Logger.Debug($"{e.RequestMessage.Method} {e.RequestMessage.Url}");

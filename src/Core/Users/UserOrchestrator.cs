@@ -117,7 +117,7 @@
         public void ProcessCallIn(ManagedSupport managedSupport)
         {
             managedSupport.CheckInTime = new DateTimeOffset(Clock.Now);
-            managedSupport.ClientVersion = SettingManagerHelper.ClientVersion;
+            managedSupport.ClientVersion = SettingManagerHelper.Instance.ClientVersion;
             managedSupport.Hostname = Environment.MachineName;
             managedSupport.Status = CallInStatus.CalledIn;
             managedSupport.UploadId = PortalClient.GenerateUploadId();
@@ -197,7 +197,7 @@
         {
             Logger.Debug("PROCCESS UPLOAD BEGIN");
             Logger.Debug("Getting the id of the upload");
-            Guid deviceId = SettingManagerHelper.DeviceId;
+            Guid deviceId = SettingManagerHelper.Instance.DeviceId;
 
             int managedSupportId = PortalClient.GetManagedSupportId(deviceId);
 
@@ -212,7 +212,7 @@
                 var ms = new ManagedSupport
                 {
                     CheckInTime = Clock.Now,
-                    ClientVersion = SettingManagerHelper.ClientVersion,
+                    ClientVersion = SettingManagerHelper.Instance.ClientVersion,
                     DeviceId = deviceId,
                     Hostname = Environment.MachineName,
                     IsActive = true,

@@ -21,7 +21,7 @@
             get
             {
                 string file = typeof(AppVersionHelper).GetAssembly().Location;
-                return file == null ? default(DateTime) : new FileInfo(file).LastWriteTime;
+                return file.IsNullOrEmpty() ? default(DateTime) : new FileInfo(file).LastWriteTime;
             }
         }
 
