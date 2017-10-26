@@ -212,10 +212,12 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Users\Compare\LicenseGroupCompareLogic.cs" />
+    <Compile Include="Users\Compare\LicenseGroupComparer.cs" />
+    <Compile Include="Users\Compare\LicenseUserComparer.cs" />
     <Compile Include="Users\Enums\Enums.cs" />
-    <Compile Include="Users\Models\LicenseGroupUpdateModel.cs" />
-    <Compile Include="Users\Models\LicenseUserUpdateModel.cs" />
-    <Compile Include="Users\Models\ManagedSupportUpdateModel.cs" />
+    <Compile Include="Users\Models\LicenseGroupSummary.cs" />
+    <Compile Include="Users\Models\LicenseUserGroupSummary.cs" />
+    <Compile Include="Users\Models\LicenseUserSummary.cs" />
     <Compile Include="OData\PortalClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sentry\RavenClient.cs" />
