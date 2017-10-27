@@ -69,19 +69,7 @@
             }
             else
             {
-                PortalClient.UpdateVeeam(veeam.Id, new VeeamUpdateModel
-                {
-                    CheckInTime = veeam.CheckInTime,
-                    ClientVersion = veeam.ClientVersion,
-                    Edition = veeam.Edition,
-                    ExpirationDate = veeam.ExpirationDate,
-                    HyperV = veeam.HyperV,
-                    ProgramVersion = veeam.ProgramVersion,
-                    Status = CallInStatus.CalledIn,
-                    SupportId = veeam.SupportId,
-                    UploadId = veeam.UploadId,
-                    vSphere = veeam.vSphere
-                });
+                PortalClient.UpdateVeeam(veeam);
             }
 
             stopWatch.Stop();

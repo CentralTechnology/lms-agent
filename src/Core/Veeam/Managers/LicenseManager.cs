@@ -10,9 +10,10 @@
     using Microsoft.Win32;
     using NLog;
 
-    public class LicenseManager
+    public class LicenseManager : IDisposable
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private bool _disposed;
         private Dictionary<string, string> _lic;
         private string _licenseFile;
 
@@ -24,6 +25,28 @@
         public LicenseManager(string licenseFile)
         {
             Initialize(licenseFile);
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    Logger.Debug("Disposing LicenseManager");
+                    _lic = null;
+                    _licenseFile = null;
+                }
+
+                _disposed = true;
+            }
         }
 
         internal Dictionary<string, string> ExtractPropertiesFromLicense()

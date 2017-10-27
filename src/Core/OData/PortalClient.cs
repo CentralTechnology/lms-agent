@@ -255,23 +255,9 @@
             Container.UpdateObject(licenseUser);
         }
 
-        public void UpdateVeeam(Guid id, VeeamUpdateModel updateModel)
+        public void UpdateVeeam(Veeam veeam)
         {
-            Veeam veeam = Container.Veeams.Where(v => v.Id == id).SingleOrDefault();
-            if (veeam == null)
-            {
-                return;
-            }
-
-            veeam.CheckInTime = updateModel.CheckInTime;
-            veeam.ClientVersion = updateModel.ClientVersion;
-            veeam.Edition = updateModel.Edition;
-            veeam.ExpirationDate = updateModel.ExpirationDate;
-            veeam.HyperV = updateModel.HyperV;
-            veeam.ProgramVersion = updateModel.ProgramVersion;
-            veeam.Status = updateModel.Status;
-            veeam.SupportId = updateModel.SupportId;
-            veeam.vSphere = updateModel.vSphere;
+            Container.AttachTo("Veeams", veeam);
 
             Container.UpdateObject(veeam);
             Container.SaveChanges();

@@ -11,6 +11,7 @@
     using Veeam.Backup.Common;
     using Veeam.Enums;
     using Veeam.Managers;
+    using Veeam.Models;
     using LicenseTypeEx = Portal.LicenseMonitoringSystem.Veeam.Entities.LicenseTypeEx;
     using Veeam = Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam;
 
