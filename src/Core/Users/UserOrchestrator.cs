@@ -166,6 +166,8 @@
 
             List<LicenseGroupSummary> groupsDeleted = DeleteGroups(adGroups);
 
+            PortalClient.SaveChanges(true);
+
             Console.WriteLine(Environment.NewLine);
             Logger.Info("     Group Summary");
             Logger.Info("----------------------------------------");
@@ -311,6 +313,8 @@
             PortalClient.SaveChanges(true);
 
             List<LicenseUserSummary> usersDeleted = DeleteUsers(adUsersAndGroups);
+
+            PortalClient.SaveChanges(true);
 
             Console.WriteLine(Environment.NewLine);
             Logger.Info("     User Summary");
