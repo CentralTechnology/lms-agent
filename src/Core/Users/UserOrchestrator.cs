@@ -314,6 +314,8 @@
 
             List<LicenseUserSummary> usersDeleted = DeleteUsers(adUsersAndGroups);
 
+            PortalClient.SaveChanges(true);
+
             Console.WriteLine(Environment.NewLine);
             Logger.Info("     User Summary");
             Logger.Info("----------------------------------------");
