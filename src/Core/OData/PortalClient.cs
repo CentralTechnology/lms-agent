@@ -79,7 +79,7 @@
         public void AddVeeam(Veeam veeam)
         {
             Container.AddToVeeams(veeam);
-
+            
             DataServiceResponse serviceResponse = Container.SaveChanges();
             ProcessResponse(serviceResponse);
         }
