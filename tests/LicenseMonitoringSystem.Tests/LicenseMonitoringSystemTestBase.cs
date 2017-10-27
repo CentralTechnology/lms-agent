@@ -3,6 +3,7 @@
     using System;
     using System.Threading.Tasks;
     using Abp.WebApi.Client;
+    using global::Core.Administration;
     using global::Core.Common.Client;
     using global::Core.Common.Helpers;
     using global::Core.EntityFramework;
@@ -18,9 +19,10 @@
         
         protected LicenseMonitoringSystemTestBase()
         {
+            SettingManagerHelper.SetTestingInstance(SettingManagerHelper);
             AbpWebApiClient = Substitute.For<AbpWebApiClient>();
             PortalWebApiClient = Substitute.For<PortalWebApiClient>(AbpWebApiClient);
-
+           
 
 
 

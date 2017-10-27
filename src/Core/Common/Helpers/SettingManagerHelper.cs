@@ -20,7 +20,7 @@
 
         private string _token;
 
-        public SettingManagerHelper()
+        public  SettingManagerHelper()
         {
             _logger = LogManager.GetCurrentClassLogger();
             _settingManager = new SettingManager();
@@ -74,7 +74,14 @@
             }
         }
 
-        public static SettingManagerHelper Instance { get; } = new SettingManagerHelper();
+        public static SettingManagerHelper Instance => _instance ?? (_instance = new SettingManagerHelper());
+
+        private static SettingManagerHelper _instance;
+
+        public static void SetTestingInstance(SettingManagerHelper newInstance)
+        {
+            _instance = newInstance;
+        }
 
         public virtual string Token
         {
