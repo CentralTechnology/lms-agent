@@ -5,8 +5,6 @@
     using Microsoft.Win32;
     using System.Linq;
     using Abp;
-    using Models;
-    using NLog;
 
     public static class CommonExtensions
     {

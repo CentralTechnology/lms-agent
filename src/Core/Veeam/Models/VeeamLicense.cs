@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam
+﻿namespace Core.Veeam.Models
 {
     using System;
     using System.Globalization;
@@ -12,9 +12,16 @@
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static readonly LicenseManager LicenseManager = new LicenseManager();
-
-        public static LicenseEditions Edition => ConvertLicEditionToAppEdition(LicenseManager.GetPropertyNoThrow("Edition"));
+        public static LicenseEditions Edition
+        {
+            get
+            {
+                using (var licenseManager = new LicenseManager())
+                {
+                    return ConvertLicEditionToAppEdition(licenseManager.GetPropertyNoThrow("Edition"));
+                }                
+            }
+        }
 
         public static DateTime ExpirationDate
         {
@@ -33,7 +40,16 @@
             }
         }
 
-        public static string ExpirationDateStr => LicenseManager.GetPropertyNoThrow("Expiration date");
+        public static string ExpirationDateStr
+        {
+            get
+            {
+                using (var licenseManager = new LicenseManager())
+                {
+                    return licenseManager.GetPropertyNoThrow("Expiration date");
+                }
+            }
+        }
 
         public static ELicenseGeneration Generation => IsRental || IsPerpetual || IsSubscription ? ELicenseGeneration.V9 : ELicenseGeneration.Old;
 
@@ -47,9 +63,27 @@
 
         public static bool IsSubscription => LicenseType.Contains("Subscription");
 
-        public static string LicenseType => LicenseManager.GetPropertyNoThrow("License type");
+        public static string LicenseType
+        {
+            get
+            {
+                using (var licenseManager = new LicenseManager())
+                {
+                    return licenseManager.GetPropertyNoThrow("License type");
+                }
+            }
+        }
 
-        public static string SupportId => LicenseManager.GetPropertyNoThrow("Support ID");
+        public static string SupportId
+        {
+            get
+            {
+                using (var licenseManager = new LicenseManager())
+                {
+                    return licenseManager.GetPropertyNoThrow("Support ID");
+                }
+            }
+        }
 
         public static LicenseTypeEx TypeEx
         {

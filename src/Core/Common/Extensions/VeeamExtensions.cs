@@ -11,6 +11,7 @@
     using Veeam.Backup.Common;
     using Veeam.Enums;
     using Veeam.Managers;
+    using Veeam.Models;
     using LicenseTypeEx = Portal.LicenseMonitoringSystem.Veeam.Entities.LicenseTypeEx;
     using Veeam = Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam;
 
@@ -37,12 +38,12 @@
             Version programVersion = Version.Parse(veeam.ProgramVersion);
 
             veeam.CollectVmInformation(programVersion);
-            veeam.ClientVersion = SettingManagerHelper.ClientVersion;
+            veeam.ClientVersion = SettingManagerHelper.Instance.ClientVersion;
             veeam.Edition = VeeamLicense.Edition;
             veeam.ExpirationDate = VeeamLicense.ExpirationDate;
-            veeam.Id = SettingManagerHelper.DeviceId;
+            veeam.Id = SettingManagerHelper.Instance.DeviceId;
             veeam.SupportId = VeeamLicense.SupportId;
-            veeam.TenantId = SettingManagerHelper.AccountId;
+            veeam.TenantId = SettingManagerHelper.Instance.AccountId;
 
             veeam.Validate();
         }

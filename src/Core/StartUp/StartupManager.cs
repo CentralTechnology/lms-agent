@@ -165,10 +165,10 @@
         {
             try
             {
-                Guid deviceId = SettingManagerHelper.DeviceId;
+                Guid deviceId = SettingManagerHelper.Instance.DeviceId;
 
                 int accountId;
-                int storedAccount = SettingManagerHelper.AccountId;
+                int storedAccount = SettingManagerHelper.Instance.AccountId;
 
                 if (storedAccount == default(int))
                 {
