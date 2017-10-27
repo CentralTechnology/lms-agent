@@ -101,6 +101,7 @@
                 return;
             }
 
+            Container.AttachTo("LicenseGroups", group);
             Container.DeleteObject(group);
             DataServiceResponse serviceResponse = Container.SaveChanges();
             ProcessResponse(serviceResponse);
