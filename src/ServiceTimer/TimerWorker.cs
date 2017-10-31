@@ -9,11 +9,11 @@ namespace ServiceTimer
     using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
-    using Core.Common.Extensions;
     using Core.Startup;
     using Microsoft.OData.Client;
     using NLog;
     using SharpRaven;
+    using SharpRaven.Data;
 
     /// <summary>
     ///     Inherit from this class to create your concrete worker class. IDisposable because
@@ -135,47 +135,6 @@ namespace ServiceTimer
 
         public string SuccessMessage { get; set; }
 
-        protected void HandleException(Exception ex)
-        {
-            if (ex is AggregateException aggex)
-            {
-                foreach (var innerException in aggex.InnerExceptions)
-                {
-                    HandleExceptionInternal(innerException);
-                }
-            }
-            else
-            {
-                HandleExceptionInternal(ex);
-            }
-        }
-
-        protected void HandleExceptionInternal(Exception ex)
-        {
-            switch (ex)
-            {
-                case SocketException socket:
-                    Logger.Error(socket.Message);
-                    Logger.Debug(socket.ToString());
-                    break;
-                case TaskCanceledException taskCancelled:
-                    Logger.Error(taskCancelled.Message);
-                    Logger.Debug(taskCancelled.ToString());
-                    break;
-                case WebException web:
-                    Logger.Error(web.Message);
-                    Logger.Debug(web.ToString());
-                    break;
-                default:
-                    RavenClient.Capture(new SharpRaven.Data.SentryEvent(ex));
-                    Logger.Error(ex.Message);
-                    Logger.Debug(ex.ToString());
-                    break;
-            }
-
-
-        }
-
         private void _doWork(TimerWorkerInfo info)
         {
 #if BASELOG
@@ -196,15 +155,35 @@ namespace ServiceTimer
 
                 try
                 {
-                    Work(info);
+                    try
+                    {
+                        Work(info);
+                    }
+                    catch (AggregateException agg)
+                    {
+                        throw agg.Flatten();
+                    }
+                }
+                catch (Exception ex) when (ex is WebException || ex is DataServiceClientException ds && ds.StatusCode == 500 || ex is InvalidOperationException || ex is SocketException || ex is TaskCanceledException)
+                {
+                    Logger.Error(ex.Message);
+                    Logger.Debug(ex, ex.Message);
+                }
+                catch (Exception ex) when (ex is ArgumentException || ex is DataServiceClientException || ex is NullReferenceException)
+                {
+                    RavenClient.Capture(new SentryEvent(ex));
+                    Logger.Error(ex.Message);
+                    Logger.Debug(ex, ex.Message);
                 }
                 catch (Exception ex)
                 {
-                    HandleException(ex);
-                    Logger.Error(FailedMessage);
+                    RavenClient.Capture(new SentryEvent(ex));
+                    Logger.Error(ex.Message);
+                    Logger.Debug(ex, ex.Message);
                 }
                 finally
                 {
+                    Logger.Error(FailedMessage);
                     GC.Collect();
                 }
             }
@@ -539,6 +518,15 @@ namespace ServiceTimer
             _paused = false;
 
             _startedWork = false;
+        }
+
+        protected void LogException<TException>(TException exception) where TException : Exception
+        {
+            // ReSharper disable once RedundantCast
+            var newException = exception as TException;
+
+            Logger.Error(newException.Message);
+            Logger.Debug(newException, newException.Message);
         }
 
         protected virtual void OnContinue(TimerWorkerInfo info)
