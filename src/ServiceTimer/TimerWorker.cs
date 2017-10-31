@@ -171,9 +171,30 @@ namespace ServiceTimer
                 }
                 catch (Exception ex) when (ex is ArgumentException || ex is DataServiceClientException || ex is NullReferenceException)
                 {
-                    RavenClient.Capture(new SentryEvent(ex));
-                    Logger.Error(ex.Message);
-                    Logger.Debug(ex, ex.Message);
+                    if (ex is DataServiceClientException dataService)
+                    {
+                        
+                        RavenClient.Capture(new SentryEvent(dataService));
+                        Logger.Error(dataService.Message);
+                        Logger.Debug(dataService, ex.Message);
+
+                        while (dataService.InnerException != null)
+                        {
+                            var innerException = dataService.InnerException;
+
+                            RavenClient.Capture(new SentryEvent(innerException));
+                            Logger.Error(innerException.Message);
+                            Logger.Debug(innerException, ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        RavenClient.Capture(new SentryEvent(ex));
+                        Logger.Error(ex.Message);
+                        Logger.Debug(ex, ex.Message);
+                    }
+
+
                 }
                 catch (Exception ex)
                 {
