@@ -34,7 +34,6 @@
                 },
                 Name = Constants.ServiceDisplayName,
                 OutDir = "bin/%Configuration%",
-                Platform = Platform.x64,
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
                 UI = WUI.WixUI_Common
             };
@@ -92,12 +91,23 @@
                         Vital = true
                     },
                     new ExePackage
-                    {
+                    {                        
                         Compressed = true,
                         InstallCommand = "/i /qb",
+                        InstallCondition = "VersionNT64",
                         PerMachine = true,
                         Permanent = true,
                         SourceFile = "../Resources/SQLCompact/SSCERuntime_x64-ENU.exe",
+                        Vital = true
+                    },
+                    new ExePackage
+                    {
+                        Compressed = true,
+                        InstallCommand = "/i /qb",
+                        InstallCondition = "NOT VersionNT64",
+                        PerMachine = true,
+                        Permanent = true,
+                        SourceFile = "../Resources/SQLCompact/SSCERuntime_x86-ENU.exe",
                         Vital = true
                     },
                     new MsiPackage(product)
