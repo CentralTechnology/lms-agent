@@ -1,51 +1,82 @@
-﻿namespace Service
+﻿namespace LMS
 {
     using System;
-    using Core.Administration;
-    using Core.Common.Extensions;
+    using Abp;
+    using Abp.Configuration;
+    using Abp.Dependency;
+    using Castle.Facilities.Logging;
     using Core.Common.Helpers;
-    using Core.Startup;
+    using Core.Configuration;
     using Menu;
     using ServiceTimer;
+    using Startup;
     using Workers;
 
-    public class LmsService : TimerServiceBase
+    public class LMSService : TimerServiceBase
     {
-        private static readonly SettingManager SettingManager = new SettingManager();
+        private AbpBootstrapper _bootstrapper;
+
         public override bool Start()
         {
-            DefaultLog();
-
-            Log.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
-
-            StartupManager startupManager = new StartupManager();
-            var started = startupManager.Init();
-            if (!started)
+            try
             {
+                _bootstrapper = AbpBootstrapper.Create<LMSServiceModule>();
+                _bootstrapper.IocManager
+                    .IocContainer
+                    .AddFacility<LoggingFacility>(f => f.UseLog4Net().WithConfig("log4net.config"));
+
+                _bootstrapper.Initialize();
+
+                DefaultLog();
+
+                Log.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
+
+                using (IDisposableDependencyObjectWrapper<StartupManager> startupManager = _bootstrapper.IocManager.ResolveAsDisposable<StartupManager>())
+                {
+                    bool started = startupManager.Object.Init();
+                    if (!started)
+                    {
+                        return false;
+                    }
+
+                    if (Environment.UserInteractive)
+                    {
+                        Console.Clear();
+                        new ClientProgram(Guid.NewGuid()).Run();
+                    }
+                    else
+                    {
+                        using (IDisposableDependencyObjectWrapper<SettingManager> settingManager = _bootstrapper.IocManager.ResolveAsDisposable<SettingManager>())
+                        {
+                            if (settingManager.Object.GetSettingValue<bool>(AppSettingNames.MonitorVeeam))
+                            {
+                                var veeamMonitorWorker = new VeeamMonitorWorker();
+                                RegisterWorker(veeamMonitorWorker);
+                            }
+
+                            if (settingManager.Object.GetSettingValue<bool>(AppSettingNames.MonitorUsers))
+                            {
+                                var userMonitorWorker = new UserMonitorWorker();
+                                RegisterWorker(userMonitorWorker);
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                //EventLog.WriteEntry($"License Monitoring Ssytem service cannot be started. Exception message =  {ex.GetType().Name} : {ex.Message} | {ex.StackTrace}", EventLogEntryType.Error);
                 return false;
             }
+        }
 
-            if (Environment.UserInteractive)
-            {
-                Console.Clear();
-                new ClientProgram(Guid.NewGuid()).Run();
-            }
-            else
-            {
-                if (SettingManager.GetSettingValue<bool>(SettingNames.MonitorVeeam))
-                {
-                    var veeamMonitorWorker = new VeeamMonitorWorker();
-                    RegisterWorker(veeamMonitorWorker);
-                }
+        public override bool Stop()
+        {
+            _bootstrapper.Dispose();
 
-                if (SettingManager.GetSettingValue<bool>(SettingNames.MonitorUsers))
-                {
-                    var userMonitorWorker = new UserMonitorWorker();
-                    RegisterWorker(userMonitorWorker);
-                }
-            }
-
-            return true;
+            return base.Stop();
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿namespace Service.Menu.Pages.Options
+﻿namespace LMS.Menu.Pages.Options
 {
     using Core.Administration;
     using Core.Common.Extensions;
+    using Core.Configuration;
     using EasyConsole;
 
     class VeeamPage : MenuPage
@@ -13,8 +14,8 @@
         {
             Menu.Add("Manual Override", () =>
             {
-                var enabled = SettingManager.GetSettingValue<bool>(SettingNames.VeeamOverride);
-                SettingManager.ChangeSetting(SettingNames.VeeamOverride, (!enabled).ToString());
+                var enabled = SettingManager.GetSettingValue<bool>(AppSettingNames.VeeamOverride);
+                SettingManager.ChangeSetting(AppSettingNames.VeeamOverride, (!enabled).ToString());
 
                 Output.WriteLine(!enabled ? "Enabled" : "Disabled");
                 ActionComplete<VeeamPage>();

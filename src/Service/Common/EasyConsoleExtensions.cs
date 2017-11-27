@@ -1,8 +1,5 @@
-﻿namespace Service.Common
+﻿namespace LMS.Common
 {
-    using System;
-    using EasyConsole;
-
     public static class EasyConsoleExtensions
     {
     }

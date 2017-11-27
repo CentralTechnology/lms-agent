@@ -5,10 +5,12 @@
     using Abp.Extensions;
     using Abp.Threading;
     using Administration;
-    using Client;
+    using Configuration;
     using Extensions;
+    using LMS.Common.Client;
     using NLog;
 
+    [Obsolete]
     public class SettingManagerHelper
     {
         private readonly Logger _logger;
@@ -32,7 +34,7 @@
             {
                 if (_accountId == default(int))
                 {
-                    int dbLookup = _settingManager.GetSettingValue<int>(SettingNames.AutotaskAccountId);
+                    int dbLookup = _settingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
 
                     _accountId = dbLookup;
                 }
@@ -65,7 +67,7 @@
             {
                 if (_deviceId == default(Guid))
                 {
-                    var dbLookup = _settingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
+                    var dbLookup = _settingManager.GetSettingValue<Guid>(AppSettingNames.CentrastageDeviceId);
 
                     _deviceId = dbLookup;
                 }
@@ -83,17 +85,17 @@
             _instance = newInstance;
         }
 
-        public virtual string Token
-        {
-            get
-            {
-                if (_token.IsNullOrEmpty())
-                {
-                    _token = AsyncHelper.RunSync(() => new PortalWebApiClient().GetTokenCookie());
-                }
+        //public virtual string Token
+        //{
+        //    get
+        //    {
+        //        if (_token.IsNullOrEmpty())
+        //        {
+        //            _token = AsyncHelper.RunSync(() => new PortalWebApiClient().GetTokenCookie());
+        //        }
 
-                return _token;
-            }
-        }
+        //        return _token;
+        //    }
+        //}
     }
 }

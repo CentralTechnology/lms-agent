@@ -1,10 +1,11 @@
-﻿namespace Service.Workers
+﻿namespace LMS.Workers
 {
     using System;
+    using Abp.Dependency;
     using Core.Common.Extensions;
-    using Core.Veeam;
-    using Core.Veeam.Managers;
     using ServiceTimer;
+    using Veeam;
+    using Veeam.Managers;
 
     internal class VeeamMonitorWorker : TimerWorker
     {
@@ -50,9 +51,10 @@
                 return;
             }
 
-            using (var orchestrator = new VeeamOrchestrator())
+            using (var orchestrator = IocManager.Instance.ResolveAsDisposable<VeeamOrchestrator>())
             {
-                orchestrator.Start();
+                orchestrator.Object.Start();
+
             }
 
             Console.WriteLine(Environment.NewLine);

@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam.Managers
+﻿namespace LMS.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using System.Security;
     using System.Text;
     using Abp;
-    using Common.Extensions;
+    using Core.Common.Extensions;
     using Microsoft.Win32;
     using NLog;
 

@@ -1,8 +1,7 @@
-﻿namespace Service
+﻿namespace LMS
 {
     using Abp.Timing;
     using Core.Common.Constants;
-    using SharpRaven.Data;
     using Topshelf;
 
     class Runner
@@ -16,9 +15,9 @@
 
             HostFactory.Run(x =>
             {
-                x.Service<LmsService>(sc =>
+                x.Service<LMSService>(sc =>
                 {
-                    sc.ConstructUsing(() => new LmsService());
+                    sc.ConstructUsing(() => new LMSService());
 
                     sc.WhenStarted(s => s.Start());
                     sc.WhenStopped(s => s.Stop());
@@ -29,7 +28,7 @@
                     sc.WhenShutdown(s => s.Shutdown());
                 });
 
-                x.UseNLog();
+                x.UseLog4Net();
                 x.RunAsLocalSystem();
                 x.SetServiceName(Constants.ServiceName);
                 x.SetDisplayName(Constants.ServiceDisplayName);

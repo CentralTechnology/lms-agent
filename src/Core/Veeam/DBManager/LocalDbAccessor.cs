@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam.DBManager
+﻿namespace LMS.Veeam.DBManager
 {
     using System;
     using System.Data;
@@ -13,7 +13,7 @@
 
         public LocalDbAccessor(string connectionString)
         {
-            RavenClient = Sentry.RavenClient.Instance;
+            RavenClient = Core.Sentry.RavenClient.Instance;
 
             if (string.IsNullOrEmpty(connectionString))
             {

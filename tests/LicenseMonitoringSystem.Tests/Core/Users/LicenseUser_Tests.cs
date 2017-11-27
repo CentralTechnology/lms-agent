@@ -2,8 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using global::Core.Users.Compare;
     using KellermanSoftware.CompareNetObjects;
+    using LMS.Users.Compare;
     using Microsoft.OData.Client;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using Shouldly;

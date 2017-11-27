@@ -1,8 +1,8 @@
-﻿namespace Core.Veeam.DBManager
+﻿namespace LMS.Veeam.DBManager
 {
     using System.Data;
     using System.Data.SqlClient;
-    using Common.Extensions;
+    using Core.Common.Extensions;
 
     public class SqlReferenceTypeFieldDescriptor<T> : ISqlFieldDescriptor<T>, ISqlFieldDescriptor where T : class
     {

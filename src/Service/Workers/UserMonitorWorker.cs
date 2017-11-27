@@ -1,9 +1,10 @@
-﻿namespace Service.Workers
+﻿namespace LMS.Workers
 {
     using System;
+    using Abp.Dependency;
     using Core.Common.Extensions;
-    using Core.Users;
     using ServiceTimer;
+    using Users;
 
     internal class UserMonitorWorker : TimerWorker
     {
@@ -36,9 +37,9 @@
                 return;
             }
 
-            using (var orchestrator = new UserOrchestrator())
+            using (var orchestrator = IocManager.Instance.ResolveAsDisposable<UserOrchestrator>())
             {
-                orchestrator.Start();
+                orchestrator.Object.Start();
             }
 
             Console.WriteLine(Environment.NewLine);

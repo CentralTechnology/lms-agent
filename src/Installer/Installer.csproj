@@ -108,13 +108,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj">
+    <ProjectReference Include="..\Core\LMS.Core.csproj">
       <Project>{6981655A-0373-4F38-A3AE-4A7262FA7150}</Project>
-      <Name>Core</Name>
+      <Name>LMS.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Service\Service.csproj">
+    <ProjectReference Include="..\Service\LMS.Service.csproj">
       <Project>{FA86143F-7692-4E33-9719-52B5F13E4380}</Project>
-      <Name>Service</Name>
+      <Name>LMS.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

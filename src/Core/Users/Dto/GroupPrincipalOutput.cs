@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Users.Dto
+﻿namespace LMS.Users.Dto
 {
+    using System;
+    using System.Collections.Generic;
     using Abp.Application.Services.Dto;
 
     public class GroupPrincipalOutput : EntityDto<Guid>

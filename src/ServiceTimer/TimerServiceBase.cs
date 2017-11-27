@@ -248,7 +248,7 @@ namespace ServiceTimer
             throw new NotImplementedException();
         }
 
-        public bool Stop()
+        public virtual bool Stop()
         {
             _log?.Info(logmessages.ServiceOnStop);
 

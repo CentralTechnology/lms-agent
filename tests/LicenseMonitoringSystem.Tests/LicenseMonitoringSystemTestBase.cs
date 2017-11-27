@@ -4,9 +4,9 @@
     using System.Threading.Tasks;
     using Abp.WebApi.Client;
     using global::Core.Administration;
-    using global::Core.Common.Client;
     using global::Core.Common.Helpers;
     using global::Core.EntityFramework;
+    using LMS.Common.Client;
     using NSubstitute;
     using Ploeh.AutoFixture;
 
@@ -29,10 +29,10 @@
 
 
             AbpWebApiClient.PostAsync<string>(Fixture.Create<string>()).Returns(Fixture.Create<string>());
-            PortalWebApiClient.GetTokenCookie().Returns(Fixture.Create<string>());
-            SettingManagerHelper.Instance.AccountId.Returns(Fixture.Create<int>());
-            SettingManagerHelper.Instance.DeviceId.Returns(Fixture.Create<Guid>());
-            SettingManagerHelper.Instance.Token.Returns(Fixture.Create<Guid>().ToString());
+            PortalWebApiClient.GetAntiForgeryToken().Returns(Fixture.Create<string>());
+            //SettingManagerHelper.Instance.AccountId.Returns(Fixture.Create<int>());
+            //SettingManagerHelper.Instance.DeviceId.Returns(Fixture.Create<Guid>());
+            //SettingManagerHelper.Instance.Token.Returns(Fixture.Create<Guid>().ToString());
 
         }
 

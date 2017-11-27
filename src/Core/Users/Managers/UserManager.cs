@@ -1,22 +1,20 @@
-﻿namespace Core.Users.Managers
+﻿namespace LMS.Users.Managers
 {
     using System;
     using System.Collections.Generic;
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
-    using System.Globalization;
     using System.Linq;
+    using Abp.Domain.Services;
     using Abp.Extensions;
-    using Common.Extensions;
+    using Core.Common.Extensions;
     using Dto;
     using Microsoft.OData.Client;
-    using NLog;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using ServiceStack.Text;
 
-    public class UserManager
+    public class UserManager: DomainService, IUserManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         ///     Returns a list of all the users from Active Directory.
@@ -59,7 +57,7 @@
                             Logger.Error($"Failed to get members from group: {(adGroup.DisplayName.IsNullOrEmpty() ? adGroup.SamAccountName : adGroup.DisplayName)}. " +
                                 "Most likely cause is that the group contains members which are no longer part of the domain. " +
                                 "Please investigate the group members in Active Directory.");
-                            Logger.Debug(ex);
+                            Logger.Debug("Exception",ex);
                         }
 
                         if (adGroup.Guid == null)
@@ -79,7 +77,7 @@
                     catch (Exception ex)
                     {
                         Logger.Error($"Error processing: {found.Guid.Dump()}. Please use the following powershell command to find the group. Get-ADGroup -Identity {found.Guid}");
-                        Logger.Debug(ex);
+                        Logger.Debug("Exception",ex);
                     }
                 }
 

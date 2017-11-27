@@ -1,8 +1,8 @@
-﻿namespace Service.Menu.Pages.Options
+﻿namespace LMS.Menu.Pages.Options
 {
-    using System;
     using Core.Administration;
     using Core.Common.Extensions;
+    using Core.Configuration;
     using EasyConsole;
 
     class UsersPage : MenuPage
@@ -15,8 +15,8 @@
             
             Menu.Add("Manual Override", () =>
             {
-                var enabled = SettingManager.GetSettingValue<bool>(SettingNames.UsersOverride);
-                SettingManager.ChangeSetting(SettingNames.UsersOverride, (!enabled).ToString());
+                var enabled = SettingManager.GetSettingValue<bool>(AppSettingNames.UsersOverride);
+                SettingManager.ChangeSetting(AppSettingNames.UsersOverride, (!enabled).ToString());
 
                 Output.WriteLine(!enabled ? "Enabled" : "Disabled");
                 ActionComplete<UsersPage>();
@@ -24,8 +24,8 @@
 
             Menu.Add("PDC Override: ", () =>
             {
-                bool pdcOverride = SettingManager.GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
-                SettingManager.ChangeSetting(SettingNames.PrimaryDomainControllerOverride, (!pdcOverride).ToString());
+                bool pdcOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.PrimaryDomainControllerOverride);
+                SettingManager.ChangeSetting(AppSettingNames.PrimaryDomainControllerOverride, (!pdcOverride).ToString());
 
                 Output.WriteLine(!pdcOverride ? "Enabled" : "Disabled");
                 ActionComplete<UsersPage>();

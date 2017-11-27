@@ -1,9 +1,11 @@
 ﻿namespace Core.Common.Extensions
 {
+    using System;
     using System.Threading.Tasks;
     using Abp.Threading;
     using Administration;
 
+    [Obsolete]
     public static class SettingManagerExtensions
     {
         public static void ChangeSetting(this SettingManager settingManager, string name, string value)

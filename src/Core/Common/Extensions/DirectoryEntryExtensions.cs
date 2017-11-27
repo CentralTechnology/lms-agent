@@ -1,7 +1,7 @@
 ﻿namespace Core.Common.Extensions
 {
     using System.DirectoryServices;
-    using Users.Enums;
+    using LMS.Users.Enums;
 
     public static class DirectoryEntryExtensions
     {

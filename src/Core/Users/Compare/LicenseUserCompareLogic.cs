@@ -1,4 +1,4 @@
-﻿namespace Core.Users.Compare
+﻿namespace LMS.Users.Compare
 {
     using System.Collections.Generic;
     using KellermanSoftware.CompareNetObjects;

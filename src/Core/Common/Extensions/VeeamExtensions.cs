@@ -6,12 +6,11 @@
     using Abp;
     using Administration;
     using Helpers;
+    using LMS.Veeam.Backup.Common;
+    using LMS.Veeam.Enums;
+    using LMS.Veeam.Managers;
+    using LMS.Veeam.Models;
     using NLog;
-    using Veeam;
-    using Veeam.Backup.Common;
-    using Veeam.Enums;
-    using Veeam.Managers;
-    using Veeam.Models;
     using LicenseTypeEx = Portal.LicenseMonitoringSystem.Veeam.Entities.LicenseTypeEx;
     using Veeam = Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam;
 

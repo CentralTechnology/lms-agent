@@ -187,9 +187,9 @@
     <Folder Include="Service\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Core\Core.csproj">
+    <ProjectReference Include="..\..\src\Core\LMS.Core.csproj">
       <Project>{6981655A-0373-4F38-A3AE-4A7262FA7150}</Project>
-      <Name>Core</Name>
+      <Name>LMS.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

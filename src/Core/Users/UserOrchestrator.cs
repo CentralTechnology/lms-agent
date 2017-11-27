@@ -1,4 +1,4 @@
-﻿namespace Core.Users
+﻿namespace LMS.Users
 {
     using System;
     using System.Collections.Concurrent;
@@ -6,36 +6,38 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
+    using Abp.Dependency;
     using Abp.Timing;
-    using Common.Helpers;
+    using Castle.Core.Logging;
     using Compare;
+    using Core.Common.Helpers;
+    using Core.OData;
     using KellermanSoftware.CompareNetObjects;
     using Managers;
     using Models;
-    using NLog;
-    using OData;
     using Portal.Common.Enums;
     using Portal.LicenseMonitoringSystem.Users.Entities;
 
-    public class UserOrchestrator : IDisposable
+    public class UserOrchestrator : ITransientDependency
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private bool _disposed;
-        protected PortalClient PortalClient = new PortalClient();
-        protected UserManager UserManager = new UserManager();
+        private readonly PortalClient _portalClient;
+        private readonly IUserManager _userManager;
 
-        public void Dispose()
+        public ILogger Logger { get; set; }
+
+        public UserOrchestrator(PortalClient portalClient, IUserManager userManager)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Logger = NullLogger.Instance;
+            _portalClient = portalClient;
+            _userManager = userManager;
         }
 
         protected List<LicenseUserSummary> AddUsersToGroup(LicenseGroup group, List<LicenseUser> localUsers)
         {
             var remoteGroup = GetRemoteGroup(group.Id);
 
-            List<LicenseUser> remoteUsers = PortalClient.ListAllUsersByGroupId(group.Id);
+            List<LicenseUser> remoteUsers = _portalClient.ListAllUsersByGroupId(group.Id);
 
             List<LicenseUser> newMembers = localUsers.Where(u => remoteUsers.All(ru => ru.Id != u.Id)).ToList();
             if (!newMembers.Any())
@@ -47,8 +49,8 @@
 
             Parallel.ForEach(newMembers, newMember =>
             {
-                PortalClient.Container.AttachTo("LicenseUsers", newMember);
-                PortalClient.AddGroupToUser(newMember, remoteGroup);
+                _portalClient.Container.AttachTo("LicenseUsers", newMember);
+                _portalClient.AddGroupToUser(newMember, remoteGroup);
                 usersAdded.Add(new LicenseUserSummary {Id = newMember.Id, DisplayName = newMember.DisplayName, Status = LicenseUserGroupStatus.Added});
             });
 
@@ -58,38 +60,24 @@
 
         public List<LicenseGroupSummary> DeleteGroups(List<LicenseGroup> localGroups)
         {
-            List<LicenseGroupSummary> apiGroups = PortalClient.ListAllActiveGroupIds();
+            List<LicenseGroupSummary> apiGroups = _portalClient.ListAllActiveGroupIds();
 
             apiGroups.RemoveAll(a => localGroups.Select(g => g.Id).Contains(a.Id));
 
-            Parallel.ForEach(apiGroups, apiGroup => PortalClient.DeleteGroup(apiGroup.Id));
+            Parallel.ForEach(apiGroups, apiGroup => _portalClient.DeleteGroup(apiGroup.Id));
 
             return apiGroups;
         }
 
         public List<LicenseUserSummary> DeleteUsers(List<LicenseUser> localUsers)
         {
-            List<LicenseUserSummary> apiUsers = PortalClient.ListAllActiveUserIds();
+            List<LicenseUserSummary> apiUsers = _portalClient.ListAllActiveUserIds();
 
             apiUsers.RemoveAll(a => localUsers.Select(u => u.Id).Contains(a.Id));
 
-            Parallel.ForEach(apiUsers, apiUser => PortalClient.DeleteUser(apiUser.Id));
+            Parallel.ForEach(apiUsers, apiUser => _portalClient.DeleteUser(apiUser.Id));
 
             return apiUsers;
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    PortalClient = null;
-                    UserManager = null;
-                }
-            }
-
-            _disposed = true;
         }
 
         protected void PrintGroupMembershipSummary(LicenseUserGroupSummary summary, List<LicenseUserSummary> usersAdded, List<LicenseUserSummary> usersRemoved)
@@ -116,10 +104,10 @@
             managedSupport.ClientVersion = SettingManagerHelper.Instance.ClientVersion;
             managedSupport.Hostname = Environment.MachineName;
             managedSupport.Status = CallInStatus.CalledIn;
-            managedSupport.UploadId = PortalClient.GenerateUploadId();
+            managedSupport.UploadId = _portalClient.GenerateUploadId();
 
-            PortalClient.UpdateManagedSupport(managedSupport);
-            PortalClient.SaveChanges();
+            _portalClient.UpdateManagedSupport(managedSupport);
+            _portalClient.SaveChanges();
         }
 
         public List<LicenseGroup> ProcessGroups(List<LicenseUser> users)
@@ -136,7 +124,7 @@
             var groupsAdded = new ConcurrentBag<LicenseGroupSummary>();
             var groupsUpdated = new ConcurrentBag<LicenseGroupSummary>();
 
-            List<LicenseGroup> remoteGroups = PortalClient.ListAllGroups();
+            List<LicenseGroup> remoteGroups = _portalClient.ListAllGroups();
 
             Parallel.ForEach(adGroups, adGroup =>
             {
@@ -145,7 +133,7 @@
                 LicenseGroup remoteGroup = remoteGroups.FirstOrDefault(g => g.Id == adGroup.Id);
                 if (remoteGroup == null)
                 {
-                    PortalClient.AddGroup(adGroup);
+                    _portalClient.AddGroup(adGroup);
                     groupsAdded.Add(new LicenseGroupSummary {Id = adGroup.Id, Name = adGroup.Name});
                     return;
                 }
@@ -158,15 +146,15 @@
 
                 Logger.Debug($"Updating group: {adGroup.Name} - {adGroup.Id}  Difference: {result.DifferencesString}");
                 Logger.Debug($"Difference: {result.DifferencesString}");
-                PortalClient.UpdateGroup(adGroup);
+                _portalClient.UpdateGroup(adGroup);
                 groupsUpdated.Add(new LicenseGroupSummary {Id = adGroup.Id, Name = adGroup.Name});
             });
 
-            PortalClient.SaveChanges(true);
+            _portalClient.SaveChanges(true);
 
             List<LicenseGroupSummary> groupsDeleted = DeleteGroups(adGroups);
 
-            PortalClient.SaveChanges(true);
+            _portalClient.SaveChanges(true);
 
             Console.WriteLine(Environment.NewLine);
             Logger.Info("     Group Summary");
@@ -197,7 +185,7 @@
             Logger.Debug("Getting the id of the upload");
             Guid deviceId = SettingManagerHelper.Instance.DeviceId;
 
-            int managedSupportId = PortalClient.GetManagedSupportId(deviceId);
+            int managedSupportId = _portalClient.GetManagedSupportId(deviceId);
 
             // create a new upload
             if (managedSupportId == default(int))
@@ -205,7 +193,7 @@
                 Logger.Debug("Looks like this device hasn't called in before.");
                 Logger.Debug("Generating a new upload id.");
 
-                int uploadId = PortalClient.GenerateUploadId();
+                int uploadId = _portalClient.GenerateUploadId();
 
                 var ms = new ManagedSupport
                 {
@@ -218,13 +206,13 @@
                     UploadId = uploadId
                 };
 
-                PortalClient.AddManagedSupport(ms);
-                PortalClient.SaveChanges();
-                managedSupportId = PortalClient.GetManagedSupportId(deviceId);
+                _portalClient.AddManagedSupport(ms);
+                _portalClient.SaveChanges();
+                managedSupportId = _portalClient.GetManagedSupportId(deviceId);
             }
 
             Logger.Debug("PROCCESS UPLOAD END");
-            return PortalClient.ListManagedSupportById(managedSupportId);
+            return _portalClient.ListManagedSupportById(managedSupportId);
         }
 
         public void ProcessUserGroups(List<LicenseUser> adUsers, List<LicenseGroup> adGroups)
@@ -269,7 +257,7 @@
             Logger.Debug("PROCESS USERS BEGIN");
             Logger.Info("Collecting information from Active Directory.");
 
-            List<LicenseUser> adUsersAndGroups = UserManager.AllUsers().ToList();
+            List<LicenseUser> adUsersAndGroups = _userManager.AllUsers().ToList();
             if (!adUsersAndGroups.Any())
             {
                 Logger.Warn("No Active Directory users could be found. Processing has been cancelled.");
@@ -282,7 +270,7 @@
             var usersAdded = new ConcurrentBag<LicenseUserSummary>();
             var usersUpdated = new ConcurrentBag<LicenseUserSummary>();
 
-            List<LicenseUser> remoteUsers = PortalClient.ListAllUsers();
+            List<LicenseUser> remoteUsers = _portalClient.ListAllUsers();
 
             Parallel.ForEach(adUsersAndGroups, adUser =>
             {
@@ -294,7 +282,7 @@
                 LicenseUser remoteUser = remoteUsers.FirstOrDefault(u => u.Id == adUser.Id);
                 if (remoteUser == null)
                 {
-                    PortalClient.AddUser(adUser);
+                    _portalClient.AddUser(adUser);
                     usersAdded.Add(new LicenseUserSummary {Id = adUser.Id, DisplayName = adUser.DisplayName});
                     return;
                 }
@@ -306,15 +294,15 @@
                 }
 
                 Logger.Debug($"Updating user: {adUser.DisplayName} - {adUser.Id}  Difference: {result.DifferencesString}");
-                PortalClient.UpdateUser(adUser);
+                _portalClient.UpdateUser(adUser);
                 usersUpdated.Add(new LicenseUserSummary {Id = adUser.Id, DisplayName = adUser.DisplayName});
             });
 
-            PortalClient.SaveChanges(true);
+            _portalClient.SaveChanges(true);
 
             List<LicenseUserSummary> usersDeleted = DeleteUsers(adUsersAndGroups);
 
-            PortalClient.SaveChanges(true);
+            _portalClient.SaveChanges(true);
 
             Console.WriteLine(Environment.NewLine);
             Logger.Info("     User Summary");
@@ -343,11 +331,8 @@
 
         protected LicenseGroup GetRemoteGroup(Guid groupId)
         {
-            // we want to track changes now.
-            PortalClient = new PortalClient();
-
-            LicenseGroup remoteGroup = PortalClient.ListGroupById(groupId);
-            PortalClient.Container.AttachTo("LicenseGroups", remoteGroup);
+            LicenseGroup remoteGroup = _portalClient.ListGroupById(groupId);
+            _portalClient.Container.AttachTo("LicenseGroups", remoteGroup);
 
             return remoteGroup;
         }
@@ -356,7 +341,7 @@
         {
             var remoteGroup = GetRemoteGroup(group.Id);
 
-            List<LicenseUser> remoteUsers = PortalClient.ListAllUsersByGroupId(group.Id);
+            List<LicenseUser> remoteUsers = _portalClient.ListAllUsersByGroupId(group.Id);
 
             List<LicenseUser> usersToRemove = remoteUsers.Except(localUsers, new LicenseUserComparer()).ToList();
 
@@ -369,8 +354,8 @@
 
             Parallel.ForEach(usersToRemove, oldMember =>
             {
-                PortalClient.Container.AttachTo("LicenseUsers", oldMember);
-                PortalClient.DeleteGroupFromUser(oldMember, remoteGroup);
+                _portalClient.Container.AttachTo("LicenseUsers", oldMember);
+                _portalClient.DeleteGroupFromUser(oldMember, remoteGroup);
                 usersRemoved.Add(new LicenseUserSummary {Id = oldMember.Id, DisplayName = oldMember.DisplayName, Status = LicenseUserGroupStatus.Removed});
             });
 

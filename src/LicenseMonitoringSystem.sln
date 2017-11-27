@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27019.1
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{660406F8-9991-484F-B375-04BD0B3FF917}"
 	ProjectSection(SolutionItems) = preProject
@@ -69,9 +69,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Content", "Content", "{3CC0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{C26EC769-9729-452C-84D1-363C8B72F90F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{FA86143F-7692-4E33-9719-52B5F13E4380}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMS.Service", "Service\LMS.Service.csproj", "{FA86143F-7692-4E33-9719-52B5F13E4380}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{6981655A-0373-4F38-A3AE-4A7262FA7150}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMS.Core", "Core\LMS.Core.csproj", "{6981655A-0373-4F38-A3AE-4A7262FA7150}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{3BD99F52-5681-471B-9F33-52840BD1A2A2}"
 EndProject
@@ -95,6 +95,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deploy", "..\tools\Deploy\Deploy\Deploy.csproj", "{1D97235A-A454-4181-BF4B-CFA3C3FFAEEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octokit", "..\tools\Octokit\Octokit.csproj", "{9D523842-D4CB-498A-A7EE-40A24E030E97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMS.EntityFramework", "EntityFramework\LMS.EntityFramework.csproj", "{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -202,6 +204,18 @@ Global
 		{9D523842-D4CB-498A-A7EE-40A24E030E97}.Release|x64.Build.0 = Release|Any CPU
 		{9D523842-D4CB-498A-A7EE-40A24E030E97}.Release|x86.ActiveCfg = Release|Any CPU
 		{9D523842-D4CB-498A-A7EE-40A24E030E97}.Release|x86.Build.0 = Release|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Debug|x64.Build.0 = Debug|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Debug|x86.Build.0 = Debug|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Release|Any CPU.Build.0 = Release|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Release|x64.ActiveCfg = Release|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Release|x64.Build.0 = Release|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Release|x86.ActiveCfg = Release|Any CPU
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -220,6 +234,7 @@ Global
 		{3D72B542-2480-4547-9F1F-AFEB02985684} = {1698522A-4E91-4B2E-A688-E1693021AFDE}
 		{1D97235A-A454-4181-BF4B-CFA3C3FFAEEE} = {17B86A6B-C865-4931-8154-E2CCB28DCC5F}
 		{9D523842-D4CB-498A-A7EE-40A24E030E97} = {17B86A6B-C865-4931-8154-E2CCB28DCC5F}
+		{847C8EA8-5B66-4CB1-B90B-64E1FEFC8216} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2A0F319B-C7F0-4746-B7C8-D9A461005AEF}

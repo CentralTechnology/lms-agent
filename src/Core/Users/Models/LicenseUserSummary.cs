@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Users.Models
+﻿namespace LMS.Users.Models
 {
+    using System;
     using Abp.Application.Services.Dto;
 
     public class LicenseUserSummary : EntityDto<Guid>

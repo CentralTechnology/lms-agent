@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Weavers>
-  <Costura >
+  <!--<Costura >
     <ExcludeAssemblies>
-      LMS.Core
+      LMS.Core,
+      LMS.EntityFramework
     </ExcludeAssemblies>
-  </Costura>
+  </Costura>-->
 </Weavers>

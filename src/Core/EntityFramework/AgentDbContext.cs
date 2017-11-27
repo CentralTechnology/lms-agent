@@ -10,7 +10,7 @@
         public AgentDbContext()
             : base("Default")
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<AgentDbContext, Configuration>());
+           // Database.SetInitializer(new MigrateDatabaseToLatestVersion<AgentDbContext, Configuration>());
         }
 
         public AgentDbContext(string nameOrConnectionString)

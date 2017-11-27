@@ -9,7 +9,8 @@ namespace ServiceTimer
     using System.Net.Sockets;
     using System.Threading;
     using System.Threading.Tasks;
-    using Core.Startup;
+    using Abp.Dependency;
+    using LMS.Startup;
     using Microsoft.OData.Client;
     using NLog;
     using SharpRaven;
@@ -92,8 +93,8 @@ namespace ServiceTimer
         /// <param name="workOnElapseCount"></param>
         protected TimerWorker(double timerInterval, uint workOnElapseCount)
         {
-            RavenClient = Core.Sentry.RavenClient.Instance;
-            StartupManager = new StartupManager();
+           // RavenClient = Core.Sentry.RavenClient.Instance;
+           // StartupManager = new StartupManager();
             _TimerWorker(0, timerInterval, workOnElapseCount);
         }
 
@@ -105,8 +106,8 @@ namespace ServiceTimer
         /// <param name="workOnElapseCount"></param>
         protected TimerWorker(double delayOnStart, double timerInterval, uint workOnElapseCount)
         {
-            RavenClient = Core.Sentry.RavenClient.Instance;
-            StartupManager = new StartupManager();
+          //  RavenClient = Core.Sentry.RavenClient.Instance;
+            StartupManager = IocManager.Instance.Resolve<StartupManager>();
             _TimerWorker(delayOnStart, timerInterval, workOnElapseCount);
         }
 
@@ -631,6 +632,9 @@ namespace ServiceTimer
             {
                 _timer?.Dispose();
                 // Free any other managed objects here. 
+
+                IocManager.Instance.Release(StartupManager);
+
                 //
 #if DEBUG // Evidence that this gets disposed of in the logs
                 Logger?.Info($"Base disposed of managed resources occurred in type {GetType().Name}");

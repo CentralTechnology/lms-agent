@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam.Managers
+﻿namespace LMS.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -11,12 +11,15 @@
     using System.Net;
     using System.Net.Sockets;
     using Abp;
-    using Administration;
     using Backup.Common;
-    using Common.Constants;
-    using Common.Extensions;
+    using Core.Administration;
+    using Core.Common.Constants;
+    using Core.Common.Extensions;
+    using Core.Configuration;
     using DBManager;
+    using Mappings;
     using Microsoft.Win32;
+    using Models;
     using NLog;
 
     public class VeeamManager
@@ -214,12 +217,12 @@
                 {
                     Logger.Error("Unable to find the Veeam.Backup.Service executable. Unable to determine the correct program version.");
                     Logger.Debug(ex);
-                    SettingManager.ChangeSetting(SettingNames.VeeamVersion, string.Empty);
+                    SettingManager.ChangeSetting(AppSettingNames.VeeamVersion, string.Empty);
                     return null;
                 }
             }
 
-            SettingManager.ChangeSetting(SettingNames.VeeamVersion, veeamFile.FileVersion);
+            SettingManager.ChangeSetting(AppSettingNames.VeeamVersion, veeamFile.FileVersion);
             return veeamFile.FileVersion;
         }
     }

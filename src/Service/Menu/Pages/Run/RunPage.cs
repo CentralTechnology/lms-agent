@@ -1,28 +1,35 @@
-﻿namespace Service.Menu.Pages.Run
+﻿namespace LMS.Menu.Pages.Run
 {
     using System;
-    using Abp.Threading;
-    using Core.Administration;
+    using Abp.Configuration;
+    using Abp.Dependency;
+    using Castle.Core.Logging;
     using Core.Common.Extensions;
-    using Core.Users;
-    using Core.Veeam;
+    using Core.Configuration;
     using EasyConsole;
-    using NLog;
     using SharpRaven;
-    using SharpRaven.Data;
+    using Users;
+    using Veeam;
 
-    public class RunPage : MenuPage
+    public class RunPage : MenuPage, ITransientDependency
     {
-        private static readonly SettingManager SettingManager = new SettingManager();
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected RavenClient RavenClient;
+        private readonly ISettingManager _settingManager;
+        private readonly UserOrchestrator _userOrchestrator;
+        private readonly VeeamOrchestrator _veeamOrchestrator;
+
+        public ILogger Logger { get; set; }
 
         public RunPage(Program program)
             : base("Run", program)
         {
+            Logger = NullLogger.Instance;
             RavenClient = Core.Sentry.RavenClient.Instance;
+            _settingManager = IocManager.Instance.Resolve<ISettingManager>();
+            _userOrchestrator = IocManager.Instance.Resolve<UserOrchestrator>();
+            _veeamOrchestrator = IocManager.Instance.Resolve<VeeamOrchestrator>();
 
-            bool monitorUsers = SettingManager.GetSettingValue<bool>(SettingNames.MonitorUsers);
+            bool monitorUsers = _settingManager.GetSettingValue<bool>(AppSettingNames.MonitorUsers);
             if (monitorUsers)
             {
                 Menu.Add(new Option("User Monitoring", () =>
@@ -32,7 +39,7 @@
 
                     try
                     {
-                        new UserOrchestrator().Start();
+                        _userOrchestrator.Start();
 
                         Logger.Info("************ User Monitoring Successful ************");
                     }
@@ -43,7 +50,7 @@
                     }
                     finally
                     {
-                        GC.Collect();
+                        IocManager.Instance.Release(_userOrchestrator);
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }
@@ -53,7 +60,7 @@
                 }));
             }
 
-            bool monitorVeeam = SettingManager.GetSettingValue<bool>(SettingNames.MonitorVeeam);
+            bool monitorVeeam = _settingManager.GetSettingValue<bool>(AppSettingNames.MonitorVeeam);
             if (monitorVeeam)
             {
                 Menu.Add(new Option("Veeam Monitoring", () =>
@@ -63,7 +70,7 @@
 
                     try
                     {
-                        new VeeamOrchestrator().Start();
+                        _veeamOrchestrator.Start();
 
                         Logger.Info("************ Veeam Monitoring Successful ************");
                     }
@@ -74,7 +81,7 @@
                     }
                     finally
                     {
-                        GC.Collect();
+                        IocManager.Instance.Release(_veeamOrchestrator);
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }

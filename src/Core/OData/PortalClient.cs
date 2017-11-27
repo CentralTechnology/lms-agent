@@ -7,25 +7,36 @@
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;
+    using Abp.Dependency;
+    using Abp.Logging;
+    using Abp.Threading;
     using Actions;
+    using Castle.Core.Logging;
     using Common.Constants;
     using Common.Extensions;
     using Common.Helpers;
+    using LMS.Autotask;
+    using LMS.CentraStage;
+    using LMS.Common.Client;
+    using LMS.Users.Models;
     using Microsoft.OData.Client;
-    using NLog;
     using Polly;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
     using SharpRaven;
     using SharpRaven.Data;
     using Tools;
-    using Users.Models;
-    using Veeam.Models;
 
-    [SuppressMessage("ReSharper", "ReplaceWithSingleCallToSingleOrDefault")]
-    public class PortalClient
+    public class PortalClient : ITransientDependency
     {
-        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public ILogger Logger { get; set; }
+        private readonly ICentraStageManager _centraStageManager;
+        private readonly IAutotaskManager _autotaskManager;
+        private readonly PortalWebApiClient _portalWebApiClient;
+
+
+
+       // protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static readonly RavenClient RavenClient = Sentry.RavenClient.Instance;
 
@@ -37,8 +48,13 @@
 
         protected Policy DefaultPolicy;
 
-        public PortalClient()
+        public PortalClient(ICentraStageManager centraStageManager, IAutotaskManager autotaskManager, PortalWebApiClient portalWebApiClient)
         {
+            Logger = NullLogger.Instance;
+            _centraStageManager = centraStageManager;
+            _autotaskManager = autotaskManager;
+            _portalWebApiClient = portalWebApiClient;
+
             Container.BuildingRequest += Container_BuildingRequest;
             Container.SendingRequest2 += Container_SendingRequest2;
             Container.Timeout = 600;
@@ -84,14 +100,14 @@
             ProcessResponse(serviceResponse);
         }
 
-        private static void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
+        private void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
         {
-            e.Headers.Add("AccountId", SettingManagerHelper.Instance.AccountId.ToString());
-            e.Headers.Add("XSRF-TOKEN", SettingManagerHelper.Instance.Token);
-            e.Headers.Add("Authorization", $"Device {SettingManagerHelper.Instance.DeviceId}");
+            e.Headers.Add("AccountId", _autotaskManager.GetId().ToString());
+            e.Headers.Add("XSRF-TOKEN", _portalWebApiClient.GetAntiForgeryToken());
+            e.Headers.Add("Authorization", $"Device {_centraStageManager.GetId()}");
         }
 
-        private static void Container_SendingRequest2(object sender, SendingRequest2EventArgs e) => Logger.Debug($"{e.RequestMessage.Method} {e.RequestMessage.Url}");
+        private void Container_SendingRequest2(object sender, SendingRequest2EventArgs e) => Logger.Debug($"{e.RequestMessage.Method} {e.RequestMessage.Url}");
 
         public void DeleteGroup(Guid id)
         {

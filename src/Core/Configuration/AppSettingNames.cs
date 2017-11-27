@@ -1,6 +1,6 @@
-﻿namespace Core.Administration
+﻿namespace Core.Configuration
 {
-    public class SettingNames
+    public class AppSettingNames
     {
         /// <summary>
         ///     Autotask Account ID
