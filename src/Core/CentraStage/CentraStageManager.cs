@@ -8,7 +8,7 @@ namespace LMS.CentraStage
 {
     using Abp.Configuration;
     using Abp.Domain.Services;
-    using Core.Common.Extensions;
+    using Common.Extensions;
     using Core.Configuration;
     using Microsoft.Win32;
 

@@ -1,6 +1,7 @@
 ﻿namespace LMS
 {
     using System.Data.Entity;
+    using System.Data.Entity.Migrations;
     using System.Reflection;
     using Abp.EntityFramework;
     using Abp.Modules;
@@ -13,13 +14,17 @@
         public override void Initialize()
         {
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
+
+            base.Initialize();
         }
 
         public override void PreInitialize()
         {
-        //    Database.SetInitializer(new CreateDatabaseIfNotExists<LMSDbContext>());
+            var dbMigrator = new DbMigrator(new Migrations.Configuration());
+            dbMigrator.Update();
 
             Configuration.DefaultNameOrConnectionString = "Default";
+            Configuration.UnitOfWork.IsTransactional = false;
         }
     }
 }

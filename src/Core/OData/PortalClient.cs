@@ -7,17 +7,18 @@
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;
+    using Abp.Configuration;
     using Abp.Dependency;
     using Abp.Logging;
     using Abp.Threading;
     using Actions;
     using Castle.Core.Logging;
     using Common.Constants;
-    using Common.Extensions;
-    using Common.Helpers;
+    using Configuration;
     using LMS.Autotask;
     using LMS.CentraStage;
     using LMS.Common.Client;
+    using LMS.Common.Extensions;
     using LMS.Users.Models;
     using Microsoft.OData.Client;
     using Polly;
@@ -31,9 +32,8 @@
     {
         public ILogger Logger { get; set; }
         private readonly ICentraStageManager _centraStageManager;
-        private readonly IAutotaskManager _autotaskManager;
         private readonly PortalWebApiClient _portalWebApiClient;
-
+        private readonly ISettingManager _settingManager;
 
 
        // protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -48,12 +48,12 @@
 
         protected Policy DefaultPolicy;
 
-        public PortalClient(ICentraStageManager centraStageManager, IAutotaskManager autotaskManager, PortalWebApiClient portalWebApiClient)
+        public PortalClient(ICentraStageManager centraStageManager, ISettingManager settingManager, PortalWebApiClient portalWebApiClient)
         {
             Logger = NullLogger.Instance;
             _centraStageManager = centraStageManager;
-            _autotaskManager = autotaskManager;
             _portalWebApiClient = portalWebApiClient;
+            _settingManager = settingManager;
 
             Container.BuildingRequest += Container_BuildingRequest;
             Container.SendingRequest2 += Container_SendingRequest2;
@@ -102,9 +102,9 @@
 
         private void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
         {
-            e.Headers.Add("AccountId", _autotaskManager.GetId().ToString());
+            e.Headers.Add("AccountId", _settingManager.GetSettingValue(AppSettingNames.AutotaskAccountId));
             e.Headers.Add("XSRF-TOKEN", _portalWebApiClient.GetAntiForgeryToken());
-            e.Headers.Add("Authorization", $"Device {_centraStageManager.GetId()}");
+            e.Headers.Add("Authorization", $"Device {_settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId)}");
         }
 
         private void Container_SendingRequest2(object sender, SendingRequest2EventArgs e) => Logger.Debug($"{e.RequestMessage.Method} {e.RequestMessage.Url}");

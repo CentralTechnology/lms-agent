@@ -3,7 +3,7 @@
     using System.Data.Entity.Migrations;
     using EntityFramework;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<LMSDbContext>
+    internal sealed  class Configuration : DbMigrationsConfiguration<LMSDbContext>
     {
         public Configuration()
         {

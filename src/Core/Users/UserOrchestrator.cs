@@ -6,11 +6,14 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
+    using Abp.Configuration;
     using Abp.Dependency;
     using Abp.Timing;
     using Castle.Core.Logging;
+    using Common.Extensions;
+    using Common.Helpers;
     using Compare;
-    using Core.Common.Helpers;
+    using Core.Configuration;
     using Core.OData;
     using KellermanSoftware.CompareNetObjects;
     using Managers;
@@ -23,14 +26,16 @@
 
         private readonly PortalClient _portalClient;
         private readonly IUserManager _userManager;
+        private readonly ISettingManager _settingManager;
 
         public ILogger Logger { get; set; }
 
-        public UserOrchestrator(PortalClient portalClient, IUserManager userManager)
+        public UserOrchestrator(PortalClient portalClient, IUserManager userManager, ISettingManager settingManager)
         {
             Logger = NullLogger.Instance;
             _portalClient = portalClient;
             _userManager = userManager;
+            _settingManager = settingManager;
         }
 
         protected List<LicenseUserSummary> AddUsersToGroup(LicenseGroup group, List<LicenseUser> localUsers)
@@ -183,7 +188,7 @@
         {
             Logger.Debug("PROCCESS UPLOAD BEGIN");
             Logger.Debug("Getting the id of the upload");
-            Guid deviceId = SettingManagerHelper.Instance.DeviceId;
+            Guid deviceId = _settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
 
             int managedSupportId = _portalClient.GetManagedSupportId(deviceId);
 

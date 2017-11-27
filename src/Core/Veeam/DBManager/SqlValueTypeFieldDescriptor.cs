@@ -2,7 +2,7 @@
 {
     using System.Data;
     using System.Data.SqlClient;
-    using Core.Common.Extensions;
+    using Common.Extensions;
 
     internal class SqlValueTypeFieldDescriptor<T> : ISqlFieldDescriptor<T> where T : struct
     {

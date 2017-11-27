@@ -1,7 +1,7 @@
 ﻿namespace LMS.Menu.Pages.Options
 {
+    using Common.Extensions;
     using Core.Administration;
-    using Core.Common.Extensions;
     using Core.Configuration;
     using EasyConsole;
 

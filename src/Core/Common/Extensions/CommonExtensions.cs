@@ -1,10 +1,10 @@
-﻿namespace Core.Common.Extensions
+﻿namespace LMS.Common.Extensions
 {
     using System;
-    using Abp.Extensions;
-    using Microsoft.Win32;
     using System.Linq;
     using Abp;
+    using Abp.Extensions;
+    using Microsoft.Win32;
 
     public static class CommonExtensions
     {

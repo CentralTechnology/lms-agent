@@ -6,7 +6,7 @@
     using System.Security;
     using System.Text;
     using Abp;
-    using Core.Common.Extensions;
+    using Common.Extensions;
     using Microsoft.Win32;
     using NLog;
 

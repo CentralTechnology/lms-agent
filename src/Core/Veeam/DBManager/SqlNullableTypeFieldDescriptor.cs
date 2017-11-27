@@ -4,7 +4,7 @@
     using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
-    using Core.Common.Extensions;
+    using Common.Extensions;
 
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     public sealed class SqlNullableTypeFieldDescriptor<TNullable, TStruct> : ISqlFieldDescriptor<TNullable>, ISqlFieldDescriptor where TStruct : struct

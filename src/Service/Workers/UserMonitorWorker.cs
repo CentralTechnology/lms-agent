@@ -2,7 +2,7 @@
 {
     using System;
     using Abp.Dependency;
-    using Core.Common.Extensions;
+    using Common.Extensions;
     using ServiceTimer;
     using Users;
 

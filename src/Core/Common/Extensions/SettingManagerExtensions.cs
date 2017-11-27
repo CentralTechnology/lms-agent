@@ -1,9 +1,9 @@
-﻿namespace Core.Common.Extensions
+﻿namespace LMS.Common.Extensions
 {
     using System;
     using System.Threading.Tasks;
     using Abp.Threading;
-    using Administration;
+    using Core.Administration;
 
     [Obsolete]
     public static class SettingManagerExtensions

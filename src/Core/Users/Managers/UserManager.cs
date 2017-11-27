@@ -7,7 +7,7 @@
     using System.Linq;
     using Abp.Domain.Services;
     using Abp.Extensions;
-    using Core.Common.Extensions;
+    using Common.Extensions;
     using Dto;
     using Microsoft.OData.Client;
     using Portal.LicenseMonitoringSystem.Users.Entities;

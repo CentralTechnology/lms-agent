@@ -1,4 +1,4 @@
-﻿namespace Core.Common.Extensions
+﻿namespace LMS.Common.Extensions
 {
     using System;
     using System.Text;

@@ -2,14 +2,9 @@
 {
     using System.Data.Common;
     using System.Data.Entity;
-    using Abp.BackgroundJobs;
     using Abp.EntityFramework;
-    using Abp.Localization;
-    using Abp.Notifications;
-    using Authorization.Roles;
-    using Authorization.Users;
-    using Core.Administration;
-    using MultiTenancy;
+    using Configuration;
+    using Migrations;
 
     public class LMSDbContext : AbpDbContext
     {
@@ -21,13 +16,12 @@
         public LMSDbContext()
             : base("Default")
         {
-
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LMSDbContext, Configuration>());
         }
 
         public LMSDbContext(string nameOrConnectionString)
             : base(nameOrConnectionString)
         {
-
         }
 
         public LMSDbContext(DbConnection existingConnection)
@@ -41,21 +35,5 @@
         {
 
         }
-
-        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        //{
-        //    base.OnModelCreating(modelBuilder);
-
-        //    modelBuilder.Entity<NotificationInfo>().Property(e => e.Data).HasMaxLength(4000);
-        //    modelBuilder.Entity<NotificationInfo>().Property(e => e.TenantIds).HasMaxLength(4000);
-        //    modelBuilder.Entity<NotificationInfo>().Property(e => e.UserIds).HasMaxLength(4000);
-        //    modelBuilder.Entity<NotificationInfo>().Property(e => e.ExcludedUserIds).HasMaxLength(4000);
-
-        //    modelBuilder.Entity<TenantNotificationInfo>().Property(e => e.Data).HasMaxLength(4000);
-
-        //    modelBuilder.Entity<ApplicationLanguageText>().Property(e => e.Value).HasMaxLength(4000);
-
-        //    modelBuilder.Entity<BackgroundJobInfo>().Property(e => e.JobArgs).HasMaxLength(4000);
-        //}
     }
 }

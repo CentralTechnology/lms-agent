@@ -9,15 +9,15 @@ namespace Core
     using System.Reflection;
     using Abp.Configuration;
     using Abp.Modules;
-    using Abp.Zero;
+    using Abp.WebApi;
     using Configuration;
+    using LMS.Configuration;
 
-    [DependsOn(typeof(AbpZeroCoreModule))]
+    [DependsOn(typeof(AbpWebApiModule))]
     public class LMSCoreModule : AbpModule
     {
         public override void PreInitialize()
         {
-            IocManager.Register<ISettingStore, SettingStore>();
             Configuration.MultiTenancy.IsEnabled = false;
             Configuration.Settings.Providers.Add<AppSettingProvider>();
             

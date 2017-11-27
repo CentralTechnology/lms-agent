@@ -20,6 +20,7 @@ namespace Core.Configuration
                 new SettingDefinition(AppSettingNames.MonitorVeeam,false.ToString()),
                 new SettingDefinition(AppSettingNames.PrimaryDomainControllerOverride,false.ToString()),
                 new SettingDefinition(AppSettingNames.VeeamOverride, false.ToString()),
+                new SettingDefinition(AppSettingNames.VeeamVersion, string.Empty),
                 new SettingDefinition(AppSettingNames.UsersOverride, false.ToString()),
             };
         }

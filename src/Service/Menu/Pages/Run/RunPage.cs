@@ -4,7 +4,7 @@
     using Abp.Configuration;
     using Abp.Dependency;
     using Castle.Core.Logging;
-    using Core.Common.Extensions;
+    using Common.Extensions;
     using Core.Configuration;
     using EasyConsole;
     using SharpRaven;

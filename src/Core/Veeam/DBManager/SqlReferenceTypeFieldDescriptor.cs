@@ -2,7 +2,7 @@
 {
     using System.Data;
     using System.Data.SqlClient;
-    using Core.Common.Extensions;
+    using Common.Extensions;
 
     public class SqlReferenceTypeFieldDescriptor<T> : ISqlFieldDescriptor<T>, ISqlFieldDescriptor where T : class
     {

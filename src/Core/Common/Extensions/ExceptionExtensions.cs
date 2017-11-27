@@ -1,4 +1,4 @@
-﻿namespace Core.Common.Extensions
+﻿namespace LMS.Common.Extensions
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +9,6 @@
     using System.Net.Http;
     using System.Net.Sockets;
     using System.Security;
-    using System.Text;
     using Microsoft.OData.Client;
     using NLog;
     using SharpRaven;
@@ -18,7 +17,7 @@
     public static class ExceptionExtensions
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly RavenClient RavenClient = Sentry.RavenClient.Instance;
+        private static readonly RavenClient RavenClient = Core.Sentry.RavenClient.Instance;
 
         public static string GetFullMessage(this Exception exception)
         {

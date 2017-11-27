@@ -1,16 +1,12 @@
-﻿namespace Core.Common.Helpers
+﻿namespace LMS.Common.Helpers
 {
     using System;
     using System.Reflection;
-    using Abp.Extensions;
-    using Abp.Threading;
-    using Administration;
-    using Configuration;
+    using Core.Administration;
+    using Core.Configuration;
     using Extensions;
-    using LMS.Common.Client;
     using NLog;
 
-    [Obsolete]
     public class SettingManagerHelper
     {
         private readonly Logger _logger;
@@ -20,14 +16,13 @@
 
         private Guid _deviceId;
 
-        private string _token;
-
         public  SettingManagerHelper()
         {
             _logger = LogManager.GetCurrentClassLogger();
             _settingManager = new SettingManager();
         }
 
+        [Obsolete]
         public virtual int AccountId
         {
             get
@@ -61,6 +56,7 @@
             }
         }
 
+        [Obsolete]
         public virtual Guid DeviceId
         {
             get
@@ -85,17 +81,5 @@
             _instance = newInstance;
         }
 
-        //public virtual string Token
-        //{
-        //    get
-        //    {
-        //        if (_token.IsNullOrEmpty())
-        //        {
-        //            _token = AsyncHelper.RunSync(() => new PortalWebApiClient().GetTokenCookie());
-        //        }
-
-        //        return _token;
-        //    }
-        //}
     }
 }

@@ -1,12 +1,15 @@
 ﻿namespace LMS
 {
     using System;
+    using System.Data.Entity.Migrations;
+    using System.Diagnostics;
     using Abp;
     using Abp.Configuration;
     using Abp.Dependency;
     using Castle.Facilities.Logging;
-    using Core.Common.Helpers;
+    using Common.Helpers;
     using Core.Configuration;
+    using EntityFramework;
     using Menu;
     using ServiceTimer;
     using Startup;
@@ -67,7 +70,7 @@
             }
             catch (Exception ex)
             {
-                //EventLog.WriteEntry($"License Monitoring Ssytem service cannot be started. Exception message =  {ex.GetType().Name} : {ex.Message} | {ex.StackTrace}", EventLogEntryType.Error);
+                EventLog.WriteEntry("License Monitoring System",$"License Monitoring Ssytem service cannot be started. Exception message =  {ex.GetType().Name} : {ex.Message} | {ex.StackTrace}", EventLogEntryType.Error);
                 return false;
             }
         }

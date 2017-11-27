@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Common.Extensions
+﻿namespace LMS.Common.Extensions
 {
+    using System;
     using System.Reflection;
 
     public static class TypeExtensions

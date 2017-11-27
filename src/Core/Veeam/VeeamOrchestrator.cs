@@ -6,10 +6,10 @@
     using Abp.Dependency;
     using Abp.Timing;
     using Castle.Core.Logging;
-    using Core.Common.Extensions;
-    using Core.Common.Helpers;
+    using Common.Extensions;
     using Core.Configuration;
     using Core.OData;
+    using Managers;
     using Portal.Common.Enums;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
@@ -18,12 +18,14 @@
         public ILogger Logger { get; set; }
         private readonly PortalClient _portalClient;
         private readonly ISettingManager _settingManager;
+        private readonly IVeeamManager _veeamManager;
 
-        public VeeamOrchestrator(PortalClient portalClient, ISettingManager settingManager)
+        public VeeamOrchestrator(PortalClient portalClient, ISettingManager settingManager, IVeeamManager veeamManager)
         {
             Logger = NullLogger.Instance;
             _portalClient = portalClient;
             _settingManager = settingManager;
+            _veeamManager = veeamManager;
         }
 
 
@@ -44,9 +46,10 @@
 
             Logger.Info("Collecting information...this could take some time.");
 
-            veeam.CollectInformation();
+            veeam = _veeamManager.GetLicensingInformation(veeam);
+            veeam.Validate();
 
-            Logger.Info($"Edition: {veeam.Edition}  License: {veeam.LicenseType}  Version: {veeam.ProgramVersion}  Hyper-V: {veeam.HyperV}  VMWare: {veeam.vSphere}");
+            Logger.Info(veeam.ToString());
 
             // set additional properties
             veeam.CheckInTime = new DateTimeOffset(Clock.Now);

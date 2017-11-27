@@ -7,8 +7,6 @@
     using Castle.Core.Logging;
     using CentraStage;
     using Core.Common.Constants;
-    using Core.Common.Extensions;
-    using Core.Common.Helpers;
     using Core.Configuration;
     using Core.DirectoryServices;
     using SharpRaven;
@@ -141,25 +139,28 @@
                     return false;
                 }
 
-                var veeamManager = new VeeamManager();
+                using (var veeamManager = IocManager.Instance.ResolveAsDisposable<IVeeamManager>())
+                {
+                    bool veeamInstalled = veeamManager.Object.IsInstalled();
+                    if (!veeamInstalled)
+                    {
+                        Logger.Warn("Check Veeam Installed: FAIL");
+                        return false;
+                    }
+
+                    Logger.Info("Check Veeam Installed: OK");
+
+                    // check the veeam version
+                    string veeamVersion = veeamManager.Object.GetVersion();
+                    if (veeamVersion == null)
+                    {
+                        Logger.Warn("Check Veeam Version: FAIL");
+                        return false;
+                    }
+                }
 
                 // check if veeam is installed
-                bool veeamInstalled = veeamManager.VeeamInstalled();
-                if (!veeamInstalled)
-                {
-                    Logger.Warn("Check Veeam Installed: FAIL");
-                    return false;
-                }
 
-                Logger.Info("Check Veeam Installed: OK");
-
-                // check the veeam version
-                string veeamVersion = veeamManager.VeeamVersion();
-                if (veeamVersion == null)
-                {
-                    Logger.Warn("Check Veeam Version: FAIL");
-                    return false;
-                }
 
                 Logger.Info("Check Veeam Version: OK");
             }
