@@ -19,6 +19,7 @@
     using LMS.CentraStage;
     using LMS.Common.Client;
     using LMS.Common.Extensions;
+    using LMS.Users.Extensions;
     using LMS.Users.Models;
     using Microsoft.OData.Client;
     using Polly;
@@ -27,6 +28,7 @@
     using SharpRaven;
     using SharpRaven.Data;
     using Tools;
+    using System.Threading.Tasks;
 
     public class PortalClient : ITransientDependency
     {
@@ -65,6 +67,7 @@
                 .Or<WebException>()
                 .Or<SocketException>()
                 .Or<IOException>()
+                .Or<TaskCanceledException>()
                 .WaitAndRetry(new[]
                 {
                     TimeSpan.FromSeconds(15),
@@ -178,6 +181,10 @@
                     Logger.Error("Portal api unavailable.");
                     Logger.Debug(web.ToString());
                     break;
+                case TaskCanceledException taskCanceled:
+                    Logger.Error(taskCanceled.Message);
+                    Logger.Debug("Exception when querying the API.", taskCanceled);
+                    break;
                 default:
                     Logger.Error(ex.Message);
                     Logger.Debug(ex.ToString());
@@ -247,7 +254,7 @@
         {
             DefaultPolicy.Execute(() =>
             {
-                DataServiceResponse serviceResponse = isBatch ? Container.SaveChanges() : Container.SaveChanges(SaveChangesOptions.BatchWithSingleChangeset);
+                DataServiceResponse serviceResponse = isBatch ? Container.SaveChanges(SaveChangesOptions.BatchWithSingleChangeset) : Container.SaveChanges();
                 ProcessResponse(serviceResponse);
             });
         }
@@ -268,9 +275,27 @@
 
         public void UpdateUser(LicenseUser licenseUser)
         {
-            Container.AttachTo("LicenseUsers", licenseUser);
+           // Container.AttachTo("LicenseUsers", licenseUser);
 
-            Container.UpdateObject(licenseUser);
+          //  Container.UpdateObject(licenseUser);
+
+            var existingUser = Container.LicenseUsers.Where(lu => lu.Id == licenseUser.Id).FirstOrDefault();
+            if (existingUser == null)
+            {
+                throw new NullReferenceException($"License User {licenseUser.Format(Logger.IsDebugEnabled)} cannot be found in the api.");
+            }
+
+            existingUser.DisplayName = licenseUser.DisplayName;
+            existingUser.Email = licenseUser.Email;
+            existingUser.Enabled = licenseUser.Enabled;
+            existingUser.FirstName = licenseUser.FirstName;
+            existingUser.LastLoginDate = licenseUser.LastLoginDate;
+            existingUser.SamAccountName = licenseUser.SamAccountName;
+            existingUser.Surname = licenseUser.Surname;
+            existingUser.WhenCreated = licenseUser.WhenCreated;
+
+            Container.AttachTo("LicenseUsers", existingUser);
+            Container.UpdateObject(existingUser);
         }
 
         public void UpdateVeeam(Veeam veeam)

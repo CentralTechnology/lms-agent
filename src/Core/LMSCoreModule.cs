@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core
+﻿namespace LMS
 {
     using System.Reflection;
-    using Abp.Configuration;
+    using Abp.AutoMapper;
     using Abp.Modules;
     using Abp.WebApi;
-    using Configuration;
-    using LMS.Configuration;
+    using Common.Extensions;
+    using Core.Configuration;
 
-    [DependsOn(typeof(AbpWebApiModule))]
+    [DependsOn(typeof(AbpWebApiModule), typeof(AbpAutoMapperModule))]
     public class LMSCoreModule : AbpModule
     {
         public override void PreInitialize()
@@ -24,7 +18,14 @@ namespace Core
         }
         public override void Initialize()
         {
+            var thisAssembly = typeof(LMSCoreModule).GetAssembly();
+
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
+
+            Configuration.Modules.AbpAutoMapper().Configurators.Add(config =>
+            {
+                config.AddProfiles(thisAssembly);
+            });
         }
     }
 }

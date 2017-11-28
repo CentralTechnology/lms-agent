@@ -9,7 +9,9 @@
         {
             const string uac = "userAccountControl";
             if (user.NativeGuid == null)
+            {
                 return false;
+            }
 
             if (user.Properties[uac]?.Value != null)
             {

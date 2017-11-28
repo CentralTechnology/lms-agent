@@ -112,7 +112,7 @@
                         return false;
                     }
 
-                    Logger.Warn("Check PDC Override: OK");
+                    Logger.Info("Check PDC Override: OK");
                 }
 
                 Logger.Info("Check PDC: OK");

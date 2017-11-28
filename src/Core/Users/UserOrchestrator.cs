@@ -25,17 +25,19 @@
     {
 
         private readonly PortalClient _portalClient;
-        private readonly IUserManager _userManager;
+        private readonly IActiveDirectoryManager _activeDirectoryManager;
         private readonly ISettingManager _settingManager;
+        private readonly IUserManager _userManager;
 
         public ILogger Logger { get; set; }
 
-        public UserOrchestrator(PortalClient portalClient, IUserManager userManager, ISettingManager settingManager)
+        public UserOrchestrator(PortalClient portalClient, IActiveDirectoryManager activeDirectoryManager, ISettingManager settingManager, IUserManager userManager)
         {
             Logger = NullLogger.Instance;
             _portalClient = portalClient;
-            _userManager = userManager;
+            _activeDirectoryManager = activeDirectoryManager;
             _settingManager = settingManager;
+            _userManager = userManager;
         }
 
         protected List<LicenseUserSummary> AddUsersToGroup(LicenseGroup group, List<LicenseUser> localUsers)
@@ -56,7 +58,7 @@
             {
                 _portalClient.Container.AttachTo("LicenseUsers", newMember);
                 _portalClient.AddGroupToUser(newMember, remoteGroup);
-                usersAdded.Add(new LicenseUserSummary {Id = newMember.Id, DisplayName = newMember.DisplayName, Status = LicenseUserGroupStatus.Added});
+                usersAdded.Add(new LicenseUserSummary { Id = newMember.Id, DisplayName = newMember.DisplayName, Status = LicenseUserGroupStatus.Added });
             });
 
             Logger.Debug($"Group: {group.Id}  Added: {usersAdded.Count}");
@@ -87,7 +89,7 @@
 
         protected void PrintGroupMembershipSummary(LicenseUserGroupSummary summary, List<LicenseUserSummary> usersAdded, List<LicenseUserSummary> usersRemoved)
         {
-            Logger.Info($"*** Group: {summary.Name}" +  $"{(Logger.IsDebugEnabled ? "  Identifier: " + summary.Id : string.Empty)} ***");
+            Logger.Info($"*** Group: {summary.Name}" + $"{(Logger.IsDebugEnabled ? "  Identifier: " + summary.Id : string.Empty)} ***");
             List<LicenseUserSummary> allUsers = usersAdded.Concat(usersRemoved).OrderBy(u => u.DisplayName).ToList();
             if (!allUsers.Any())
             {
@@ -139,7 +141,7 @@
                 if (remoteGroup == null)
                 {
                     _portalClient.AddGroup(adGroup);
-                    groupsAdded.Add(new LicenseGroupSummary {Id = adGroup.Id, Name = adGroup.Name});
+                    groupsAdded.Add(new LicenseGroupSummary { Id = adGroup.Id, Name = adGroup.Name });
                     return;
                 }
 
@@ -152,7 +154,7 @@
                 Logger.Debug($"Updating group: {adGroup.Name} - {adGroup.Id}  Difference: {result.DifferencesString}");
                 Logger.Debug($"Difference: {result.DifferencesString}");
                 _portalClient.UpdateGroup(adGroup);
-                groupsUpdated.Add(new LicenseGroupSummary {Id = adGroup.Id, Name = adGroup.Name});
+                groupsUpdated.Add(new LicenseGroupSummary { Id = adGroup.Id, Name = adGroup.Name });
             });
 
             _portalClient.SaveChanges(true);
@@ -233,7 +235,7 @@
             {
                 Logger.Debug($"Processing Active Directory group: {adGroup.Name} - {adGroup.Id}");
 
-                var userGroup = new LicenseUserGroupSummary {Id = adGroup.Id, Name = adGroup.Name};
+                var userGroup = new LicenseUserGroupSummary { Id = adGroup.Id, Name = adGroup.Name };
 
                 List<LicenseUser> localUsers = adUsers.Where(u => u.Groups.Any(g => g.Id == adGroup.Id)).ToList();
                 List<LicenseUserSummary> usersAdded = AddUsersToGroup(adGroup, localUsers);
@@ -256,82 +258,113 @@
             Logger.Debug("PROCESS GROUP MEMBERSHIP END");
         }
 
-        public List<LicenseUser> ProcessUsers(ManagedSupport managedSupport)
+        /// <summary>
+        /// Decides whether a License User object should be Added, Updated or Deleted from the API.
+        /// </summary>
+        /// <param name="managedSupport"></param>
+        public void ProcessUsers(ManagedSupport managedSupport)
         {
             Console.WriteLine(Environment.NewLine);
             Logger.Debug("PROCESS USERS BEGIN");
             Logger.Info("Collecting information from Active Directory.");
 
-            List<LicenseUser> adUsersAndGroups = _userManager.AllUsers().ToList();
-            if (!adUsersAndGroups.Any())
+            var users = _activeDirectoryManager.GetUsers();
+            var remoteUsers = _portalClient.ListAllActiveUserIds();
+            List<Guid> localUserIds = new List<Guid>();
+            foreach (var user in users)
             {
-                Logger.Warn("No Active Directory users could be found. Processing has been cancelled.");
-                return new List<LicenseUser>();
-            }
+                localUserIds.Add(user.Id);
 
-            Logger.Info("Synchronizing Active Directory users with the api...This might take some time.");
-            var userCompareLogic = new LicenseUserCompareLogic();
-
-            var usersAdded = new ConcurrentBag<LicenseUserSummary>();
-            var usersUpdated = new ConcurrentBag<LicenseUserSummary>();
-
-            List<LicenseUser> remoteUsers = _portalClient.ListAllUsers();
-
-            Parallel.ForEach(adUsersAndGroups, adUser =>
-            {
-                Logger.Debug($"Processing Active Directory user: {adUser.DisplayName} - {adUser.Id}");
-                adUser.ManagedSupportId = managedSupport.Id;
-                adUser.TenantId = managedSupport.TenantId;
-                Parallel.ForEach(adUser.Groups, group => group.TenantId = managedSupport.TenantId);
-
-                LicenseUser remoteUser = remoteUsers.FirstOrDefault(u => u.Id == adUser.Id);
-                if (remoteUser == null)
+                bool existingUser = remoteUsers.Any(ru => ru.Id == user.Id);
+                if (existingUser)
                 {
-                    _portalClient.AddUser(adUser);
-                    usersAdded.Add(new LicenseUserSummary {Id = adUser.Id, DisplayName = adUser.DisplayName});
-                    return;
+                    _userManager.Update(user);
+                    continue;
                 }
 
-                ComparisonResult result = userCompareLogic.Compare(adUser, remoteUser);
-                if (result.AreEqual)
-                {
-                    return;
-                }
-
-                Logger.Debug($"Updating user: {adUser.DisplayName} - {adUser.Id}  Difference: {result.DifferencesString}");
-                _portalClient.UpdateUser(adUser);
-                usersUpdated.Add(new LicenseUserSummary {Id = adUser.Id, DisplayName = adUser.DisplayName});
-            });
-
-            _portalClient.SaveChanges(true);
-
-            List<LicenseUserSummary> usersDeleted = DeleteUsers(adUsersAndGroups);
-
-            _portalClient.SaveChanges(true);
-
-            Console.WriteLine(Environment.NewLine);
-            Logger.Info("     User Summary");
-            Logger.Info("----------------------------------------");
-            Logger.Info($"Created: {usersAdded.Count}");
-            foreach (LicenseUserSummary user in usersAdded)
-            {
-                Logger.Info($"+ {user.DisplayName}" + (Logger.IsDebugEnabled ? $"  Identifier: {user.Id}" : string.Empty));
+                _userManager.Add(user, managedSupport.Id, managedSupport.TenantId);
             }
 
-            Logger.Info($"Updated: {usersUpdated.Count}");
-            foreach (LicenseUserSummary user in usersUpdated)
+            var usersToDelete = remoteUsers.Where(ru => localUserIds.All(u => u != ru.Id));
+            foreach (var user in usersToDelete)
             {
-                Logger.Info($"^ {user.DisplayName}" + (Logger.IsDebugEnabled ? $"  Identifier: {user.Id}" : string.Empty));
+                _userManager.Delete(user.Id);
             }
 
-            Logger.Info($"Deleted: {usersDeleted.Count}");
-            foreach (LicenseUserSummary user in usersDeleted)
-            {
-                Logger.Info($"- {user.DisplayName}" + (Logger.IsDebugEnabled ? $"  Identifier: {user.Id}" : string.Empty));
-            }
+            //Console.WriteLine(Environment.NewLine);
+            //Logger.Debug("PROCESS USERS BEGIN");
+            //Logger.Info("Collecting information from Active Directory.");
 
-            Logger.Debug("PROCESS USERS END");
-            return adUsersAndGroups;
+            //List<LicenseUser> adUsersAndGroups = _activeDirectoryManager.AllUsers().ToList();
+            //if (!adUsersAndGroups.Any())
+            //{
+            //    Logger.Warn("No Active Directory users could be found. Processing has been cancelled.");
+            //    return new List<LicenseUser>();
+            //}
+
+            //Logger.Info("Synchronizing Active Directory users with the api...This might take some time.");
+            //var userCompareLogic = new LicenseUserCompareLogic();
+
+            //var usersAdded = new ConcurrentBag<LicenseUserSummary>();
+            //var usersUpdated = new ConcurrentBag<LicenseUserSummary>();
+
+            //List<LicenseUser> remoteUsers = _portalClient.ListAllUsers();
+
+            //Parallel.ForEach(adUsersAndGroups, adUser =>
+            //{
+            //    Logger.Debug($"Processing Active Directory user: {adUser.DisplayName} - {adUser.Id}");
+            //    adUser.ManagedSupportId = managedSupport.Id;
+            //    adUser.TenantId = managedSupport.TenantId;
+            //    Parallel.ForEach(adUser.Groups, group => group.TenantId = managedSupport.TenantId);
+
+            //    LicenseUser remoteUser = remoteUsers.FirstOrDefault(u => u.Id == adUser.Id);
+            //    if (remoteUser == null)
+            //    {
+            //        _portalClient.AddUser(adUser);
+            //        usersAdded.Add(new LicenseUserSummary {Id = adUser.Id, DisplayName = adUser.DisplayName});
+            //        return;
+            //    }
+
+            //    ComparisonResult result = userCompareLogic.Compare(adUser, remoteUser);
+            //    if (result.AreEqual)
+            //    {
+            //        return;
+            //    }
+
+            //    Logger.Debug($"Updating user: {adUser.DisplayName} - {adUser.Id}  Difference: {result.DifferencesString}");
+            //    _portalClient.UpdateUser(adUser);
+            //    usersUpdated.Add(new LicenseUserSummary {Id = adUser.Id, DisplayName = adUser.DisplayName});
+            //});
+
+            //_portalClient.SaveChanges(true);
+
+            //List<LicenseUserSummary> usersDeleted = DeleteUsers(adUsersAndGroups);
+
+            //_portalClient.SaveChanges(true);
+
+            //Console.WriteLine(Environment.NewLine);
+            //Logger.Info("     User Summary");
+            //Logger.Info("----------------------------------------");
+            //Logger.Info($"Created: {usersAdded.Count}");
+            //foreach (LicenseUserSummary user in usersAdded)
+            //{
+            //    Logger.Info($"+ {user.DisplayName}" + (Logger.IsDebugEnabled ? $"  Identifier: {user.Id}" : string.Empty));
+            //}
+
+            //Logger.Info($"Updated: {usersUpdated.Count}");
+            //foreach (LicenseUserSummary user in usersUpdated)
+            //{
+            //    Logger.Info($"^ {user.DisplayName}" + (Logger.IsDebugEnabled ? $"  Identifier: {user.Id}" : string.Empty));
+            //}
+
+            //Logger.Info($"Deleted: {usersDeleted.Count}");
+            //foreach (LicenseUserSummary user in usersDeleted)
+            //{
+            //    Logger.Info($"- {user.DisplayName}" + (Logger.IsDebugEnabled ? $"  Identifier: {user.Id}" : string.Empty));
+            //}
+
+            //Logger.Debug("PROCESS USERS END");
+            //return adUsersAndGroups;
         }
 
         protected LicenseGroup GetRemoteGroup(Guid groupId)
@@ -361,7 +394,7 @@
             {
                 _portalClient.Container.AttachTo("LicenseUsers", oldMember);
                 _portalClient.DeleteGroupFromUser(oldMember, remoteGroup);
-                usersRemoved.Add(new LicenseUserSummary {Id = oldMember.Id, DisplayName = oldMember.DisplayName, Status = LicenseUserGroupStatus.Removed});
+                usersRemoved.Add(new LicenseUserSummary { Id = oldMember.Id, DisplayName = oldMember.DisplayName, Status = LicenseUserGroupStatus.Removed });
             });
 
             Logger.Debug($"Group: {group.Id}  Removed: {usersToRemove.Count}");
@@ -376,21 +409,23 @@
             Logger.Info("Processing the upload information");
             ManagedSupport managedSupport = ProcessUpload();
 
-            List<LicenseUser> adUsersAndGroups = ProcessUsers(managedSupport);
-            if (!adUsersAndGroups.Any())
-            {
-                return;
-            }
+            ProcessUsers(managedSupport);
 
-            List<LicenseGroup> adGroups = ProcessGroups(adUsersAndGroups);
+            //List<LicenseUser> adUsersAndGroups = ProcessUsers(managedSupport);
+            //if (!adUsersAndGroups.Any())
+            //{
+            //    return;
+            //}
 
-            ProcessUserGroups(adUsersAndGroups, adGroups);
+            //List<LicenseGroup> adGroups = ProcessGroups(adUsersAndGroups);
 
-            ProcessCallIn(managedSupport);
+            //ProcessUserGroups(adUsersAndGroups, adGroups);
 
-            stopWatch.Stop();
-            Console.WriteLine(Environment.NewLine);
-            Logger.Info($"Time elapsed: {stopWatch.Elapsed:hh\\:mm\\:ss}");
+            //ProcessCallIn(managedSupport);
+
+            //stopWatch.Stop();
+            //Console.WriteLine(Environment.NewLine);
+            //Logger.Info($"Time elapsed: {stopWatch.Elapsed:hh\\:mm\\:ss}");
         }
     }
 }

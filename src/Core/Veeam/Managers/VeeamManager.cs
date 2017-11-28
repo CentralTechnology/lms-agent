@@ -37,6 +37,9 @@
         private static readonly ISqlFieldDescriptor<DateTime?> FirstStartTimeField = SqlFieldDescriptor.DateTimeNullable("first_start_time");
         private static readonly ISqlFieldDescriptor<DateTime?> LastStartTimeField = SqlFieldDescriptor.DateTimeNullable("last_start_time");
 
+        public const string VeeamFilePath = @"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe";
+        public const string Veeam90FilePath = @"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe";
+
         private VmLicensingInfo FromReader(IDataReader reader)
         {
             return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform)PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
@@ -199,35 +202,22 @@
 
         public string GetVersion()
         {
-            FileVersionInfo veeamFile = null;
-
-            try
+            if (File.Exists(VeeamFilePath))
             {
-                veeamFile = FileVersionInfo.GetVersionInfo(@"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe");
-            }
-            catch (FileNotFoundException ex)
-            {
-                Logger.Debug("Exception", ex);
+                FileVersionInfo version = FileVersionInfo.GetVersionInfo(VeeamFilePath);
+                SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, version.FileVersion);
+                return version.FileVersion;
             }
 
-            if (veeamFile == null)
+            if (File.Exists(Veeam90FilePath))
             {
-                try
-                {
-                    // file path for veeam 9.0
-                    veeamFile = FileVersionInfo.GetVersionInfo(@"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe");
-                }
-                catch (FileNotFoundException ex)
-                {
-                    Logger.Error("Unable to find the Veeam.Backup.Service executable. Unable to determine the correct program version.");
-                    Logger.Debug("Exception", ex);
-                    SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, string.Empty);
-                    return null;
-                }
+                FileVersionInfo version = FileVersionInfo.GetVersionInfo(Veeam90FilePath);
+                SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, version.FileVersion);
+                return version.FileVersion;
             }
 
-            SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, veeamFile.FileVersion);
-            return veeamFile.FileVersion;
+            SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, string.Empty);
+            return null;
         }
 
 
