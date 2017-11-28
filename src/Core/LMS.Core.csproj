@@ -234,11 +234,16 @@
     <Compile Include="Users\Compare\LicenseGroupCompareLogic.cs" />
     <Compile Include="Users\Compare\LicenseGroupComparer.cs" />
     <Compile Include="Users\Compare\LicenseUserComparer.cs" />
+    <Compile Include="Users\Dto\LicenseGroupDto.cs" />
     <Compile Include="Users\Dto\LicenseUserDto.cs" />
     <Compile Include="Users\Enums\Enums.cs" />
+    <Compile Include="Users\Extensions\GroupPrincipalExtensions.cs" />
+    <Compile Include="Users\Extensions\LicenseGroupExtensions.cs" />
     <Compile Include="Users\Extensions\LicenseUserExtensions.cs" />
     <Compile Include="Users\Extensions\UserPrincipalExtensions.cs" />
+    <Compile Include="Users\Managers\GroupManager.cs" />
     <Compile Include="Users\Managers\IActiveDirectoryManager.cs" />
+    <Compile Include="Users\Managers\IGroupManager.cs" />
     <Compile Include="Users\Managers\IUserManager.cs" />
     <Compile Include="Users\Managers\UserManager.cs" />
     <Compile Include="Users\Models\LicenseGroupSummary.cs" />
@@ -252,6 +257,7 @@
     <Compile Include="Users\Dto\GroupPrincipalOutput.cs" />
     <Compile Include="Users\Entities\LicenseBase.cs" />
     <Compile Include="Users\Managers\ActiveDirectoryManager.cs" />
+    <Compile Include="Users\Profiles\LicenseGroupProfile.cs" />
     <Compile Include="Users\Profiles\LicenseUserProfile.cs" />
     <Compile Include="Users\UserOrchestrator.cs" />
     <Compile Include="Veeam\Backup\Common\EPlatform.cs" />

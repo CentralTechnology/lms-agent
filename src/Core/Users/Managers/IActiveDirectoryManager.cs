@@ -15,5 +15,7 @@ namespace LMS.Users.Managers
         IEnumerable<LicenseUser> AllUsers();
 
         IEnumerable<LicenseUserDto> GetUsers();
+
+        IEnumerable<LicenseGroupDto> GetGroups();
     }
 }

@@ -127,9 +127,9 @@
         /// <inheritdoc />
         public IEnumerable<LicenseUserDto> GetUsers()
         {
-            using (var principleContext = new PrincipalContext(ContextType.Domain))
+            using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
-                using (var userPrincipal = new UserPrincipal(principleContext))
+                using (var userPrincipal = new UserPrincipal(principalContext))
                 {
                     using (var principalSearcher = new PrincipalSearcher(userPrincipal))
                     {
@@ -158,8 +158,8 @@
                                 }
                                 catch (Exception ex)
                                 {
-                                    Logger.Error($"Failed to cast Principle to UserPrinciple for object {principal.Dump()}");
-                                    Logger.Error("Exception while casting to UserPrinciple", ex);
+                                    Logger.Error($"Failed to cast Principle to UserPrincipal for object {principal.Dump()}");
+                                    Logger.Error("Exception while casting to UserPrincipal", ex);
                                     throw;
                                 }
 
@@ -225,6 +225,98 @@
                                     LastLogon = lastLogon,
                                     SamAccountName = user.SamAccountName,
                                     Surname = user.Surname,
+                                    WhenCreated = whenCreated
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<LicenseGroupDto> GetGroups()
+        {
+            using (var principalContext = new PrincipalContext(ContextType.Domain))
+            {
+                using (var groupPrincipal = new GroupPrincipal(principalContext))
+                {
+                    using (var principalSearcher = new PrincipalSearcher(groupPrincipal))
+                    {
+                        using (var results = principalSearcher.FindAll())
+                        {
+                            foreach (var principal in results)
+                            {
+                                if (principal.Guid == null)
+                                {
+                                    Logger.Debug($"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
+                                    continue;
+                                }
+
+                                bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
+                                if (!validId)
+                                {
+                                    Logger.Debug($"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
+                                    continue;
+                                }
+
+                                GroupPrincipal group;
+
+                                try
+                                {
+                                    group = (GroupPrincipal) principal;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Error($"Failed to cast Principal to GroupPrincipal for object {principal.Dump()}");
+                                    Logger.Error("Exception while casting to GroupPrincipal", ex);
+                                    throw;
+                                }
+
+                                Logger.Debug($"Retrieving {group.GetDisplayText()} from Active Directory.");
+
+                                if (group.IsSecurityGroup == null)
+                                {
+                                    Logger.Warn($"Cannot tell if {group.GetDisplayText()} is a security group or not.");
+                                    continue;
+                                }
+
+
+                                bool isValidSecurityGroup = bool.TryParse(group.IsSecurityGroup.ToString(), out bool isSecurityGroup);
+                                if (!isValidSecurityGroup)
+                                {
+                                    Logger.Warn($"Cannot process {group.GetDisplayText()} because the IsSecurityGroup value is not valid");
+                                    continue;
+                                }
+
+
+                                DateTimeOffset whenCreated;
+                                try
+                                {
+                                    var getWhenCreated = group.GetProperty("whenCreated");
+                                    if (getWhenCreated.IsNullOrEmpty())
+                                    {
+                                        throw new NullReferenceException($"WhenCreated property for {group.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
+                                    }
+
+                                    whenCreated = DateTimeOffset.Parse(getWhenCreated);
+                                }
+                                catch (NullReferenceException nullRef)
+                                {
+                                    Logger.Error(nullRef.Message);
+                                    throw;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Error($"Failed to determine the when created date for {group.GetDisplayText()}. Task cannot continue.");
+                                    Logger.Debug("Exception getting WhenCreated GroupPrincipal property.", ex);
+                                    throw;
+                                }
+
+                                yield return new LicenseGroupDto
+                                {
+                                    Id = principalId,
+                                    Name = group.Name,
                                     WhenCreated = whenCreated
                                 };
                             }

@@ -261,9 +261,21 @@
 
         public void UpdateGroup(LicenseGroup licenseGroup)
         {
-            Container.AttachTo("LicenseGroups", licenseGroup);
+            //Container.AttachTo("LicenseGroups", licenseGroup);
 
-            Container.UpdateObject(licenseGroup);
+            //Container.UpdateObject(licenseGroup);
+
+            var existingGroup = Container.LicenseGroups.Where(lg => lg.Id == licenseGroup.Id).FirstOrDefault();
+            if (existingGroup == null)
+            {
+                throw new NullReferenceException($"License Group {licenseGroup.Format(Logger.IsDebugEnabled)} cannot be found in the api.");
+            }
+
+            existingGroup.Name = licenseGroup.Name;
+            existingGroup.WhenCreated = licenseGroup.WhenCreated;
+
+            Container.AttachTo("LicenseGroups", existingGroup);
+            Container.UpdateObject(existingGroup);
         }
 
         public void UpdateManagedSupport(ManagedSupport managedSupport)
