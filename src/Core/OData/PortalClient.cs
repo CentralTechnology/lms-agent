@@ -83,6 +83,11 @@
                 });
         }
 
+        public void Detach(object entity)
+        {
+            Container.Detach(entity);
+        }
+
         public void AddGroup(LicenseGroup licenseGroup) => Container.AddToLicenseGroups(licenseGroup);
 
         public void AddGroupToUser(LicenseUser licenseUser, LicenseGroup licenseGroup)
@@ -261,10 +266,6 @@
 
         public void UpdateGroup(LicenseGroup licenseGroup)
         {
-            //Container.AttachTo("LicenseGroups", licenseGroup);
-
-            //Container.UpdateObject(licenseGroup);
-
             var existingGroup = Container.LicenseGroups.Where(lg => lg.Id == licenseGroup.Id).FirstOrDefault();
             if (existingGroup == null)
             {
@@ -280,17 +281,24 @@
 
         public void UpdateManagedSupport(ManagedSupport managedSupport)
         {
-            Container.AttachTo("ManagedSupports", managedSupport);
+            var existingManagedSupport = Container.ManagedSupports.Where(ms => ms.Id == managedSupport.Id).FirstOrDefault();
+            if (existingManagedSupport == null)
+            {
+                throw new NullReferenceException($"Managed Support {managedSupport.Id} cannot be found in the api.");
+            }
 
-            Container.UpdateObject(managedSupport);
+            existingManagedSupport.CheckInTime = managedSupport.CheckInTime;
+            existingManagedSupport.ClientVersion = managedSupport.ClientVersion;
+            existingManagedSupport.Hostname = managedSupport.Hostname;
+            existingManagedSupport.Status = managedSupport.Status;
+            existingManagedSupport.UploadId = managedSupport.UploadId;
+            
+            Container.AttachTo("ManagedSupports", existingManagedSupport);
+            Container.UpdateObject(existingManagedSupport);
         }
 
         public void UpdateUser(LicenseUser licenseUser)
         {
-           // Container.AttachTo("LicenseUsers", licenseUser);
-
-          //  Container.UpdateObject(licenseUser);
-
             var existingUser = Container.LicenseUsers.Where(lu => lu.Id == licenseUser.Id).FirstOrDefault();
             if (existingUser == null)
             {

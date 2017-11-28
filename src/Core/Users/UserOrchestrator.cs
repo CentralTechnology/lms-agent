@@ -29,10 +29,18 @@
         private readonly ISettingManager _settingManager;
         private readonly IUserManager _userManager;
         private readonly IGroupManager _groupManager;
+        private readonly IManagedSupportManager _managedSupportManager;
 
         public ILogger Logger { get; set; }
 
-        public UserOrchestrator(PortalClient portalClient, IActiveDirectoryManager activeDirectoryManager, ISettingManager settingManager, IUserManager userManager, IGroupManager groupManager)
+        public UserOrchestrator(
+            PortalClient portalClient, 
+            IActiveDirectoryManager activeDirectoryManager, 
+            ISettingManager settingManager, 
+            IUserManager userManager, 
+            IGroupManager groupManager, 
+            IManagedSupportManager managedSupportManager
+            )
         {
             Logger = NullLogger.Instance;
             _portalClient = portalClient;
@@ -40,6 +48,7 @@
             _settingManager = settingManager;
             _userManager = userManager;
             _groupManager = groupManager;
+            _managedSupportManager = managedSupportManager;
         }
 
         protected List<LicenseUserSummary> AddUsersToGroup(LicenseGroup group, List<LicenseUser> localUsers)
@@ -107,18 +116,6 @@
             }
         }
 
-        public void ProcessCallIn(ManagedSupport managedSupport)
-        {
-            managedSupport.CheckInTime = new DateTimeOffset(Clock.Now);
-            managedSupport.ClientVersion = SettingManagerHelper.Instance.ClientVersion;
-            managedSupport.Hostname = Environment.MachineName;
-            managedSupport.Status = CallInStatus.CalledIn;
-            managedSupport.UploadId = _portalClient.GenerateUploadId();
-
-            _portalClient.UpdateManagedSupport(managedSupport);
-            _portalClient.SaveChanges();
-        }
-
         public void ProcessGroups(ManagedSupport managedSupport)
         {
             Console.WriteLine(Environment.NewLine);
@@ -149,42 +146,6 @@
             }
 
             Logger.Debug("PROCESS GROUPS END");
-        }
-
-        public ManagedSupport ProcessUpload()
-        {
-            Logger.Debug("PROCCESS UPLOAD BEGIN");
-            Logger.Debug("Getting the id of the upload");
-            Guid deviceId = _settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
-
-            int managedSupportId = _portalClient.GetManagedSupportId(deviceId);
-
-            // create a new upload
-            if (managedSupportId == default(int))
-            {
-                Logger.Debug("Looks like this device hasn't called in before.");
-                Logger.Debug("Generating a new upload id.");
-
-                int uploadId = _portalClient.GenerateUploadId();
-
-                var ms = new ManagedSupport
-                {
-                    CheckInTime = Clock.Now,
-                    ClientVersion = SettingManagerHelper.Instance.ClientVersion,
-                    DeviceId = deviceId,
-                    Hostname = Environment.MachineName,
-                    IsActive = true,
-                    Status = CallInStatus.NotCalledIn,
-                    UploadId = uploadId
-                };
-
-                _portalClient.AddManagedSupport(ms);
-                _portalClient.SaveChanges();
-                managedSupportId = _portalClient.GetManagedSupportId(deviceId);
-            }
-
-            Logger.Debug("PROCCESS UPLOAD END");
-            return _portalClient.ListManagedSupportById(managedSupportId);
         }
 
         public void ProcessUserGroups(List<LicenseUser> adUsers, List<LicenseGroup> adGroups)
@@ -299,10 +260,15 @@
             stopWatch.Start();
             Logger.Info("Stopwatch started!");
             Logger.Info("Processing the upload information");
-            ManagedSupport managedSupport = ProcessUpload();
+            ManagedSupport managedSupport = _managedSupportManager.Get() ?? _managedSupportManager.Add();
+            _portalClient.Detach(managedSupport);
 
             ProcessUsers(managedSupport);
             ProcessGroups(managedSupport);
+
+
+            // let the api know we have completed the task
+            _managedSupportManager.Update(managedSupport);
 
             //List<LicenseUser> adUsersAndGroups = ProcessUsers(managedSupport);
             //if (!adUsersAndGroups.Any())
@@ -316,9 +282,9 @@
 
             //ProcessCallIn(managedSupport);
 
-            //stopWatch.Stop();
-            //Console.WriteLine(Environment.NewLine);
-            //Logger.Info($"Time elapsed: {stopWatch.Elapsed:hh\\:mm\\:ss}");
+            stopWatch.Stop();
+            Console.WriteLine(Environment.NewLine);
+            Logger.Info($"Time elapsed: {stopWatch.Elapsed:hh\\:mm\\:ss}");
         }
     }
 }

@@ -244,7 +244,9 @@
     <Compile Include="Users\Managers\GroupManager.cs" />
     <Compile Include="Users\Managers\IActiveDirectoryManager.cs" />
     <Compile Include="Users\Managers\IGroupManager.cs" />
+    <Compile Include="Users\Managers\IManagedSupportManager.cs" />
     <Compile Include="Users\Managers\IUserManager.cs" />
+    <Compile Include="Users\Managers\ManagedSupportManager.cs" />
     <Compile Include="Users\Managers\UserManager.cs" />
     <Compile Include="Users\Models\LicenseGroupSummary.cs" />
     <Compile Include="Users\Models\LicenseUserGroupSummary.cs" />
