@@ -10,9 +10,8 @@ namespace ServiceTimer
     using System.Threading;
     using System.Threading.Tasks;
     using Abp.Dependency;
-    using LMS.Startup;
+    using Castle.Core.Logging;
     using Microsoft.OData.Client;
-    using NLog;
     using SharpRaven;
     using SharpRaven.Data;
 
@@ -20,7 +19,7 @@ namespace ServiceTimer
     ///     Inherit from this class to create your concrete worker class. IDisposable because
     ///     System.Timers.Timer, used within, is IDisposable
     /// </summary>
-    public abstract class TimerWorker : IDisposable
+    public abstract class TimerWorker : IDisposable, ITransientDependency
     {
         /// <summary>
         ///     Storing a count of the number of times the timer has elapsed
@@ -30,7 +29,9 @@ namespace ServiceTimer
         /// <summary>
         ///     The nlog logger
         /// </summary>
-        private Logger _logger;
+        // private Logger _logger;
+
+        public ILogger Logger { get; set; }
 
         /// <summary>
         ///     If true, the worker has "paused" (as a result of the Service being Paused)
@@ -73,12 +74,9 @@ namespace ServiceTimer
         /// </summary>
         protected RavenClient RavenClient;
 
-        /// <summary>
-        /// </summary>
-        protected StartupManager StartupManager;
-
         private TimerWorker()
         {
+            RavenClient = Core.Sentry.RavenClient.Instance;
             // Hide the default constructor
         }
 
@@ -92,9 +90,8 @@ namespace ServiceTimer
         /// <param name="timerInterval"></param>
         /// <param name="workOnElapseCount"></param>
         protected TimerWorker(double timerInterval, uint workOnElapseCount)
+            :this()
         {
-           // RavenClient = Core.Sentry.RavenClient.Instance;
-           // StartupManager = new StartupManager();
             _TimerWorker(0, timerInterval, workOnElapseCount);
         }
 
@@ -105,9 +102,8 @@ namespace ServiceTimer
         /// <param name="timerInterval"></param>
         /// <param name="workOnElapseCount"></param>
         protected TimerWorker(double delayOnStart, double timerInterval, uint workOnElapseCount)
+            :this()
         {
-          //  RavenClient = Core.Sentry.RavenClient.Instance;
-            StartupManager = IocManager.Instance.Resolve<StartupManager>();
             _TimerWorker(delayOnStart, timerInterval, workOnElapseCount);
         }
 
@@ -121,7 +117,7 @@ namespace ServiceTimer
         /// <summary>
         ///     Log
         /// </summary>
-        protected Logger Logger => _logger;
+        //protected Logger Logger => _logger;
 
         /// <summary>
         ///     Check if the state of the service is something other than "Running"
@@ -141,10 +137,10 @@ namespace ServiceTimer
 #if BASELOG
             DateTime entered = DateTime.UtcNow;
 
-            _logger?.Info(logmessages.WorkerWorkEnter,
-                info.WorkId,
-                info.ThreadId,
-                entered.ToString("u"));
+            //Logger?.Info(logmessages.WorkerWorkEnter,
+            //    info.WorkId,
+            //    info.ThreadId,
+            //    entered.ToString("u"));
 #endif
 
             try
@@ -168,7 +164,7 @@ namespace ServiceTimer
                 catch (Exception ex) when (ex is WebException || ex is DataServiceClientException ds && ds.StatusCode == 500 || ex is InvalidOperationException || ex is SocketException || ex is TaskCanceledException)
                 {
                     Logger.Error(ex.Message);
-                    Logger.Debug(ex, ex.Message);
+                    Logger.Debug(ex.Message,ex);
                 }
                 catch (Exception ex) when (ex is ArgumentException || ex is DataServiceClientException || ex is NullReferenceException)
                 {
@@ -177,7 +173,7 @@ namespace ServiceTimer
                         
                         RavenClient.Capture(new SentryEvent(dataService));
                         Logger.Error(dataService.Message);
-                        Logger.Debug(dataService, ex.Message);
+                        Logger.Debug(ex.Message, dataService);
 
                         while (dataService.InnerException != null)
                         {
@@ -185,14 +181,14 @@ namespace ServiceTimer
 
                             RavenClient.Capture(new SentryEvent(innerException));
                             Logger.Error(innerException.Message);
-                            Logger.Debug(innerException, ex.Message);
+                            Logger.Debug(innerException.Message, innerException);
                         }
                     }
                     else
                     {
                         RavenClient.Capture(new SentryEvent(ex));
                         Logger.Error(ex.Message);
-                        Logger.Debug(ex, ex.Message);
+                        Logger.Debug(ex.Message,ex);
                     }
 
 
@@ -201,7 +197,7 @@ namespace ServiceTimer
                 {
                     RavenClient.Capture(new SentryEvent(ex));
                     Logger.Error(ex.Message);
-                    Logger.Debug(ex, ex.Message);
+                    Logger.Debug(ex.Message,ex);
                 }
                 finally
                 {
@@ -214,7 +210,7 @@ namespace ServiceTimer
                 var wex = new OnWorkException(logmessages.WorkerOnWorkException,
                     ex, info);
 
-                _logger?.Warn(logmessages.WorkerOnWorkException, wex);
+                Logger?.Warn(logmessages.WorkerOnWorkException, wex);
 
                 throw wex;
             }
@@ -224,22 +220,22 @@ namespace ServiceTimer
             }
 
 #if BASELOG
-            if (_logger != null)
+            if (Logger != null)
             {
                 DateTime exited = DateTime.UtcNow;
 
-                _logger.Info(logmessages.WorkerWorkExit,
-                    info.WorkId,
-                    info.ThreadId,
-                    exited.ToString("u"));
+                //_logger.Info(logmessages.WorkerWorkExit,
+                //    info.WorkId,
+                //    info.ThreadId,
+                //    exited.ToString("u"));
 
                 TimeSpan duration =
                     exited - entered;
 
-                _logger.Info(logmessages.WorkerWorkDuration,
-                    info.WorkId,
-                    info.ThreadId,
-                    duration);
+                //_logger.Info(logmessages.WorkerWorkDuration,
+                //    info.WorkId,
+                //    info.ThreadId,
+                //    duration);
             }
 #endif
         }
@@ -261,7 +257,7 @@ namespace ServiceTimer
                 (_timerInterval, _elapseCount, _workOnElapseCount, _totalElapseCount);
 
 #if BASELOG
-            _logger?.Info($"TimerWorkerInfo: {info}");
+            Logger?.Info($"TimerWorkerInfo: {info}");
 #endif
 
             // Reset the counter if necessary
@@ -304,9 +300,9 @@ namespace ServiceTimer
                     var cex = new OnContinueException(logmessages.WorkerOnContinueException,
                         ex, info);
 
-                    if (_logger != null)
+                    if (Logger != null)
                     {
-                        _logger.Warn(logmessages.WorkerOnContinueException, cex);
+                        Logger.Warn(logmessages.WorkerOnContinueException, cex);
                     }
 
                     throw cex;
@@ -357,9 +353,9 @@ namespace ServiceTimer
                         var pex = new OnPauseException(logmessages.WorkerOnPauseException,
                             ex, info);
 
-                        if (_logger != null)
+                        if (Logger != null)
                         {
-                            _logger.Warn(logmessages.WorkerOnPauseException, pex);
+                            Logger.Warn(logmessages.WorkerOnPauseException, pex);
                         }
 
                         throw pex;
@@ -394,9 +390,9 @@ namespace ServiceTimer
                     var sex = new OnStopException(logmessages.WorkerOnStopException,
                         ex, info);
 
-                    if (_logger != null)
+                    if (Logger != null)
                     {
-                        _logger.Warn(logmessages.WorkerOnStopException, sex);
+                        Logger.Warn(logmessages.WorkerOnStopException, sex);
                     }
 
                     throw sex;
@@ -428,9 +424,9 @@ namespace ServiceTimer
                     var sex = new OnShutdownException(logmessages.WorkerOnShutdownException,
                         ex, info);
 
-                    if (_logger != null)
+                    if (Logger != null)
                     {
-                        _logger.Warn(logmessages.WorkerOnShutdownException, sex);
+                        Logger.Warn(logmessages.WorkerOnShutdownException, sex);
                     }
 
                     throw sex;
@@ -498,7 +494,7 @@ namespace ServiceTimer
 #else
             catch (Exception ex)
             {
-                _logger?.Error(ex, logmessages.WorkerException);
+                Logger?.Error(logmessages.WorkerException, ex);
 #endif
             }
             finally
@@ -548,42 +544,42 @@ namespace ServiceTimer
             var newException = exception as TException;
 
             Logger.Error(newException.Message);
-            Logger.Debug(newException, newException.Message);
+            Logger.Debug(newException.Message, newException);
         }
 
         protected virtual void OnContinue(TimerWorkerInfo info)
         {
 #if BASELOG
-            _logger?.Info(logmessages.WorkerOnContinue,
-                info.WorkId,
-                info.ThreadId);
+            //_logger?.Info(logmessages.WorkerOnContinue,
+            //    info.WorkId,
+            //    info.ThreadId);
 #endif
         }
 
         protected virtual void OnPause(TimerWorkerInfo info)
         {
 #if BASELOG
-            _logger?.Info(logmessages.WorkerOnPause,
-                info.WorkId,
-                info.ThreadId);
+            //_logger?.Info(logmessages.WorkerOnPause,
+            //    info.WorkId,
+            //    info.ThreadId);
 #endif
         }
 
         protected virtual void OnShutdown(TimerWorkerInfo info)
         {
 #if BASELOG
-            _logger?.Info(logmessages.WorkerOnShutdown,
-                info.WorkId,
-                info.ThreadId);
+            //_logger?.Info(logmessages.WorkerOnShutdown,
+            //    info.WorkId,
+            //    info.ThreadId);
 #endif
         }
 
         protected virtual void OnStop(TimerWorkerInfo info)
         {
 #if BASELOG
-            _logger?.Info(logmessages.WorkerOnStop,
-                info.WorkId,
-                info.ThreadId);
+            //_logger?.Info(logmessages.WorkerOnStop,
+            //    info.WorkId,
+            //    info.ThreadId);
 #endif
         }
 
@@ -591,10 +587,10 @@ namespace ServiceTimer
         ///     Get/Set the log4net logger
         /// </summary>
         /// <param name="log"></param>
-        internal void SetLog(Logger log)
-        {
-            _logger = log;
-        }
+        //internal void SetLog(Logger log)
+        //{
+        //    _logger = log;
+        //}
 
         /// <summary>
         ///     Start the timer
@@ -632,8 +628,6 @@ namespace ServiceTimer
             {
                 _timer?.Dispose();
                 // Free any other managed objects here. 
-
-                IocManager.Instance.Release(StartupManager);
 
                 //
 #if DEBUG // Evidence that this gets disposed of in the logs

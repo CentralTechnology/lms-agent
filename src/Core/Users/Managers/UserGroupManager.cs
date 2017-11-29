@@ -28,7 +28,7 @@ namespace LMS.Users.Managers
 
             var remoteUsers = _portalManager.ListAllUsersByGroupId(groupMembers.Id);
 
-            var newMembers = ObjectMapper.Map<List<LicenseUser>>(groupMembers.Users).Except(remoteUsers);
+            var newMembers = ObjectMapper.Map<List<LicenseUser>>(groupMembers.Users).Except(remoteUsers, new LicenseUserComparer());
 
             foreach (var newMember in newMembers)
             {
@@ -37,7 +37,6 @@ namespace LMS.Users.Managers
 
                 Logger.Info($"+ {newMember.Format(Logger.IsDebugEnabled)} has been added to {group.Format(Logger.IsDebugEnabled)}");
                 _portalManager.Detach(newMember);
-
             }
 
             // need to detach the group 

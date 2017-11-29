@@ -47,7 +47,7 @@ namespace LMS.Users.Managers
             var ms = new ManagedSupport
             {
                 CheckInTime = Clock.Now,
-                ClientVersion = SettingManagerHelper.Instance.ClientVersion,
+                ClientVersion = SettingManagerHelper.ClientVersion,
                 DeviceId = deviceId,
                 Hostname = Environment.MachineName,
                 IsActive = true,
@@ -68,7 +68,7 @@ namespace LMS.Users.Managers
         public void Update(ManagedSupport input)
         {
             input.CheckInTime = new DateTimeOffset(Clock.Now);
-            input.ClientVersion = SettingManagerHelper.Instance.ClientVersion;
+            input.ClientVersion = SettingManagerHelper.ClientVersion;
             input.Hostname = Environment.MachineName;
             input.Status = CallInStatus.CalledIn;
             input.UploadId = _portalManager.GenerateUploadId();

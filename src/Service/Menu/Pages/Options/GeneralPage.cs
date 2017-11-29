@@ -11,15 +11,15 @@
         public GeneralPage(Program program)
             : base("General", program)
         {
+            var settingManager = IocManager.Instance.Resolve<ISettingManager>();
+
             Menu.Add("Set Account number", () =>
             {
                 int newAcct = Input.ReadInt("Enter Account: ", int.MinValue, int.MaxValue);
 
-                using (IDisposableDependencyObjectWrapper<ISettingManager> settingManager = IocManager.Instance.ResolveAsDisposable<ISettingManager>())
-                {
-                    settingManager.Object.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, newAcct.ToString());
-                }
+                settingManager.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, newAcct.ToString());
 
+                IocManager.Instance.Release(settingManager);
                 ActionComplete<GeneralPage>();
             });
 
@@ -27,11 +27,9 @@
             {
                 Guid newDevice = Input.ReadGuid("Enter Device: ");
 
-                using (IDisposableDependencyObjectWrapper<ISettingManager> settingManager = IocManager.Instance.ResolveAsDisposable<ISettingManager>())
-                {
-                    settingManager.Object.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, newDevice.ToString());
-                }
+                settingManager.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, newDevice.ToString());
 
+                IocManager.Instance.Release(settingManager);
                 ActionComplete<GeneralPage>();
             });
         }

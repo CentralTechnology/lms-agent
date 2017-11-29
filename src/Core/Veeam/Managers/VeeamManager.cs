@@ -17,7 +17,6 @@
     using Backup.Common;
     using Common.Extensions;
     using Common.Helpers;
-    using Core.Administration;
     using Core.Common.Constants;
     using Core.Configuration;
     using DBManager;
@@ -25,7 +24,6 @@
     using Mappings;
     using Microsoft.Win32;
     using Models;
-    using NLog;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
     public class VeeamManager : DomainService, IVeeamManager
@@ -118,7 +116,7 @@
             catch (Win32Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug("Exception",ex);
+                Logger.Debug(ex.Message, ex);
                 return 0;
             }
 
@@ -142,7 +140,7 @@
             catch (Win32Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug("Exception", ex);
+                Logger.Debug(ex.Message, ex);
                 return 0;
             }
 
@@ -163,7 +161,7 @@
             catch (Win32Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug("Exception", ex);
+                Logger.Debug(ex.Message, ex);
                 return new VmsCounterInfo(0, 0);
             }
         }
@@ -172,17 +170,17 @@
         {
             try
             {
-                return CommonExtensions.IsApplictionInstalled(Constants.VeeamApplicationName);
+                return CommonHelpers.IsApplictionInstalled(Constants.VeeamApplicationName);
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug("Exception", ex);
+                Logger.Debug(ex.Message, ex);
                 return false;
             }
         }
 
-        public bool VeeamOnline()
+        public bool IsOnline()
         {
             IPAddress localhost = IPAddress.Parse("127.0.0.1");
 
@@ -230,7 +228,7 @@
             catch (Exception ex)
             {
                 Logger.Error("There was an error while getting the license information from the registry. We'll therefore assume its an evaluation license.");
-                Logger.Debug("Exception",ex);
+                Logger.Debug(ex.Message, ex);
                 veeam.LicenseType = LicenseTypeEx.Evaluation;
             }
 
@@ -242,7 +240,7 @@
             veeam.vSphere = virtualMachines.vsphere;
             veeam.HyperV = virtualMachines.hyperv;
 
-            veeam.ClientVersion = SettingManagerHelper.Instance.ClientVersion;
+            veeam.ClientVersion = SettingManagerHelper.ClientVersion;
             veeam.Edition = VeeamLicense.Edition;
             veeam.ExpirationDate = VeeamLicense.ExpirationDate;
             veeam.Id = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();

@@ -1,56 +1,71 @@
 ﻿namespace LMS.Menu.Pages.Run
 {
     using System;
+    using System.Data.SqlClient;
+    using System.IO;
+    using System.Net;
+    using System.Net.Http;
+    using System.Net.Sockets;
+    using System.Security;
     using Abp.Configuration;
     using Abp.Dependency;
-    using Castle.Core.Logging;
-    using Common.Extensions;
+    using Abp.Logging;
     using Core.Configuration;
     using EasyConsole;
+    using Microsoft.OData.Client;
     using SharpRaven;
+    using SharpRaven.Data;
     using Users;
     using Veeam;
 
-    public class RunPage : MenuPage, ITransientDependency
+    public class RunPage : MenuPage
     {
         protected RavenClient RavenClient;
-        private readonly ISettingManager _settingManager;
-        private readonly IUserWorkerManager _userWorkerManager;
-        private readonly IVeeamWorkerManager _veeamWorkerManager;
-
-        public ILogger Logger { get; set; }
 
         public RunPage(Program program)
             : base("Run", program)
         {
-            Logger = NullLogger.Instance;
-            RavenClient = Core.Sentry.RavenClient.Instance;
-            _settingManager = IocManager.Instance.Resolve<ISettingManager>();
-            _userWorkerManager = IocManager.Instance.Resolve<IUserWorkerManager>();
-            _veeamWorkerManager = IocManager.Instance.Resolve<IVeeamWorkerManager>();
+            var settingManager = IocManager.Instance.Resolve<ISettingManager>();
+            var userWorkerManager = IocManager.Instance.Resolve<IUserWorkerManager>();
+            var veeamWorkerManager = IocManager.Instance.Resolve<IVeeamWorkerManager>();
 
-            bool monitorUsers = _settingManager.GetSettingValue<bool>(AppSettingNames.MonitorUsers);
+            bool monitorUsers = settingManager.GetSettingValue<bool>(AppSettingNames.MonitorUsers);
             if (monitorUsers)
             {
                 Menu.Add(new Option("User Monitoring", () =>
                 {
                     Console.Clear();
-                    Logger.Info("User monitoring begin...");
+                    LogHelper.Logger.Info("User monitoring begin...");
 
                     try
                     {
-                        _userWorkerManager.Start();
+                        userWorkerManager.Start();
 
-                        Logger.Info("************ User Monitoring Successful ************");
+                        LogHelper.Logger.Info("************ User Monitoring Successful ************");
+                    }
+                    catch (Exception ex) when (
+                        ex is DataServiceClientException
+                        || ex is SqlException
+                        || ex is HttpRequestException
+                        || ex is SocketException
+                        || ex is WebException
+                        || ex is SecurityException
+                        || ex is IOException)
+                    {
+                        LogHelper.LogException(ex);
+                        LogHelper.Logger.Debug(ex.Message, ex);
+                        LogHelper.Logger.Error("************ User Monitoring Failed ************");
                     }
                     catch (Exception ex)
                     {
-                        ex.Handle();
-                        Logger.Error("************ User Monitoring Failed ************");
+                        LogHelper.LogException(ex);
+                        LogHelper.Logger.Debug(ex.Message, ex);
+                        RavenClient.Capture(new SentryEvent(ex));
+                        LogHelper.Logger.Error("************ User Monitoring Failed ************");
                     }
                     finally
                     {
-                        IocManager.Instance.Release(_userWorkerManager);
+                        IocManager.Instance.Release(userWorkerManager);
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }
@@ -60,28 +75,43 @@
                 }));
             }
 
-            bool monitorVeeam = _settingManager.GetSettingValue<bool>(AppSettingNames.MonitorVeeam);
+            bool monitorVeeam = settingManager.GetSettingValue<bool>(AppSettingNames.MonitorVeeam);
             if (monitorVeeam)
             {
                 Menu.Add(new Option("Veeam Monitoring", () =>
                 {
                     Console.Clear();
-                    Logger.Info("Veeam monitoring begin...");
+                    LogHelper.Logger.Info("Veeam monitoring begin...");
 
                     try
                     {
-                        _veeamWorkerManager.Start();
+                        veeamWorkerManager.Start();
 
-                        Logger.Info("************ Veeam Monitoring Successful ************");
+                        LogHelper.Logger.Info("************ Veeam Monitoring Successful ************");
+                    }
+                    catch (Exception ex) when (
+                        ex is DataServiceClientException
+                        || ex is SqlException
+                        || ex is HttpRequestException
+                        || ex is SocketException
+                        || ex is WebException
+                        || ex is SecurityException
+                        || ex is IOException)
+                    {
+                        LogHelper.LogException(ex);
+                        LogHelper.Logger.Debug(ex.Message, ex);
+                        LogHelper.Logger.Error("************ Veeam Monitoring Failed ************");
                     }
                     catch (Exception ex)
                     {
-                        ex.Handle();
-                        Logger.Error("************ Veeam Monitoring Failed ************");
+                        LogHelper.LogException(ex);
+                        LogHelper.Logger.Debug(ex.Message, ex);
+                        RavenClient.Capture(new SentryEvent(ex));
+                        LogHelper.Logger.Error("************ Veeam Monitoring Failed ************");
                     }
                     finally
                     {
-                        IocManager.Instance.Release(_veeamWorkerManager);
+                        IocManager.Instance.Release(veeamWorkerManager);
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }

@@ -2,33 +2,32 @@
 {
     using System;
     using Abp.Configuration;
-    using Abp.Dependency;
     using Autotask;
-    using Castle.Core.Logging;
     using CentraStage;
-    using Core.Common.Constants;
+    using Common.Managers;
     using Core.Configuration;
-    using Core.DirectoryServices;
-    using SharpRaven;
     using SharpRaven.Data;
+    using Users.Managers;
     using Veeam.Managers;
 
-    public class StartupManager : ITransientDependency
+    public class StartupManager : LMSManagerBase, IStartupManager
     {
-        public ILogger Logger { get; set; }
-        protected SettingManager SettingManager;
-        private readonly ICentraStageManager _centraStageManager;
+        private readonly IActiveDirectoryManager _activeDirectoryManager;
         private readonly IAutotaskManager _autotaskManager;
+        private readonly ICentraStageManager _centraStageManager;
+        private readonly IVeeamManager _veeamManager;
 
-        public StartupManager(SettingManager settingManager, ICentraStageManager centraStageManager, IAutotaskManager autotaskManager)
+        public StartupManager(
+            ICentraStageManager centraStageManager,
+            IAutotaskManager autotaskManager,
+            IActiveDirectoryManager activeDirectoryManager,
+            IVeeamManager veeamManager)
         {
-            Logger = NullLogger.Instance;
-            SettingManager = settingManager;
             _centraStageManager = centraStageManager;
             _autotaskManager = autotaskManager;
+            _activeDirectoryManager = activeDirectoryManager;
+            _veeamManager = veeamManager;
         }
-
-        protected RavenClient RavenClient = Core.Sentry.RavenClient.Instance;
 
         public bool Init()
         {
@@ -75,10 +74,10 @@
             return true;
         }
 
-        private bool MonitorUsers()
+        public bool MonitorUsers()
         {
             Logger.Info("Dermining whether to monitor users...");
-            var directoryServicesManager = new DirectoryServicesManager();
+
             try
             {
                 bool userOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.UsersOverride);
@@ -89,7 +88,7 @@
                 }
 
                 // check if a domain exists
-                bool domainExists = directoryServicesManager.DomainExist();
+                bool domainExists = _activeDirectoryManager.IsOnDomain();
                 if (!domainExists)
                 {
                     Logger.Warn("Check Domain: FAIL");
@@ -99,7 +98,7 @@
                 Logger.Info("Check Domain: OK");
 
                 // check if this is a primary domain controller
-                bool pdc = directoryServicesManager.PrimaryDomainController();
+                bool pdc = _activeDirectoryManager.IsPrimaryDomainController();
                 if (!pdc)
                 {
                     Logger.Warn("Check PDC: FAIL");
@@ -120,14 +119,14 @@
             catch (Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug("Exception",ex);
+                Logger.Debug("Exception", ex);
                 return false;
             }
 
             return true;
         }
 
-        private bool MonitorVeeam()
+        public bool MonitorVeeam()
         {
             Logger.Info("Dermining whether to monitor veeam...");
             try
@@ -139,35 +138,31 @@
                     return false;
                 }
 
-                using (var veeamManager = IocManager.Instance.ResolveAsDisposable<IVeeamManager>())
+                bool veeamInstalled = _veeamManager.IsInstalled();
+                if (!veeamInstalled)
                 {
-                    bool veeamInstalled = veeamManager.Object.IsInstalled();
-                    if (!veeamInstalled)
-                    {
-                        Logger.Warn("Check Veeam Installed: FAIL");
-                        return false;
-                    }
+                    Logger.Warn("Check Veeam Installed: FAIL");
+                    return false;
+                }
 
-                    Logger.Info("Check Veeam Installed: OK");
+                Logger.Info("Check Veeam Installed: OK");
 
-                    // check the veeam version
-                    string veeamVersion = veeamManager.Object.GetVersion();
-                    if (veeamVersion == null)
-                    {
-                        Logger.Warn("Check Veeam Version: FAIL");
-                        return false;
-                    }
+                // check the veeam version
+                string veeamVersion = _veeamManager.GetVersion();
+                if (veeamVersion == null)
+                {
+                    Logger.Warn("Check Veeam Version: FAIL");
+                    return false;
                 }
 
                 // check if veeam is installed
-
 
                 Logger.Info("Check Veeam Version: OK");
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug("Exception",ex);
+                Logger.Debug("Exception", ex);
                 return false;
             }
 

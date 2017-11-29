@@ -4,126 +4,17 @@
     using System.Collections.Generic;
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
+    using System.DirectoryServices.ActiveDirectory;
     using System.Linq;
+    using System.Net.NetworkInformation;
     using Abp.Domain.Services;
     using Abp.Extensions;
     using Common.Extensions;
     using Dto;
     using Extensions;
-    using Microsoft.OData.Client;
-    using Portal.LicenseMonitoringSystem.Users.Entities;
-    using ServiceStack.Text;
 
     public class ActiveDirectoryManager : DomainService, IActiveDirectoryManager
     {
-
-        /// <summary>
-        ///     Returns a list of all the users from Active Directory.
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete]
-        public IEnumerable<LicenseUser> AllUsers()
-        {
-            var context = new PrincipalContext(ContextType.Domain);
-            Logger.Debug("Context created.");
-
-            // get the groups first
-
-            using (var groupSearch = new PrincipalSearcher(new GroupPrincipal(context)))
-            {
-                Logger.Debug("Searching groups.");
-
-                var groups = new List<GroupPrincipalOutput>();
-                foreach (Principal found in groupSearch.FindAll())
-                {
-                    try
-                    {
-                        var adGroup = found as GroupPrincipal;
-
-                        if (adGroup?.Guid == null)
-                        {
-                            continue;
-                        }
-                        if (adGroup.IsSecurityGroup == null || (bool)!adGroup.IsSecurityGroup)
-                        {
-                            continue;
-                        }
-
-                        var members = new List<Guid>();
-                        try
-                        {
-                            members = adGroup.Members.Where(m => m.Guid != null).Select(m => (Guid)m.Guid).ToList();
-                        }
-                        catch (PrincipalOperationException ex)
-                        {
-                            Logger.Error($"Failed to get members from group: {(adGroup.DisplayName.IsNullOrEmpty() ? adGroup.SamAccountName : adGroup.DisplayName)}. " +
-                                "Most likely cause is that the group contains members which are no longer part of the domain. " +
-                                "Please investigate the group members in Active Directory.");
-                            Logger.Debug("Exception", ex);
-                        }
-
-                        if (adGroup.Guid == null)
-                        {
-                            Logger.Debug($"Group: {adGroup.Name} does not have a valid GUID - skipping");
-                            continue;
-                        }
-
-                        groups.Add(new GroupPrincipalOutput
-                        {
-                            Id = (Guid)adGroup.Guid,
-                            Members = members,
-                            Name = adGroup.Name,
-                            WhenCreated = DateTime.Parse(adGroup.GetProperty("whenCreated"))
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"Error processing: {found.Guid.Dump()}. Please use the following powershell command to find the group. Get-ADGroup -Identity {found.Guid}");
-                        Logger.Debug("Exception", ex);
-                    }
-                }
-
-                // then process the users
-                using (var userSearch = new PrincipalSearcher(new UserPrincipal(context)))
-                {
-                    Logger.Debug("Searching users.");
-
-                    List<UserPrincipal> users = userSearch.FindAll()
-                        .Cast<UserPrincipal>()
-                        .Where(u => u.Guid != null)
-                        .ToList();
-
-                    foreach (UserPrincipal user in users)
-                    {
-                        var dirEntry = user.GetUnderlyingObject() as DirectoryEntry;
-
-                        var localGroups = groups.Where(g => g.Members.Any(m => m == user.Guid))
-                            .Select(g => new LicenseGroup
-                            {
-                                Id = g.Id,
-                                Name = g.Name,
-                                // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                                WhenCreated = DateTimeOffset.Parse(g.WhenCreated.ToString())
-                            });
-
-                        yield return new LicenseUser
-                        {
-                            DisplayName = user.DisplayName,
-                            Email = user.EmailAddress,
-                            Enabled = !dirEntry.IsAccountDisabled(),
-                            FirstName = user.GivenName,
-                            Groups = new DataServiceCollection<LicenseGroup>(localGroups, TrackingMode.None),
-                            Id = Guid.Parse(user.Guid.ToString()),
-                            LastLoginDate = user.LastLogon == null ? (DateTimeOffset?)null : DateTimeOffset.Parse(user.LastLogon.ToString()),
-                            SamAccountName = user.SamAccountName,
-                            Surname = user.Surname,
-                            WhenCreated = DateTimeOffset.Parse(user.GetProperty("whenCreated"))
-                        };
-                    }
-                }
-            }
-        }
-
         /// <inheritdoc />
         public IEnumerable<LicenseUserDto> GetUsers()
         {
@@ -133,9 +24,9 @@
                 {
                     using (var principalSearcher = new PrincipalSearcher(userPrincipal))
                     {
-                        using (var results = principalSearcher.FindAll())
+                        using (PrincipalSearchResult<Principal> results = principalSearcher.FindAll())
                         {
-                            foreach (var principal in results)
+                            foreach (Principal principal in results)
                             {
                                 if (principal.Guid == null)
                                 {
@@ -150,22 +41,14 @@
                                     continue;
                                 }
 
-                                UserPrincipal user;
-
-                                try
+                                if (!(principal is UserPrincipal user))
                                 {
-                                    user = (UserPrincipal)principal;
-                                }
-                                catch (Exception ex)
-                                {
-                                    Logger.Error($"Failed to cast Principle to UserPrincipal for object {principal.Dump()}");
-                                    Logger.Error("Exception while casting to UserPrincipal", ex);
-                                    throw;
+                                    continue;
                                 }
 
                                 Logger.Debug($"Retrieving {user.GetDisplayText()} from Active Directory.");
 
-                                var localUser = GetUser(principalId);
+                                LicenseUserDto localUser = GetUser(principalId);
                                 if (localUser == null)
                                 {
                                     continue;
@@ -184,7 +67,7 @@
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
-                var user = UserPrincipal.FindByIdentity(principalContext, IdentityType.Guid, userId.ToString());
+                UserPrincipal user = UserPrincipal.FindByIdentity(principalContext, IdentityType.Guid, userId.ToString());
                 if (user == null)
                 {
                     throw new NullReferenceException($"Cannot find User Principal with Guid {userId}");
@@ -220,7 +103,7 @@
                 DateTimeOffset whenCreated;
                 try
                 {
-                    var getWhenCreated = user.GetProperty("whenCreated");
+                    string getWhenCreated = user.GetProperty("whenCreated");
                     if (getWhenCreated.IsNullOrEmpty())
                     {
                         throw new NullReferenceException($"WhenCreated property for {user.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
@@ -264,9 +147,9 @@
                 {
                     using (var principalSearcher = new PrincipalSearcher(groupPrincipal))
                     {
-                        using (var results = principalSearcher.FindAll())
+                        using (PrincipalSearchResult<Principal> results = principalSearcher.FindAll())
                         {
-                            foreach (var principal in results)
+                            foreach (Principal principal in results)
                             {
                                 if (principal.Guid == null)
                                 {
@@ -281,22 +164,14 @@
                                     continue;
                                 }
 
-                                GroupPrincipal group;
-
-                                try
+                                if (!(principal is GroupPrincipal group))
                                 {
-                                    group = (GroupPrincipal)principal;
-                                }
-                                catch (Exception ex)
-                                {
-                                    Logger.Error($"Failed to cast Principal to GroupPrincipal for object {principal.Dump()}");
-                                    Logger.Error("Exception while casting to GroupPrincipal", ex);
-                                    throw;
+                                    continue;
                                 }
 
                                 Logger.Debug($"Retrieving {group.GetDisplayText()} from Active Directory.");
 
-                                var localGroup = GetGroup(principalId);
+                                LicenseGroupDto localGroup = GetGroup(principalId);
                                 if (localGroup == null)
                                 {
                                     continue;
@@ -315,7 +190,7 @@
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
-                var group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, groupId.ToString());
+                GroupPrincipal group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, groupId.ToString());
                 if (group == null)
                 {
                     throw new NullReferenceException($"Cannot find Group Principal with Guid {groupId}");
@@ -327,7 +202,6 @@
                     return null;
                 }
 
-
                 bool isValidSecurityGroup = bool.TryParse(group.IsSecurityGroup.ToString(), out bool isSecurityGroup);
                 if (!isValidSecurityGroup)
                 {
@@ -338,7 +212,7 @@
                 DateTimeOffset whenCreated;
                 try
                 {
-                    var getWhenCreated = group.GetProperty("whenCreated");
+                    string getWhenCreated = group.GetProperty("whenCreated");
                     if (getWhenCreated.IsNullOrEmpty())
                     {
                         throw new NullReferenceException($"WhenCreated property for {group.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
@@ -372,7 +246,7 @@
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
-                var group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, groupId.ToString());
+                GroupPrincipal group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, groupId.ToString());
                 if (group == null)
                 {
                     throw new NullReferenceException($"Cannot find Group Principal with Guid {groupId}");
@@ -380,13 +254,13 @@
 
                 var licenseGroupUsers = new LicenseGroupUsersDto(groupId, group.Name);
 
-                var members = group.GetMembers();
+                PrincipalSearchResult<Principal> members = group.GetMembers();
                 if (!members.Any())
                 {
                     return licenseGroupUsers;
                 }
 
-                foreach (var principal in members)
+                foreach (Principal principal in members)
                 {
                     if (principal.Guid == null)
                     {
@@ -406,7 +280,7 @@
                         continue;
                     }
 
-                    var localUser = GetUser(principalId);
+                    LicenseUserDto localUser = GetUser(principalId);
                     if (localUser == null)
                     {
                         continue;
@@ -416,6 +290,40 @@
                 }
 
                 return licenseGroupUsers;
+            }
+        }
+
+        public bool IsOnDomain()
+        {
+            try
+            {
+                using (var principalContext = new PrincipalContext(ContextType.Domain))
+                {
+                    return true;
+                }
+            }
+            catch (ActiveDirectoryOperationException ex)
+            {
+                Logger.Debug(ex.Message, ex);
+                return false;
+            }
+        }
+
+        public bool IsPrimaryDomainController()
+        {
+            try
+            {
+                Domain domain = Domain.GetCurrentDomain();
+                DomainController primaryDomainController = domain.PdcRoleOwner;
+
+                string currentMachine = $"{Environment.MachineName}.{IPGlobalProperties.GetIPGlobalProperties().DomainName}";
+
+                return primaryDomainController.Name.Equals(currentMachine, StringComparison.OrdinalIgnoreCase);
+            }
+            catch (ActiveDirectoryOperationException ex)
+            {
+                Logger.Debug(ex.Message, ex);
+                return false;
             }
         }
     }

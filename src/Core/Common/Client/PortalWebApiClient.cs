@@ -4,7 +4,6 @@
     using Abp.Dependency;
     using Abp.Threading;
     using Abp.WebApi.Client;
-    using Core.Administration;
     using Core.Common.Constants;
 
     /// <summary>

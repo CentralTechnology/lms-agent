@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace LicenseMonitoringSystem.Tests.Core.Users
 {
     using Effort;
-    using global::Core.EntityFramework;
     using NSubstitute;
     using Shouldly;
     using Xunit;

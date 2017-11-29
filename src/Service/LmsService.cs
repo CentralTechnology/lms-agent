@@ -6,6 +6,7 @@
     using Abp;
     using Abp.Configuration;
     using Abp.Dependency;
+    using Abp.Logging;
     using Castle.Facilities.Logging;
     using Common.Helpers;
     using Core.Configuration;
@@ -30,9 +31,7 @@
 
                 _bootstrapper.Initialize();
 
-                DefaultLog();
-
-                Log.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
+                LogHelper.Logger.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
 
                 using (IDisposableDependencyObjectWrapper<StartupManager> startupManager = _bootstrapper.IocManager.ResolveAsDisposable<StartupManager>())
                 {
@@ -70,7 +69,7 @@
             }
             catch (Exception ex)
             {
-                EventLog.WriteEntry("License Monitoring System",$"License Monitoring Ssytem service cannot be started. Exception message =  {ex.GetType().Name} : {ex.Message} | {ex.StackTrace}", EventLogEntryType.Error);
+                LogHelper.LogException(ex);
                 return false;
             }
         }

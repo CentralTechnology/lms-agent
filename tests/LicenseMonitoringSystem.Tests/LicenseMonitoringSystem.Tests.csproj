@@ -36,6 +36,12 @@
     <Reference Include="Abp, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Abp.1.5.1\lib\net452\Abp.dll</HintPath>
     </Reference>
+    <Reference Include="Abp.EntityFramework, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\Abp.EntityFramework.1.5.1\lib\net452\Abp.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Abp.EntityFramework.Common, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\Abp.EntityFramework.Common.1.5.1\lib\net452\Abp.EntityFramework.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Abp.Web, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Abp.Web.1.5.1\lib\net452\Abp.Web.dll</HintPath>
     </Reference>
@@ -46,7 +52,7 @@
       <HintPath>..\..\src\packages\Abp.Web.Common.1.5.1\lib\net452\Abp.Web.Common.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\src\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+      <HintPath>..\..\src\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Facilities.Logging, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Castle.LoggingFacility.4.0.0\lib\net45\Castle.Facilities.Logging.dll</HintPath>
@@ -60,6 +66,9 @@
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework.DynamicFilters, Version=1.4.11.0, Culture=neutral, PublicKeyToken=146423a1b8d60775, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\EntityFramework.DynamicFilters.1.4.11\lib\net40\EntityFramework.DynamicFilters.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
@@ -68,9 +77,6 @@
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=3.9.0.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
-      <HintPath>..\..\src\packages\CompareNETObjects.3.09.0.0\lib\net452\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.OData.Client, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Microsoft.OData.Client.6.18.0\lib\net40\Microsoft.OData.Client.dll</HintPath>
@@ -193,6 +199,10 @@
     <ProjectReference Include="..\..\src\Core\LMS.Core.csproj">
       <Project>{6981655A-0373-4F38-A3AE-4A7262FA7150}</Project>
       <Name>LMS.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\EntityFramework\LMS.EntityFramework.csproj">
+      <Project>{847c8ea8-5b66-4cb1-b90b-64e1fefc8216}</Project>
+      <Name>LMS.EntityFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

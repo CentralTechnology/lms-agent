@@ -16,5 +16,6 @@ namespace LMS.Veeam.Managers
         bool IsInstalled();
 
         string GetVersion();
+        bool IsOnline();
     }
 }
