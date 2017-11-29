@@ -97,23 +97,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleExtensions.cs" />
-    <Compile Include="Integration.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Integration.resx</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Integration.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Integration.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Octokit\Octokit.csproj">
