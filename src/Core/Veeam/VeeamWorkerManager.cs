@@ -3,31 +3,28 @@
     using System;
     using System.Diagnostics;
     using Abp.Configuration;
-    using Abp.Dependency;
     using Abp.Timing;
     using Castle.Core.Logging;
     using Common.Extensions;
+    using Common.Managers;
     using Core.Configuration;
-    using Core.OData;
     using Managers;
+    using OData;
     using Portal.Common.Enums;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
-    public class VeeamOrchestrator : ITransientDependency
+    public class VeeamWorkerManager : LMSManagerBase, IVeeamWorkerManager
     {
-        public ILogger Logger { get; set; }
-        private readonly PortalClient _portalClient;
+        private readonly IPortalManager _portalManager;
         private readonly ISettingManager _settingManager;
         private readonly IVeeamManager _veeamManager;
 
-        public VeeamOrchestrator(PortalClient portalClient, ISettingManager settingManager, IVeeamManager veeamManager)
+        public VeeamWorkerManager(IPortalManager portalManager, ISettingManager settingManager, IVeeamManager veeamManager)
         {
-            Logger = NullLogger.Instance;
-            _portalClient = portalClient;
+            _portalManager = portalManager;
             _settingManager = settingManager;
             _veeamManager = veeamManager;
         }
-
 
         public void Start()
         {
@@ -35,8 +32,8 @@
             stopWatch.Start();
             Logger.Info("Stopwatch started!");
 
-            Guid deviceId = _settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
-            Veeam veeam = _portalClient.ListVeeamById(deviceId);
+            var deviceId = _settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
+            Veeam veeam = _portalManager.ListVeeamById(deviceId);
             bool newVeeam = false;
             if (veeam == null)
             {
@@ -54,15 +51,15 @@
             // set additional properties
             veeam.CheckInTime = new DateTimeOffset(Clock.Now);
             veeam.Status = CallInStatus.CalledIn;
-            veeam.UploadId = _portalClient.GenerateUploadId();
+            veeam.UploadId = _portalManager.GenerateUploadId();
 
             if (newVeeam)
             {
-                _portalClient.AddVeeam(veeam);
+                _portalManager.AddVeeam(veeam);
             }
             else
             {
-                _portalClient.UpdateVeeam(veeam);
+                _portalManager.UpdateVeeam(veeam);
             }
 
             stopWatch.Stop();

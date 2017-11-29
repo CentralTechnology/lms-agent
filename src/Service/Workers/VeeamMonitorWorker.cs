@@ -51,7 +51,7 @@
                 return;
             }
 
-            using (var orchestrator = IocManager.Instance.ResolveAsDisposable<VeeamOrchestrator>())
+            using (var orchestrator = IocManager.Instance.ResolveAsDisposable<IVeeamWorkerManager>())
             {
                 orchestrator.Object.Start();
 

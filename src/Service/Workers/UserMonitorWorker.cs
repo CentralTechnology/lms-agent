@@ -37,7 +37,7 @@
                 return;
             }
 
-            using (var orchestrator = IocManager.Instance.ResolveAsDisposable<UserOrchestrator>())
+            using (var orchestrator = IocManager.Instance.ResolveAsDisposable<IUserWorkerManager>())
             {
                 orchestrator.Object.Start();
             }

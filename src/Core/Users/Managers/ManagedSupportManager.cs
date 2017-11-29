@@ -12,37 +12,37 @@ namespace LMS.Users.Managers
     using Common.Extensions;
     using Common.Helpers;
     using Core.Configuration;
-    using Core.OData;
+    using OData;
     using Portal.Common.Enums;
     using Portal.LicenseMonitoringSystem.Users.Entities;
 
     public class ManagedSupportManager : DomainService, IManagedSupportManager
     {
-        private readonly PortalClient _portalClient;
-        public ManagedSupportManager(PortalClient portalClient)
+        private readonly IPortalManager _portalManager;
+        public ManagedSupportManager(IPortalManager portalManager)
         {
-            _portalClient = portalClient;
+            _portalManager = portalManager;
         }
 
         public ManagedSupport Get()
         {
             Guid deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
 
-            int idOfManagedSupport = _portalClient.GetManagedSupportId(deviceId);
+            int idOfManagedSupport = _portalManager.GetManagedSupportId(deviceId);
 
             if (idOfManagedSupport == default(int))
             {
                 return null;
             }
 
-            return _portalClient.ListManagedSupportById(idOfManagedSupport);
+            return _portalManager.ListManagedSupportById(idOfManagedSupport);
         }
 
         public ManagedSupport Add()
         {
             Guid deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
 
-            int uploadId = _portalClient.GenerateUploadId();
+            int uploadId = _portalManager.GenerateUploadId();
 
             var ms = new ManagedSupport
             {
@@ -55,8 +55,8 @@ namespace LMS.Users.Managers
                 UploadId = uploadId
             };
 
-            _portalClient.AddManagedSupport(ms);
-            _portalClient.SaveChanges();
+            _portalManager.AddManagedSupport(ms);
+            _portalManager.SaveChanges();
 
             var managedSupport = Get();
 
@@ -71,10 +71,10 @@ namespace LMS.Users.Managers
             input.ClientVersion = SettingManagerHelper.Instance.ClientVersion;
             input.Hostname = Environment.MachineName;
             input.Status = CallInStatus.CalledIn;
-            input.UploadId = _portalClient.GenerateUploadId();
+            input.UploadId = _portalManager.GenerateUploadId();
 
-            _portalClient.UpdateManagedSupport(input);
-            _portalClient.SaveChanges();
+            _portalManager.UpdateManagedSupport(input);
+            _portalManager.SaveChanges();
 
             Logger.Info("Successfully called in.");
         }

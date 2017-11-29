@@ -8,61 +8,61 @@ namespace LMS.Users.Managers
 {
     using Abp.Domain.Services;
     using Compare;
-    using Core.OData;
     using Dto;
     using Extensions;
+    using OData;
     using Portal.LicenseMonitoringSystem.Users.Entities;
 
     public class UserGroupManager : DomainService, IUserGroupManager
     {
-        private readonly PortalClient _portalClient;
-        public UserGroupManager(PortalClient portalClient)
+        private readonly IPortalManager _portalManager;
+        public UserGroupManager(IPortalManager portalManager)
         {
-            _portalClient = portalClient;
+            _portalManager = portalManager;
         }
 
         public void AddUsersToGroup(LicenseGroupUsersDto groupMembers)
         {
-            var group = _portalClient.ListGroupById(groupMembers.Id);
-            _portalClient.Container.AttachTo("LicenseGroups", group);
+            var group = _portalManager.ListGroupById(groupMembers.Id);
+            _portalManager.Container.AttachTo("LicenseGroups", group);
 
-            var remoteUsers = _portalClient.ListAllUsersByGroupId(groupMembers.Id);
+            var remoteUsers = _portalManager.ListAllUsersByGroupId(groupMembers.Id);
 
             var newMembers = ObjectMapper.Map<List<LicenseUser>>(groupMembers.Users).Except(remoteUsers);
 
             foreach (var newMember in newMembers)
             {
-                _portalClient.AddGroupToUser(newMember, group);
-                _portalClient.SaveChanges();
+                _portalManager.AddGroupToUser(newMember, group);
+                _portalManager.SaveChanges();
 
                 Logger.Info($"+ {newMember.Format(Logger.IsDebugEnabled)} has been added to {group.Format(Logger.IsDebugEnabled)}");
-                _portalClient.Detach(newMember);
+                _portalManager.Detach(newMember);
 
             }
 
             // need to detach the group 
-            _portalClient.Detach(group);
+            _portalManager.Detach(group);
         }
         public void DeleteUsersFromGroup(LicenseGroupUsersDto groupMembers)
         {
-            var group = _portalClient.ListGroupById(groupMembers.Id);
-            _portalClient.Container.AttachTo("LicenseGroups", group);
+            var group = _portalManager.ListGroupById(groupMembers.Id);
+            _portalManager.Container.AttachTo("LicenseGroups", group);
 
-            var remoteUsers = _portalClient.ListAllUsersByGroupId(groupMembers.Id);
+            var remoteUsers = _portalManager.ListAllUsersByGroupId(groupMembers.Id);
 
             var staleMembers = remoteUsers.Except(ObjectMapper.Map<List<LicenseUser>>(groupMembers.Users), new LicenseUserComparer());
 
             foreach (var staleMember in staleMembers)
             {
-                _portalClient.DeleteGroupFromUser(staleMember, group);
-                _portalClient.SaveChanges();
+                _portalManager.DeleteGroupFromUser(staleMember, group);
+                _portalManager.SaveChanges();
 
                 Logger.Info($"+ {staleMember.Format(Logger.IsDebugEnabled)} has been removed from {group.Format(Logger.IsDebugEnabled)}");
-                _portalClient.Detach(staleMember);
+                _portalManager.Detach(staleMember);
             }
 
             // need to detach the group
-            _portalClient.Detach(group);
+            _portalManager.Detach(group);
         }
     }
 }

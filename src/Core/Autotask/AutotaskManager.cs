@@ -5,15 +5,15 @@
     using Abp.Domain.Services;
     using Common.Extensions;
     using Core.Configuration;
-    using Core.OData;
+    using OData;
 
     public class AutotaskManager : DomainService, IAutotaskManager
     {
-        private readonly PortalClient _portalClient;
+        private readonly IPortalManager _portalManager;
 
-        public AutotaskManager(PortalClient portalClient)
+        public AutotaskManager(IPortalManager portalManager)
         {
-            _portalClient = portalClient;
+            _portalManager = portalManager;
         }
 
         /// <inheritdoc />
@@ -33,7 +33,7 @@
 
                 if (storedAccount == default(int))
                 {
-                    int reportedAccount = _portalClient.GetAccountIdByDeviceId(deviceId);
+                    int reportedAccount = _portalManager.GetAccountIdByDeviceId(deviceId);
 
                     if (reportedAccount == default(int))
                     {

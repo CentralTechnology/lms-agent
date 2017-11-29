@@ -1,26 +1,21 @@
-﻿namespace Core.OData
+﻿namespace LMS.OData
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;
+    using System.Threading.Tasks;
     using Abp.Configuration;
-    using Abp.Dependency;
-    using Abp.Logging;
-    using Abp.Threading;
     using Actions;
     using Castle.Core.Logging;
-    using Common.Constants;
-    using Configuration;
-    using LMS.Autotask;
-    using LMS.CentraStage;
-    using LMS.Common.Client;
-    using LMS.Common.Extensions;
-    using LMS.Users.Extensions;
-    using LMS.Users.Models;
+    using CentraStage;
+    using Common.Client;
+    using Common.Extensions;
+    using Common.Managers;
+    using Core.Common.Constants;
+    using Core.Configuration;
     using Microsoft.OData.Client;
     using Polly;
     using Portal.LicenseMonitoringSystem.Users.Entities;
@@ -28,34 +23,27 @@
     using SharpRaven;
     using SharpRaven.Data;
     using Tools;
-    using System.Threading.Tasks;
+    using Users.Extensions;
+    using Users.Models;
 
-    public class PortalClient : ITransientDependency
+    public class PortalManager : LMSManagerBase, IPortalManager
     {
-        public ILogger Logger { get; set; }
-        private readonly ICentraStageManager _centraStageManager;
         private readonly PortalWebApiClient _portalWebApiClient;
-        private readonly ISettingManager _settingManager;
 
-
-       // protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private static readonly RavenClient RavenClient = Sentry.RavenClient.Instance;
-
-        public Container Container = new Container(new Uri(Constants.DefaultServiceUrl))
-        {
-            IgnoreResourceNotFoundException = true,
-            MergeOption = MergeOption.NoTracking
-        };
+        public Container Container { get; set; }
 
         protected Policy DefaultPolicy;
 
-        public PortalClient(ICentraStageManager centraStageManager, ISettingManager settingManager, PortalWebApiClient portalWebApiClient)
+        public PortalManager(PortalWebApiClient portalWebApiClient)
         {
-            Logger = NullLogger.Instance;
-            _centraStageManager = centraStageManager;
+            Container = new Container(new Uri(Constants.DefaultServiceUrl))
+            {
+                IgnoreResourceNotFoundException = true,
+                MergeOption = MergeOption.NoTracking
+            };
+
+
             _portalWebApiClient = portalWebApiClient;
-            _settingManager = settingManager;
 
             Container.BuildingRequest += Container_BuildingRequest;
             Container.SendingRequest2 += Container_SendingRequest2;
@@ -115,9 +103,9 @@
 
         private void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
         {
-            e.Headers.Add("AccountId", _settingManager.GetSettingValue(AppSettingNames.AutotaskAccountId));
+            e.Headers.Add("AccountId", SettingManager.GetSettingValue(AppSettingNames.AutotaskAccountId));
             e.Headers.Add("XSRF-TOKEN", _portalWebApiClient.GetAntiForgeryToken());
-            e.Headers.Add("Authorization", $"Device {_settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId)}");
+            e.Headers.Add("Authorization", $"Device {SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId)}");
         }
 
         private void Container_SendingRequest2(object sender, SendingRequest2EventArgs e) => Logger.Debug($"{e.RequestMessage.Method} {e.RequestMessage.Url}");

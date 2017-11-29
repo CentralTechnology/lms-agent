@@ -8,7 +8,6 @@ namespace LicenseMonitoringSystem.Tests.Core.Users
 {
     using Effort;
     using global::Core.EntityFramework;
-    using global::Core.OData;
     using NSubstitute;
     using Shouldly;
     using Xunit;

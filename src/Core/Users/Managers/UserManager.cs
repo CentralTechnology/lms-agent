@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 namespace LMS.Users.Managers
 {
     using Abp.Domain.Services;
-    using Core.OData;
     using Dto;
     using Extensions;
+    using OData;
     using Portal.LicenseMonitoringSystem.Users.Entities;
 
     public class UserManager : DomainService, IUserManager
     {
-        private readonly PortalClient _portalClient;
-        public UserManager(PortalClient portalClient)
+        private readonly IPortalManager _portalManager;
+        public UserManager(IPortalManager portalManager)
         {
-            _portalClient = portalClient;
+            _portalManager = portalManager;
         }
         public void Add(LicenseUserDto input, int managedSupportId, int tenantId)
         {
@@ -27,8 +27,8 @@ namespace LMS.Users.Managers
 
             try
             {
-                _portalClient.AddUser(userToAdd);
-                _portalClient.SaveChanges();
+                _portalManager.AddUser(userToAdd);
+                _portalManager.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -46,8 +46,8 @@ namespace LMS.Users.Managers
 
             try
             {
-                _portalClient.UpdateUser(userToUpdate);
-                _portalClient.SaveChanges();
+                _portalManager.UpdateUser(userToUpdate);
+                _portalManager.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -63,8 +63,8 @@ namespace LMS.Users.Managers
         {
             try
             {
-                _portalClient.DeleteUser(id);
-                _portalClient.SaveChanges();
+                _portalManager.DeleteUser(id);
+                _portalManager.SaveChanges();
             }
             catch (Exception ex)
             {

@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 namespace LMS.Users.Managers
 {
     using Abp.Domain.Services;
-    using Core.OData;
     using Dto;
     using Extensions;
+    using OData;
     using Portal.LicenseMonitoringSystem.Users.Entities;
 
     public  class GroupManager : DomainService, IGroupManager
     {
-        private readonly PortalClient _portalClient;
-        public GroupManager(PortalClient portalClient)
+        private readonly IPortalManager _portalManager;
+        public GroupManager(IPortalManager portalManager)
         {
-            _portalClient = portalClient;
+            _portalManager = portalManager;
         }
         public void Add(LicenseGroupDto input, int tenantId)
         {
@@ -26,8 +26,8 @@ namespace LMS.Users.Managers
 
             try
             {
-                _portalClient.AddGroup(groupToAdd);
-                _portalClient.SaveChanges();
+                _portalManager.AddGroup(groupToAdd);
+                _portalManager.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -45,8 +45,8 @@ namespace LMS.Users.Managers
 
             try
             {
-                _portalClient.UpdateGroup(userToUpdate);
-                _portalClient.SaveChanges();
+                _portalManager.UpdateGroup(userToUpdate);
+                _portalManager.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -62,8 +62,8 @@ namespace LMS.Users.Managers
         {
             try
             {
-                _portalClient.DeleteGroup(id);
-                _portalClient.SaveChanges();
+                _portalManager.DeleteGroup(id);
+                _portalManager.SaveChanges();
             }
             catch (Exception ex)
             {

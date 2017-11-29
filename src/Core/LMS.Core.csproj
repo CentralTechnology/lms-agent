@@ -217,6 +217,7 @@
     <Compile Include="Common\Helpers\AppVersionHelper.cs" />
     <Compile Include="Common\Helpers\DebuggingService.cs" />
     <Compile Include="Common\Helpers\SettingManagerHelper.cs" />
+    <Compile Include="Common\Managers\LMSManagerBase.cs" />
     <Compile Include="Configuration\AppSettingNames.cs" />
     <Compile Include="Configuration\AppSettingProvider.cs" />
     <Compile Include="Configuration\Setting.cs" />
@@ -231,6 +232,7 @@
       <DependentUpon>201707140955114_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="OData\IPortalManager.cs" />
     <Compile Include="Users\Compare\LicenseGroupCompareLogic.cs" />
     <Compile Include="Users\Compare\LicenseGroupComparer.cs" />
     <Compile Include="Users\Compare\LicenseUserComparer.cs" />
@@ -242,6 +244,7 @@
     <Compile Include="Users\Extensions\LicenseGroupExtensions.cs" />
     <Compile Include="Users\Extensions\LicenseUserExtensions.cs" />
     <Compile Include="Users\Extensions\UserPrincipalExtensions.cs" />
+    <Compile Include="Users\IUserWorkerManager.cs" />
     <Compile Include="Users\Managers\GroupManager.cs" />
     <Compile Include="Users\Managers\IActiveDirectoryManager.cs" />
     <Compile Include="Users\Managers\IGroupManager.cs" />
@@ -254,7 +257,7 @@
     <Compile Include="Users\Models\LicenseGroupSummary.cs" />
     <Compile Include="Users\Models\LicenseUserGroupSummary.cs" />
     <Compile Include="Users\Models\LicenseUserSummary.cs" />
-    <Compile Include="OData\PortalClient.cs" />
+    <Compile Include="OData\PortalManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sentry\RavenClient.cs" />
     <Compile Include="Startup\StartupManager.cs" />
@@ -264,9 +267,10 @@
     <Compile Include="Users\Managers\ActiveDirectoryManager.cs" />
     <Compile Include="Users\Profiles\LicenseGroupProfile.cs" />
     <Compile Include="Users\Profiles\LicenseUserProfile.cs" />
-    <Compile Include="Users\UserOrchestrator.cs" />
+    <Compile Include="Users\UserWorkerManager.cs" />
     <Compile Include="Veeam\Backup\Common\EPlatform.cs" />
     <Compile Include="Veeam\Entities\Veeam.cs" />
+    <Compile Include="Veeam\IVeeamWorkerManager.cs" />
     <Compile Include="Veeam\Managers\IVeeamManager.cs" />
     <Compile Include="Veeam\Mappings\CPerVmStoredProceduresMapping.cs" />
     <Compile Include="Veeam\Mappings\CPerVmTrialStoredProceduresMapping.cs" />
@@ -286,7 +290,7 @@
     <Compile Include="Veeam\Managers\LicenseManager.cs" />
     <Compile Include="Veeam\Models\VeeamLicense.cs" />
     <Compile Include="Veeam\Managers\VeeamManager.cs" />
-    <Compile Include="Veeam\VeeamOrchestrator.cs" />
+    <Compile Include="Veeam\VeeamWorkerManager.cs" />
     <Compile Include="Veeam\Models\VmLicensingInfo.cs" />
     <Compile Include="Veeam\Models\VmsCounterInfo.cs" />
   </ItemGroup>

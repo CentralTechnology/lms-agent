@@ -15,8 +15,8 @@
     {
         protected RavenClient RavenClient;
         private readonly ISettingManager _settingManager;
-        private readonly UserOrchestrator _userOrchestrator;
-        private readonly VeeamOrchestrator _veeamOrchestrator;
+        private readonly IUserWorkerManager _userWorkerManager;
+        private readonly IVeeamWorkerManager _veeamWorkerManager;
 
         public ILogger Logger { get; set; }
 
@@ -26,8 +26,8 @@
             Logger = NullLogger.Instance;
             RavenClient = Core.Sentry.RavenClient.Instance;
             _settingManager = IocManager.Instance.Resolve<ISettingManager>();
-            _userOrchestrator = IocManager.Instance.Resolve<UserOrchestrator>();
-            _veeamOrchestrator = IocManager.Instance.Resolve<VeeamOrchestrator>();
+            _userWorkerManager = IocManager.Instance.Resolve<IUserWorkerManager>();
+            _veeamWorkerManager = IocManager.Instance.Resolve<IVeeamWorkerManager>();
 
             bool monitorUsers = _settingManager.GetSettingValue<bool>(AppSettingNames.MonitorUsers);
             if (monitorUsers)
@@ -39,7 +39,7 @@
 
                     try
                     {
-                        _userOrchestrator.Start();
+                        _userWorkerManager.Start();
 
                         Logger.Info("************ User Monitoring Successful ************");
                     }
@@ -50,7 +50,7 @@
                     }
                     finally
                     {
-                        IocManager.Instance.Release(_userOrchestrator);
+                        IocManager.Instance.Release(_userWorkerManager);
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }
@@ -70,7 +70,7 @@
 
                     try
                     {
-                        _veeamOrchestrator.Start();
+                        _veeamWorkerManager.Start();
 
                         Logger.Info("************ Veeam Monitoring Successful ************");
                     }
@@ -81,7 +81,7 @@
                     }
                     finally
                     {
-                        IocManager.Instance.Release(_veeamOrchestrator);
+                        IocManager.Instance.Release(_veeamWorkerManager);
                         Input.ReadString("Press [Enter]");
                         program.NavigateTo<RunPage>();
                     }

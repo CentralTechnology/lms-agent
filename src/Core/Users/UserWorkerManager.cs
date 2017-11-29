@@ -4,46 +4,38 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using Abp.Configuration;
-    using Abp.Dependency;
-    using Castle.Core.Logging;
-    using Core.OData;
+    using Common.Managers;
     using Dto;
     using Managers;
     using Models;
+    using OData;
     using Portal.LicenseMonitoringSystem.Users.Entities;
 
-    public class UserOrchestrator : ITransientDependency
+    public class UserWorkerManager : LMSManagerBase, IUserWorkerManager
     {
         private readonly IActiveDirectoryManager _activeDirectoryManager;
         private readonly IGroupManager _groupManager;
-        private readonly IManagedSupportManager _managedSupportManager;    
-        private readonly PortalClient _portalClient;
-        private readonly ISettingManager _settingManager;
+        private readonly IManagedSupportManager _managedSupportManager;
+        private readonly IPortalManager _portalManager;
         private readonly IUserGroupManager _userGroupManager;
         private readonly IUserManager _userManager;
 
-        public UserOrchestrator(
-            PortalClient portalClient,
+        public UserWorkerManager(
+            IPortalManager portalManager,
             IActiveDirectoryManager activeDirectoryManager,
-            ISettingManager settingManager,
             IUserManager userManager,
             IGroupManager groupManager,
             IManagedSupportManager managedSupportManager,
             IUserGroupManager userGroupManager
         )
         {
-            Logger = NullLogger.Instance;
-            _portalClient = portalClient;
+            _portalManager = portalManager;
             _activeDirectoryManager = activeDirectoryManager;
-            _settingManager = settingManager;
             _userManager = userManager;
             _groupManager = groupManager;
             _managedSupportManager = managedSupportManager;
             _userGroupManager = userGroupManager;
         }
-
-        public ILogger Logger { get; set; }
 
         public void ProcessGroups(ManagedSupport managedSupport)
         {
@@ -52,7 +44,7 @@
             Logger.Info("Collecting information from Active Directory.");
 
             IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetGroups();
-            List<LicenseGroupSummary> remoteGroups = _portalClient.ListAllActiveGroupIds();
+            List<LicenseGroupSummary> remoteGroups = _portalManager.ListAllActiveGroupIds();
             var localGroupIds = new List<Guid>();
             foreach (LicenseGroupDto group in groups)
             {
@@ -107,7 +99,7 @@
             Logger.Info("Collecting information from Active Directory.");
 
             IEnumerable<LicenseUserDto> users = _activeDirectoryManager.GetUsers();
-            List<LicenseUserSummary> remoteUsers = _portalClient.ListAllActiveUserIds();
+            List<LicenseUserSummary> remoteUsers = _portalManager.ListAllActiveUserIds();
             var localUserIds = new List<Guid>();
             foreach (LicenseUserDto user in users)
             {
@@ -139,7 +131,7 @@
             Logger.Info("Stopwatch started!");
             Logger.Info("Processing the upload information");
             ManagedSupport managedSupport = _managedSupportManager.Get() ?? _managedSupportManager.Add();
-            _portalClient.Detach(managedSupport);
+            _portalManager.Detach(managedSupport);
 
             ProcessUsers(managedSupport);
             ProcessGroups(managedSupport);
