@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Users.Managers
+﻿namespace LMS.Users.Managers
 {
+    using System;
     using Abp.Domain.Services;
     using Dto;
     using Extensions;
@@ -15,10 +10,12 @@ namespace LMS.Users.Managers
     public class UserManager : DomainService, IUserManager
     {
         private readonly IPortalManager _portalManager;
+
         public UserManager(IPortalManager portalManager)
         {
             _portalManager = portalManager;
         }
+
         public void Add(LicenseUserDto input, int managedSupportId, int tenantId)
         {
             var userToAdd = ObjectMapper.Map<LicenseUser>(input);
@@ -46,8 +43,10 @@ namespace LMS.Users.Managers
 
             try
             {
-                _portalManager.UpdateUser(userToUpdate);
+                bool updated = _portalManager.UpdateUser(userToUpdate);
                 _portalManager.SaveChanges();
+
+                Logger.Info($"{(updated ? "^" : "=")} {userToUpdate.Format(Logger.IsDebugEnabled)}");
             }
             catch (Exception ex)
             {
@@ -55,8 +54,6 @@ namespace LMS.Users.Managers
                 Logger.Debug("Exception when updateing LicenseUser", ex);
                 throw;
             }
-
-            Logger.Info($"^ {userToUpdate.Format(Logger.IsDebugEnabled)}");
         }
 
         public void Delete(Guid id)

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Users.Dto
+﻿namespace LMS.Users.Dto
 {
+    using System;
+    using System.Collections.Generic;
     using Abp.Application.Services.Dto;
 
     public class LicenseGroupUsersDto : EntityDto<Guid>
@@ -16,6 +12,7 @@ namespace LMS.Users.Dto
             GroupName = groupName;
             Users = new List<LicenseUserDto>();
         }
+
         public string GroupName { get; set; }
         public List<LicenseUserDto> Users { get; set; }
     }

@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Users.Managers
+﻿namespace LMS.Users.Managers
 {
+    using System;
+    using System.Collections.Generic;
     using Abp.Domain.Services;
     using Dto;
 
     public interface IActiveDirectoryManager : IDomainService
     {
-        IEnumerable<LicenseUserDto> GetUsers();
-        LicenseUserDto GetUser(Guid userId);
-        IEnumerable<LicenseGroupDto> GetGroups();
-        LicenseGroupDto GetGroup(Guid groupId);        
+        LicenseGroupDto GetGroup(Guid groupId);
         LicenseGroupUsersDto GetGroupMembers(Guid groupId);
+        IEnumerable<LicenseGroupDto> GetGroups();
+        LicenseUserDto GetUser(Guid userId);
+        IEnumerable<LicenseUserDto> GetUsers();
         bool IsOnDomain();
         bool IsPrimaryDomainController();
     }

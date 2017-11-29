@@ -10,8 +10,9 @@
         {
             Users = new List<LicenseUserSummary>();
         }
+
         public string Name { get; set; }
 
         public List<LicenseUserSummary> Users { get; set; }
-    }  
+    }
 }

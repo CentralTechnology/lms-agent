@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Net;
     using System.Net.Sockets;
     using System.Threading.Tasks;
@@ -23,12 +24,15 @@
     using SharpRaven;
     using SharpRaven.Data;
     using Tools;
+    using Users.Compare;
     using Users.Extensions;
     using Users.Models;
 
     public class PortalManager : LMSManagerBase, IPortalManager
     {
         private readonly PortalWebApiClient _portalWebApiClient;
+        private readonly LicenseUserCompareLogic _licenseUserCompareLogic = new LicenseUserCompareLogic();
+        private readonly LicenseGroupCompareLogic _licenseGroupCompareLogic = new LicenseGroupCompareLogic();
 
         public Container Container { get; set; }
 
@@ -96,7 +100,7 @@
         public void AddVeeam(Veeam veeam)
         {
             Container.AddToVeeams(veeam);
-            
+
             DataServiceResponse serviceResponse = Container.SaveChanges();
             ProcessResponse(serviceResponse);
         }
@@ -191,19 +195,33 @@
             }
         }
 
-        public List<LicenseGroupSummary> ListAllActiveGroupIds()
+        public List<LicenseGroupSummary> ListAllGroupIds()
         {
             return DefaultPolicy.Execute(() => Container.LicenseGroups
-                .Where(g => !g.IsDeleted)
-                .Select(g => new LicenseGroupSummary {Id = g.Id, Name = g.Name})
+                .Select(g => new LicenseGroupSummary { Id = g.Id, Name = g.Name })
                 .ToList());
         }
 
-        public List<LicenseUserSummary> ListAllActiveUserIds()
+        public List<LicenseGroupSummary> ListAllGroupIds(Expression<Func<LicenseGroup, bool>> predicate)
+        {
+            return DefaultPolicy.Execute(() => Container.LicenseGroups
+                .Where(predicate)
+                .Select(g => new LicenseGroupSummary { Id = g.Id, Name = g.Name })
+                .ToList());
+        }
+
+        public List<LicenseUserSummary> ListAllUserIds(Expression<Func<LicenseUser, bool>> predicate)
         {
             return DefaultPolicy.Execute(() => Container.LicenseUsers
-                .Where(u => !u.IsDeleted)
-                .Select(u => new LicenseUserSummary {Id = u.Id, DisplayName = u.DisplayName})
+                .Where(predicate)
+                .Select(u => new LicenseUserSummary { Id = u.Id, DisplayName = u.DisplayName })
+                .ToList());
+        }
+
+        public List<LicenseUserSummary> ListAllUserIds()
+        {
+            return DefaultPolicy.Execute(() => Container.LicenseUsers
+                .Select(u => new LicenseUserSummary { Id = u.Id, DisplayName = u.DisplayName })
                 .ToList());
         }
 
@@ -257,7 +275,7 @@
             });
         }
 
-        public void UpdateGroup(LicenseGroup licenseGroup)
+        public bool UpdateGroup(LicenseGroup licenseGroup)
         {
             var existingGroup = Container.LicenseGroups.Where(lg => lg.Id == licenseGroup.Id).FirstOrDefault();
             if (existingGroup == null)
@@ -265,11 +283,21 @@
                 throw new NullReferenceException($"License Group {licenseGroup.Format(Logger.IsDebugEnabled)} cannot be found in the api.");
             }
 
+            var result = _licenseGroupCompareLogic.Compare(existingGroup, licenseGroup);
+            if (result.AreEqual)
+            {
+                Container.Detach(existingGroup);
+                return false;
+            }
+
+            existingGroup.IsDeleted = false;
             existingGroup.Name = licenseGroup.Name;
             existingGroup.WhenCreated = licenseGroup.WhenCreated;
 
             Container.AttachTo("LicenseGroups", existingGroup);
             Container.UpdateObject(existingGroup);
+
+            return true;
         }
 
         public void UpdateManagedSupport(ManagedSupport managedSupport)
@@ -285,12 +313,12 @@
             existingManagedSupport.Hostname = managedSupport.Hostname;
             existingManagedSupport.Status = managedSupport.Status;
             existingManagedSupport.UploadId = managedSupport.UploadId;
-            
+
             Container.AttachTo("ManagedSupports", existingManagedSupport);
             Container.UpdateObject(existingManagedSupport);
         }
 
-        public void UpdateUser(LicenseUser licenseUser)
+        public bool UpdateUser(LicenseUser licenseUser)
         {
             var existingUser = Container.LicenseUsers.Where(lu => lu.Id == licenseUser.Id).FirstOrDefault();
             if (existingUser == null)
@@ -298,10 +326,19 @@
                 throw new NullReferenceException($"License User {licenseUser.Format(Logger.IsDebugEnabled)} cannot be found in the api.");
             }
 
+            var result = _licenseUserCompareLogic.Compare(existingUser, licenseUser);
+            if (result.AreEqual)
+            {
+                // no changes so why make another call hmmm... ?
+                Container.Detach(existingUser);
+                return false;
+            }
+
             existingUser.DisplayName = licenseUser.DisplayName;
             existingUser.Email = licenseUser.Email;
             existingUser.Enabled = licenseUser.Enabled;
             existingUser.FirstName = licenseUser.FirstName;
+            existingUser.IsDeleted = false;
             existingUser.LastLoginDate = licenseUser.LastLoginDate;
             existingUser.SamAccountName = licenseUser.SamAccountName;
             existingUser.Surname = licenseUser.Surname;
@@ -309,6 +346,8 @@
 
             Container.AttachTo("LicenseUsers", existingUser);
             Container.UpdateObject(existingUser);
+
+            return true;
         }
 
         public void UpdateVeeam(Veeam veeam)

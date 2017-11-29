@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Users.Managers
+﻿namespace LMS.Users.Managers
 {
     using Abp.Domain.Services;
     using Dto;

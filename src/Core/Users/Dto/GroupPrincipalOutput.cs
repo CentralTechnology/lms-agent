@@ -6,8 +6,8 @@
 
     public class GroupPrincipalOutput : EntityDto<Guid>
     {
-        public string Name { get; set; }
         public List<Guid> Members { get; set; }
+        public string Name { get; set; }
         public DateTime WhenCreated { get; set; }
     }
 }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Users.Managers
+﻿namespace LMS.Users.Managers
 {
+    using System;
     using Abp.Configuration;
     using Abp.Domain.Services;
     using Abp.Timing;
@@ -19,6 +14,7 @@ namespace LMS.Users.Managers
     public class ManagedSupportManager : DomainService, IManagedSupportManager
     {
         private readonly IPortalManager _portalManager;
+
         public ManagedSupportManager(IPortalManager portalManager)
         {
             _portalManager = portalManager;
@@ -26,7 +22,7 @@ namespace LMS.Users.Managers
 
         public ManagedSupport Get()
         {
-            Guid deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
+            var deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
 
             int idOfManagedSupport = _portalManager.GetManagedSupportId(deviceId);
 
@@ -40,7 +36,7 @@ namespace LMS.Users.Managers
 
         public ManagedSupport Add()
         {
-            Guid deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
+            var deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
 
             int uploadId = _portalManager.GenerateUploadId();
 
@@ -58,7 +54,7 @@ namespace LMS.Users.Managers
             _portalManager.AddManagedSupport(ms);
             _portalManager.SaveChanges();
 
-            var managedSupport = Get();
+            ManagedSupport managedSupport = Get();
 
             Logger.Debug($"Created new Managed Support {managedSupport.Id}");
             return managedSupport;
@@ -75,8 +71,6 @@ namespace LMS.Users.Managers
 
             _portalManager.UpdateManagedSupport(input);
             _portalManager.SaveChanges();
-
-            Logger.Info("Successfully called in.");
         }
     }
 }

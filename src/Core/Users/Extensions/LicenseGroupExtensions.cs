@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Users.Extensions
+﻿namespace LMS.Users.Extensions
 {
     using Abp.Extensions;
     using Portal.LicenseMonitoringSystem.Users.Entities;

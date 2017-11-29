@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Users.Extensions
+﻿namespace LMS.Users.Extensions
 {
     using Abp.Extensions;
     using Portal.LicenseMonitoringSystem.Users.Entities;
@@ -17,7 +11,8 @@ namespace LMS.Users.Extensions
             if (!licenseUser.DisplayName.IsNullOrEmpty())
             {
                 userText = licenseUser.DisplayName;
-            }else if (!licenseUser.FirstName.IsNullOrEmpty() && !licenseUser.Surname.IsNullOrEmpty())
+            }
+            else if (!licenseUser.FirstName.IsNullOrEmpty() && !licenseUser.Surname.IsNullOrEmpty())
             {
                 userText = $"{licenseUser.FirstName} {licenseUser.Surname}";
             }

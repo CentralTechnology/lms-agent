@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
     using Abp.Domain.Services;
     using Actions;
     using Portal.LicenseMonitoringSystem.Users.Entities;
@@ -24,8 +25,10 @@
         int GenerateUploadId();
         int GetAccountIdByDeviceId(Guid deviceId);
         int GetManagedSupportId(Guid deviceId);
-        List<LicenseGroupSummary> ListAllActiveGroupIds();
-        List<LicenseUserSummary> ListAllActiveUserIds();
+        List<LicenseGroupSummary> ListAllGroupIds();
+        List<LicenseGroupSummary> ListAllGroupIds(Expression<Func<LicenseGroup,bool>> predicate);
+        List<LicenseUserSummary> ListAllUserIds(Expression<Func<LicenseUser, bool>> predicate);
+        List<LicenseUserSummary> ListAllUserIds();
         List<LicenseGroup> ListAllGroups();
         List<LicenseUser> ListAllUsers();
         LicenseGroup ListGroupById(Guid id);
@@ -33,9 +36,9 @@
         LicenseUser ListUserById(Guid id);
         Veeam ListVeeamById(Guid id);
         void SaveChanges(bool isBatch = false);
-        void UpdateGroup(LicenseGroup licenseGroup);
+        bool UpdateGroup(LicenseGroup licenseGroup);
         void UpdateManagedSupport(ManagedSupport managedSupport);
-        void UpdateUser(LicenseUser licenseUser);
+        bool UpdateUser(LicenseUser licenseUser);
         void UpdateVeeam(Veeam veeam);
     }
 }
