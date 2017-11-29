@@ -90,10 +90,15 @@
 
         public void AddGroup(LicenseGroup licenseGroup) => Container.AddToLicenseGroups(licenseGroup);
 
+        /// <summary>
+        /// Add License User to License Group. License Group should be attached to the container before calling this method.
+        /// </summary>
+        /// <param name="licenseUser"></param>
+        /// <param name="licenseGroup"></param>
         public void AddGroupToUser(LicenseUser licenseUser, LicenseGroup licenseGroup)
         {
+            Container.AttachTo("LicenseUsers", licenseUser);
             Container.AddLink(licenseUser, "Groups", licenseGroup);
-            Container.SaveChanges();
         }
 
         public void AddManagedSupport(ManagedSupport managedSupport) => Container.AddToManagedSupports(managedSupport);
@@ -133,8 +138,8 @@
 
         public void DeleteGroupFromUser(LicenseUser licenseUser, LicenseGroup licenseGroup)
         {
+            Container.AttachTo("LicenseUsers", licenseUser);
             Container.DeleteLink(licenseUser, "Groups", licenseGroup);
-            Container.SaveChanges();
         }
 
         public void DeleteUser(Guid id)

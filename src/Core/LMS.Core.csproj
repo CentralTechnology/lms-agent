@@ -236,6 +236,7 @@
     <Compile Include="Users\Compare\LicenseUserComparer.cs" />
     <Compile Include="Users\Dto\LicenseGroupDto.cs" />
     <Compile Include="Users\Dto\LicenseUserDto.cs" />
+    <Compile Include="Users\Dto\LicenseGroupUsersDto.cs" />
     <Compile Include="Users\Enums\Enums.cs" />
     <Compile Include="Users\Extensions\GroupPrincipalExtensions.cs" />
     <Compile Include="Users\Extensions\LicenseGroupExtensions.cs" />
@@ -245,8 +246,10 @@
     <Compile Include="Users\Managers\IActiveDirectoryManager.cs" />
     <Compile Include="Users\Managers\IGroupManager.cs" />
     <Compile Include="Users\Managers\IManagedSupportManager.cs" />
+    <Compile Include="Users\Managers\IUserGroupManager.cs" />
     <Compile Include="Users\Managers\IUserManager.cs" />
     <Compile Include="Users\Managers\ManagedSupportManager.cs" />
+    <Compile Include="Users\Managers\UserGroupManager.cs" />
     <Compile Include="Users\Managers\UserManager.cs" />
     <Compile Include="Users\Models\LicenseGroupSummary.cs" />
     <Compile Include="Users\Models\LicenseUserGroupSummary.cs" />

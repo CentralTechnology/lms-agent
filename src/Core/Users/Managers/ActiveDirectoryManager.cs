@@ -165,72 +165,93 @@
 
                                 Logger.Debug($"Retrieving {user.GetDisplayText()} from Active Directory.");
 
-                                bool isAccountDisabled;
-                                try
+                                var localUser = GetUser(principalId);
+                                if (localUser == null)
                                 {
-                                    var dirEntry = user.GetUnderlyingObject() as DirectoryEntry;
-                                    isAccountDisabled = !dirEntry.IsAccountDisabled();
-                                }
-                                catch (Exception ex)
-                                {
-                                    isAccountDisabled = true;
-                                    Logger.Error($"Failed to determine whether {user.GetDisplayText()} is enabled or not. Therefore we have to assumed they are enabled.");
-                                    Logger.Debug("Exception getting DirectoryEntry status", ex);
+                                    continue;
                                 }
 
-                                DateTimeOffset? lastLogon = null;
-                                if (user.LastLogon != null)
-                                {
-                                    bool validLastLogon = DateTimeOffset.TryParse(user.LastLogon.ToString(), out DateTimeOffset lastLogonValue);
-                                    if (validLastLogon)
-                                    {
-                                        lastLogon = lastLogonValue;
-                                    }
-                                    else
-                                    {
-                                        Logger.Debug($"Failed to determine the last logon date for {user.GetDisplayText()}. Therefore we have to assume they have never logged on.");
-                                    }
-                                }
-
-                                DateTimeOffset whenCreated;
-                                try
-                                {
-                                    var getWhenCreated = user.GetProperty("whenCreated");
-                                    if (getWhenCreated.IsNullOrEmpty())
-                                    {
-                                        throw new NullReferenceException($"WhenCreated property for {user.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
-                                    }
-
-                                    whenCreated = DateTimeOffset.Parse(getWhenCreated);
-                                }
-                                catch (NullReferenceException nullRef)
-                                {
-                                    Logger.Error(nullRef.Message);
-                                    throw;
-                                }
-                                catch (Exception ex)
-                                {
-                                    Logger.Error($"Failed to determine the when created date for {user.GetDisplayText()}. Task cannot continue.");
-                                    Logger.Debug("Exception getting WhenCreated UserPrincipal property.", ex);
-                                    throw;
-                                }
-
-                                yield return new LicenseUserDto
-                                {
-                                    DisplayName = user.DisplayName,
-                                    Email = user.EmailAddress,
-                                    Enabled = isAccountDisabled,
-                                    FirstName = user.GivenName,
-                                    Id = principalId,
-                                    LastLogon = lastLogon,
-                                    SamAccountName = user.SamAccountName,
-                                    Surname = user.Surname,
-                                    WhenCreated = whenCreated
-                                };
+                                yield return localUser;
                             }
                         }
                     }
                 }
+            }
+        }
+
+        /// <inheritdoc />
+        public LicenseUserDto GetUser(Guid userId)
+        {
+            using (var principalContext = new PrincipalContext(ContextType.Domain))
+            {
+                var user = UserPrincipal.FindByIdentity(principalContext, IdentityType.Guid, userId.ToString());
+                if (user == null)
+                {
+                    throw new NullReferenceException($"Cannot find User Principal with Guid {userId}");
+                }
+
+                bool isAccountDisabled;
+                try
+                {
+                    var dirEntry = user.GetUnderlyingObject() as DirectoryEntry;
+                    isAccountDisabled = !dirEntry.IsAccountDisabled();
+                }
+                catch (Exception ex)
+                {
+                    isAccountDisabled = true;
+                    Logger.Error($"Failed to determine whether {user.GetDisplayText()} is enabled or not. Therefore we have to assumed they are enabled.");
+                    Logger.Debug("Exception getting DirectoryEntry status", ex);
+                }
+
+                DateTimeOffset? lastLogon = null;
+                if (user.LastLogon != null)
+                {
+                    bool validLastLogon = DateTimeOffset.TryParse(user.LastLogon.ToString(), out DateTimeOffset lastLogonValue);
+                    if (validLastLogon)
+                    {
+                        lastLogon = lastLogonValue;
+                    }
+                    else
+                    {
+                        Logger.Debug($"Failed to determine the last logon date for {user.GetDisplayText()}. Therefore we have to assume they have never logged on.");
+                    }
+                }
+
+                DateTimeOffset whenCreated;
+                try
+                {
+                    var getWhenCreated = user.GetProperty("whenCreated");
+                    if (getWhenCreated.IsNullOrEmpty())
+                    {
+                        throw new NullReferenceException($"WhenCreated property for {user.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
+                    }
+
+                    whenCreated = DateTimeOffset.Parse(getWhenCreated);
+                }
+                catch (NullReferenceException nullRef)
+                {
+                    Logger.Error(nullRef.Message);
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Failed to determine the when created date for {user.GetDisplayText()}. Task cannot continue.");
+                    Logger.Debug("Exception getting WhenCreated UserPrincipal property.", ex);
+                    throw;
+                }
+
+                return new LicenseUserDto
+                {
+                    DisplayName = user.DisplayName,
+                    Email = user.EmailAddress,
+                    Enabled = isAccountDisabled,
+                    FirstName = user.GivenName,
+                    Id = userId,
+                    LastLogon = lastLogon,
+                    SamAccountName = user.SamAccountName,
+                    Surname = user.Surname,
+                    WhenCreated = whenCreated
+                };
             }
         }
 
@@ -264,7 +285,7 @@
 
                                 try
                                 {
-                                    group = (GroupPrincipal) principal;
+                                    group = (GroupPrincipal)principal;
                                 }
                                 catch (Exception ex)
                                 {
@@ -275,54 +296,126 @@
 
                                 Logger.Debug($"Retrieving {group.GetDisplayText()} from Active Directory.");
 
-                                if (group.IsSecurityGroup == null)
+                                var localGroup = GetGroup(principalId);
+                                if (localGroup == null)
                                 {
-                                    Logger.Warn($"Cannot tell if {group.GetDisplayText()} is a security group or not.");
                                     continue;
                                 }
 
-
-                                bool isValidSecurityGroup = bool.TryParse(group.IsSecurityGroup.ToString(), out bool isSecurityGroup);
-                                if (!isValidSecurityGroup)
-                                {
-                                    Logger.Warn($"Cannot process {group.GetDisplayText()} because the IsSecurityGroup value is not valid");
-                                    continue;
-                                }
-
-
-                                DateTimeOffset whenCreated;
-                                try
-                                {
-                                    var getWhenCreated = group.GetProperty("whenCreated");
-                                    if (getWhenCreated.IsNullOrEmpty())
-                                    {
-                                        throw new NullReferenceException($"WhenCreated property for {group.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
-                                    }
-
-                                    whenCreated = DateTimeOffset.Parse(getWhenCreated);
-                                }
-                                catch (NullReferenceException nullRef)
-                                {
-                                    Logger.Error(nullRef.Message);
-                                    throw;
-                                }
-                                catch (Exception ex)
-                                {
-                                    Logger.Error($"Failed to determine the when created date for {group.GetDisplayText()}. Task cannot continue.");
-                                    Logger.Debug("Exception getting WhenCreated GroupPrincipal property.", ex);
-                                    throw;
-                                }
-
-                                yield return new LicenseGroupDto
-                                {
-                                    Id = principalId,
-                                    Name = group.Name,
-                                    WhenCreated = whenCreated
-                                };
+                                yield return localGroup;
                             }
                         }
                     }
                 }
+            }
+        }
+
+        /// <inheritdoc />
+        public LicenseGroupDto GetGroup(Guid groupId)
+        {
+            using (var principalContext = new PrincipalContext(ContextType.Domain))
+            {
+                var group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, groupId.ToString());
+                if (group == null)
+                {
+                    throw new NullReferenceException($"Cannot find Group Principal with Guid {groupId}");
+                }
+
+                if (group.IsSecurityGroup == null)
+                {
+                    Logger.Warn($"Cannot tell if {group.GetDisplayText()} is a security group or not.");
+                    return null;
+                }
+
+
+                bool isValidSecurityGroup = bool.TryParse(group.IsSecurityGroup.ToString(), out bool isSecurityGroup);
+                if (!isValidSecurityGroup)
+                {
+                    Logger.Warn($"Cannot process {group.GetDisplayText()} because the IsSecurityGroup value is not valid");
+                    return null;
+                }
+
+                DateTimeOffset whenCreated;
+                try
+                {
+                    var getWhenCreated = group.GetProperty("whenCreated");
+                    if (getWhenCreated.IsNullOrEmpty())
+                    {
+                        throw new NullReferenceException($"WhenCreated property for {group.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
+                    }
+
+                    whenCreated = DateTimeOffset.Parse(getWhenCreated);
+                }
+                catch (NullReferenceException nullRef)
+                {
+                    Logger.Error(nullRef.Message);
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Failed to determine the when created date for {group.GetDisplayText()}. Task cannot continue.");
+                    Logger.Debug("Exception getting WhenCreated GroupPrincipal property.", ex);
+                    throw;
+                }
+
+                return new LicenseGroupDto
+                {
+                    Id = groupId,
+                    Name = group.Name,
+                    WhenCreated = whenCreated
+                };
+            }
+        }
+
+        /// <inheritdoc />
+        public LicenseGroupUsersDto GetGroupMembers(Guid groupId)
+        {
+            using (var principalContext = new PrincipalContext(ContextType.Domain))
+            {
+                var group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, groupId.ToString());
+                if (group == null)
+                {
+                    throw new NullReferenceException($"Cannot find Group Principal with Guid {groupId}");
+                }
+
+                var licenseGroupUsers = new LicenseGroupUsersDto(groupId, group.Name);
+
+                var members = group.GetMembers();
+                if (!members.Any())
+                {
+                    return licenseGroupUsers;
+                }
+
+                foreach (var principal in members)
+                {
+                    if (principal.Guid == null)
+                    {
+                        Logger.Debug($"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
+                        continue;
+                    }
+
+                    bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
+                    if (!validId)
+                    {
+                        Logger.Debug($"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
+                        continue;
+                    }
+
+                    if (!(principal is UserPrincipal user))
+                    {
+                        continue;
+                    }
+
+                    var localUser = GetUser(principalId);
+                    if (localUser == null)
+                    {
+                        continue;
+                    }
+
+                    licenseGroupUsers.Users.Add(localUser);
+                }
+
+                return licenseGroupUsers;
             }
         }
     }
