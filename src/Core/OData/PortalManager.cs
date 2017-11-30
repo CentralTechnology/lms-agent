@@ -229,6 +229,15 @@
 
         public List<LicenseUser> ListAllUsers() => DefaultPolicy.Execute(() => Container.LicenseUsers.ToList());
 
+        public List<LicenseUserSummary> ListAllUserIdsByGroupId(Guid groupId)
+        {
+            return DefaultPolicy.Execute(() =>
+                    Container.LicenseUsers
+                        .Where(u => u.Groups.Any(g => g.Id == groupId))
+                        .Select(u => new LicenseUserSummary { DisplayName = u.DisplayName, Id = u.Id }))
+                .ToList();
+        }
+
         public List<LicenseUser> ListAllUsersByGroupId(Guid groupId) => DefaultPolicy.Execute(() => Container.LicenseUsers.Where(u => u.Groups.Any(g => g.Id == groupId)).ToList());
 
         public LicenseGroup ListGroupById(Guid id) => DefaultPolicy.Execute(() => Container.LicenseGroups.Where(g => g.Id == id).SingleOrDefault());

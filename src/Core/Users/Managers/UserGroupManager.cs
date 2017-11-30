@@ -1,11 +1,13 @@
 ﻿namespace LMS.Users.Managers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Abp.Domain.Services;
     using Compare;
     using Dto;
     using Extensions;
+    using Models;
     using OData;
     using Portal.LicenseMonitoringSystem.Users.Entities;
 
@@ -23,17 +25,25 @@
             LicenseGroup group = _portalManager.ListGroupById(groupMembers.Id);
             _portalManager.Container.AttachTo("LicenseGroups", group);
 
-            List<LicenseUser> remoteUsers = _portalManager.ListAllUsersByGroupId(groupMembers.Id);
+            var remoteUsers = _portalManager.ListAllUserIdsByGroupId(groupMembers.Id).ToDictionary(u => u.Id);
 
-            IEnumerable<LicenseUser> newMembers = ObjectMapper.Map<List<LicenseUser>>(groupMembers.Users).Except(remoteUsers, new LicenseUserComparer());
+            var members = ObjectMapper.Map<List<LicenseUser>>(groupMembers.Users);
 
-            foreach (LicenseUser newMember in newMembers)
+            foreach (var user in members)
             {
-                _portalManager.AddGroupToUser(newMember, group);
-                _portalManager.SaveChanges();
+                bool userIsMember = remoteUsers.ContainsKey(user.Id);
+                if (userIsMember)
+                {
+                    Logger.Info($"= {user.Format(Logger.IsDebugEnabled)}");
+                }
+                else
+                {
+                    _portalManager.AddGroupToUser(user, group);
+                    _portalManager.SaveChanges();
 
-                Logger.Info($"+ {newMember.Format(Logger.IsDebugEnabled)} has been added to {group.Format(Logger.IsDebugEnabled)}");
-                _portalManager.Detach(newMember);
+                    Logger.Info($"+ {user.Format(Logger.IsDebugEnabled)}");
+                    _portalManager.Detach(user);
+                }
             }
 
             // need to detach the group 
@@ -54,7 +64,7 @@
                 _portalManager.DeleteGroupFromUser(staleMember, group);
                 _portalManager.SaveChanges();
 
-                Logger.Info($"+ {staleMember.Format(Logger.IsDebugEnabled)} has been removed from {group.Format(Logger.IsDebugEnabled)}");
+                Logger.Info($"- {staleMember.Format(Logger.IsDebugEnabled)}");
                 _portalManager.Detach(staleMember);
             }
 

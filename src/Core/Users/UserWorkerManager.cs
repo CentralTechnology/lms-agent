@@ -77,6 +77,7 @@
             IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetGroups();
             foreach (LicenseGroupDto group in groups)
             {
+                Logger.Info($"** {group.Name} **");
                 LicenseGroupUsersDto localMembers = _activeDirectoryManager.GetGroupMembers(group.Id);
 
                 _userGroupManager.AddUsersToGroup(localMembers);

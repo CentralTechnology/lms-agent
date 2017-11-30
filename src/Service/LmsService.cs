@@ -3,6 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     using System.Diagnostics;
+    using System.Threading;
     using Abp;
     using Abp.Configuration;
     using Abp.Dependency;
@@ -43,6 +44,7 @@
 
                     if (Environment.UserInteractive)
                     {
+                        Thread.Sleep(4000);
                         Console.Clear();
                         new ClientProgram(Guid.NewGuid()).Run();
                     }

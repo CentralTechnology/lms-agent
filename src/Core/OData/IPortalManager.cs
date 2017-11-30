@@ -11,6 +11,7 @@
 
     public interface IPortalManager : IDomainService
     {
+        List<LicenseUserSummary> ListAllUserIdsByGroupId(Guid groupId);
         List<LicenseUser> ListAllUsersByGroupId(Guid groupId);
         Container Container { get; set; }
         void AddGroup(LicenseGroup licenseGroup);
