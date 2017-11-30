@@ -1,9 +1,11 @@
-﻿namespace Service.Workers
+﻿namespace LMS.Workers
 {
     using System;
-    using Core.Common.Extensions;
-    using Core.Users;
+    using Abp.Dependency;
+    using Common.Extensions;
     using ServiceTimer;
+    using Startup;
+    using Users;
 
     internal class UserMonitorWorker : TimerWorker
     {
@@ -31,14 +33,17 @@
             RavenClient.AddTag("operation", "users");
 
             Logger.Info("User monitoring begin...");
-            if (!StartupManager.ValidateCredentials())
+            using (var startupManager = IocManager.Instance.ResolveAsDisposable<IStartupManager>())
             {
-                return;
+                if (!startupManager.Object.ValidateCredentials())
+                {
+                    return;
+                }
             }
 
-            using (var orchestrator = new UserOrchestrator())
+            using (var userWorkerManager = IocManager.Instance.ResolveAsDisposable<IUserWorkerManager>())
             {
-                orchestrator.Start();
+                userWorkerManager.Object.Start();
             }
 
             Console.WriteLine(Environment.NewLine);

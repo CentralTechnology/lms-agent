@@ -1,4 +1,4 @@
-﻿namespace Core.Users.Compare
+﻿namespace LMS.Users.Compare
 {
     using System.Collections.Generic;
     using KellermanSoftware.CompareNetObjects;
@@ -9,8 +9,8 @@
         {
             Config = new ComparisonConfig
             {
-                MembersToIgnore = new List<string> {"Groups", "ManagedSupportId", "IsDeleted", "IsExcluded", "IsActive"},
-                MaxMillisecondsDateDifference = 1000
+                MaxMillisecondsDateDifference = 1000,
+                MembersToInclude = new List<string> {"DisplayName", "Email", "Enabled", "FirstName", "LastLoginDate", "SamAccountName", "Surname", "WhenCreated"}
             };
         }
     }

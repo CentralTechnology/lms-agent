@@ -1,23 +1,25 @@
-﻿namespace Service.Menu.Pages.Options
+﻿namespace LMS.Menu.Pages.Options
 {
     using System;
-    using Core.Administration;
-    using Core.Common.Extensions;
+    using Abp.Configuration;
+    using Abp.Dependency;
+    using Core.Configuration;
     using EasyConsole;
 
     class GeneralPage : MenuPage
     {
-        private static readonly SettingManager SettingManager = new SettingManager();
-
         public GeneralPage(Program program)
             : base("General", program)
         {
+            var settingManager = IocManager.Instance.Resolve<ISettingManager>();
+
             Menu.Add("Set Account number", () =>
             {
                 int newAcct = Input.ReadInt("Enter Account: ", int.MinValue, int.MaxValue);
 
-                SettingManager.ChangeSetting(SettingNames.AutotaskAccountId, newAcct.ToString());
+                settingManager.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, newAcct.ToString());
 
+                IocManager.Instance.Release(settingManager);
                 ActionComplete<GeneralPage>();
             });
 
@@ -25,8 +27,9 @@
             {
                 Guid newDevice = Input.ReadGuid("Enter Device: ");
 
-                SettingManager.ChangeSetting(SettingNames.CentrastageDeviceId, newDevice.ToString());
+                settingManager.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, newDevice.ToString());
 
+                IocManager.Instance.Release(settingManager);
                 ActionComplete<GeneralPage>();
             });
         }

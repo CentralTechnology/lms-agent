@@ -1,25 +1,24 @@
-﻿namespace Core.Veeam.Models
+﻿namespace LMS.Veeam.Models
 {
     using System;
     using System.Globalization;
+    using Abp.Dependency;
     using Abp.Extensions;
+    using Abp.Logging;
     using Enums;
     using Managers;
-    using NLog;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
     public class VeeamLicense
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         public static LicenseEditions Edition
         {
             get
             {
-                using (var licenseManager = new LicenseManager())
+                using (var licenseManager = IocManager.Instance.ResolveAsDisposable<ILicenseManager>())
                 {
-                    return ConvertLicEditionToAppEdition(licenseManager.GetPropertyNoThrow("Edition"));
-                }                
+                    return ConvertLicEditionToAppEdition(licenseManager.Object.GetPropertyNoThrow("Edition"));
+                }             
             }
         }
 
@@ -33,8 +32,8 @@
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex.Message);
-                    Logger.Debug(ex);
+                    LogHelper.Logger.Error(ex.Message);
+                    LogHelper.LogException(ex);
                     return DateTime.MinValue;
                 }
             }
@@ -44,9 +43,9 @@
         {
             get
             {
-                using (var licenseManager = new LicenseManager())
+                using (var licenseManager = IocManager.Instance.ResolveAsDisposable<ILicenseManager>())
                 {
-                    return licenseManager.GetPropertyNoThrow("Expiration date");
+                    return licenseManager.Object.GetPropertyNoThrow("Expiration date");
                 }
             }
         }
@@ -67,9 +66,9 @@
         {
             get
             {
-                using (var licenseManager = new LicenseManager())
+                using (var licenseManager = IocManager.Instance.ResolveAsDisposable<ILicenseManager>())
                 {
-                    return licenseManager.GetPropertyNoThrow("License type");
+                    return licenseManager.Object.GetPropertyNoThrow("License type");
                 }
             }
         }
@@ -78,9 +77,9 @@
         {
             get
             {
-                using (var licenseManager = new LicenseManager())
+                using (var licenseManager = IocManager.Instance.ResolveAsDisposable<ILicenseManager>())
                 {
-                    return licenseManager.GetPropertyNoThrow("Support ID");
+                    return licenseManager.Object.GetPropertyNoThrow("Support ID");
                 }
             }
         }

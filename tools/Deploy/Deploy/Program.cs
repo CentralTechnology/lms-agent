@@ -10,30 +10,23 @@ namespace Deploy
     using System.Net;
     using System.Net.Http;
     using System.Reflection;
-    using System.Resources;
-    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Win32;
     using Nito.AsyncEx;
     using Octokit;
-    using Octokit.Internal;
     using Version = SemVer.Version;
 
     class Program
     {
-        static readonly string LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
+        private const int MaxRetryAttempts = 3;
+        private const string Name = "lms-agent";
 
-        static readonly string owner = "CentralTechnology";
-        static readonly string name = "lms-agent";
-        static readonly string SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
+        private const string Owner = "CentralTechnology";
 
-        private static readonly int MaxRetryAttempts = 3;
-        private static readonly TimeSpan PauseBetweenFailures = TimeSpan.FromSeconds(5);
-
-        static InMemoryCredentialStore _credentials;
         private static GitHubClient _client;
-
-        static readonly ResourceManager ResourceManager = new ResourceManager("Deploy.Integration", Assembly.GetExecutingAssembly());
+        private static readonly string LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
+        private static readonly TimeSpan PauseBetweenFailures = TimeSpan.FromSeconds(5);
+        private static readonly string SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
 
         private static readonly RegistryKey[] UninstallKeys =
         {
@@ -50,7 +43,7 @@ namespace Deploy
         static void Deploy()
         {
             Release release = null;
-            RetryOnException(MaxRetryAttempts, PauseBetweenFailures, () => { release = AsyncHelper.RunSync(() => _client.Repository.Release.GetLatest(owner, name)); });
+            RetryOnException(MaxRetryAttempts, PauseBetweenFailures, () => { release = AsyncHelper.RunSync(() => _client.Repository.Release.GetLatest(Owner, Name)); });
 
             if (release == null)
             {
@@ -124,7 +117,7 @@ namespace Deploy
             int assetId = release.Assets.Where(x => x.Name == "LMS.Setup.exe").Select(x => x.Id).SingleOrDefault();
 
             ReleaseAsset asset = null;
-            RetryOnException(MaxRetryAttempts, PauseBetweenFailures, () => { asset = AsyncHelper.RunSync(() => _client.Repository.Release.GetAsset(owner, name, assetId)); });
+            RetryOnException(MaxRetryAttempts, PauseBetweenFailures, () => { asset = AsyncHelper.RunSync(() => _client.Repository.Release.GetAsset(Owner, Name, assetId)); });
 
             if (asset == null)
             {
@@ -181,7 +174,7 @@ namespace Deploy
             Success("Installation complete");
         }
 
-        static void Main(string[] args)
+        private static void Main()
         {
             Information("Starting deployment....");
 
@@ -189,20 +182,7 @@ namespace Deploy
 
             ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => true;
 
-            string username = Encoding.UTF8.GetString(Convert.FromBase64String(ResourceManager.GetString("GITHUB_USERNAME") ?? throw new InvalidOperationException()));
-            if (username == null)
-            {
-                throw new NullReferenceException("Github username is not set");
-            }
-
-            string password = Encoding.UTF8.GetString(Convert.FromBase64String(ResourceManager.GetString("GITHUB_PASSWORD") ?? throw new InvalidOperationException()));
-            if (password == null)
-            {
-                throw new NullReferenceException("Github username is not set");
-            }
-
-            _credentials = new InMemoryCredentialStore(new Credentials(username, password));
-            _client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"), _credentials);
+            _client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"));
 
             try
             {

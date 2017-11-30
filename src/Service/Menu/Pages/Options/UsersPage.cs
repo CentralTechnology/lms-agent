@@ -1,33 +1,36 @@
-﻿namespace Service.Menu.Pages.Options
+﻿namespace LMS.Menu.Pages.Options
 {
-    using System;
-    using Core.Administration;
-    using Core.Common.Extensions;
+    using Abp.Configuration;
+    using Abp.Dependency;
+    using Core.Configuration;
     using EasyConsole;
 
     class UsersPage : MenuPage
     {
-        private static readonly SettingManager SettingManager = new SettingManager();
+        private readonly ISettingManager _settingManager;
 
         public UsersPage(Program program)
             : base("Users", program)
         {
+            _settingManager = IocManager.Instance.Resolve<ISettingManager>();
             
             Menu.Add("Manual Override", () =>
             {
-                var enabled = SettingManager.GetSettingValue<bool>(SettingNames.UsersOverride);
-                SettingManager.ChangeSetting(SettingNames.UsersOverride, (!enabled).ToString());
+                var enabled = _settingManager.GetSettingValue<bool>(AppSettingNames.UsersOverride);
+                _settingManager.ChangeSettingForApplication(AppSettingNames.UsersOverride, (!enabled).ToString());
 
                 Output.WriteLine(!enabled ? "Enabled" : "Disabled");
+                IocManager.Instance.Release(_settingManager);
                 ActionComplete<UsersPage>();
             });
 
             Menu.Add("PDC Override: ", () =>
             {
-                bool pdcOverride = SettingManager.GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
-                SettingManager.ChangeSetting(SettingNames.PrimaryDomainControllerOverride, (!pdcOverride).ToString());
+                bool pdcOverride = _settingManager.GetSettingValue<bool>(AppSettingNames.PrimaryDomainControllerOverride);
+                _settingManager.ChangeSettingForApplication(AppSettingNames.PrimaryDomainControllerOverride, (!pdcOverride).ToString());
 
                 Output.WriteLine(!pdcOverride ? "Enabled" : "Disabled");
+                IocManager.Instance.Release(_settingManager);
                 ActionComplete<UsersPage>();
             });
 

@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam.Managers
+﻿namespace LMS.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -8,18 +8,25 @@
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Sockets;
     using Abp;
-    using Administration;
+    using Abp.Configuration;
+    using Abp.Domain.Services;
     using Backup.Common;
-    using Common.Constants;
     using Common.Extensions;
+    using Common.Helpers;
+    using Core.Common.Constants;
+    using Core.Configuration;
     using DBManager;
+    using Enums;
+    using Mappings;
     using Microsoft.Win32;
-    using NLog;
+    using Models;
+    using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
-    public class VeeamManager
+    public class VeeamManager : DomainService, IVeeamManager
     {
         private static readonly IPerVmStoredProceduresMapping PerVmTrialQueriesMapping = new CPerVmTrialStoredProceduresMapping();
         private static readonly IPerVmStoredProceduresMapping PerVmQueriesMapping = new CPerVmStoredProceduresMapping();
@@ -27,12 +34,13 @@
         private static readonly ISqlFieldDescriptor<int> PlatformField = SqlFieldDescriptor.Int("platform");
         private static readonly ISqlFieldDescriptor<DateTime?> FirstStartTimeField = SqlFieldDescriptor.DateTimeNullable("first_start_time");
         private static readonly ISqlFieldDescriptor<DateTime?> LastStartTimeField = SqlFieldDescriptor.DateTimeNullable("last_start_time");
-        protected readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        protected readonly SettingManager SettingManager = new SettingManager();
+
+        public const string VeeamFilePath = @"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe";
+        public const string Veeam90FilePath = @"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe";
 
         private VmLicensingInfo FromReader(IDataReader reader)
         {
-            return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform) PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
+            return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform)PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
         }
 
         public List<VmLicensingInfo> GetAllVmInfos(EPlatform platform)
@@ -40,7 +48,7 @@
             try
             {
                 var vmLicensingInfoList = new List<VmLicensingInfo>();
-                using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
+                using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
                 {
                     while (dataReader.Read())
                     {
@@ -53,7 +61,7 @@
             catch (Win32Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug(ex);
+                Logger.Debug("Exception",ex);
                 return new List<VmLicensingInfo>();
             }
         }
@@ -101,14 +109,14 @@
                 {
                     if (dataReader.Read())
                     {
-                        return (int) dataReader["vm_count"];
+                        return (int)dataReader["vm_count"];
                     }
                 }
             }
             catch (Win32Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug(ex);
+                Logger.Debug(ex.Message, ex);
                 return 0;
             }
 
@@ -121,18 +129,18 @@
             {
                 var localDbAccessor = new LocalDbAccessor(GetConnectionString());
 
-                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmsCount", DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
+                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmsCount", DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
                 {
                     if (dataReader.Read())
                     {
-                        return (int) dataReader["protected_vms_count"];
+                        return (int)dataReader["protected_vms_count"];
                     }
                 }
             }
             catch (Win32Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug(ex);
+                Logger.Debug(ex.Message, ex);
                 return 0;
             }
 
@@ -144,7 +152,7 @@
             try
             {
                 var localDbAccessor = new LocalDbAccessor(GetConnectionString());
-                using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
+                using (DataTableReader dataReader = localDbAccessor.GetDataTable(GetMapping(useTrialStrategy).GetVmsNumbers, DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
                 {
                     dataReader.Read();
                     return new VmsCounterInfo(dataReader.GetValue<int>("vm_active"), dataReader.GetValue<int>("vm_trial"));
@@ -153,26 +161,26 @@
             catch (Win32Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug(ex);
+                Logger.Debug(ex.Message, ex);
                 return new VmsCounterInfo(0, 0);
             }
         }
 
-        public bool VeeamInstalled()
+        public bool IsInstalled()
         {
             try
             {
-                return CommonExtensions.IsApplictionInstalled(Constants.VeeamApplicationName);
+                return CommonHelpers.IsApplictionInstalled(Constants.VeeamApplicationName);
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug(ex);
+                Logger.Debug(ex.Message, ex);
                 return false;
             }
         }
 
-        public bool VeeamOnline()
+        public bool IsOnline()
         {
             IPAddress localhost = IPAddress.Parse("127.0.0.1");
 
@@ -190,37 +198,100 @@
             }
         }
 
-        public string VeeamVersion()
+        public string GetVersion()
         {
-            FileVersionInfo veeamFile = null;
+            if (File.Exists(VeeamFilePath))
+            {
+                FileVersionInfo version = FileVersionInfo.GetVersionInfo(VeeamFilePath);
+                SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, version.FileVersion);
+                return version.FileVersion;
+            }
 
+            if (File.Exists(Veeam90FilePath))
+            {
+                FileVersionInfo version = FileVersionInfo.GetVersionInfo(Veeam90FilePath);
+                SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, version.FileVersion);
+                return version.FileVersion;
+            }
+
+            SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, string.Empty);
+            return null;
+        }
+
+
+        public Veeam GetLicensingInformation(Veeam veeam)
+        {
             try
             {
-                veeamFile = FileVersionInfo.GetVersionInfo(@"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe");
+                veeam.LicenseType = VeeamLicense.TypeEx;
             }
-            catch (FileNotFoundException ex)
+            catch (Exception ex)
             {
-                Logger.Debug(ex);
+                Logger.Error("There was an error while getting the license information from the registry. We'll therefore assume its an evaluation license.");
+                Logger.Debug(ex.Message, ex);
+                veeam.LicenseType = LicenseTypeEx.Evaluation;
             }
 
-            if (veeamFile == null)
+            veeam.ProgramVersion = GetVersion();
+
+            Version programVersion = Version.Parse(veeam.ProgramVersion);
+
+            var virtualMachines = GetVirtualMachineCount(programVersion, veeam.LicenseType);
+            veeam.vSphere = virtualMachines.vsphere;
+            veeam.HyperV = virtualMachines.hyperv;
+
+            veeam.ClientVersion = SettingManagerHelper.ClientVersion;
+            veeam.Edition = VeeamLicense.Edition;
+            veeam.ExpirationDate = VeeamLicense.ExpirationDate;
+            veeam.Id = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
+            veeam.SupportId = VeeamLicense.SupportId;
+            veeam.TenantId = SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
+
+            return veeam;
+        }
+        protected (int vsphere, int hyperv) GetVirtualMachineCount(Version programVersion, LicenseTypeEx licenseType)
+        {
+            if (programVersion.Major == 9 && programVersion.Minor == 5)
             {
-                try
+                if (programVersion.Revision == 1038)
                 {
-                    // file path for veeam 9.0
-                    veeamFile = FileVersionInfo.GetVersionInfo(@"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe");
+                    return GetVirtualMachineCount9501038();
                 }
-                catch (FileNotFoundException ex)
-                {
-                    Logger.Error("Unable to find the Veeam.Backup.Service executable. Unable to determine the correct program version.");
-                    Logger.Debug(ex);
-                    SettingManager.ChangeSetting(SettingNames.VeeamVersion, string.Empty);
-                    return null;
-                }
+
+                return GetVirtualMachineCount95(licenseType);
             }
 
-            SettingManager.ChangeSetting(SettingNames.VeeamVersion, veeamFile.FileVersion);
-            return veeamFile.FileVersion;
+            // default
+            return GetVirtualMachineCount90();
+        }
+
+        protected (int vsphere, int hyperv) GetVirtualMachineCount9501038()
+        {
+            int vsphere = GetProtectedVmsCount(EPlatform.EVmware);
+            int hyperv = GetProtectedVmsCount(EPlatform.EHyperV);
+
+            return (vsphere, hyperv);
+        }
+
+        protected (int vsphere, int hyperv) GetVirtualMachineCount95(LicenseTypeEx licenseType)
+        {
+            bool evaluation = licenseType == LicenseTypeEx.Evaluation;
+
+            VmsCounterInfo vSphereCounterInfo = GetVmsCounters(EPlatform.EVmware, evaluation);
+            VmsCounterInfo hypervCounterInfo = GetVmsCounters(EPlatform.EHyperV, evaluation);
+
+            int vsphere = evaluation ? vSphereCounterInfo.TrialVmsCount : vSphereCounterInfo.NonTrialVmsCount;
+            int hyperv = evaluation ? hypervCounterInfo.TrialVmsCount : hypervCounterInfo.NonTrialVmsCount;
+
+            return (vsphere, hyperv);
+        }
+
+        protected (int vsphere, int hyperv) GetVirtualMachineCount90()
+        {
+            int vsphere = GetAllVmInfos(EPlatform.EVmware).Count(item => item.State == EVmLicensingStatus.Managed);
+            int hyperv = GetAllVmInfos(EPlatform.EHyperV).Count(item => item.State == EVmLicensingStatus.Managed);
+
+            return (vsphere, hyperv);
         }
     }
 }

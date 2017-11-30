@@ -1,24 +1,33 @@
-﻿namespace Core.Startup
+﻿namespace LMS.Startup
 {
     using System;
-    using Administration;
-    using Common.Constants;
-    using Common.Extensions;
-    using Common.Helpers;
-    using DirectoryServices;
-    using NLog;
-    using SharpRaven;
+    using Abp.Configuration;
+    using Autotask;
+    using CentraStage;
+    using Common.Managers;
+    using Core.Configuration;
     using SharpRaven.Data;
-    using Veeam;
+    using Users.Managers;
     using Veeam.Managers;
 
-    public class StartupManager
+    public class StartupManager : LMSManagerBase, IStartupManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        protected OData.PortalClient PortalClient = new OData.PortalClient();
+        private readonly IActiveDirectoryManager _activeDirectoryManager;
+        private readonly IAutotaskManager _autotaskManager;
+        private readonly ICentraStageManager _centraStageManager;
+        private readonly IVeeamManager _veeamManager;
 
-        protected RavenClient RavenClient = Sentry.RavenClient.Instance;
-        protected SettingManager SettingManager = new SettingManager();
+        public StartupManager(
+            ICentraStageManager centraStageManager,
+            IAutotaskManager autotaskManager,
+            IActiveDirectoryManager activeDirectoryManager,
+            IVeeamManager veeamManager)
+        {
+            _centraStageManager = centraStageManager;
+            _autotaskManager = autotaskManager;
+            _activeDirectoryManager = activeDirectoryManager;
+            _veeamManager = veeamManager;
+        }
 
         public bool Init()
         {
@@ -40,7 +49,7 @@
             try
             {
                 bool monUsers = MonitorUsers();
-                SettingManager.ChangeSetting(SettingNames.MonitorUsers, monUsers.ToString());
+                SettingManager.ChangeSettingForApplication(AppSettingNames.MonitorUsers, monUsers.ToString());
                 Logger.Info(monUsers ? "Monitoring Users" : "Not Monitoring Users");
                 Console.WriteLine(Environment.NewLine);
             }
@@ -52,7 +61,7 @@
             try
             {
                 bool monVeeam = MonitorVeeam();
-                SettingManager.ChangeSetting(SettingNames.MonitorVeeam, monVeeam.ToString());
+                SettingManager.ChangeSettingForApplication(AppSettingNames.MonitorVeeam, monVeeam.ToString());
                 Logger.Info(monVeeam ? "Monitoring Veeam" : "Not Monitoring Veeam");
                 Console.WriteLine(Environment.NewLine);
             }
@@ -65,13 +74,13 @@
             return true;
         }
 
-        private bool MonitorUsers()
+        public bool MonitorUsers()
         {
             Logger.Info("Dermining whether to monitor users...");
-            var directoryServicesManager = new DirectoryServicesManager();
+
             try
             {
-                bool userOverride = SettingManager.GetSettingValue<bool>(SettingNames.UsersOverride);
+                bool userOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.UsersOverride);
                 if (userOverride)
                 {
                     Logger.Warn("User monitoring has been manually disabled.");
@@ -79,7 +88,7 @@
                 }
 
                 // check if a domain exists
-                bool domainExists = directoryServicesManager.DomainExist();
+                bool domainExists = _activeDirectoryManager.IsOnDomain();
                 if (!domainExists)
                 {
                     Logger.Warn("Check Domain: FAIL");
@@ -89,20 +98,20 @@
                 Logger.Info("Check Domain: OK");
 
                 // check if this is a primary domain controller
-                bool pdc = directoryServicesManager.PrimaryDomainController();
+                bool pdc = _activeDirectoryManager.IsPrimaryDomainController();
                 if (!pdc)
                 {
                     Logger.Warn("Check PDC: FAIL");
 
                     // check override is enabled
-                    bool pdcOverride = SettingManager.GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
+                    bool pdcOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.PrimaryDomainControllerOverride);
                     if (!pdcOverride)
                     {
                         Logger.Warn("Check PDC Override: FAIL");
                         return false;
                     }
 
-                    Logger.Warn("Check PDC Override: OK");
+                    Logger.Info("Check PDC Override: OK");
                 }
 
                 Logger.Info("Check PDC: OK");
@@ -110,29 +119,26 @@
             catch (Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug(ex);
+                Logger.Debug("Exception", ex);
                 return false;
             }
 
             return true;
         }
 
-        private bool MonitorVeeam()
+        public bool MonitorVeeam()
         {
             Logger.Info("Dermining whether to monitor veeam...");
             try
             {
-                bool veeamOverride = SettingManager.GetSettingValue<bool>(SettingNames.VeeamOverride);
+                bool veeamOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.VeeamOverride);
                 if (veeamOverride)
                 {
                     Logger.Warn("Veeam monitoring has been manually disabled.");
                     return false;
                 }
 
-                var veeamManager = new VeeamManager();
-
-                // check if veeam is installed
-                bool veeamInstalled = veeamManager.VeeamInstalled();
+                bool veeamInstalled = _veeamManager.IsInstalled();
                 if (!veeamInstalled)
                 {
                     Logger.Warn("Check Veeam Installed: FAIL");
@@ -142,110 +148,33 @@
                 Logger.Info("Check Veeam Installed: OK");
 
                 // check the veeam version
-                string veeamVersion = veeamManager.VeeamVersion();
+                string veeamVersion = _veeamManager.GetVersion();
                 if (veeamVersion == null)
                 {
                     Logger.Warn("Check Veeam Version: FAIL");
                     return false;
                 }
 
+                // check if veeam is installed
+
                 Logger.Info("Check Veeam Version: OK");
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.Message);
-                Logger.Debug(ex);
+                Logger.Debug("Exception", ex);
                 return false;
             }
 
             return true;
         }
 
-        protected bool ValidateAutotask()
-        {
-            try
-            {
-                Guid deviceId = SettingManagerHelper.Instance.DeviceId;
-
-                int accountId;
-                int storedAccount = SettingManagerHelper.Instance.AccountId;
-
-                if (storedAccount == default(int))
-                {
-                    int reportedAccount = PortalClient.GetAccountIdByDeviceId(deviceId);
-
-                    if (reportedAccount == default(int))
-                    {
-                        Logger.Warn("Check Account: FAIL");
-                        Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
-                        return false;
-                    }
-
-                    SettingManager.ChangeSetting(SettingNames.AutotaskAccountId, reportedAccount.ToString());
-                    accountId = reportedAccount.To<int>();
-                }
-                else
-                {
-                    accountId = storedAccount;
-                }
-
-                Logger.Info("Check Account: OK");
-                Logger.Info($"Account: {accountId}");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn("Check Account: FAIL");
-                Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
-                Logger.Error(ex.Message);
-                Logger.Debug(ex);
-                return false;
-            }
-        }
-
-        protected bool ValidateCentraStage()
-        {
-            try
-            {
-                Guid deviceId;
-                var storedDevice = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
-                if (storedDevice == default(Guid))
-                {
-                    Guid? reportedDevice = Constants.CentraStage.GetCentrastageId();
-
-                    if (reportedDevice == null)
-                    {
-                        Logger.Warn("Check Centrastage: FAIL");
-                        Logger.Error("Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
-                        return false;
-                    }
-
-                    SettingManager.ChangeSetting(SettingNames.CentrastageDeviceId, reportedDevice.ToString());
-                    deviceId = reportedDevice.To<Guid>();
-                }
-                else
-                {
-                    deviceId = storedDevice;
-                }
-
-                Logger.Info("Check Centrastage: OK");
-                Logger.Info($"Device: {deviceId}");
-                return true;
-            }
-            catch (Exception)
-            {
-                Logger.Warn("Check Centrastage: FAIL");
-                Logger.Error("Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
-                return false;
-            }
-        }
-
         public bool ValidateCredentials()
         {
             Logger.Info("Validating api credentials...");
 
-            bool centraStage = ValidateCentraStage();
-            return centraStage && ValidateAutotask();
+            bool centraStage = _centraStageManager.IsValid();
+            return centraStage && _autotaskManager.IsValid();
         }
     }
 }

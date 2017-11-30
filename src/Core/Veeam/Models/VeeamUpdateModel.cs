@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam.Models
+﻿namespace LMS.Veeam.Models
 {
     using System;
     using Portal.Common.Enums;

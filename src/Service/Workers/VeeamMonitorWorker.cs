@@ -1,15 +1,15 @@
-﻿namespace Service.Workers
+﻿namespace LMS.Workers
 {
     using System;
-    using Core.Common.Extensions;
-    using Core.Veeam;
-    using Core.Veeam.Managers;
+    using Abp.Dependency;
+    using Common.Extensions;
     using ServiceTimer;
+    using Startup;
+    using Veeam;
+    using Veeam.Managers;
 
     internal class VeeamMonitorWorker : TimerWorker
     {
-        protected VeeamManager VeeamManager;
-
         /// <inheritdoc />
         /// <summary>
         ///     30 second start up delay
@@ -21,7 +21,6 @@
         {
             FailedMessage = "************ Veeam Monitoring Failed ************";
             SuccessMessage = "************ Veeam Monitoring Successful ************";
-            VeeamManager = new VeeamManager();
         }
 
         /// <inheritdoc />
@@ -35,24 +34,31 @@
             RavenClient.AddTag("operation", "veeam");
 
             Logger.Info("Veeam monitoring begin...");
-
-            if (!StartupManager.ValidateCredentials())
+            using (var startupManager = IocManager.Instance.ResolveAsDisposable<IStartupManager>())
             {
-                return;
+                if (!startupManager.Object.ValidateCredentials())
+                {
+                    return;
+                }
             }
 
-            bool veeamOnline = VeeamManager.VeeamOnline();
-            if (!veeamOnline)
+            using (var veeamManager = IocManager.Instance.ResolveAsDisposable<IVeeamManager>())
             {
-                Logger.Error("Cannot contact the Veeam server. Please make sure all the Veeam services are started.");
-                Logger.Error("We cannot go on like this.");
-                Logger.Error(FailedMessage);
-                return;
+                bool veeamOnline = veeamManager.Object.IsOnline();
+                if (!veeamOnline)
+                {
+                    Logger.Error("Cannot contact the Veeam server. Please make sure all the Veeam services are started.");
+                    Logger.Error("We cannot go on like this.");
+                    Logger.Error(FailedMessage);
+                    return;
+                }
             }
 
-            using (var orchestrator = new VeeamOrchestrator())
+
+            using (var veeamWorkerManager = IocManager.Instance.ResolveAsDisposable<IVeeamWorkerManager>())
             {
-                orchestrator.Start();
+                veeamWorkerManager.Object.Start();
+
             }
 
             Console.WriteLine(Environment.NewLine);

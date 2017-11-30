@@ -21,6 +21,6 @@
     "GeneratedFileNamePrefix": "PortalProxy",
     "UseNameSpacePrefix": false,
     "NamespacePrefix": null,
-    "UseDataServiceCollection": true
+    "UseDataServiceCollection": false
   }
 }

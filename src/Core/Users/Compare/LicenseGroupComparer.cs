@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Users.Compare
+﻿namespace LMS.Users.Compare
 {
+    using System.Collections.Generic;
     using Portal.LicenseMonitoringSystem.Users.Entities;
 
     public class LicenseGroupComparer : IEqualityComparer<LicenseGroup>

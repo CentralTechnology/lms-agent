@@ -4,8 +4,7 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using Abp;
-    using global::Core.Veeam;
-    using global::Core.Veeam.Managers;
+    using LMS.Veeam.Managers;
     using Shouldly;
     using Xunit;
 

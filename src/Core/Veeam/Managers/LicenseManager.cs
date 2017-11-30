@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam.Managers
+﻿namespace LMS.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -7,49 +7,20 @@
     using System.Text;
     using Abp;
     using Common.Extensions;
+    using Common.Managers;
     using Microsoft.Win32;
-    using NLog;
 
-    public class LicenseManager : IDisposable
+    public class LicenseManager : LMSManagerBase, ILicenseManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private bool _disposed;
         private Dictionary<string, string> _lic;
         private string _licenseFile;
 
-        public LicenseManager()
+        public LicenseManager(string licenseFile = null)
         {
-            Initialize(LoadFromRegistry());
+            Initialize(string.IsNullOrEmpty(licenseFile) ? LoadFromRegistry() : licenseFile);
         }
 
-        public LicenseManager(string licenseFile)
-        {
-            Initialize(licenseFile);
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    Logger.Debug("Disposing LicenseManager");
-                    _lic = null;
-                    _licenseFile = null;
-                }
-
-                _disposed = true;
-            }
-        }
-
-        internal Dictionary<string, string> ExtractPropertiesFromLicense()
+        public  Dictionary<string, string> ExtractPropertiesFromLicense()
         {
             string[] licenseArray = _licenseFile.Split(new[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries);
 
@@ -104,7 +75,7 @@
             _lic = ExtractPropertiesFromLicense();
         }
 
-        internal string LoadFromRegistry()
+        public string LoadFromRegistry()
         {
             try
             {
