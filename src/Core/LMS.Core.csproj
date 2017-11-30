@@ -257,7 +257,6 @@
     <Compile Include="Sentry\RavenClient.cs" />
     <Compile Include="Startup\StartupManager.cs" />
     <Compile Include="Users\Dto\GroupPrincipalOutput.cs" />
-    <Compile Include="Users\Entities\LicenseBase.cs" />
     <Compile Include="Users\Managers\ActiveDirectoryManager.cs" />
     <Compile Include="Users\Profiles\LicenseGroupProfile.cs" />
     <Compile Include="Users\Profiles\LicenseUserProfile.cs" />
