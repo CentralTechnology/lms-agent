@@ -92,6 +92,9 @@
     <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.SqlServerCompact.6.1.3\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
     </Reference>
+    <Reference Include="Hangfire.Console, Version=1.3.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Console.1.3.10\lib\net45\Hangfire.Console.dll</HintPath>
+    </Reference>
     <Reference Include="Hangfire.Core, Version=1.6.17.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Hangfire.Core.1.6.17\lib\net45\Hangfire.Core.dll</HintPath>
     </Reference>
@@ -210,6 +213,7 @@
     <Compile Include="Common\Constants\Constants.cs" />
     <Compile Include="Common\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Common\Extensions\IDataReaderExtensions.cs" />
+    <Compile Include="Common\Extensions\LoggerExtensions.cs" />
     <Compile Include="Common\Extensions\RavenClientExtensions.cs" />
     <Compile Include="Common\Extensions\TypeExtensions.cs" />
     <Compile Include="Common\Extensions\UserFlagExtensions.cs" />
@@ -225,6 +229,8 @@
     <Compile Include="Common\Helpers\DebuggingService.cs" />
     <Compile Include="Common\Helpers\Log4NetHelper.cs" />
     <Compile Include="Common\Helpers\SettingManagerHelper.cs" />
+    <Compile Include="Common\Interfaces\IWorkerManager.cs" />
+    <Compile Include="Common\Interfaces\WorkerManagerBase.cs" />
     <Compile Include="Common\Managers\LMSManagerBase.cs" />
     <Compile Include="Configuration\AppSettingNames.cs" />
     <Compile Include="Configuration\AppSettingProvider.cs" />

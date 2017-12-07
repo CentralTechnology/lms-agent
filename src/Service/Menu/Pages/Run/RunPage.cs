@@ -39,7 +39,7 @@
 
                     try
                     {
-                        userWorkerManager.Start();
+                      //  userWorkerManager.Start();
 
                         LogHelper.Logger.Info("************ User Monitoring Successful ************");
                     }

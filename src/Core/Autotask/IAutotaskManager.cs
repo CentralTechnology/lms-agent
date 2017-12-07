@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 namespace LMS.Autotask
 {
     using Abp.Domain.Services;
+    using global::Hangfire.Server;
 
     public interface IAutotaskManager : IDomainService
     {
         int GetId();
-        bool IsValid();
+        bool IsValid(PerformContext performContext);
     }
 }

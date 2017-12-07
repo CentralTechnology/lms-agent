@@ -51,12 +51,12 @@
 
             using (var startupManager = IocManager.ResolveAsDisposable<IStartupManager>())
             {
-                if (startupManager.Object.MonitorUsers())
+                if (startupManager.Object.ShouldMonitorUsers(null))
                 {
-                    recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<IUserWorkerManager>(j => j.Start()), "*/15 * * * *");
+                    recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), "*/15 * * * *");
                 }
 
-                if (startupManager.Object.MonitorVeeam())
+                if (startupManager.Object.MonitorVeeam(null))
                 {
                     recurringJobManager.AddOrUpdate(BackgroundJobNames.Veeam, Job.FromExpression<IVeeamWorkerManager>(j => j.Start()), "*/15 * * * *");
                 }

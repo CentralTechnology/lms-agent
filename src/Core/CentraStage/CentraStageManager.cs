@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.CentraStage
+﻿namespace LMS.CentraStage
 {
+    using System;
     using Abp.Configuration;
     using Abp.Domain.Services;
+    using Abp.Logging;
     using Common.Extensions;
     using Core.Configuration;
+    using global::Hangfire.Server;
     using Microsoft.Win32;
 
     public class CentraStageManager : DomainService, ICentraStageManager
@@ -26,11 +23,11 @@ namespace LMS.CentraStage
                 RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE")
             };
 
-            foreach (var key in keys)
+            foreach (RegistryKey key in keys)
             {
                 try
                 {
-                    var data = key.GetSubKeyValue(key.GetSubKeyNames(), requestedKeyName: "CentraStage", requestedValue: "DeviceID");
+                    (bool exist, string value) data = key.GetSubKeyValue(key.GetSubKeyNames(), requestedKeyName: "CentraStage", requestedValue: "DeviceID");
                     if (data.exist)
                     {
                         bool valid = Guid.TryParse(data.value, out Guid csId);
@@ -48,8 +45,9 @@ namespace LMS.CentraStage
             return null;
         }
 
+        /// <param name="performContext"></param>
         /// <inheritdoc />
-        public bool IsValid()
+        public bool IsValid(PerformContext performContext)
         {
             try
             {
@@ -61,8 +59,10 @@ namespace LMS.CentraStage
 
                     if (reportedDevice == null)
                     {
-                        Logger.Warn("Check Centrastage: FAIL");
-                        Logger.Error("Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
+                        Logger.Log(LogSeverity.Warn, performContext, "Check Centrastage: FAIL");
+                        Logger.Log(LogSeverity.Error,
+                            performContext, "Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
+
                         return false;
                     }
 
@@ -74,14 +74,18 @@ namespace LMS.CentraStage
                     deviceId = storedDevice;
                 }
 
-                Logger.Info("Check Centrastage: OK");
-                Logger.Info($"Device: {deviceId}");
+                Logger.Log(LogSeverity.Info, performContext, "Check Centrastage: OK");
+                Logger.Log(LogSeverity.Info, performContext, $"Device: {deviceId}");
+
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Logger.Warn("Check Centrastage: FAIL");
-                Logger.Error("Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
+                Logger.Log(LogSeverity.Error, performContext, "Check Centrastage: FAIL");
+                Logger.Log(LogSeverity.Error, performContext, "Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
+                Logger.Log(LogSeverity.Error, performContext, ex.Message);
+                Logger.Log(LogSeverity.Debug, performContext, ex.Message, ex);
+
                 return false;
             }
         }

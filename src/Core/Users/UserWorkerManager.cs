@@ -4,15 +4,20 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using Abp.Logging;
+    using Common.Extensions;
+    using Common.Interfaces;
     using Common.Managers;
     using Dto;
+    using global::Hangfire.Console;
+    using global::Hangfire.Server;
     using Managers;
     using Models;
     using OData;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using Startup;
 
-    public class UserWorkerManager : LMSManagerBase, IUserWorkerManager
+    public class UserWorkerManager : WorkerManagerBase, IUserWorkerManager
     {
         private readonly IActiveDirectoryManager _activeDirectoryManager;
         private readonly IGroupManager _groupManager;
@@ -94,11 +99,11 @@
         /// <summary>
         ///     Decides whether a License User object should be Added, Updated or Deleted from the API.
         /// </summary>
+        /// <param name="performContext"></param>
         /// <param name="managedSupport"></param>
-        public void ProcessUsers(ManagedSupport managedSupport)
+        public void ProcessUsers(PerformContext performContext, ManagedSupport managedSupport)
         {
-            Console.WriteLine(Environment.NewLine);
-            Logger.Info("--------------- PROCESS USERS BEGIN ---------------");
+            Logger.Log(LogSeverity.Info, performContext, "--------------- PROCESS USERS BEGIN ---------------");
 
             IEnumerable<LicenseUserDto> users = _activeDirectoryManager.GetUsers();
             List<LicenseUserSummary> remoteUsers = _portalManager.ListAllUserIds();
@@ -124,34 +129,26 @@
                 _userManager.Delete(user.Id);
             }
 
-            Logger.Info(" ---------------PROCESS USERS END ---------------");
+            Logger.Log(LogSeverity.Info, performContext, " ---------------PROCESS USERS END ---------------");
         }
 
-        public void Start()
+        public override void Start(PerformContext performContext)
         {
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-            Logger.Debug("Stopwatch started!");
-            Logger.Info("User monitoring begin...");
-            _startupManager.ValidateCredentials();
+            Execute(performContext, () =>
+            {
+                _startupManager.ValidateCredentials(performContext);
 
-            Logger.Info("Getting account details from the api.");
-            ManagedSupport managedSupport = _managedSupportManager.Get() ?? _managedSupportManager.Add();
-            _portalManager.Detach(managedSupport);
+                Logger.Log(LogSeverity.Info, performContext, "Getting account details from the api.");
+                ManagedSupport managedSupport = _managedSupportManager.Get() ?? _managedSupportManager.Add();
+                _portalManager.Detach(managedSupport);
 
-            ProcessUsers(managedSupport);
-            ProcessGroups(managedSupport);
-            ProcessUserGroups();
+                ProcessUsers(performContext, managedSupport);
+                ProcessGroups(managedSupport);
+                ProcessUserGroups();
 
-            // let the api know we have completed the task
-            Console.WriteLine(Environment.NewLine);
-            Logger.Info("Letting the api know we are done here.");
-            _managedSupportManager.Update(managedSupport);
-            Logger.Info("All done.");
-
-            stopWatch.Stop();
-            Console.WriteLine(Environment.NewLine);
-            Logger.Info($"Time elapsed: {stopWatch.Elapsed:hh\\:mm\\:ss}");
+                // let the api know we have completed the task
+                _managedSupportManager.Update(managedSupport);
+            });
         }
     }
 }

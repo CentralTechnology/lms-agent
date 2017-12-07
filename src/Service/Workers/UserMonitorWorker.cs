@@ -35,15 +35,15 @@
             Logger.Info("User monitoring begin...");
             using (var startupManager = IocManager.Instance.ResolveAsDisposable<IStartupManager>())
             {
-                if (!startupManager.Object.ValidateCredentials())
-                {
-                    return;
-                }
+                //if (!startupManager.Object.ValidateCredentials(TODO))
+                //{
+                //    return;
+                //}
             }
 
             using (var userWorkerManager = IocManager.Instance.ResolveAsDisposable<IUserWorkerManager>())
             {
-                userWorkerManager.Object.Start();
+              //  userWorkerManager.Object.Start();
             }
 
             Console.WriteLine(Environment.NewLine);

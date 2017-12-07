@@ -36,10 +36,10 @@
             Logger.Info("Veeam monitoring begin...");
             using (var startupManager = IocManager.Instance.ResolveAsDisposable<IStartupManager>())
             {
-                if (!startupManager.Object.ValidateCredentials())
-                {
-                    return;
-                }
+                //if (!startupManager.Object.ValidateCredentials(TODO))
+                //{
+                //    return;
+                //}
             }
 
             using (var veeamManager = IocManager.Instance.ResolveAsDisposable<IVeeamManager>())

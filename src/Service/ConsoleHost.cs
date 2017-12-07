@@ -41,7 +41,7 @@
                 {
                     using (IDisposableDependencyObjectWrapper<StartupManager> startupManager = bootstrapper.IocManager.ResolveAsDisposable<StartupManager>())
                     {
-                        bool started = startupManager.Object.Init();
+                        bool started = startupManager.Object.Init(null);
                         if (!started)
                         {
                             return;
@@ -53,16 +53,16 @@
                 {
                     if (opts.Monitor == Monitor.Users)
                     {
-                        using (IDisposableDependencyObjectWrapper<IUserWorkerManager> userWorkerManager = bootstrapper.IocManager.ResolveAsDisposable<IUserWorkerManager>())
+                        using (IDisposableDependencyObjectWrapper<UserWorkerManager> userWorkerManager = bootstrapper.IocManager.ResolveAsDisposable<UserWorkerManager>())
                         {
-                            userWorkerManager.Object.Start();
+                            userWorkerManager.Object.Start(null);
                             return;
                         }
                     }
 
                     if (opts.Monitor == Monitor.Veeam)
                     {
-                        using (IDisposableDependencyObjectWrapper<IVeeamWorkerManager> veeamWorkerManager = bootstrapper.IocManager.ResolveAsDisposable<IVeeamWorkerManager>())
+                        using (IDisposableDependencyObjectWrapper<VeeamWorkerManager> veeamWorkerManager = bootstrapper.IocManager.ResolveAsDisposable<VeeamWorkerManager>())
                         {
                             veeamWorkerManager.Object.Start();
                         }
