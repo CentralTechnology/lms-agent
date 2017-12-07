@@ -59,6 +59,9 @@
     <Reference Include="Abp.AutoMapper, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Abp.AutoMapper.1.5.1\lib\net452\Abp.AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="Abp.Castle.Log4Net, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Abp.Castle.Log4Net.1.5.1\lib\net452\Abp.Castle.Log4Net.dll</HintPath>
+    </Reference>
     <Reference Include="Abp.Web, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Abp.Web.1.5.1\lib\net452\Abp.Web.dll</HintPath>
     </Reference>
@@ -94,6 +97,9 @@
     </Reference>
     <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=4.0.0.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
       <HintPath>..\packages\CompareNETObjects.4.00.0.0\lib\net452\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -211,6 +217,7 @@
     <Compile Include="Common\Helpers\AppVersionHelper.cs" />
     <Compile Include="Common\Helpers\CommonHelpers.cs" />
     <Compile Include="Common\Helpers\DebuggingService.cs" />
+    <Compile Include="Common\Helpers\Log4NetHelper.cs" />
     <Compile Include="Common\Helpers\SettingManagerHelper.cs" />
     <Compile Include="Common\Managers\LMSManagerBase.cs" />
     <Compile Include="Configuration\AppSettingNames.cs" />
