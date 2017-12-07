@@ -10,6 +10,7 @@
     using Models;
     using OData;
     using Portal.LicenseMonitoringSystem.Users.Entities;
+    using Startup;
 
     public class UserWorkerManager : LMSManagerBase, IUserWorkerManager
     {
@@ -19,6 +20,7 @@
         private readonly IPortalManager _portalManager;
         private readonly IUserGroupManager _userGroupManager;
         private readonly IUserManager _userManager;
+        private readonly IStartupManager _startupManager;
 
         public UserWorkerManager(
             IPortalManager portalManager,
@@ -26,7 +28,8 @@
             IUserManager userManager,
             IGroupManager groupManager,
             IManagedSupportManager managedSupportManager,
-            IUserGroupManager userGroupManager
+            IUserGroupManager userGroupManager,
+            IStartupManager startupManager
         )
         {
             _portalManager = portalManager;
@@ -35,6 +38,7 @@
             _groupManager = groupManager;
             _managedSupportManager = managedSupportManager;
             _userGroupManager = userGroupManager;
+            _startupManager = startupManager;
         }
 
         public void ProcessGroups(ManagedSupport managedSupport)
@@ -128,6 +132,9 @@
             var stopWatch = new Stopwatch();
             stopWatch.Start();
             Logger.Debug("Stopwatch started!");
+            Logger.Info("User monitoring begin...");
+            _startupManager.ValidateCredentials();
+
             Logger.Info("Getting account details from the api.");
             ManagedSupport managedSupport = _managedSupportManager.Get() ?? _managedSupportManager.Add();
             _portalManager.Detach(managedSupport);
@@ -137,7 +144,6 @@
             ProcessUserGroups();
 
             // let the api know we have completed the task
-
             Console.WriteLine(Environment.NewLine);
             Logger.Info("Letting the api know we are done here.");
             _managedSupportManager.Update(managedSupport);

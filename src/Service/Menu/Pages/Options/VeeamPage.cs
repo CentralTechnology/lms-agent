@@ -1,8 +1,7 @@
-﻿namespace LMS.Menu.Pages.Options
+﻿namespace LMS.Service.Menu.Pages.Options
 {
     using Abp.Configuration;
     using Abp.Dependency;
-    using Common.Extensions;
     using Core.Configuration;
     using EasyConsole;
 

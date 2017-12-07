@@ -1,4 +1,4 @@
-﻿namespace LMS.Menu.Pages.Run
+﻿namespace LMS.Service.Menu.Pages.Run
 {
     using System;
     using System.Data.SqlClient;

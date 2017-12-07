@@ -1,4 +1,4 @@
-﻿namespace LMS.Menu.Pages
+﻿namespace LMS.Service.Menu.Pages
 {
     using System;
     using Core.Common.Constants;

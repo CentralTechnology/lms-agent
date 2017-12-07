@@ -1,4 +1,4 @@
-﻿namespace LMS
+﻿namespace LMS.Service
 {
     using System;
     using System.Data.SqlClient;
@@ -11,9 +11,9 @@
     using Abp.Dependency;
     using Abp.Logging;
     using Castle.Facilities.Logging;
-    using Common.Helpers;
+    using LMS.Common.Helpers;
+    using LMS.Startup;
     using Microsoft.OData.Client;
-    using Startup;
     using Users;
     using Veeam;
 
@@ -81,6 +81,16 @@
                     LogHelper.Logger.Debug(ex.Message, ex);
                     LogHelper.Logger.Error("************ Failed ************");
                 }
+                catch (Exception ex)
+                {
+                    // sentry
+                    LogHelper.LogException(ex);
+                    LogHelper.Logger.Debug(ex.Message, ex);
+                    LogHelper.Logger.Error("************ Failed ************");
+                }
+
+                Console.WriteLine("Press [Enter] to continue.");
+                Console.ReadLine();
             }
         }
     }

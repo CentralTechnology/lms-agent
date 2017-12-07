@@ -1,10 +1,10 @@
-﻿namespace LMS.Workers
+﻿namespace LMS.Service.Workers
 {
     using System;
     using Abp.Dependency;
-    using Common.Extensions;
+    using LMS.Common.Extensions;
+    using LMS.Startup;
     using ServiceTimer;
-    using Startup;
     using Veeam;
     using Veeam.Managers;
 

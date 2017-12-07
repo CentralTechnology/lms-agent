@@ -1,4 +1,4 @@
-﻿namespace LMS.Menu.Pages.Options
+﻿namespace LMS.Service.Menu.Pages.Options
 {
     using EasyConsole;
 

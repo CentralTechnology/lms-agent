@@ -1,13 +1,13 @@
-﻿namespace LMS
+﻿namespace LMS.Service
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using Abp;
+    using Abp.Collections.Extensions;
     using Abp.Configuration;
     using Abp.Dependency;
-    using Abp.Logging;
     using Abp.Timing;
     using Castle.Facilities.Logging;
     using CommandLine;
@@ -25,6 +25,29 @@
         /// </summary>
         static void Main(string[] args)
         {
+            Clock.Provider = ClockProviders.Utc;
+
+            if (args.IsNullOrEmpty())
+            {
+                HostFactory.Run(x =>
+                {
+                    x.Service<LMSService>(sc =>
+                    {
+                        sc.ConstructUsing<LMSService>(s => new LMSService());
+
+                        sc.WhenStarted((tc, hostControl) => tc.Start(hostControl));
+                        sc.WhenStopped((tc, hostControl) => tc.Stop(hostControl));
+                    });
+
+                    x.UseLog4Net();
+                    x.RunAsLocalSystem();
+                    x.SetServiceName(Constants.ServiceName);
+                    x.SetDisplayName(Constants.ServiceDisplayName);
+                    x.SetDescription(Constants.ServiceDescription);
+                    x.StartAutomatically();
+                });
+            }
+
             Parser.Default.ParseArguments<UpdateOptions, RunOptions>(args)
                 .WithParsed<UpdateOptions>(opts =>
                 {
@@ -71,52 +94,7 @@
                     }
 
                 })
-                .WithParsed<RunOptions>(opts =>
-               {
-                   Clock.Provider = ClockProviders.Utc;
-
-                   if (opts.Verbose)
-                   {
-                       ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository()).Root.Level = Level.Debug;
-                       ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository()).RaiseConfigurationChanged(EventArgs.Empty);
-                   }
-
-                   bool isService = !Environment.UserInteractive;
-                   if (isService)
-                   {
-                       HostFactory.Run(x =>
-                       {
-                           x.Service<LMSService>(sc =>
-                           {
-                               sc.ConstructUsing(() => new LMSService());
-
-                               sc.WhenStarted(s => s.Start());
-                               sc.WhenStopped(s => s.Stop());
-
-                               sc.WhenPaused(s => s.Pause());
-                               sc.WhenContinued(s => s.Continue());
-
-                               sc.WhenShutdown(s => s.Shutdown());
-                           });
-
-                           x.UseLog4Net();
-                           x.RunAsLocalSystem();
-                           x.SetServiceName(Constants.ServiceName);
-                           x.SetDisplayName(Constants.ServiceDisplayName);
-                           x.SetDescription(Constants.ServiceDescription);
-                           x.StartAutomatically();
-                       });
-                   }
-                   else
-                   {
-                       ConsoleHost.Run(opts);
-                   }
-               });
-
-            if (Debugger.IsAttached)
-            {
-                Console.ReadLine();
-            }
+                .WithParsed<RunOptions>(ConsoleHost.Run);
         }
     }
 

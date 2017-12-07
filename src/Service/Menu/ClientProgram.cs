@@ -1,4 +1,4 @@
-﻿namespace LMS.Menu
+﻿namespace LMS.Service.Menu
 {
     using System;
     using EasyConsole;

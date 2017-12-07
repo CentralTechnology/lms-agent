@@ -1,4 +1,4 @@
-﻿namespace LMS.Common
+﻿namespace LMS.Service.Common
 {
     public static class EasyConsoleExtensions
     {
