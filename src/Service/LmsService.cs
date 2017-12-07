@@ -3,8 +3,7 @@
     using System;
     using System.Collections.Concurrent;
     using System.Reflection;
-    using Hangfire;
-    using Hangfire.MemoryStorage;
+    using global::Hangfire;
     using Microsoft.Owin.Hosting;
     using Topshelf;
 

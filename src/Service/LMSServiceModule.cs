@@ -6,10 +6,12 @@
     using Abp.Hangfire;
     using Abp.Hangfire.Configuration;
     using Abp.Modules;
-    using Core.Configuration;
+    using Castle.Facilities.Logging;
+    using global::Hangfire;
+    using global::Hangfire.Common;
+    using global::Hangfire.Console;
+    using global::Hangfire.MemoryStorage;
     using Hangfire;
-    using Hangfire.Common;
-    using Hangfire.MemoryStorage;
     using LMS.Startup;
     using Users;
     using Veeam;
@@ -24,15 +26,19 @@
 
         public override void PreInitialize()
         {
+            IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseLog4Net().WithConfig("log4net.config"));
+
             Configuration.BackgroundJobs.UseHangfire(config =>
             {
                 config.GlobalConfiguration.UseMemoryStorage();
                 config.Server = new BackgroundJobServer();
+                config.GlobalConfiguration.UseConsole();
             });
         }
 
         public override void PostInitialize()
         {
+            GlobalJobFilters.Filters.Add(new DisableMultipleQueuedItemsFilter());
             ConfigureHangfireJobs();
         }
 

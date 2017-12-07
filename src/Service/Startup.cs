@@ -7,6 +7,7 @@ using Microsoft.Owin;
 namespace LMS.Service
 {
     using Abp.Owin;
+    using global::Hangfire;
     using Hangfire;
     using Owin;
 
