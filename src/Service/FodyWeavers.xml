@@ -3,6 +3,7 @@
   <Costura >
     <ExcludeAssemblies>
       LMS.Core
+      LMS.EntityFramework
     </ExcludeAssemblies>
   </Costura>
 </Weavers>
