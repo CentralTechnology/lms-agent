@@ -2,6 +2,7 @@
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
+    using Abp.Castle.Logging.Log4Net;
     using Abp.Dependency;
     using Abp.Hangfire;
     using Abp.Hangfire.Configuration;
@@ -52,7 +53,7 @@
 
         public override void PreInitialize()
         {
-            IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseLog4Net().WithConfig("log4net.config"));
+            IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseAbpLog4Net().WithConfig("log4net.config"));
 
             Configuration.BackgroundJobs.UseHangfire(config =>
             {
