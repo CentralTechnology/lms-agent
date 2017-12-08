@@ -216,7 +216,6 @@
     <Compile Include="Configuration\SettingExtensions.cs" />
     <Compile Include="Configuration\SettingStore.cs" />
     <Compile Include="Connected Services\Portal\PortalProxy.cs" />
-    <Compile Include="Hangfire\DisableMultipleQueuedItemsFilter.cs" />
     <Compile Include="LMSCoreModule.cs" />
     <Compile Include="Migrations\201707140955114_Initial.cs" />
     <Compile Include="Migrations\201707140955114_Initial.Designer.cs">
@@ -289,6 +288,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EntityFramework\" />
+    <Folder Include="Hangfire\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201707140955114_Initial.resx">

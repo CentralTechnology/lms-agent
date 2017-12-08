@@ -7,11 +7,10 @@
     using Abp.Hangfire.Configuration;
     using Abp.Modules;
     using Castle.Facilities.Logging;
-    using global::Hangfire;
-    using global::Hangfire.Common;
-    using global::Hangfire.Console;
-    using global::Hangfire.MemoryStorage;
     using Hangfire;
+    using Hangfire.Common;
+    using Hangfire.Console;
+    using Hangfire.MemoryStorage;
     using LMS.Startup;
     using Users;
     using Veeam;
@@ -20,29 +19,6 @@
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class LMSServiceModule : AbpModule
     {
-        public override void Initialize()
-        {
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
-        }
-
-        public override void PreInitialize()
-        {
-            IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseLog4Net().WithConfig("log4net.config"));
-
-            Configuration.BackgroundJobs.UseHangfire(config =>
-            {
-                config.GlobalConfiguration.UseMemoryStorage();
-                config.Server = new BackgroundJobServer();
-                config.GlobalConfiguration.UseConsole();
-            });
-        }
-
-        public override void PostInitialize()
-        {
-            GlobalJobFilters.Filters.Add(new DisableMultipleQueuedItemsFilter());
-            ConfigureHangfireJobs();
-        }
-
         private void ConfigureHangfireJobs()
         {
             var recurringJobManager = new RecurringJobManager();
@@ -50,7 +26,7 @@
             recurringJobManager.RemoveIfExists(BackgroundJobNames.Users);
             recurringJobManager.RemoveIfExists(BackgroundJobNames.Veeam);
 
-            using (var startupManager = IocManager.ResolveAsDisposable<IStartupManager>())
+            using (IDisposableDependencyObjectWrapper<IStartupManager> startupManager = IocManager.ResolveAsDisposable<IStartupManager>())
             {
                 if (startupManager.Object.ShouldMonitorUsers(null))
                 {
@@ -64,7 +40,30 @@
             }
         }
 
-        
+        public override void Initialize()
+        {
+            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
+        }
+
+        public override void PostInitialize()
+        {
+            ConfigureHangfireJobs();
+        }
+
+        public override void PreInitialize()
+        {
+            IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseLog4Net().WithConfig("log4net.config"));
+
+            Configuration.BackgroundJobs.UseHangfire(config =>
+            {
+                config.GlobalConfiguration.UseMemoryStorage();
+                config.Server = new BackgroundJobServer(new BackgroundJobServerOptions
+                {
+                    WorkerCount = 1
+                });
+                config.GlobalConfiguration.UseConsole();
+            });
+        }
     }
 
     public static class BackgroundJobNames
