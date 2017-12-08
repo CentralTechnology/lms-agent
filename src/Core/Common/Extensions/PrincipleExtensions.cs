@@ -1,7 +1,11 @@
 ﻿namespace LMS.Common.Extensions
 {
+    using System;
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
+    using Abp.Logging;
+    using Hangfire.Server;
+    using log4net.Repository.Hierarchy;
 
     public static class PrincipleExtensions
     {
@@ -13,6 +17,29 @@
             }
 
             return directoryEntry.Properties.Contains(property) ? directoryEntry.Properties[property].Value.ToString() : string.Empty;
+        }
+
+        public static UserPrincipal Validate(this Principal principal, PerformContext performContext)
+        {
+            if (!principal.Guid.HasValue)
+            {
+                LogHelper.Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id doesn't contain a value. Please check this manually in Active Directory.");
+                return null;
+            }
+
+            bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
+            if (!validId)
+            {
+                LogHelper.Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
+                return null;
+            }
+
+            if (principal is UserPrincipal user)
+            {
+                return user;
+            }
+
+            return null;
         }
     }
 }

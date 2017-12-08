@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
     using System.DirectoryServices.ActiveDirectory;
@@ -31,27 +32,15 @@
                         {
                             foreach (Principal principal in results)
                             {
-                                if (principal.Guid == null)
-                                {
-                                    Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
-                                    continue;
-                                }
-
-                                bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
-                                if (!validId)
-                                {
-                                    Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
-                                    continue;
-                                }
-
-                                if (!(principal is UserPrincipal user))
+                                var user = principal.Validate(performContext);
+                                if (user?.Guid == null)
                                 {
                                     continue;
                                 }
 
                                 Logger.Debug(performContext, $"Retrieving {user.GetDisplayText()} from Active Directory.");
 
-                                LicenseUserDto localUser = GetUser(performContext, principalId);
+                                LicenseUserDto localUser = GetUser(performContext, user.Guid.Value);
                                 if (localUser == null)
                                 {
                                     continue;
@@ -189,16 +178,22 @@
             }
         }
 
-        /// <inheritdoc />
+        private GroupPrincipal GetGroupPrincipal(PrincipalContext principalContext, Guid id)
+        {
+            GroupPrincipal group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, id.ToString());
+            if (group == null)
+            {
+                throw new AbpException($"Cannot find Group Principal with Guid {id}");
+            }
+
+            return group;
+        }
+
         public LicenseGroupDto GetGroup(PerformContext performContext, Guid groupId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
-                GroupPrincipal group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, groupId.ToString());
-                if (group == null)
-                {
-                    throw new NullReferenceException($"Cannot find Group Principal with Guid {groupId}");
-                }
+                GroupPrincipal group = GetGroupPrincipal(principalContext, groupId);
 
                 if (group.IsSecurityGroup == null)
                 {
@@ -250,11 +245,7 @@
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
-                GroupPrincipal group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, groupId.ToString());
-                if (group == null)
-                {
-                    throw new NullReferenceException($"Cannot find Group Principal with Guid {groupId}");
-                }
+                GroupPrincipal group = GetGroupPrincipal(principalContext, groupId);
 
                 var licenseGroupUsers = new LicenseGroupUsersDto(groupId, group.Name);
 
@@ -266,25 +257,13 @@
 
                 foreach (Principal principal in members)
                 {
-                    if (principal.Guid == null)
-                    {
-                        Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
-                        continue;
-                    }
-
-                    bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
-                    if (!validId)
-                    {
-                        Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
-                        continue;
-                    }
-
-                    if (!(principal is UserPrincipal user))
+                    var user = principal.Validate(performContext);
+                    if (user?.Guid == null)
                     {
                         continue;
                     }
 
-                    LicenseUserDto localUser = GetUser(performContext, principalId);
+                    LicenseUserDto localUser = GetUser(performContext, user.Guid.Value);
                     if (localUser == null)
                     {
                         continue;
