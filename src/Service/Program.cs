@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using Abp;
     using Abp.Collections.Extensions;
@@ -12,10 +11,8 @@
     using Castle.Facilities.Logging;
     using CommandLine;
     using CommandLine.Text;
-    using Core.Common.Constants;
+    using Common.Constants;
     using Core.Configuration;
-    using log4net;
-    using log4net.Core;
     using Topshelf;
 
     class Runner
@@ -99,6 +96,8 @@
     }
 
     [Verb("run", HelpText = "Run a monitor")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class RunOptions
     {
         public RunOptions(Monitor monitor = Monitor.None, bool verbose = false, bool skipStartup = false)
@@ -132,6 +131,8 @@
 
     [Verb("update", HelpText = "Update settings")]
     [SuppressMessage("ReSharper", "ConvertToAutoProperty")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class UpdateOptions
     {
         private readonly bool? _pdcOverride;

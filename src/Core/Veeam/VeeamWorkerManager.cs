@@ -35,6 +35,12 @@
             {
                 _startupManager.ValidateCredentials(performContext);
 
+                if (!_veeamManager.IsOnline())
+                {
+                    Logger.Error("Veeam server not online.");
+                    return;
+                }
+
                 var deviceId = _settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
                 Veeam veeam = _portalManager.ListVeeamById(deviceId);
                 bool newVeeam = false;

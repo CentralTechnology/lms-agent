@@ -5,10 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EntityFramework Module for License Monitoring System")]
-[assembly: AssemblyDescription("EntityFramework Module for License Monitoring System")]
+[assembly: AssemblyTitle("License Monitoring System Assistant")]
+[assembly: AssemblyDescription("Helper application for the License Monitoring System")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("EntityFramework")]
+[assembly: AssemblyCompany("Central Technology Ltd")]
+[assembly: AssemblyProduct("Assistant")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("847c8ea8-5b66-4cb1-b90b-64e1fefc8216")]
+[assembly: Guid("d62934d8-8eaa-4ff4-a503-a251743298d2")]
 
 // Version information for an assembly consists of the following four values:
 //

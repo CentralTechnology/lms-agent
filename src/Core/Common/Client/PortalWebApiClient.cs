@@ -4,7 +4,7 @@
     using Abp.Dependency;
     using Abp.Threading;
     using Abp.WebApi.Client;
-    using Core.Common.Constants;
+    using Constants;
 
     /// <summary>
     ///     Class used for standard api calls

@@ -10,23 +10,18 @@
     using Abp;
     using Abp.Dependency;
     using Abp.Logging;
-    using Castle.Facilities.Logging;
-    using LMS.Common.Helpers;
+    using Common.Helpers;
     using LMS.Startup;
     using Microsoft.OData.Client;
     using Users;
     using Veeam;
 
-    public class ConsoleHost
+    public static class ConsoleHost
     {
         public static void Run(RunOptions opts)
         {
             using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
             {
-                bootstrapper.IocManager
-                    .IocContainer
-                    .AddFacility<LoggingFacility>(f => f.UseLog4Net().WithConfig("log4net.config"));
-
                 bootstrapper.Initialize();
 
 

@@ -17,8 +17,6 @@
         {
             _portalManager = portalManager;
         }
-
-        /// <inheritdoc />
         public int GetId()
         {
             return SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);

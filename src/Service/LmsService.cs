@@ -23,7 +23,7 @@
             return DisposeServers();
         }
 
-        internal static bool DisposeServers()
+        private static bool DisposeServers()
         {
             try
             {

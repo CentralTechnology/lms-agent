@@ -1,7 +1,7 @@
 ﻿namespace LMS.Service
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
-    using Abp.Configuration;
     using Abp.Dependency;
     using Abp.Hangfire;
     using Abp.Hangfire.Configuration;
@@ -17,6 +17,7 @@
     using Veeam;
 
     [DependsOn(typeof(LMSEntityFrameworkModule), typeof(AbpHangfireModule))]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class LMSServiceModule : AbpModule
     {
         public override void Initialize()
@@ -66,7 +67,7 @@
         
     }
 
-    public class BackgroundJobNames
+    public static class BackgroundJobNames
     {
         public const string Users = "Users";
         public const string Veeam = "Veeam";
