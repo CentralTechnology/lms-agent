@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Common.Extensions
+﻿namespace LMS.Common.Extensions
 {
+    using System;
     using Abp.Logging;
     using Castle.Core.Logging;
     using global::Hangfire.Console;
@@ -13,9 +8,14 @@ namespace LMS.Common.Extensions
 
     public static class LoggerExtensions
     {
-        public static void Info(this ILogger logger, PerformContext performContext, string message)
+        public static void Debug(this ILogger logger, PerformContext performContext, string message)
         {
-            logger.Log(LogSeverity.Info, performContext, message);
+            logger.Log(LogSeverity.Debug, performContext, message);
+        }
+
+        public static void Debug(this ILogger logger, PerformContext performContext, string message, Exception exception)
+        {
+            logger.Log(LogSeverity.Debug, performContext, message, exception);
         }
 
         public static void Error(this ILogger logger, PerformContext performContext, string message)
@@ -23,25 +23,19 @@ namespace LMS.Common.Extensions
             logger.Log(LogSeverity.Error, performContext, message);
         }
 
-        public static void Debug(this ILogger logger, PerformContext performContext, string message)
+        public static void Error(this ILogger logger, PerformContext performContext, string message, Exception ex)
         {
-            logger.Log(LogSeverity.Debug, performContext, message);
-        }
-        public static void Debug(this ILogger logger, PerformContext performContext, string message, Exception exception)
-        {
-            logger.Log(LogSeverity.Debug, performContext, message, exception);
+            logger.Log(LogSeverity.Error, performContext, message, ex);
         }
 
-        private static void WriteToConsole(this PerformContext performContext, ConsoleTextColor color, string message)
+        public static void Info(this ILogger logger, PerformContext performContext, string message)
         {
-            performContext.SetTextColor(ConsoleTextColor.DarkGray);
-            performContext.WriteLine(message);
-            performContext.ResetTextColor();
+            logger.Log(LogSeverity.Info, performContext, message);
         }
 
         public static void Log(this ILogger logger, LogSeverity severity, PerformContext performContext, string message)
         {
-            Abp.Logging.LoggerExtensions.Log(logger, severity, message);
+            logger.Log(severity, message);
             if (performContext == null)
             {
                 return;
@@ -86,7 +80,7 @@ namespace LMS.Common.Extensions
 
         public static void Log(this ILogger logger, LogSeverity severity, PerformContext performContext, string message, Exception exception)
         {
-            Abp.Logging.LoggerExtensions.Log(logger, severity, message, exception);
+            logger.Log(severity, message, exception);
             if (performContext == null)
             {
                 return;
@@ -122,6 +116,13 @@ namespace LMS.Common.Extensions
                 default:
                     throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
             }
+        }
+
+        private static void WriteToConsole(this PerformContext performContext, ConsoleTextColor color, string message)
+        {
+            performContext.SetTextColor(ConsoleTextColor.DarkGray);
+            performContext.WriteLine(message);
+            performContext.ResetTextColor();
         }
     }
 }

@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Common.Interfaces
+﻿namespace LMS.Common.Managers
 {
+    using System;
     using System.Diagnostics;
     using System.Net;
     using Abp;
-    using Abp.Logging;
     using Extensions;
     using global::Hangfire.Console;
     using global::Hangfire.Server;
-    using Managers;
+    using Interfaces;
 
     public abstract class WorkerManagerBase : LMSManagerBase, IWorkerManager
     {
+        private const string FailedMessage = "Action Failed.";
         private const string StartMessage = "Action Start.";
         private const string SuccessMessage = "Action Success.";
-        private const string FailedMessage = "Action Failed.";
         public abstract void Start(PerformContext performContext);
 
         protected void Execute(PerformContext performContext, Action action)
@@ -32,13 +26,14 @@ namespace LMS.Common.Interfaces
                 action.Invoke();
 
                 stopwatch.Stop();
-                Logger.Log(LogSeverity.Info, performContext, SuccessMessage);
-                Logger.Log(LogSeverity.Info, performContext, $"Action took {stopwatch.Elapsed}");
+                performContext?.SetTextColor(ConsoleTextColor.Green);
+                performContext?.WriteLine(SuccessMessage);
+                Logger.Info(performContext, $"Action took {stopwatch.Elapsed}");
             }
             catch (Exception ex)
             {
                 HandleException(performContext, ex);
-                Logger.Log(LogSeverity.Error, performContext, FailedMessage);
+                Logger.Error(performContext, FailedMessage);
                 throw;
             }
         }
@@ -47,7 +42,7 @@ namespace LMS.Common.Interfaces
         {
             if (ex is AggregateException aggex)
             {
-                foreach (var innerException in aggex.InnerExceptions)
+                foreach (Exception innerException in aggex.InnerExceptions)
                 {
                     HandleExceptionInternal(performContext, innerException);
                 }
@@ -63,28 +58,26 @@ namespace LMS.Common.Interfaces
             switch (ex)
             {
                 case AbpException abp:
-                    Logger.Log(LogSeverity.Error, performContext, abp.Message, abp);
+                    Logger.Error(performContext, abp.Message, abp);
                     throw abp;
 
                 case JobAbortedException jobAborted:
-                    Logger.Log(LogSeverity.Error, performContext, jobAborted.Message, jobAborted);
+                    Logger.Error(performContext, jobAborted.Message, jobAborted);
                     throw jobAborted;
 
                 case OperationCanceledException operationCancelled:
-                    Logger.Log(LogSeverity.Error, performContext, operationCancelled.Message, operationCancelled);
+                    Logger.Error(performContext, operationCancelled.Message, operationCancelled);
                     throw operationCancelled;
 
                 case WebException web:
-                    Logger.Log(LogSeverity.Error, performContext, web.Message, web);
+                    Logger.Error(performContext, web.Message, web);
                     throw web;
 
                 default:
                     RavenClient.Capture(new SharpRaven.Data.SentryEvent(ex));
-                    Logger.Log(LogSeverity.Error, performContext, ex.Message, ex);
+                    Logger.Error(performContext, ex.Message, ex);
                     break;
             }
-
-
         }
     }
 }

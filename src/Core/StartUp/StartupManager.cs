@@ -144,7 +144,7 @@
                     return false;
                 }
 
-                bool veeamInstalled = _veeamManager.IsInstalled();
+                bool veeamInstalled = _veeamManager.IsInstalled(performContext);
                 if (!veeamInstalled)
                 {
                     Logger.Log(LogSeverity.Warn, performContext, "Check Veeam Installed: FAIL");

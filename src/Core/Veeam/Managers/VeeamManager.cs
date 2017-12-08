@@ -21,6 +21,7 @@
     using Core.Configuration;
     using DBManager;
     using Enums;
+    using global::Hangfire.Server;
     using Mappings;
     using Microsoft.Win32;
     using Models;
@@ -43,7 +44,7 @@
             return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform)PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
         }
 
-        public List<VmLicensingInfo> GetAllVmInfos(EPlatform platform)
+        public List<VmLicensingInfo> GetAllVmInfos(PerformContext performContext, EPlatform platform)
         {
             try
             {
@@ -60,8 +61,8 @@
             }
             catch (Win32Exception ex)
             {
-                Logger.Error(ex.Message);
-                Logger.Debug("Exception",ex);
+                Logger.Error(performContext,ex.Message);
+                Logger.Debug(performContext,"Exception",ex);
                 return new List<VmLicensingInfo>();
             }
         }
@@ -99,7 +100,7 @@
             return !useTrialStrategy ? PerVmQueriesMapping : PerVmTrialQueriesMapping;
         }
 
-        public int GetProtectedVmCount()
+        public int GetProtectedVmCount(PerformContext performContext)
         {
             try
             {
@@ -115,15 +116,15 @@
             }
             catch (Win32Exception ex)
             {
-                Logger.Error(ex.Message);
-                Logger.Debug(ex.Message, ex);
+                Logger.Error(performContext,ex.Message);
+                Logger.Debug(performContext,ex.Message, ex);
                 return 0;
             }
 
             return 0;
         }
 
-        public int GetProtectedVmsCount(EPlatform platform)
+        public int GetProtectedVmsCount(PerformContext performContext, EPlatform platform)
         {
             try
             {
@@ -139,15 +140,15 @@
             }
             catch (Win32Exception ex)
             {
-                Logger.Error(ex.Message);
-                Logger.Debug(ex.Message, ex);
+                Logger.Error(performContext,ex.Message);
+                Logger.Debug(performContext,ex.Message, ex);
                 return 0;
             }
 
             return 0;
         }
 
-        public VmsCounterInfo GetVmsCounters(EPlatform platform, bool useTrialStrategy)
+        public VmsCounterInfo GetVmsCounters(PerformContext performContext, EPlatform platform, bool useTrialStrategy)
         {
             try
             {
@@ -160,13 +161,13 @@
             }
             catch (Win32Exception ex)
             {
-                Logger.Error(ex.Message);
-                Logger.Debug(ex.Message, ex);
+                Logger.Error(performContext,ex.Message);
+                Logger.Debug(performContext,ex.Message, ex);
                 return new VmsCounterInfo(0, 0);
             }
         }
 
-        public bool IsInstalled()
+        public bool IsInstalled(PerformContext performContext)
         {
             try
             {
@@ -174,8 +175,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
-                Logger.Debug(ex.Message, ex);
+                Logger.Error(performContext,ex.Message);
+                Logger.Debug(performContext,ex.Message, ex);
                 return false;
             }
         }
@@ -219,7 +220,7 @@
         }
 
 
-        public Veeam GetLicensingInformation(Veeam veeam)
+        public Veeam GetLicensingInformation(PerformContext performContext, Veeam veeam)
         {
             try
             {
@@ -227,8 +228,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Error("There was an error while getting the license information from the registry. We'll therefore assume its an evaluation license.");
-                Logger.Debug(ex.Message, ex);
+                Logger.Error(performContext,"There was an error while getting the license information from the registry. We'll therefore assume its an evaluation license.");
+                Logger.Debug(performContext,ex.Message, ex);
                 veeam.LicenseType = LicenseTypeEx.Evaluation;
             }
 
@@ -236,7 +237,7 @@
 
             Version programVersion = Version.Parse(veeam.ProgramVersion);
 
-            var virtualMachines = GetVirtualMachineCount(programVersion, veeam.LicenseType);
+            var virtualMachines = GetVirtualMachineCount(performContext, programVersion, veeam.LicenseType);
             veeam.vSphere = virtualMachines.vsphere;
             veeam.HyperV = virtualMachines.hyperv;
 
@@ -249,36 +250,36 @@
 
             return veeam;
         }
-        protected (int vsphere, int hyperv) GetVirtualMachineCount(Version programVersion, LicenseTypeEx licenseType)
+        protected (int vsphere, int hyperv) GetVirtualMachineCount(PerformContext performContext, Version programVersion, LicenseTypeEx licenseType)
         {
             if (programVersion.Major == 9 && programVersion.Minor == 5)
             {
                 if (programVersion.Revision == 1038)
                 {
-                    return GetVirtualMachineCount9501038();
+                    return GetVirtualMachineCount9501038(performContext);
                 }
 
-                return GetVirtualMachineCount95(licenseType);
+                return GetVirtualMachineCount95(performContext, licenseType);
             }
 
             // default
-            return GetVirtualMachineCount90();
+            return GetVirtualMachineCount90(performContext);
         }
 
-        protected (int vsphere, int hyperv) GetVirtualMachineCount9501038()
+        protected (int vsphere, int hyperv) GetVirtualMachineCount9501038(PerformContext performContext)
         {
-            int vsphere = GetProtectedVmsCount(EPlatform.EVmware);
-            int hyperv = GetProtectedVmsCount(EPlatform.EHyperV);
+            int vsphere = GetProtectedVmsCount(performContext, EPlatform.EVmware);
+            int hyperv = GetProtectedVmsCount(performContext, EPlatform.EHyperV);
 
             return (vsphere, hyperv);
         }
 
-        protected (int vsphere, int hyperv) GetVirtualMachineCount95(LicenseTypeEx licenseType)
+        protected (int vsphere, int hyperv) GetVirtualMachineCount95(PerformContext performContext, LicenseTypeEx licenseType)
         {
             bool evaluation = licenseType == LicenseTypeEx.Evaluation;
 
-            VmsCounterInfo vSphereCounterInfo = GetVmsCounters(EPlatform.EVmware, evaluation);
-            VmsCounterInfo hypervCounterInfo = GetVmsCounters(EPlatform.EHyperV, evaluation);
+            VmsCounterInfo vSphereCounterInfo = GetVmsCounters(performContext, EPlatform.EVmware, evaluation);
+            VmsCounterInfo hypervCounterInfo = GetVmsCounters(performContext, EPlatform.EHyperV, evaluation);
 
             int vsphere = evaluation ? vSphereCounterInfo.TrialVmsCount : vSphereCounterInfo.NonTrialVmsCount;
             int hyperv = evaluation ? hypervCounterInfo.TrialVmsCount : hypervCounterInfo.NonTrialVmsCount;
@@ -286,10 +287,10 @@
             return (vsphere, hyperv);
         }
 
-        protected (int vsphere, int hyperv) GetVirtualMachineCount90()
+        protected (int vsphere, int hyperv) GetVirtualMachineCount90(PerformContext performContext)
         {
-            int vsphere = GetAllVmInfos(EPlatform.EVmware).Count(item => item.State == EVmLicensingStatus.Managed);
-            int hyperv = GetAllVmInfos(EPlatform.EHyperV).Count(item => item.State == EVmLicensingStatus.Managed);
+            int vsphere = GetAllVmInfos(performContext, EPlatform.EVmware).Count(item => item.State == EVmLicensingStatus.Managed);
+            int hyperv = GetAllVmInfos(performContext, EPlatform.EHyperV).Count(item => item.State == EVmLicensingStatus.Managed);
 
             return (vsphere, hyperv);
         }

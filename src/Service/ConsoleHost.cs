@@ -64,7 +64,7 @@
                     {
                         using (IDisposableDependencyObjectWrapper<VeeamWorkerManager> veeamWorkerManager = bootstrapper.IocManager.ResolveAsDisposable<VeeamWorkerManager>())
                         {
-                            veeamWorkerManager.Object.Start();
+                            veeamWorkerManager.Object.Start(null);
                         }
                     }
                 }

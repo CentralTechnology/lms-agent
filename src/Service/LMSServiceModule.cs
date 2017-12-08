@@ -58,7 +58,7 @@
 
                 if (startupManager.Object.MonitorVeeam(null))
                 {
-                    recurringJobManager.AddOrUpdate(BackgroundJobNames.Veeam, Job.FromExpression<VeeamWorkerManager>(j => j.Start()), "*/15 * * * *");
+                    recurringJobManager.AddOrUpdate(BackgroundJobNames.Veeam, Job.FromExpression<VeeamWorkerManager>(j => j.Start(null)), "*/15 * * * *");
                 }
             }
         }

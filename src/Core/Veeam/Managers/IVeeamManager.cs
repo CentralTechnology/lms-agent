@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 namespace LMS.Veeam.Managers
 {
     using Abp.Domain.Services;
+    using global::Hangfire.Server;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
     public interface IVeeamManager: IDomainService
     {
-        Veeam GetLicensingInformation(Veeam veeam);
+        Veeam GetLicensingInformation(PerformContext performContext, Veeam veeam);
 
-        bool IsInstalled();
+        bool IsInstalled(PerformContext performContext);
 
         string GetVersion();
         bool IsOnline();

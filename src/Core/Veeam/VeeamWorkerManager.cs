@@ -1,70 +1,70 @@
 ﻿namespace LMS.Veeam
 {
     using System;
-    using System.Diagnostics;
     using Abp.Configuration;
     using Abp.Timing;
-    using Castle.Core.Logging;
     using Common.Extensions;
+    using Common.Interfaces;
     using Common.Managers;
     using Core.Configuration;
+    using global::Hangfire.Server;
     using Managers;
     using OData;
     using Portal.Common.Enums;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
+    using Startup;
 
-    public class VeeamWorkerManager : LMSManagerBase, IVeeamWorkerManager
+    public class VeeamWorkerManager : WorkerManagerBase, IVeeamWorkerManager
     {
         private readonly IPortalManager _portalManager;
         private readonly ISettingManager _settingManager;
+        private readonly IStartupManager _startupManager;
         private readonly IVeeamManager _veeamManager;
 
-        public VeeamWorkerManager(IPortalManager portalManager, ISettingManager settingManager, IVeeamManager veeamManager)
+        public VeeamWorkerManager(IPortalManager portalManager, ISettingManager settingManager, IVeeamManager veeamManager, IStartupManager startupManager)
         {
             _portalManager = portalManager;
             _settingManager = settingManager;
             _veeamManager = veeamManager;
+            _startupManager = startupManager;
         }
 
-        public void Start()
+        public override void Start(PerformContext performContext)
         {
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-            Logger.Info("Stopwatch started!");
-
-            var deviceId = _settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
-            Veeam veeam = _portalManager.ListVeeamById(deviceId);
-            bool newVeeam = false;
-            if (veeam == null)
+            Execute(performContext, () =>
             {
-                veeam = new Veeam();
-                newVeeam = true;
-            }
+                _startupManager.ValidateCredentials(performContext);
 
-            Logger.Info("Collecting information...this could take some time.");
+                var deviceId = _settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
+                Veeam veeam = _portalManager.ListVeeamById(deviceId);
+                bool newVeeam = false;
+                if (veeam == null)
+                {
+                    veeam = new Veeam();
+                    newVeeam = true;
+                }
 
-            veeam = _veeamManager.GetLicensingInformation(veeam);
-            veeam.Validate();
+                Logger.Info(performContext, "Collecting information...this could take some time.");
 
-            Logger.Info(veeam.ToString());
+                veeam = _veeamManager.GetLicensingInformation(performContext, veeam);
+                veeam.Validate();
 
-            // set additional properties
-            veeam.CheckInTime = new DateTimeOffset(Clock.Now);
-            veeam.Status = CallInStatus.CalledIn;
-            veeam.UploadId = _portalManager.GenerateUploadId();
+                Logger.Info(veeam.ToString());
 
-            if (newVeeam)
-            {
-                _portalManager.AddVeeam(veeam);
-            }
-            else
-            {
-                _portalManager.UpdateVeeam(veeam);
-            }
+                // set additional properties
+                veeam.CheckInTime = new DateTimeOffset(Clock.Now);
+                veeam.Status = CallInStatus.CalledIn;
+                veeam.UploadId = _portalManager.GenerateUploadId();
 
-            stopWatch.Stop();
-            Console.WriteLine(Environment.NewLine);
-            Logger.Info($"Time elapsed: {stopWatch.Elapsed:hh\\:mm\\:ss}");
+                if (newVeeam)
+                {
+                    _portalManager.AddVeeam(veeam);
+                }
+                else
+                {
+                    _portalManager.UpdateVeeam(veeam);
+                }
+            });
         }
     }
 }
