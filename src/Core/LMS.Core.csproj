@@ -81,13 +81,16 @@
       <HintPath>..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.SqlServerCompact.6.1.3\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
+    <Reference Include="Hangfire.Console, Version=1.3.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Console.1.3.10\lib\net45\Hangfire.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.Core, Version=1.6.17.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.6.17\lib\net45\Hangfire.Core.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
@@ -95,8 +98,8 @@
     <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=4.0.0.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
       <HintPath>..\packages\CompareNETObjects.4.00.0.0\lib\net452\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.OData.Client, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.OData.Client.6.18.0\lib\net40\Microsoft.OData.Client.dll</HintPath>
@@ -131,11 +134,11 @@
     <Reference Include="Nito.AsyncEx.Enlightenment, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
     </Reference>
-    <Reference Include="Polly, Version=5.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Polly.5.3.1\lib\net45\Polly.dll</HintPath>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Text, Version=4.5.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ServiceStack.Text.4.5.14\lib\net45\ServiceStack.Text.dll</HintPath>
+    <Reference Include="Polly, Version=5.6.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Polly.5.6.1\lib\net45\Polly.dll</HintPath>
     </Reference>
     <Reference Include="SharpRaven, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpRaven.2.2.0\lib\net45\SharpRaven.dll</HintPath>
@@ -145,7 +148,6 @@
       <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
@@ -166,23 +168,16 @@
     <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -198,7 +193,7 @@
     <Compile Include="Common\Constants\Constants.cs" />
     <Compile Include="Common\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Common\Extensions\IDataReaderExtensions.cs" />
-    <Compile Include="Common\Extensions\RavenClientExtensions.cs" />
+    <Compile Include="Common\Extensions\LoggerExtensions.cs" />
     <Compile Include="Common\Extensions\TypeExtensions.cs" />
     <Compile Include="Common\Extensions\UserFlagExtensions.cs" />
     <Compile Include="Common\Extensions\VeeamExtensions.cs" />
@@ -206,12 +201,14 @@
     <Compile Include="Common\Extensions\CommonExtensions.cs" />
     <Compile Include="Common\Extensions\ObjectExtensions.cs" />
     <Compile Include="Common\Extensions\RegistryExtensions.cs" />
-    <Compile Include="Common\Extensions\StringExtensions.cs" />
     <Compile Include="Common\Extensions\PrincipleExtensions.cs" />
     <Compile Include="Common\Helpers\AppVersionHelper.cs" />
     <Compile Include="Common\Helpers\CommonHelpers.cs" />
     <Compile Include="Common\Helpers\DebuggingService.cs" />
+    <Compile Include="Common\Helpers\Log4NetHelper.cs" />
     <Compile Include="Common\Helpers\SettingManagerHelper.cs" />
+    <Compile Include="Common\Interfaces\IWorkerManager.cs" />
+    <Compile Include="Common\Managers\WorkerManagerBase.cs" />
     <Compile Include="Common\Managers\LMSManagerBase.cs" />
     <Compile Include="Configuration\AppSettingNames.cs" />
     <Compile Include="Configuration\AppSettingProvider.cs" />
@@ -219,6 +216,7 @@
     <Compile Include="Configuration\SettingExtensions.cs" />
     <Compile Include="Configuration\SettingStore.cs" />
     <Compile Include="Connected Services\Portal\PortalProxy.cs" />
+    <Compile Include="Hangfire\DisableMultipleQueuedItemsFilter.cs" />
     <Compile Include="LMSCoreModule.cs" />
     <Compile Include="Migrations\201707140955114_Initial.cs" />
     <Compile Include="Migrations\201707140955114_Initial.Designer.cs">
@@ -228,7 +226,6 @@
     <Compile Include="OData\IPortalManager.cs" />
     <Compile Include="Startup\IStartupManager.cs" />
     <Compile Include="Users\Compare\LicenseGroupCompareLogic.cs" />
-    <Compile Include="Users\Compare\LicenseGroupComparer.cs" />
     <Compile Include="Users\Compare\LicenseUserCompareLogic.cs" />
     <Compile Include="Users\Compare\LicenseUserComparer.cs" />
     <Compile Include="Users\Dto\LicenseGroupDto.cs" />
@@ -250,13 +247,11 @@
     <Compile Include="Users\Managers\UserGroupManager.cs" />
     <Compile Include="Users\Managers\UserManager.cs" />
     <Compile Include="Users\Models\LicenseGroupSummary.cs" />
-    <Compile Include="Users\Models\LicenseUserGroupSummary.cs" />
     <Compile Include="Users\Models\LicenseUserSummary.cs" />
     <Compile Include="OData\PortalManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sentry\RavenClient.cs" />
     <Compile Include="Startup\StartupManager.cs" />
-    <Compile Include="Users\Dto\GroupPrincipalOutput.cs" />
     <Compile Include="Users\Managers\ActiveDirectoryManager.cs" />
     <Compile Include="Users\Profiles\LicenseGroupProfile.cs" />
     <Compile Include="Users\Profiles\LicenseUserProfile.cs" />
@@ -280,7 +275,6 @@
     <Compile Include="Veeam\DBManager\SqlValueTypeFieldDescriptor.cs" />
     <Compile Include="Veeam\Enums\Enums.cs" />
     <Compile Include="Veeam\Mappings\IPerVmStoredProceduresMapping.cs" />
-    <Compile Include="Veeam\Models\VeeamUpdateModel.cs" />
     <Compile Include="Veeam\Managers\LicenseManager.cs" />
     <Compile Include="Veeam\Models\VeeamLicense.cs" />
     <Compile Include="Veeam\Managers\VeeamManager.cs" />

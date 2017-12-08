@@ -3,8 +3,10 @@
     using System;
     using Abp.Configuration;
     using Abp.Domain.Services;
+    using Abp.Logging;
     using Common.Extensions;
     using Core.Configuration;
+    using global::Hangfire.Server;
     using OData;
 
     public class AutotaskManager : DomainService, IAutotaskManager
@@ -15,18 +17,16 @@
         {
             _portalManager = portalManager;
         }
-
-        /// <inheritdoc />
         public int GetId()
         {
             return SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
         }
 
-        public bool IsValid()
+        public bool IsValid(PerformContext performContext)
         {
             try
             {
-                Guid deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
+                var deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
 
                 int accountId;
                 int storedAccount = SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
@@ -37,8 +37,10 @@
 
                     if (reportedAccount == default(int))
                     {
-                        Logger.Warn("Check Account: FAIL");
-                        Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
+                        Logger.Log(LogSeverity.Warn, performContext, "Check Account: FAIL");
+                        Logger.Log(LogSeverity.Error,
+                            performContext, "Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
+
                         return false;
                     }
 
@@ -50,16 +52,18 @@
                     accountId = storedAccount;
                 }
 
-                Logger.Info("Check Account: OK");
-                Logger.Info($"Account: {accountId}");
+                Logger.Log(LogSeverity.Info, performContext, "Check Account: OK");
+                Logger.Log(LogSeverity.Info, performContext, $"Account: {accountId}");
+
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.Warn("Check Account: FAIL");
-                Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
-                Logger.Error(ex.Message);
-                Logger.Debug("Exception", ex);
+                Logger.Log(LogSeverity.Error, performContext, "Check Account: FAIL");
+                Logger.Log(LogSeverity.Error, performContext, "Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
+                Logger.Log(LogSeverity.Error, performContext, ex.Message);
+                Logger.Log(LogSeverity.Debug, performContext, ex.Message, ex);
+
                 return false;
             }
         }

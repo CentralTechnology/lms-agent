@@ -7,6 +7,7 @@
     using Common.Extensions;
     using Common.Helpers;
     using Core.Configuration;
+    using global::Hangfire.Server;
     using OData;
     using Portal.Common.Enums;
     using Portal.LicenseMonitoringSystem.Users.Entities;
@@ -34,7 +35,7 @@
             return _portalManager.ListManagedSupportById(idOfManagedSupport);
         }
 
-        public ManagedSupport Add()
+        public ManagedSupport Add(PerformContext performContext)
         {
             var deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
 
@@ -56,7 +57,7 @@
 
             ManagedSupport managedSupport = Get();
 
-            Logger.Debug($"Created new Managed Support {managedSupport.Id}");
+            Logger.Debug(performContext, $"Created new Managed Support {managedSupport.Id}");
             return managedSupport;
         }
 

@@ -13,9 +13,9 @@
     using Castle.Core.Logging;
     using CentraStage;
     using Common.Client;
+    using Common.Constants;
     using Common.Extensions;
     using Common.Managers;
-    using Core.Common.Constants;
     using Core.Configuration;
     using Microsoft.OData.Client;
     using Polly;
@@ -225,10 +225,6 @@
                 .ToList());
         }
 
-        public List<LicenseGroup> ListAllGroups() => DefaultPolicy.Execute(() => Container.LicenseGroups.ToList());
-
-        public List<LicenseUser> ListAllUsers() => DefaultPolicy.Execute(() => Container.LicenseUsers.ToList());
-
         public List<LicenseUserSummary> ListAllUserIdsByGroupId(Guid groupId)
         {
             return DefaultPolicy.Execute(() =>
@@ -243,8 +239,6 @@
         public LicenseGroup ListGroupById(Guid id) => DefaultPolicy.Execute(() => Container.LicenseGroups.Where(g => g.Id == id).SingleOrDefault());
 
         public ManagedSupport ListManagedSupportById(int id) => DefaultPolicy.Execute(() => Container.ManagedSupports.Where(ms => ms.Id == id).SingleOrDefault());
-
-        public LicenseUser ListUserById(Guid id) => DefaultPolicy.Execute(() => Container.LicenseUsers.Where(u => u.Id == id).SingleOrDefault());
 
         public Veeam ListVeeamById(Guid id) => DefaultPolicy.Execute(() => Container.Veeams.Where(u => u.Id == id).SingleOrDefault());
 

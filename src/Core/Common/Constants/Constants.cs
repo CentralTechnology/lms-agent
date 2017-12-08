@@ -1,4 +1,4 @@
-﻿namespace Core.Common.Constants
+﻿namespace LMS.Common.Constants
 {
     using System.Diagnostics.CodeAnalysis;
 

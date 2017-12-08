@@ -2,8 +2,10 @@
 {
     using System;
     using Abp.Domain.Services;
+    using Common.Extensions;
     using Dto;
     using Extensions;
+    using global::Hangfire.Server;
     using OData;
     using Portal.LicenseMonitoringSystem.Users.Entities;
 
@@ -16,7 +18,7 @@
             _portalManager = portalManager;
         }
 
-        public void Add(LicenseUserDto input, int managedSupportId, int tenantId)
+        public void Add(PerformContext performContext, LicenseUserDto input, int managedSupportId, int tenantId)
         {
             var userToAdd = ObjectMapper.Map<LicenseUser>(input);
             userToAdd.ManagedSupportId = managedSupportId;
@@ -29,15 +31,15 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"An error occurred while creating {userToAdd.Format()}");
-                Logger.Debug("Exception when creating LicenseUser", ex);
+                Logger.Error(performContext, $"An error occurred while creating {userToAdd.Format()}");
+                Logger.Debug(performContext, "Exception when creating LicenseUser", ex);
                 throw;
             }
 
-            Logger.Info($"+ {userToAdd.Format(Logger.IsDebugEnabled)}");
+            Logger.Info(performContext, $"+ {userToAdd.Format(Logger.IsDebugEnabled)}");
         }
 
-        public void Update(LicenseUserDto input)
+        public void Update(PerformContext performContext, LicenseUserDto input)
         {
             var userToUpdate = ObjectMapper.Map<LicenseUser>(input);
 
@@ -46,17 +48,17 @@
                 bool updated = _portalManager.UpdateUser(userToUpdate);
                 _portalManager.SaveChanges();
 
-                Logger.Info($"{(updated ? "^" : "=")} {userToUpdate.Format(Logger.IsDebugEnabled)}");
+                Logger.Info(performContext, $"{(updated ? "^" : "=")} {userToUpdate.Format(Logger.IsDebugEnabled)}");
             }
             catch (Exception ex)
             {
-                Logger.Error($"An error occurred while updating {userToUpdate.Format()}");
-                Logger.Debug("Exception when updateing LicenseUser", ex);
+                Logger.Error(performContext, $"An error occurred while updating {userToUpdate.Format()}");
+                Logger.Debug(performContext, "Exception when updateing LicenseUser", ex);
                 throw;
             }
         }
 
-        public void Delete(Guid id)
+        public void Delete(PerformContext performContext, Guid id)
         {
             try
             {
@@ -65,12 +67,12 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"An error occurred while deleting {id}");
-                Logger.Debug("Exception when deleting LicenseUser", ex);
+                Logger.Error(performContext, $"An error occurred while deleting {id}");
+                Logger.Debug(performContext, "Exception when deleting LicenseUser", ex);
                 throw;
             }
 
-            Logger.Info($"- {id}");
+            Logger.Info(performContext, $"- {id}");
         }
     }
 }

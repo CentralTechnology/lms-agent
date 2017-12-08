@@ -4,6 +4,5 @@
 
     public interface IVeeamWorkerManager : IDomainService
     {
-        void Start();
     }
 }

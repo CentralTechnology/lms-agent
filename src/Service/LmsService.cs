@@ -1,86 +1,69 @@
-﻿namespace LMS
+﻿namespace LMS.Service
 {
     using System;
-    using System.Data.Entity.Migrations;
-    using System.Diagnostics;
-    using System.Threading;
-    using Abp;
-    using Abp.Configuration;
-    using Abp.Dependency;
-    using Abp.Logging;
-    using Castle.Facilities.Logging;
-    using Common.Helpers;
-    using Core.Configuration;
-    using EntityFramework;
-    using Menu;
-    using ServiceTimer;
-    using Startup;
-    using Workers;
+    using System.Collections.Concurrent;
+    using System.Reflection;
+    using global::Hangfire;
+    using Microsoft.Owin.Hosting;
+    using Topshelf;
 
-    public class LMSService : TimerServiceBase
+    public class LMSService : ServiceControl
     {
-        private AbpBootstrapper _bootstrapper;
+        private IDisposable _webapp;
+        public bool Start(HostControl hostControl)
+        { 
+            _webapp = WebApp.Start<Startup>("http://localhost:9000");
 
-        public override bool Start()
+            return true;
+        }
+
+        public bool Stop(HostControl hostControl)
+        {
+            _webapp.Dispose();
+            return DisposeServers();
+        }
+
+        private static bool DisposeServers()
         {
             try
             {
-                _bootstrapper = AbpBootstrapper.Create<LMSServiceModule>();
-                _bootstrapper.IocManager
-                    .IocContainer
-                    .AddFacility<LoggingFacility>(f => f.UseLog4Net().WithConfig("log4net.config"));
-
-                _bootstrapper.Initialize();
-
-                LogHelper.Logger.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
-
-                using (IDisposableDependencyObjectWrapper<StartupManager> startupManager = _bootstrapper.IocManager.ResolveAsDisposable<StartupManager>())
+                var type = Type.GetType("Hangfire.AppBuilderExtensions, Hangfire.Core", throwOnError: false);
+                if (type == null)
                 {
-                    bool started = startupManager.Object.Init();
-                    if (!started)
-                    {
-                        return false;
-                    }
-
-                    if (Environment.UserInteractive)
-                    {
-                        Thread.Sleep(4000);
-                        Console.Clear();
-                        new ClientProgram(Guid.NewGuid()).Run();
-                    }
-                    else
-                    {
-                        using (IDisposableDependencyObjectWrapper<SettingManager> settingManager = _bootstrapper.IocManager.ResolveAsDisposable<SettingManager>())
-                        {
-                            if (settingManager.Object.GetSettingValue<bool>(AppSettingNames.MonitorVeeam))
-                            {
-                                var veeamMonitorWorker = new VeeamMonitorWorker();
-                                RegisterWorker(veeamMonitorWorker);
-                            }
-
-                            if (settingManager.Object.GetSettingValue<bool>(AppSettingNames.MonitorUsers))
-                            {
-                                var userMonitorWorker = new UserMonitorWorker();
-                                RegisterWorker(userMonitorWorker);
-                            }
-                        }
-                    }
-
-                    return true;
+                    return false;
                 }
+
+                var field = type.GetField("Servers", BindingFlags.Static | BindingFlags.NonPublic);
+                if (field == null)
+                {
+                    return false;
+                }
+
+                if (!(field.GetValue(null) is ConcurrentBag<BackgroundJobServer> value))
+                {
+                    return false;
+                }
+
+                var servers = value.ToArray();
+
+                foreach (var server in servers)
+                {
+                    // Dispose method is a blocking one. It's better to send stop
+                    // signals first, to let them stop at once, instead of one by one.
+                    server.SendStop();
+                }
+
+                foreach (var server in servers)
+                {
+                    server.Dispose();
+                }
+
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                LogHelper.LogException(ex);
                 return false;
             }
-        }
-
-        public override bool Stop()
-        {
-            _bootstrapper.Dispose();
-
-            return base.Stop();
         }
     }
 }

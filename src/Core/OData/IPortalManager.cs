@@ -30,11 +30,8 @@
         List<LicenseGroupSummary> ListAllGroupIds(Expression<Func<LicenseGroup,bool>> predicate);
         List<LicenseUserSummary> ListAllUserIds(Expression<Func<LicenseUser, bool>> predicate);
         List<LicenseUserSummary> ListAllUserIds();
-        List<LicenseGroup> ListAllGroups();
-        List<LicenseUser> ListAllUsers();
         LicenseGroup ListGroupById(Guid id);
         ManagedSupport ListManagedSupportById(int id);
-        LicenseUser ListUserById(Guid id);
         Veeam ListVeeamById(Guid id);
         void SaveChanges(bool isBatch = false);
         bool UpdateGroup(LicenseGroup licenseGroup);

@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using Core.Common.Constants;
+    using LMS.Common.Constants;
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;

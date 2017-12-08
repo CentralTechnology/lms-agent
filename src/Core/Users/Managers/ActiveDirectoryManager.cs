@@ -7,16 +7,19 @@
     using System.DirectoryServices.ActiveDirectory;
     using System.Linq;
     using System.Net.NetworkInformation;
+    using Abp;
     using Abp.Domain.Services;
     using Abp.Extensions;
     using Common.Extensions;
     using Dto;
     using Extensions;
+    using global::Hangfire.Server;
 
     public class ActiveDirectoryManager : DomainService, IActiveDirectoryManager
     {
+        /// <param name="performContext"></param>
         /// <inheritdoc />
-        public IEnumerable<LicenseUserDto> GetUsers()
+        public IEnumerable<LicenseUserDto> GetUsers(PerformContext performContext)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -30,14 +33,14 @@
                             {
                                 if (principal.Guid == null)
                                 {
-                                    Logger.Debug($"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
+                                    Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
                                     continue;
                                 }
 
                                 bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
                                 if (!validId)
                                 {
-                                    Logger.Debug($"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
+                                    Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
                                     continue;
                                 }
 
@@ -46,9 +49,9 @@
                                     continue;
                                 }
 
-                                Logger.Debug($"Retrieving {user.GetDisplayText()} from Active Directory.");
+                                Logger.Debug(performContext, $"Retrieving {user.GetDisplayText()} from Active Directory.");
 
-                                LicenseUserDto localUser = GetUser(principalId);
+                                LicenseUserDto localUser = GetUser(performContext, principalId);
                                 if (localUser == null)
                                 {
                                     continue;
@@ -63,14 +66,14 @@
         }
 
         /// <inheritdoc />
-        public LicenseUserDto GetUser(Guid userId)
+        public LicenseUserDto GetUser(PerformContext performContext, Guid userId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
                 UserPrincipal user = UserPrincipal.FindByIdentity(principalContext, IdentityType.Guid, userId.ToString());
                 if (user == null)
                 {
-                    throw new NullReferenceException($"Cannot find User Principal with Guid {userId}");
+                    throw new AbpException($"Cannot find User Principal with Guid {userId}");
                 }
 
                 bool isAccountDisabled;
@@ -82,8 +85,8 @@
                 catch (Exception ex)
                 {
                     isAccountDisabled = true;
-                    Logger.Error($"Failed to determine whether {user.GetDisplayText()} is enabled or not. Therefore we have to assumed they are enabled.");
-                    Logger.Debug("Exception getting DirectoryEntry status", ex);
+                    Logger.Error(performContext, $"Failed to determine whether {user.GetDisplayText()} is enabled or not. Therefore we have to assumed they are enabled.");
+                    Logger.Debug(performContext, "Exception getting DirectoryEntry status", ex);
                 }
 
                 DateTimeOffset? lastLogon = null;
@@ -96,7 +99,7 @@
                     }
                     else
                     {
-                        Logger.Debug($"Failed to determine the last logon date for {user.GetDisplayText()}. Therefore we have to assume they have never logged on.");
+                        Logger.Debug(performContext, $"Failed to determine the last logon date for {user.GetDisplayText()}. Therefore we have to assume they have never logged on.");
                     }
                 }
 
@@ -113,13 +116,13 @@
                 }
                 catch (NullReferenceException nullRef)
                 {
-                    Logger.Error(nullRef.Message);
+                    Logger.Error(performContext, nullRef.Message);
                     throw;
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"Failed to determine the when created date for {user.GetDisplayText()}. Task cannot continue.");
-                    Logger.Debug("Exception getting WhenCreated UserPrincipal property.", ex);
+                    Logger.Error(performContext, $"Failed to determine the when created date for {user.GetDisplayText()}. Task cannot continue.");
+                    Logger.Debug(performContext, "Exception getting WhenCreated UserPrincipal property.", ex);
                     throw;
                 }
 
@@ -138,8 +141,9 @@
             }
         }
 
+        /// <param name="performContext"></param>
         /// <inheritdoc />
-        public IEnumerable<LicenseGroupDto> GetGroups()
+        public IEnumerable<LicenseGroupDto> GetGroups(PerformContext performContext)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -153,14 +157,14 @@
                             {
                                 if (principal.Guid == null)
                                 {
-                                    Logger.Debug($"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
+                                    Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
                                     continue;
                                 }
 
                                 bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
                                 if (!validId)
                                 {
-                                    Logger.Debug($"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
+                                    Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
                                     continue;
                                 }
 
@@ -169,9 +173,9 @@
                                     continue;
                                 }
 
-                                Logger.Debug($"Retrieving {group.GetDisplayText()} from Active Directory.");
+                                Logger.Debug(performContext, $"Retrieving {group.GetDisplayText()} from Active Directory.");
 
-                                LicenseGroupDto localGroup = GetGroup(principalId);
+                                LicenseGroupDto localGroup = GetGroup(performContext, principalId);
                                 if (localGroup == null)
                                 {
                                     continue;
@@ -186,7 +190,7 @@
         }
 
         /// <inheritdoc />
-        public LicenseGroupDto GetGroup(Guid groupId)
+        public LicenseGroupDto GetGroup(PerformContext performContext, Guid groupId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -222,13 +226,13 @@
                 }
                 catch (NullReferenceException nullRef)
                 {
-                    Logger.Error(nullRef.Message);
+                    Logger.Error(performContext, nullRef.Message);
                     throw;
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"Failed to determine the when created date for {group.GetDisplayText()}. Task cannot continue.");
-                    Logger.Debug("Exception getting WhenCreated GroupPrincipal property.", ex);
+                    Logger.Error(performContext, $"Failed to determine the when created date for {group.GetDisplayText()}. Task cannot continue.");
+                    Logger.Debug(performContext, "Exception getting WhenCreated GroupPrincipal property.", ex);
                     throw;
                 }
 
@@ -242,7 +246,7 @@
         }
 
         /// <inheritdoc />
-        public LicenseGroupUsersDto GetGroupMembers(Guid groupId)
+        public LicenseGroupUsersDto GetGroupMembers(PerformContext performContext, Guid groupId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -264,14 +268,14 @@
                 {
                     if (principal.Guid == null)
                     {
-                        Logger.Debug($"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
+                        Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
                         continue;
                     }
 
                     bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
                     if (!validId)
                     {
-                        Logger.Debug($"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
+                        Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
                         continue;
                     }
 
@@ -280,7 +284,7 @@
                         continue;
                     }
 
-                    LicenseUserDto localUser = GetUser(principalId);
+                    LicenseUserDto localUser = GetUser(performContext, principalId);
                     if (localUser == null)
                     {
                         continue;
@@ -293,7 +297,7 @@
             }
         }
 
-        public bool IsOnDomain()
+        public bool IsOnDomain(PerformContext performContext)
         {
             try
             {
@@ -304,12 +308,12 @@
             }
             catch (ActiveDirectoryOperationException ex)
             {
-                Logger.Debug(ex.Message, ex);
+                Logger.Debug(performContext, ex.Message, ex);
                 return false;
             }
         }
 
-        public bool IsPrimaryDomainController()
+        public bool IsPrimaryDomainController(PerformContext performContext)
         {
             try
             {
@@ -322,7 +326,7 @@
             }
             catch (ActiveDirectoryOperationException ex)
             {
-                Logger.Debug(ex.Message, ex);
+                Logger.Debug(performContext, ex.Message, ex);
                 return false;
             }
         }

@@ -18,3 +18,5 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
 [assembly: Guid("1abf7dae-0c38-4b8f-b372-40223e7fea11")]
+[assembly: AssemblyTitle("Core Module for License Monitoring System")]
+[assembly: AssemblyDescription("Core Module for License Monitoring System")]
