@@ -2,21 +2,12 @@
 {
     using System;
     using System.Threading.Tasks;
-    using Abp.WebApi.Client;
-    using LMS.Common.Client;
-    using LMS.Common.Helpers;
     using LMS.EntityFramework;
-    using NSubstitute;
     using Ploeh.AutoFixture;
 
     public abstract class LicenseMonitoringSystemTestBase
-    {    
-       protected Fixture Fixture = new Fixture();
-        
-        protected LicenseMonitoringSystemTestBase()
-        {
-
-        }
+    {
+        protected Fixture Fixture = new Fixture();
 
         #region UsingDbContext
 
