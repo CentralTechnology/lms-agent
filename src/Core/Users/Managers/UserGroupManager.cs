@@ -4,9 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using Abp.Domain.Services;
+    using Common.Extensions;
     using Compare;
     using Dto;
     using Extensions;
+    using global::Hangfire.Server;
     using Models;
     using OData;
     using Portal.LicenseMonitoringSystem.Users.Entities;
@@ -20,28 +22,28 @@
             _portalManager = portalManager;
         }
 
-        public void AddUsersToGroup(LicenseGroupUsersDto groupMembers)
+        public void AddUsersToGroup(PerformContext performContext, LicenseGroupUsersDto groupMembers)
         {
             LicenseGroup group = _portalManager.ListGroupById(groupMembers.Id);
             _portalManager.Container.AttachTo("LicenseGroups", group);
 
-            var remoteUsers = _portalManager.ListAllUserIdsByGroupId(groupMembers.Id).ToDictionary(u => u.Id);
+            Dictionary<Guid, LicenseUserSummary> remoteUsers = _portalManager.ListAllUserIdsByGroupId(groupMembers.Id).ToDictionary(u => u.Id);
 
             var members = ObjectMapper.Map<List<LicenseUser>>(groupMembers.Users);
 
-            foreach (var user in members)
+            foreach (LicenseUser user in members)
             {
                 bool userIsMember = remoteUsers.ContainsKey(user.Id);
                 if (userIsMember)
                 {
-                    Logger.Info($"= {user.Format(Logger.IsDebugEnabled)}");
+                    Logger.Info(performContext, $"= {user.Format(Logger.IsDebugEnabled)}");
                 }
                 else
                 {
                     _portalManager.AddGroupToUser(user, group);
                     _portalManager.SaveChanges();
 
-                    Logger.Info($"+ {user.Format(Logger.IsDebugEnabled)}");
+                    Logger.Info(performContext, $"+ {user.Format(Logger.IsDebugEnabled)}");
                     _portalManager.Detach(user);
                 }
             }
@@ -50,7 +52,7 @@
             _portalManager.Detach(group);
         }
 
-        public void DeleteUsersFromGroup(LicenseGroupUsersDto groupMembers)
+        public void DeleteUsersFromGroup(PerformContext performContext, LicenseGroupUsersDto groupMembers)
         {
             LicenseGroup group = _portalManager.ListGroupById(groupMembers.Id);
             _portalManager.Container.AttachTo("LicenseGroups", group);
@@ -64,7 +66,7 @@
                 _portalManager.DeleteGroupFromUser(staleMember, group);
                 _portalManager.SaveChanges();
 
-                Logger.Info($"- {staleMember.Format(Logger.IsDebugEnabled)}");
+                Logger.Info(performContext, $"- {staleMember.Format(Logger.IsDebugEnabled)}");
                 _portalManager.Detach(staleMember);
             }
 

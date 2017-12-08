@@ -90,7 +90,7 @@
                 }
 
                 // check if a domain exists
-                bool domainExists = _activeDirectoryManager.IsOnDomain();
+                bool domainExists = _activeDirectoryManager.IsOnDomain(performContext);
                 if (!domainExists)
                 {
                     Logger.Log(LogSeverity.Warn, performContext, "Check Domain: FAIL");
@@ -101,7 +101,7 @@
                 Logger.Log(LogSeverity.Info, performContext, "Check Domain: OK");
 
                 // check if this is a primary domain controller
-                bool pdc = _activeDirectoryManager.IsPrimaryDomainController();
+                bool pdc = _activeDirectoryManager.IsPrimaryDomainController(performContext);
                 if (!pdc)
                 {
                     Logger.Log(LogSeverity.Warn, performContext, "Check PDC: FAIL");

@@ -46,12 +46,12 @@
             _startupManager = startupManager;
         }
 
-        public void ProcessGroups(ManagedSupport managedSupport)
+        public void ProcessGroups(PerformContext performContext, ManagedSupport managedSupport)
         {
             Console.WriteLine(Environment.NewLine);
-            Logger.Info("--------------- PROCESS GROUPS BEGIN ---------------");
+            Logger.Info(performContext,"--------------- PROCESS GROUPS BEGIN ---------------");
 
-            IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetGroups();
+            IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetGroups(performContext);
             List<LicenseGroupSummary> remoteGroups = _portalManager.ListAllGroupIds();
             var localGroupIds = new List<Guid>();
             foreach (LicenseGroupDto group in groups)
@@ -61,39 +61,39 @@
                 bool existingGroup = remoteGroups.Any(ru => ru.Id == group.Id);
                 if (existingGroup)
                 {
-                    _groupManager.Update(group);
+                    _groupManager.Update(performContext, group);
                     continue;
                 }
 
-                _groupManager.Add(group, managedSupport.TenantId);
+                _groupManager.Add(performContext, group, managedSupport.TenantId);
             }
 
             List<LicenseGroupSummary> activeRemoteGroups = _portalManager.ListAllGroupIds(g => !g.IsDeleted);
             IEnumerable<LicenseGroupSummary> groupsToDelete = activeRemoteGroups.Where(ru => localGroupIds.All(u => u != ru.Id));
             foreach (LicenseGroupSummary group in groupsToDelete)
             {
-                _groupManager.Delete(group.Id);
+                _groupManager.Delete(performContext, group.Id);
             }
 
-            Logger.Info("--------------- PROCESS GROUPS END ---------------");
+            Logger.Info(performContext,"--------------- PROCESS GROUPS END ---------------");
         }
 
-        public void ProcessUserGroups()
+        public void ProcessUserGroups(PerformContext performContext)
         {
             Console.WriteLine(Environment.NewLine);
-            Logger.Info("--------------- PROCESS GROUP MEMBERSHIP BEGIN ---------------");
+            Logger.Info(performContext,"--------------- PROCESS GROUP MEMBERSHIP BEGIN ---------------");
 
-            IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetGroups();
+            IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetGroups(performContext);
             foreach (LicenseGroupDto group in groups)
             {
-                Logger.Info($"** {group.Name} **");
-                LicenseGroupUsersDto localMembers = _activeDirectoryManager.GetGroupMembers(group.Id);
+                Logger.Info(performContext,$"** {group.Name} **");
+                LicenseGroupUsersDto localMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
 
-                _userGroupManager.AddUsersToGroup(localMembers);
-                _userGroupManager.DeleteUsersFromGroup(localMembers);
+                _userGroupManager.AddUsersToGroup(performContext, localMembers);
+                _userGroupManager.DeleteUsersFromGroup(performContext, localMembers);
             }
 
-            Logger.Info("--------------- PROCESS GROUP MEMBERSHIP END ---------------");
+            Logger.Info(performContext,"--------------- PROCESS GROUP MEMBERSHIP END ---------------");
         }
 
         /// <summary>
@@ -103,9 +103,9 @@
         /// <param name="managedSupport"></param>
         public void ProcessUsers(PerformContext performContext, ManagedSupport managedSupport)
         {
-            Logger.Log(LogSeverity.Info, performContext, "--------------- PROCESS USERS BEGIN ---------------");
+            Logger.Info(performContext, "--------------- PROCESS USERS BEGIN ---------------");
 
-            IEnumerable<LicenseUserDto> users = _activeDirectoryManager.GetUsers();
+            IEnumerable<LicenseUserDto> users = _activeDirectoryManager.GetUsers(performContext);
             List<LicenseUserSummary> remoteUsers = _portalManager.ListAllUserIds();
             var localUserIds = new List<Guid>();
             foreach (LicenseUserDto user in users)
@@ -115,21 +115,21 @@
                 bool existingUser = remoteUsers.Any(ru => ru.Id == user.Id);
                 if (existingUser)
                 {
-                    _userManager.Update(user);
+                    _userManager.Update(performContext, user);
                     continue;
                 }
 
-                _userManager.Add(user, managedSupport.Id, managedSupport.TenantId);
+                _userManager.Add(performContext, user, managedSupport.Id, managedSupport.TenantId);
             }
 
             List<LicenseUserSummary> activeRemoteUsers = _portalManager.ListAllUserIds(u => !u.IsDeleted);
             IEnumerable<LicenseUserSummary> usersToDelete = activeRemoteUsers.Where(ru => localUserIds.All(u => u != ru.Id));
             foreach (LicenseUserSummary user in usersToDelete)
             {
-                _userManager.Delete(user.Id);
+                _userManager.Delete(performContext, user.Id);
             }
 
-            Logger.Log(LogSeverity.Info, performContext, " ---------------PROCESS USERS END ---------------");
+            Logger.Info(performContext, " ---------------PROCESS USERS END ---------------");
         }
 
         public override void Start(PerformContext performContext)
@@ -138,13 +138,13 @@
             {
                 _startupManager.ValidateCredentials(performContext);
 
-                Logger.Log(LogSeverity.Info, performContext, "Getting account details from the api.");
-                ManagedSupport managedSupport = _managedSupportManager.Get() ?? _managedSupportManager.Add();
+                Logger.Info(performContext, "Getting account details from the api.");
+                ManagedSupport managedSupport = _managedSupportManager.Get() ?? _managedSupportManager.Add(performContext);
                 _portalManager.Detach(managedSupport);
 
                 ProcessUsers(performContext, managedSupport);
-                ProcessGroups(managedSupport);
-                ProcessUserGroups();
+                ProcessGroups(performContext, managedSupport);
+                ProcessUserGroups(performContext);
 
                 // let the api know we have completed the task
                 _managedSupportManager.Update(managedSupport);

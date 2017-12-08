@@ -7,8 +7,8 @@
 
     public interface IUserWorkerManager : IDomainService
     {
-        void ProcessGroups(ManagedSupport managedSupport);
-        void ProcessUserGroups();
+        void ProcessGroups(PerformContext performContext, ManagedSupport managedSupport);
+        void ProcessUserGroups(PerformContext performContext);
         void ProcessUsers(PerformContext performContext, ManagedSupport managedSupport);
     }
 }

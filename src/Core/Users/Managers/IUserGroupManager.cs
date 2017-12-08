@@ -2,11 +2,12 @@
 {
     using Abp.Domain.Services;
     using Dto;
+    using global::Hangfire.Server;
 
     public interface IUserGroupManager : IDomainService
     {
-        void AddUsersToGroup(LicenseGroupUsersDto groupMembers);
+        void AddUsersToGroup(PerformContext performContext, LicenseGroupUsersDto groupMembers);
 
-        void DeleteUsersFromGroup(LicenseGroupUsersDto groupMembers);
+        void DeleteUsersFromGroup(PerformContext performContext, LicenseGroupUsersDto groupMembers);
     }
 }
