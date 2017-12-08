@@ -10,31 +10,13 @@
     using Ploeh.AutoFixture;
 
     public abstract class LicenseMonitoringSystemTestBase
-    {
-     
-        protected AbpWebApiClient AbpWebApiClient; 
-        protected PortalWebApiClient PortalWebApiClient; 
-        protected Fixture Fixture = new Fixture();
+    {    
+       protected Fixture Fixture = new Fixture();
         
         protected LicenseMonitoringSystemTestBase()
         {
-            AbpWebApiClient = Substitute.For<AbpWebApiClient>();
-            PortalWebApiClient = Substitute.For<PortalWebApiClient>(AbpWebApiClient);
-           
-
-
-
-
-
-            AbpWebApiClient.PostAsync<string>(Fixture.Create<string>()).Returns(Fixture.Create<string>());
-            PortalWebApiClient.GetAntiForgeryToken().Returns(Fixture.Create<string>());
-            //SettingManagerHelper.Instance.AccountId.Returns(Fixture.Create<int>());
-            //SettingManagerHelper.Instance.DeviceId.Returns(Fixture.Create<Guid>());
-            //SettingManagerHelper.Instance.Token.Returns(Fixture.Create<Guid>().ToString());
 
         }
-
-
 
         #region UsingDbContext
 
