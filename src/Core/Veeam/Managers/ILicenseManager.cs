@@ -22,5 +22,7 @@ namespace LMS.Veeam.Managers
             where TResult : struct;
 
         string LoadFromRegistry();
+
+        void SetLicenseFile(string licenseFile = null);
     }
 }

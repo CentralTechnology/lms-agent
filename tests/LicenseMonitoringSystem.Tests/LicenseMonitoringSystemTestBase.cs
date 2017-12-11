@@ -1,19 +1,36 @@
 ﻿namespace LicenseMonitoringSystem.Tests
 {
     using System;
+    using System.Data.Common;
     using System.Threading.Tasks;
+    using Abp.TestBase;
+    using Castle.MicroKernel.Registration;
     using LMS.EntityFramework;
     using Ploeh.AutoFixture;
 
-    public abstract class LicenseMonitoringSystemTestBase
+    public abstract class LicenseMonitoringSystemTestBase : AbpIntegratedTestBase<LicenseMonitoringSystemTestModule>
     {
-        protected Fixture Fixture = new Fixture();
+
+        protected override void PreInitialize()
+        {
+            //Fake DbConnection using Effort!
+            LocalIocManager.IocContainer.Register(
+                Component.For<DbConnection>()
+                    .UsingFactoryMethod(Effort.DbConnectionFactory.CreateTransient)
+                    .LifestyleSingleton()
+            );
+
+            base.PreInitialize();
+        }
+
+
+
 
         #region UsingDbContext
 
         protected void UsingDbContext(string connectionString, Action<LMSDbContext> action)
         {
-            using (var context = new LMSDbContext(connectionString))
+            using (var context = LocalIocManager.Resolve<LMSDbContext>())
             {
                 action(context);
                 context.SaveChanges();
@@ -22,7 +39,7 @@
 
         protected async Task UsingDbContextAsync(Func<LMSDbContext, Task> action)
         {
-            using (var context = new LMSDbContext())
+            using (var context = LocalIocManager.Resolve<LMSDbContext>())
             {
                 await action(context);
                 await context.SaveChangesAsync();
@@ -33,7 +50,7 @@
         {
             T result;
 
-            using (var context = new LMSDbContext())
+            using (var context = LocalIocManager.Resolve<LMSDbContext>())
             {
                 result = func(context);
                 context.SaveChanges();
@@ -46,7 +63,7 @@
         {
             T result;
 
-            using (var context = new LMSDbContext())
+            using (var context = LocalIocManager.Resolve<LMSDbContext>())
             {
                 result = await func(context);
                 await context.SaveChangesAsync();

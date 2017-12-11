@@ -17,6 +17,7 @@
             {
                 using (var licenseManager = IocManager.Instance.ResolveAsDisposable<ILicenseManager>())
                 {
+                    licenseManager.Object.SetLicenseFile();
                     return ConvertLicEditionToAppEdition(licenseManager.Object.GetPropertyNoThrow("Edition"));
                 }             
             }
@@ -45,6 +46,7 @@
             {
                 using (var licenseManager = IocManager.Instance.ResolveAsDisposable<ILicenseManager>())
                 {
+                    licenseManager.Object.SetLicenseFile();
                     return licenseManager.Object.GetPropertyNoThrow("Expiration date");
                 }
             }
@@ -68,6 +70,7 @@
             {
                 using (var licenseManager = IocManager.Instance.ResolveAsDisposable<ILicenseManager>())
                 {
+                    licenseManager.Object.SetLicenseFile();
                     return licenseManager.Object.GetPropertyNoThrow("License type");
                 }
             }

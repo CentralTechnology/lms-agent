@@ -36,11 +36,20 @@
     <Reference Include="Abp, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Abp.1.5.1\lib\net452\Abp.dll</HintPath>
     </Reference>
+    <Reference Include="Abp.AutoMapper, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\Abp.AutoMapper.1.5.1\lib\net452\Abp.AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Abp.EntityFramework, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Abp.EntityFramework.1.5.1\lib\net452\Abp.EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="Abp.EntityFramework.Common, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Abp.EntityFramework.Common.1.5.1\lib\net452\Abp.EntityFramework.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Abp.HangFire, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\Abp.HangFire.1.5.1\lib\net452\Abp.HangFire.dll</HintPath>
+    </Reference>
+    <Reference Include="Abp.TestBase, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\Abp.TestBase.1.5.1\lib\net452\Abp.TestBase.dll</HintPath>
     </Reference>
     <Reference Include="Abp.Web, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Abp.Web.1.5.1\lib\net452\Abp.Web.dll</HintPath>
@@ -50,6 +59,9 @@
     </Reference>
     <Reference Include="Abp.Web.Common, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Abp.Web.Common.1.5.1\lib\net452\Abp.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper, Version=5.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\AutoMapper.5.2.0\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
@@ -77,6 +89,12 @@
     </Reference>
     <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.Core, Version=1.6.17.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\Hangfire.Core.1.6.17\lib\net45\Hangfire.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.MemoryStorage, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\Hangfire.MemoryStorage.1.5.2\lib\net40\Hangfire.MemoryStorage.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
@@ -122,6 +140,9 @@
     </Reference>
     <Reference Include="NMemory, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6a46696d54971e6d, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\NMemory.1.1.2\lib\net45\NMemory.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\..\src\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="Ploeh.AutoFixture, Version=3.51.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
       <HintPath>..\..\src\packages\AutoFixture.3.51.0\lib\net40\Ploeh.AutoFixture.dll</HintPath>
@@ -194,6 +215,7 @@
     <Compile Include="Core\Users\LicenseUser_Tests.cs" />
     <Compile Include="Core\Veeam\VeeamLicenseManager_Tests.cs" />
     <Compile Include="LicenseMonitoringSystemTestBase.cs" />
+    <Compile Include="LicenseMonitoringSystemTestModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -212,6 +234,10 @@
     <ProjectReference Include="..\..\src\EntityFramework\LMS.EntityFramework.csproj">
       <Project>{847c8ea8-5b66-4cb1-b90b-64e1fefc8216}</Project>
       <Name>LMS.EntityFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Service\LMS.Service.csproj">
+      <Project>{FA86143F-7692-4E33-9719-52B5F13E4380}</Project>
+      <Name>LMS.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

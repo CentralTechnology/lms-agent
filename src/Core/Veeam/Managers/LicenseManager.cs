@@ -13,16 +13,12 @@
     public class LicenseManager : LMSManagerBase, ILicenseManager
     {
         private Dictionary<string, string> _lic;
-        private string _licenseFile;
+        public string LicenseFile { get; private set; }
 
-        public LicenseManager(string licenseFile = null)
-        {
-            Initialize(string.IsNullOrEmpty(licenseFile) ? LoadFromRegistry() : licenseFile);
-        }
 
         public  Dictionary<string, string> ExtractPropertiesFromLicense()
         {
-            string[] licenseArray = _licenseFile.Split(new[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] licenseArray = LicenseFile.Split(new[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries);
 
             return licenseArray.Select(x => x.Split('=')).ToDictionary(x => x[0], x => x[1]);
         }
@@ -69,12 +65,6 @@
             }
         }
 
-        public void Initialize(string licenseFile)
-        {
-            _licenseFile = licenseFile;
-            _lic = ExtractPropertiesFromLicense();
-        }
-
         public string LoadFromRegistry()
         {
             try
@@ -99,6 +89,20 @@
                 Logger.Error(ex.Message);
                 throw;
             }
+        }
+
+        public void SetLicenseFile(string licenseFile = null)
+        {
+            if (licenseFile == null)
+            {
+                LicenseFile = LoadFromRegistry();
+            }
+            else
+            {
+                LicenseFile = licenseFile;
+            }
+
+            _lic = ExtractPropertiesFromLicense();
         }
     }
 }

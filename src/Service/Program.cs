@@ -47,51 +47,7 @@
             }
 
             Parser.Default.ParseArguments<UpdateOptions, RunOptions>(args)
-                .WithParsed<UpdateOptions>(opts =>
-                {
-                    using (var bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
-                    {
-                        bootstrapper.IocManager
-                            .IocContainer
-                            .AddFacility<LoggingFacility>(f => f.LogUsing<Log4NetLoggerFactory>().WithConfig("log4net.config"));
-
-                        bootstrapper.Initialize();
-
-                        using (var settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
-                        {
-                            if (opts.AccountId != default(int))
-                            {
-                                settingsManager.Object.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, opts.AccountId.ToString());
-                                Console.WriteLine($"Account ID: {opts.AccountId}");
-                            }
-
-                            if (opts.DeviceId != default(Guid))
-                            {
-                                settingsManager.Object.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, opts.DeviceId.ToString());
-                                Console.WriteLine($"Device ID: {opts.DeviceId}");
-                            }
-
-                            if (opts.PdcOverride.HasValue)
-                            {
-                                settingsManager.Object.ChangeSettingForApplication(AppSettingNames.PrimaryDomainControllerOverride, opts.PdcOverride.Value.ToString());
-                                Console.WriteLine($"PDC Override: {opts.PdcOverride.Value}");
-                            }
-
-                            if (opts.UsersOverride.HasValue)
-                            {
-                                settingsManager.Object.ChangeSettingForApplication(AppSettingNames.UsersOverride, opts.UsersOverride.Value.ToString());
-                                Console.WriteLine($"Users Override: {opts.UsersOverride.Value}");
-                            }
-
-                            if (opts.VeeamOverride.HasValue)
-                            {
-                                settingsManager.Object.ChangeSettingForApplication(AppSettingNames.VeeamOverride, opts.VeeamOverride.Value.ToString());
-                                Console.WriteLine($"Veeam Override: {opts.VeeamOverride.Value}");
-                            }
-                        }
-                    }
-
-                })
+                .WithParsed<UpdateOptions>(ConsoleHost.Update)
                 .WithParsed<RunOptions>(ConsoleHost.Run);
         }
     }
