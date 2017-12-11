@@ -16,7 +16,7 @@
     using Common.Constants;
     using Common.Extensions;
     using Common.Managers;
-    using Core.Configuration;
+    using Configuration;
     using Microsoft.OData.Client;
     using Polly;
     using Portal.LicenseMonitoringSystem.Users.Entities;

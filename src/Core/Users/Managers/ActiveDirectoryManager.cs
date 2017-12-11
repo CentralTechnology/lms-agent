@@ -18,52 +18,29 @@
 
     public class ActiveDirectoryManager : DomainService, IActiveDirectoryManager
     {
-        /// <param name="performContext"></param>
-        /// <inheritdoc />
-        public IEnumerable<LicenseUserDto> GetUsers(PerformContext performContext)
+        public LicenseUserDto GetUserByPrincipalName(PerformContext performContext, string principalName)
         {
-            using (var principalContext = new PrincipalContext(ContextType.Domain))
-            {
-                using (var userPrincipal = new UserPrincipal(principalContext))
-                {
-                    using (var principalSearcher = new PrincipalSearcher(userPrincipal))
-                    {
-                        using (PrincipalSearchResult<Principal> results = principalSearcher.FindAll())
-                        {
-                            foreach (Principal principal in results)
-                            {
-                                var user = principal.Validate(performContext);
-                                if (user?.Guid == null)
-                                {
-                                    continue;
-                                }
-
-                                Logger.Debug(performContext, $"Retrieving {user.GetDisplayText()} from Active Directory.");
-
-                                LicenseUserDto localUser = GetUser(performContext, user.Guid.Value);
-                                if (localUser == null)
-                                {
-                                    continue;
-                                }
-
-                                yield return localUser;
-                            }
-                        }
-                    }
-                }
-            }
+            return GetUser(performContext, IdentityType.UserPrincipalName, principalName);
         }
 
-        /// <inheritdoc />
-        public LicenseUserDto GetUser(PerformContext performContext, Guid userId)
+        public LicenseUserDto ValidateUser(PerformContext performContext, UserPrincipal princiapl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public LicenseUserDto GetUser(PerformContext performContext, IdentityType type, string key)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
-                UserPrincipal user = UserPrincipal.FindByIdentity(principalContext, IdentityType.Guid, userId.ToString());
+                UserPrincipal user = UserPrincipal.FindByIdentity(principalContext, type, key);
                 if (user == null)
                 {
-                    throw new AbpException($"Cannot find User Principal with Guid {userId}");
+                    throw new AbpException($"Cannot find User Principal with {type} {key}");
                 }
+
+                user.Validate(performContext);
+
+                Logger.Debug(performContext, $"Retrieving {user.GetDisplayText()} from Active Directory.");
 
                 bool isAccountDisabled;
                 try
@@ -121,13 +98,47 @@
                     Email = user.EmailAddress,
                     Enabled = isAccountDisabled,
                     FirstName = user.GivenName,
-                    Id = userId,
+                    // ReSharper disable once PossibleInvalidOperationException
+                    Id = user.Guid.Value,
                     LastLogon = lastLogon,
                     SamAccountName = user.SamAccountName,
                     Surname = user.Surname,
                     WhenCreated = whenCreated
                 };
             }
+        }
+
+        /// <param name="performContext"></param>
+        /// <inheritdoc />
+        public IEnumerable<LicenseUserDto> GetUsers(PerformContext performContext)
+        {
+            using (var principalContext = new PrincipalContext(ContextType.Domain))
+            {
+                using (var userPrincipal = new UserPrincipal(principalContext))
+                {
+                    using (var principalSearcher = new PrincipalSearcher(userPrincipal))
+                    {
+                        using (PrincipalSearchResult<Principal> results = principalSearcher.FindAll())
+                        {
+                            foreach (Principal principal in results)
+                            {
+                                LicenseUserDto localUser = GetUserById(performContext, principal.Guid);
+                                if (localUser == null)
+                                {
+                                    continue;
+                                }
+
+                                yield return localUser;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public LicenseUserDto GetUserById(PerformContext performContext, Guid? userId)
+        {
+            return GetUser(performContext, IdentityType.Guid, userId.ToString());
         }
 
         /// <param name="performContext"></param>
@@ -263,7 +274,7 @@
                         continue;
                     }
 
-                    LicenseUserDto localUser = GetUser(performContext, user.Guid.Value);
+                    LicenseUserDto localUser = GetUserById(performContext, user.Guid.Value);
                     if (localUser == null)
                     {
                         continue;

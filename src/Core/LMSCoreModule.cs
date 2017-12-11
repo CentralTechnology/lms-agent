@@ -5,7 +5,7 @@
     using Abp.Modules;
     using Abp.WebApi;
     using Common.Extensions;
-    using Core.Configuration;
+    using Configuration;
 
     [DependsOn(typeof(AbpWebApiModule), typeof(AbpAutoMapperModule))]
     public class LMSCoreModule : AbpModule

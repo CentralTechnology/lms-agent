@@ -1,4 +1,4 @@
-﻿namespace Core.Configuration
+﻿namespace LMS.Configuration
 {
     public class AppSettingNames
     {
@@ -11,6 +11,11 @@
         ///     CentraStage Device ID
         /// </summary>
         public const string CentrastageDeviceId = "Setting.Centrastage.Id";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string ManagedSupportId = "Setting.Users.ManagedSupportId";
 
         /// <summary>
         ///     Automatic start up process set's this value

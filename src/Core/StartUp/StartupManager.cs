@@ -7,7 +7,7 @@
     using CentraStage;
     using Common.Extensions;
     using Common.Managers;
-    using Core.Configuration;
+    using Configuration;
     using global::Hangfire.Server;
     using SharpRaven.Data;
     using Users.Managers;

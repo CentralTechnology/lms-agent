@@ -8,10 +8,11 @@
     using Abp.Hangfire.Configuration;
     using Abp.Modules;
     using Castle.Facilities.Logging;
+    using global::Hangfire;
+    using global::Hangfire.Common;
+    using global::Hangfire.Console;
+    using global::Hangfire.MemoryStorage;
     using Hangfire;
-    using Hangfire.Common;
-    using Hangfire.Console;
-    using Hangfire.MemoryStorage;
     using LMS.Startup;
     using Users;
     using Veeam;
@@ -32,6 +33,9 @@
                 if (startupManager.Object.ShouldMonitorUsers(null))
                 {
                     recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), "*/15 * * * *");
+
+                    // setup event log monitoring
+                    ServiceHost.ConfigureEventLog();
                 }
 
                 if (startupManager.Object.MonitorVeeam(null))
@@ -48,12 +52,12 @@
 
         public override void PostInitialize()
         {
-            ConfigureHangfireJobs();
+            ConfigureHangfireJobs();           
         }
 
         public override void PreInitialize()
         {
-            IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.UseAbpLog4Net().WithConfig("log4net.config"));
+            IocManager.IocContainer.AddFacility<LoggingFacility>(f => f.LogUsing<Log4NetLoggerFactory>().WithConfig("log4net.config"));
 
             Configuration.BackgroundJobs.UseHangfire(config =>
             {
@@ -65,11 +69,5 @@
                 config.GlobalConfiguration.UseConsole();
             });
         }
-    }
-
-    public static class BackgroundJobNames
-    {
-        public const string Users = "Users";
-        public const string Veeam = "Veeam";
     }
 }

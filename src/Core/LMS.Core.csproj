@@ -197,6 +197,8 @@
     <Compile Include="Common\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Common\Extensions\IDataReaderExtensions.cs" />
     <Compile Include="Common\Extensions\LoggerExtensions.cs" />
+    <Compile Include="Common\Extensions\PerformContextExtensions.cs" />
+    <Compile Include="Common\Extensions\StringExtensions.cs" />
     <Compile Include="Common\Extensions\TypeExtensions.cs" />
     <Compile Include="Common\Extensions\UserFlagExtensions.cs" />
     <Compile Include="Common\Extensions\VeeamExtensions.cs" />
@@ -208,6 +210,7 @@
     <Compile Include="Common\Helpers\AppVersionHelper.cs" />
     <Compile Include="Common\Helpers\CommonHelpers.cs" />
     <Compile Include="Common\Helpers\DebuggingService.cs" />
+    <Compile Include="Common\Helpers\HangfireHelper.cs" />
     <Compile Include="Common\Helpers\Log4NetHelper.cs" />
     <Compile Include="Common\Helpers\SettingManagerHelper.cs" />
     <Compile Include="Common\Interfaces\IWorkerManager.cs" />
@@ -219,6 +222,7 @@
     <Compile Include="Configuration\SettingExtensions.cs" />
     <Compile Include="Configuration\SettingStore.cs" />
     <Compile Include="Connected Services\Portal\PortalProxy.cs" />
+    <Compile Include="Hangfire\BackgroundJobNames.cs" />
     <Compile Include="LMSCoreModule.cs" />
     <Compile Include="Migrations\201707140955114_Initial.cs" />
     <Compile Include="Migrations\201707140955114_Initial.Designer.cs">
@@ -234,6 +238,8 @@
     <Compile Include="Users\Dto\LicenseUserDto.cs" />
     <Compile Include="Users\Dto\LicenseGroupUsersDto.cs" />
     <Compile Include="Users\Enums\Enums.cs" />
+    <Compile Include="Users\Events\NewActiveDirectoryUserEventData.cs" />
+    <Compile Include="Users\Events\NewActiveDirectoryUserEventHandler.cs" />
     <Compile Include="Users\Extensions\GroupPrincipalExtensions.cs" />
     <Compile Include="Users\Extensions\LicenseGroupExtensions.cs" />
     <Compile Include="Users\Extensions\LicenseUserExtensions.cs" />
@@ -291,7 +297,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EntityFramework\" />
-    <Folder Include="Hangfire\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201707140955114_Initial.resx">

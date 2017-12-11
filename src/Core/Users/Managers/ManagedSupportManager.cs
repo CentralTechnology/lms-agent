@@ -6,7 +6,7 @@
     using Abp.Timing;
     using Common.Extensions;
     using Common.Helpers;
-    using Core.Configuration;
+    using Configuration;
     using global::Hangfire.Server;
     using OData;
     using Portal.Common.Enums;
@@ -31,6 +31,8 @@
             {
                 return null;
             }
+
+            SettingManager.ChangeSettingForApplication(AppSettingNames.ManagedSupportId, idOfManagedSupport.ToString());
 
             return _portalManager.ListManagedSupportById(idOfManagedSupport);
         }
@@ -58,6 +60,7 @@
             ManagedSupport managedSupport = Get();
 
             Logger.Debug(performContext, $"Created new Managed Support {managedSupport.Id}");
+            SettingManager.ChangeSettingForApplication(AppSettingNames.ManagedSupportId, managedSupport.Id.ToString());
             return managedSupport;
         }
 

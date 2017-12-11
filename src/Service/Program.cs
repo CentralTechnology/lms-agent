@@ -13,7 +13,7 @@
     using CommandLine;
     using CommandLine.Text;
     using Common.Constants;
-    using Core.Configuration;
+    using Configuration;
     using Topshelf;
 
     class Runner
@@ -53,7 +53,7 @@
                     {
                         bootstrapper.IocManager
                             .IocContainer
-                            .AddFacility<LoggingFacility>(f => f.UseAbpLog4Net().WithConfig("log4net.config"));
+                            .AddFacility<LoggingFacility>(f => f.LogUsing<Log4NetLoggerFactory>().WithConfig("log4net.config"));
 
                         bootstrapper.Initialize();
 

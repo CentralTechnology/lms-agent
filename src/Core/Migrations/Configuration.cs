@@ -2,7 +2,6 @@
 {
     using System;
     using System.Data.Entity.Migrations;
-    using Core.Configuration;
 
     //public sealed class Configuration : DbMigrationsConfiguration<AgentDbContext>
     //{

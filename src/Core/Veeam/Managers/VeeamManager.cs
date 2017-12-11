@@ -18,7 +18,7 @@
     using Common.Constants;
     using Common.Extensions;
     using Common.Helpers;
-    using Core.Configuration;
+    using Configuration;
     using DBManager;
     using Enums;
     using global::Hangfire.Server;
