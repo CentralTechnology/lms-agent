@@ -4,8 +4,7 @@
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
     using Abp.Logging;
-    using Hangfire.Server;
-    using log4net.Repository.Hierarchy;
+    using global::Hangfire.Server;
 
     public static class PrincipleExtensions
     {

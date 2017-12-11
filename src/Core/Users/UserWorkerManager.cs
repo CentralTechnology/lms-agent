@@ -45,7 +45,7 @@
             _userGroupManager = userGroupManager;
             _startupManager = startupManager;
         }
-
+     
         public void ProcessGroups(PerformContext performContext, ManagedSupport managedSupport)
         {
             Console.WriteLine(Environment.NewLine);
@@ -56,6 +56,8 @@
             var localGroupIds = new List<Guid>();
             foreach (LicenseGroupDto group in groups)
             {
+                performContext?.Cancel();
+
                 localGroupIds.Add(group.Id);
 
                 bool existingGroup = remoteGroups.Any(ru => ru.Id == group.Id);
@@ -72,6 +74,8 @@
             IEnumerable<LicenseGroupSummary> groupsToDelete = activeRemoteGroups.Where(ru => localGroupIds.All(u => u != ru.Id));
             foreach (LicenseGroupSummary group in groupsToDelete)
             {
+                performContext?.Cancel();
+
                 _groupManager.Delete(performContext, group.Id);
             }
 
@@ -86,6 +90,8 @@
             IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetGroups(performContext);
             foreach (LicenseGroupDto group in groups)
             {
+                performContext?.Cancel();
+
                 Logger.Info(performContext,$"** {group.Name} **");
                 LicenseGroupUsersDto localMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
 
@@ -110,6 +116,8 @@
             var localUserIds = new List<Guid>();
             foreach (LicenseUserDto user in users)
             {
+                performContext?.Cancel();
+
                 localUserIds.Add(user.Id);
 
                 bool existingUser = remoteUsers.Any(ru => ru.Id == user.Id);
@@ -126,6 +134,8 @@
             IEnumerable<LicenseUserSummary> usersToDelete = activeRemoteUsers.Where(ru => localUserIds.All(u => u != ru.Id));
             foreach (LicenseUserSummary user in usersToDelete)
             {
+                performContext?.Cancel();
+
                 _userManager.Delete(performContext, user.Id);
             }
 

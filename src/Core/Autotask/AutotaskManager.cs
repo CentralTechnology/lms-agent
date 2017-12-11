@@ -5,7 +5,7 @@
     using Abp.Domain.Services;
     using Abp.Logging;
     using Common.Extensions;
-    using Core.Configuration;
+    using Configuration;
     using global::Hangfire.Server;
     using OData;
 

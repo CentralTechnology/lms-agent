@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using Abp;
+    using Abp.Castle.Logging.Log4Net;
     using Abp.Collections.Extensions;
     using Abp.Configuration;
     using Abp.Dependency;
@@ -12,7 +13,7 @@
     using CommandLine;
     using CommandLine.Text;
     using Common.Constants;
-    using Core.Configuration;
+    using Configuration;
     using Topshelf;
 
     class Runner
@@ -52,7 +53,7 @@
                     {
                         bootstrapper.IocManager
                             .IocContainer
-                            .AddFacility<LoggingFacility>(f => f.UseLog4Net().WithConfig("log4net.config"));
+                            .AddFacility<LoggingFacility>(f => f.LogUsing<Log4NetLoggerFactory>().WithConfig("log4net.config"));
 
                         bootstrapper.Initialize();
 

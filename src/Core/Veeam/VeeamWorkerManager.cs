@@ -6,7 +6,7 @@
     using Common.Extensions;
     using Common.Interfaces;
     using Common.Managers;
-    using Core.Configuration;
+    using Configuration;
     using global::Hangfire.Server;
     using Managers;
     using OData;

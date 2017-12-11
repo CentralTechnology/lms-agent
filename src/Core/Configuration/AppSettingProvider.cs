@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Configuration
+﻿namespace LMS.Configuration
 {
+    using System;
+    using System.Collections.Generic;
     using Abp.Configuration;
 
     public class AppSettingProvider : SettingProvider
@@ -16,6 +12,7 @@ namespace Core.Configuration
             {
                 new SettingDefinition(AppSettingNames.AutotaskAccountId, default(int).ToString()),
                 new SettingDefinition(AppSettingNames.CentrastageDeviceId,default(Guid).ToString()),
+                new SettingDefinition(AppSettingNames.ManagedSupportId, default(int).ToString()),
                 new SettingDefinition(AppSettingNames.MonitorUsers,false.ToString()),
                 new SettingDefinition(AppSettingNames.MonitorVeeam,false.ToString()),
                 new SettingDefinition(AppSettingNames.PrimaryDomainControllerOverride,false.ToString()),
