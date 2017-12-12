@@ -183,6 +183,7 @@ namespace Deploy
             ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => true;
 
             _client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"));
+            _client.SetRequestTimeout(TimeSpan.FromMinutes(5));
 
             try
             {
