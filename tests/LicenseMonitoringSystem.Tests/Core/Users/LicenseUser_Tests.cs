@@ -9,7 +9,7 @@
     using Shouldly;
     using Xunit;
 
-    public class LicenseUser_Tests : LicenseMonitoringSystemTestBase
+    public class LicenseUser_Tests
     {
         [Fact]
         public void Compare_ShouldReturnFalse()
