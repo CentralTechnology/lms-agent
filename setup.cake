@@ -4,10 +4,8 @@ Environment.SetVariableNames();
 
 BuildParameters.Tasks.UploadAppVeyorArtifactsTask.Task.Actions.Clear();
 BuildParameters.Tasks.UploadAppVeyorArtifactsTask
-    .IsDependentOn("Package")
     .WithCriteria(() => BuildParameters.IsRunningOnAppVeyor)
-    .Does(() =>
-{
+    .Does(() => {
 	Information("*** Upload files goes here. ***");
 });
 
@@ -28,3 +26,4 @@ ToolSettings.SetToolSettings(context: Context,
 							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]*");
 
 Build.Run();
+
