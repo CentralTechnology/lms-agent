@@ -245,8 +245,6 @@ ModelManifest.xml
 tools/*
 !tools/packages.config
 !tools/Deploy
-!tools/Octokit
-!tools/Cake.Recipe
 
 # build artifacts
-BuildArtifacts
+[Bb]uildArtifacts
