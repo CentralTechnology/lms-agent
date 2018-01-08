@@ -22,8 +22,6 @@ BuildParameters.SetParameters(context: Context,
                             repositoryName: "lms-agent",
 							isPublicRepository: false,
                             appVeyorAccountName: "CentralTechnologyLtd",
-                            shouldDownloadFullReleaseNotes: true,
-                            shouldDownloadMilestoneReleaseNotes: true,
 							shouldExecuteGitLink: false);
 
 ToolSettings.SetToolSettings(context: Context,
