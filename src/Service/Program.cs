@@ -51,23 +51,19 @@
                 {
                     using (var bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
                     {
-                        bootstrapper.IocManager
-                            .IocContainer
-                            .AddFacility<LoggingFacility>(f => f.LogUsing<Log4NetLoggerFactory>().WithConfig("log4net.config"));
-
                         bootstrapper.Initialize();
 
                         using (var settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
                         {
-                            if (opts.AccountId != default(int))
+                            if (opts.AccountId.HasValue)
                             {
-                                settingsManager.Object.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, opts.AccountId.ToString());
+                                settingsManager.Object.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, opts.AccountId.Value.ToString());
                                 Console.WriteLine($"Account ID: {opts.AccountId}");
                             }
 
-                            if (opts.DeviceId != default(Guid))
+                            if (opts.DeviceId.HasValue)
                             {
-                                settingsManager.Object.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, opts.DeviceId.ToString());
+                                settingsManager.Object.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, opts.DeviceId.Value.ToString());
                                 Console.WriteLine($"Device ID: {opts.DeviceId}");
                             }
 
@@ -131,65 +127,33 @@
     }
 
     [Verb("update", HelpText = "Update settings")]
-    [SuppressMessage("ReSharper", "ConvertToAutoProperty")]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class UpdateOptions
     {
-        private readonly bool? _pdcOverride;
-        private readonly bool? _usersOverride;
-        private readonly bool? _veeamOverride;
-        public UpdateOptions()
-        {
-
-        }
-        public UpdateOptions(bool? pdcOverride = null, bool? usersOverride =null, bool? veeamOverride = null)
-        {
-            _pdcOverride = pdcOverride;
-            _usersOverride = usersOverride;
-            _veeamOverride = veeamOverride;
-        }
-        public UpdateOptions(int accountId)
-        {
-            AccountId = accountId;
-        }
-
-        public UpdateOptions(Guid deviceId)
-        {
-            DeviceId = deviceId;
-        }
-
-        public UpdateOptions(int accountId, Guid deviceId)
-        {
-            AccountId = accountId;
-            DeviceId = deviceId;
-        }
-
         [Option('p', "pdc-override", HelpText = "Allows the users monitor to run from a member server")]
-        public bool? PdcOverride => _pdcOverride;
+        public bool? PdcOverride { get; set; }
 
         [Option("force-users", HelpText = "Enables the user monitoring to run even if the startup checks fail")]
-        public bool? UsersOverride => _usersOverride;
+        public bool? UsersOverride { get; set; }
 
         [Option("force-veeam", HelpText = "Enables the veeam monitoring to run even if the startup checks fail")]
-        public bool? VeeamOverride => _veeamOverride;
+        public bool? VeeamOverride { get; set; }
 
         [Option('a', "account", HelpText = "Autotask account id")]
-        public int AccountId { get; set; }
+        public int? AccountId { get; set; }
 
         [Option('d', "device", HelpText = "CentraStage device id")]
-        public Guid DeviceId { get; set; }
+        public Guid? DeviceId { get; set; }
 
         [Usage(ApplicationAlias = "lms.exe")]
         public static IEnumerable<Example> Examples
         {
             get
             {
-                yield return new Example("Update Autotask Account", new UpdateOptions(accountId: 12345));
-                yield return new Example("Update CentraStage Device", new UpdateOptions(deviceId: Guid.NewGuid()));
-                yield return new Example("Enable PDC override", new UpdateOptions(pdcOverride: true));
-                yield return new Example("Force user monitoring", new UpdateOptions(usersOverride: true));
-                yield return new Example("Force veeam monitoring", new UpdateOptions(veeamOverride: true));
+                yield return new Example("Update Autotask Account", new UpdateOptions{AccountId = 12345});
+                yield return new Example("Update CentraStage Device", new UpdateOptions{DeviceId =  Guid.NewGuid()});
+                yield return new Example("Enable PDC override", new UpdateOptions{ PdcOverride = true });
+                yield return new Example("Force user monitoring", new UpdateOptions{UsersOverride = true});
+                yield return new Example("Force veeam monitoring", new UpdateOptions{VeeamOverride = true});
             }
         }
     }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 28/11/2017 07:44:57
+// Generation date: 08/01/2018 09:38:44
 namespace Portal.Autotask.Account.Entities
 {
     /// <summary>
@@ -38,7 +38,7 @@ namespace Portal.Autotask.Account.Entities
         /// There are no comments for Contacts in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.AutotaskContact> Contacts
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.Entities.AutotaskContact> Contacts
         {
             get
             {
@@ -48,13 +48,13 @@ namespace Portal.Autotask.Account.Entities
                 }
                 if ((this._Contacts == null))
                 {
-                    this._Contacts = Context.CreateQuery<global::Portal.Autotask.Contact.AutotaskContact>(GetPath("Contacts"));
+                    this._Contacts = Context.CreateQuery<global::Portal.Autotask.Contact.Entities.AutotaskContact>(GetPath("Contacts"));
                 }
                 return this._Contacts;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.AutotaskContact> _Contacts;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.Entities.AutotaskContact> _Contacts;
         /// <summary>
         /// There are no comments for Contracts in the schema.
         /// </summary>
@@ -1556,7 +1556,7 @@ namespace Portal.Autotask.Account.Entities
         /// There are no comments for Property Contacts in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.Contact.AutotaskContact> Contacts
+        public global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.Contact.Entities.AutotaskContact> Contacts
         {
             get
             {
@@ -1570,8 +1570,8 @@ namespace Portal.Autotask.Account.Entities
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.Contact.AutotaskContact> _Contacts = new global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.Contact.AutotaskContact>();
-        partial void OnContactsChanging(global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.Contact.AutotaskContact> value);
+        private global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.Contact.Entities.AutotaskContact> _Contacts = new global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.Contact.Entities.AutotaskContact>();
+        partial void OnContactsChanging(global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.Contact.Entities.AutotaskContact> value);
         partial void OnContactsChanged();
         /// <summary>
         /// There are no comments for Property Contracts in the schema.
@@ -2137,7 +2137,7 @@ namespace Portal.Autotask.AllocationCode.Entities
         }
     }
 }
-namespace Portal.Autotask.Contact
+namespace Portal.Autotask.Contact.Entities
 {
     /// <summary>
     /// There are no comments for AutotaskContactSingle in the schema.
@@ -2207,7 +2207,7 @@ namespace Portal.Autotask.Contact
         /// <param name="lastName">Initial value of LastName.</param>
         /// <param name="notification">Initial value of Notification.</param>
         /// <param name="primaryContact">Initial value of PrimaryContact.</param>
-        /// <param name="sendReport">Initial value of SendReport.</param>
+        /// <param name="sendMonthlyReport">Initial value of SendMonthlyReport.</param>
         /// <param name="surveyOptOut">Initial value of SurveyOptOut.</param>
         /// <param name="isDeleted">Initial value of IsDeleted.</param>
         /// <param name="creationTime">Initial value of CreationTime.</param>
@@ -2224,7 +2224,7 @@ namespace Portal.Autotask.Contact
                     string lastName, 
                     bool notification, 
                     bool primaryContact, 
-                    bool sendReport, 
+                    bool sendMonthlyReport, 
                     bool surveyOptOut, 
                     bool isDeleted, 
                     global::System.DateTimeOffset creationTime, 
@@ -2242,7 +2242,7 @@ namespace Portal.Autotask.Contact
             autotaskContact.LastName = lastName;
             autotaskContact.Notification = notification;
             autotaskContact.PrimaryContact = primaryContact;
-            autotaskContact.SendReport = sendReport;
+            autotaskContact.SendMonthlyReport = sendMonthlyReport;
             autotaskContact.SurveyOptOut = surveyOptOut;
             autotaskContact.IsDeleted = isDeleted;
             autotaskContact.CreationTime = creationTime;
@@ -2964,26 +2964,26 @@ namespace Portal.Autotask.Contact
         partial void OnRoomNumberChanging(string value);
         partial void OnRoomNumberChanged();
         /// <summary>
-        /// There are no comments for Property SendReport in the schema.
+        /// There are no comments for Property SendMonthlyReport in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool SendReport
+        public bool SendMonthlyReport
         {
             get
             {
-                return this._SendReport;
+                return this._SendMonthlyReport;
             }
             set
             {
-                this.OnSendReportChanging(value);
-                this._SendReport = value;
-                this.OnSendReportChanged();
+                this.OnSendMonthlyReportChanging(value);
+                this._SendMonthlyReport = value;
+                this.OnSendMonthlyReportChanged();
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _SendReport;
-        partial void OnSendReportChanging(bool value);
-        partial void OnSendReportChanged();
+        private bool _SendMonthlyReport;
+        partial void OnSendMonthlyReportChanging(bool value);
+        partial void OnSendMonthlyReportChanged();
         /// <summary>
         /// There are no comments for Property State in the schema.
         /// </summary>
@@ -3285,27 +3285,27 @@ namespace Portal.Autotask.Contact
     public static class ExtensionMethods
     {
         /// <summary>
-        /// Get an entity of type global::Portal.Autotask.Contact.AutotaskContact as global::Portal.Autotask.Contact.AutotaskContactSingle specified by key from an entity set
+        /// Get an entity of type global::Portal.Autotask.Contact.Entities.AutotaskContact as global::Portal.Autotask.Contact.Entities.AutotaskContactSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Portal.Autotask.Contact.AutotaskContactSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.AutotaskContact> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        public static global::Portal.Autotask.Contact.Entities.AutotaskContactSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.Entities.AutotaskContact> source, global::System.Collections.Generic.Dictionary<string, object> keys)
         {
-            return new global::Portal.Autotask.Contact.AutotaskContactSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Portal.Autotask.Contact.Entities.AutotaskContactSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Portal.Autotask.Contact.AutotaskContact as global::Portal.Autotask.Contact.AutotaskContactSingle specified by key from an entity set
+        /// Get an entity of type global::Portal.Autotask.Contact.Entities.AutotaskContact as global::Portal.Autotask.Contact.Entities.AutotaskContactSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="id">The value of id</param>
-        public static global::Portal.Autotask.Contact.AutotaskContactSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.AutotaskContact> source,
+        public static global::Portal.Autotask.Contact.Entities.AutotaskContactSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.Entities.AutotaskContact> source,
             long id)
         {
             global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
             {
                 { "Id", id }
             };
-            return new global::Portal.Autotask.Contact.AutotaskContactSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Portal.Autotask.Contact.Entities.AutotaskContactSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
     }
 }
@@ -4063,7 +4063,7 @@ namespace Portal.Autotask.Contract.Entities
         /// There are no comments for ContractServiceUnits in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit> ContractServiceUnits
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit> ContractServiceUnits
         {
             get
             {
@@ -4073,13 +4073,13 @@ namespace Portal.Autotask.Contract.Entities
                 }
                 if ((this._ContractServiceUnits == null))
                 {
-                    this._ContractServiceUnits = Context.CreateQuery<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit>(GetPath("ContractServiceUnits"));
+                    this._ContractServiceUnits = Context.CreateQuery<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit>(GetPath("ContractServiceUnits"));
                 }
                 return this._ContractServiceUnits;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit> _ContractServiceUnits;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit> _ContractServiceUnits;
     }
     /// <summary>
     /// There are no comments for AutotaskContract in the schema.
@@ -4990,7 +4990,7 @@ namespace Portal.Autotask.Contract.Entities
         /// There are no comments for Property ContractServiceUnits in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit> ContractServiceUnits
+        public global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit> ContractServiceUnits
         {
             get
             {
@@ -5004,8 +5004,8 @@ namespace Portal.Autotask.Contract.Entities
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit> _ContractServiceUnits = new global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit>();
-        partial void OnContractServiceUnitsChanging(global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit> value);
+        private global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit> _ContractServiceUnits = new global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit>();
+        partial void OnContractServiceUnitsChanging(global::System.Collections.ObjectModel.Collection<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit> value);
         partial void OnContractServiceUnitsChanged();
     }
     /// <summary>
@@ -6361,7 +6361,7 @@ namespace Portal.Autotask.ContractService.Entities
         }
     }
 }
-namespace Portal.Autotask.ContractServiceUnit
+namespace Portal.Autotask.ContractServiceUnit.Entities
 {
     /// <summary>
     /// There are no comments for AutotaskContractServiceUnitSingle in the schema.
@@ -6840,27 +6840,27 @@ namespace Portal.Autotask.ContractServiceUnit
     public static class ExtensionMethods
     {
         /// <summary>
-        /// Get an entity of type global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit as global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnitSingle specified by key from an entity set
+        /// Get an entity of type global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit as global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnitSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnitSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        public static global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnitSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit> source, global::System.Collections.Generic.Dictionary<string, object> keys)
         {
-            return new global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnitSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnitSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit as global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnitSingle specified by key from an entity set
+        /// Get an entity of type global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit as global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnitSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="id">The value of id</param>
-        public static global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnitSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit> source,
+        public static global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnitSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit> source,
             long id)
         {
             global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
             {
                 { "Id", id }
             };
-            return new global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnitSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnitSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
     }
 }
@@ -16477,225 +16477,6 @@ namespace Portal.BackupMonitoring
 namespace Portal.CentraStage.Entities
 {
     /// <summary>
-    /// There are no comments for CentraStageDevicePortScanSingle in the schema.
-    /// </summary>
-    public partial class CentraStageDevicePortScanSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<CentraStageDevicePortScan>
-    {
-        /// <summary>
-        /// Initialize a new CentraStageDevicePortScanSingle object.
-        /// </summary>
-        public CentraStageDevicePortScanSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
-            : base(context, path) {}
-
-        /// <summary>
-        /// Initialize a new CentraStageDevicePortScanSingle object.
-        /// </summary>
-        public CentraStageDevicePortScanSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
-            : base(context, path, isComposable) {}
-
-        /// <summary>
-        /// Initialize a new CentraStageDevicePortScanSingle object.
-        /// </summary>
-        public CentraStageDevicePortScanSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<CentraStageDevicePortScan> query)
-            : base(query) {}
-
-        /// <summary>
-        /// There are no comments for Device in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Portal.CentraStage.Entities.CentraStageDeviceSingle Device
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._Device == null))
-                {
-                    this._Device = new global::Portal.CentraStage.Entities.CentraStageDeviceSingle(this.Context, GetPath("Device"));
-                }
-                return this._Device;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Portal.CentraStage.Entities.CentraStageDeviceSingle _Device;
-    }
-    /// <summary>
-    /// There are no comments for CentraStageDevicePortScan in the schema.
-    /// </summary>
-    /// <KeyProperties>
-    /// Id
-    /// </KeyProperties>
-    [global::Microsoft.OData.Client.Key("Id")]
-    public partial class CentraStageDevicePortScan : global::Microsoft.OData.Client.BaseEntityType
-    {
-        /// <summary>
-        /// Create a new CentraStageDevicePortScan object.
-        /// </summary>
-        /// <param name="deviceId">Initial value of DeviceId.</param>
-        /// <param name="open">Initial value of Open.</param>
-        /// <param name="scanDate">Initial value of ScanDate.</param>
-        /// <param name="ID">Initial value of Id.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static CentraStageDevicePortScan CreateCentraStageDevicePortScan(long deviceId, bool open, global::System.DateTimeOffset scanDate, int ID)
-        {
-            CentraStageDevicePortScan centraStageDevicePortScan = new CentraStageDevicePortScan();
-            centraStageDevicePortScan.DeviceId = deviceId;
-            centraStageDevicePortScan.Open = open;
-            centraStageDevicePortScan.ScanDate = scanDate;
-            centraStageDevicePortScan.Id = ID;
-            return centraStageDevicePortScan;
-        }
-        /// <summary>
-        /// There are no comments for Property DeviceId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public long DeviceId
-        {
-            get
-            {
-                return this._DeviceId;
-            }
-            set
-            {
-                this.OnDeviceIdChanging(value);
-                this._DeviceId = value;
-                this.OnDeviceIdChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private long _DeviceId;
-        partial void OnDeviceIdChanging(long value);
-        partial void OnDeviceIdChanged();
-        /// <summary>
-        /// There are no comments for Property IpAddress in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string IpAddress
-        {
-            get
-            {
-                return this._IpAddress;
-            }
-            set
-            {
-                this.OnIpAddressChanging(value);
-                this._IpAddress = value;
-                this.OnIpAddressChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _IpAddress;
-        partial void OnIpAddressChanging(string value);
-        partial void OnIpAddressChanged();
-        /// <summary>
-        /// There are no comments for Property Name in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Name
-        {
-            get
-            {
-                return this._Name;
-            }
-            set
-            {
-                this.OnNameChanging(value);
-                this._Name = value;
-                this.OnNameChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Name;
-        partial void OnNameChanging(string value);
-        partial void OnNameChanged();
-        /// <summary>
-        /// There are no comments for Property Open in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool Open
-        {
-            get
-            {
-                return this._Open;
-            }
-            set
-            {
-                this.OnOpenChanging(value);
-                this._Open = value;
-                this.OnOpenChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _Open;
-        partial void OnOpenChanging(bool value);
-        partial void OnOpenChanged();
-        /// <summary>
-        /// There are no comments for Property ScanDate in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.DateTimeOffset ScanDate
-        {
-            get
-            {
-                return this._ScanDate;
-            }
-            set
-            {
-                this.OnScanDateChanging(value);
-                this._ScanDate = value;
-                this.OnScanDateChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _ScanDate;
-        partial void OnScanDateChanging(global::System.DateTimeOffset value);
-        partial void OnScanDateChanged();
-        /// <summary>
-        /// There are no comments for Property Id in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public int Id
-        {
-            get
-            {
-                return this._Id;
-            }
-            set
-            {
-                this.OnIdChanging(value);
-                this._Id = value;
-                this.OnIdChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _Id;
-        partial void OnIdChanging(int value);
-        partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property Device in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Portal.CentraStage.Entities.CentraStageDevice Device
-        {
-            get
-            {
-                return this._Device;
-            }
-            set
-            {
-                this.OnDeviceChanging(value);
-                this._Device = value;
-                this.OnDeviceChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Portal.CentraStage.Entities.CentraStageDevice _Device;
-        partial void OnDeviceChanging(global::Portal.CentraStage.Entities.CentraStageDevice value);
-        partial void OnDeviceChanged();
-    }
-    /// <summary>
     /// There are no comments for CentraStageProfileSingle in the schema.
     /// </summary>
     public partial class CentraStageProfileSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<CentraStageProfile>
@@ -17714,6 +17495,225 @@ namespace Portal.CentraStage.Entities
         partial void OnSoftwareChanged();
     }
     /// <summary>
+    /// There are no comments for CentraStageDevicePortScanSingle in the schema.
+    /// </summary>
+    public partial class CentraStageDevicePortScanSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<CentraStageDevicePortScan>
+    {
+        /// <summary>
+        /// Initialize a new CentraStageDevicePortScanSingle object.
+        /// </summary>
+        public CentraStageDevicePortScanSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new CentraStageDevicePortScanSingle object.
+        /// </summary>
+        public CentraStageDevicePortScanSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new CentraStageDevicePortScanSingle object.
+        /// </summary>
+        public CentraStageDevicePortScanSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<CentraStageDevicePortScan> query)
+            : base(query) {}
+
+        /// <summary>
+        /// There are no comments for Device in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Portal.CentraStage.Entities.CentraStageDeviceSingle Device
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Device == null))
+                {
+                    this._Device = new global::Portal.CentraStage.Entities.CentraStageDeviceSingle(this.Context, GetPath("Device"));
+                }
+                return this._Device;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Portal.CentraStage.Entities.CentraStageDeviceSingle _Device;
+    }
+    /// <summary>
+    /// There are no comments for CentraStageDevicePortScan in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    public partial class CentraStageDevicePortScan : global::Microsoft.OData.Client.BaseEntityType
+    {
+        /// <summary>
+        /// Create a new CentraStageDevicePortScan object.
+        /// </summary>
+        /// <param name="deviceId">Initial value of DeviceId.</param>
+        /// <param name="open">Initial value of Open.</param>
+        /// <param name="scanDate">Initial value of ScanDate.</param>
+        /// <param name="ID">Initial value of Id.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static CentraStageDevicePortScan CreateCentraStageDevicePortScan(long deviceId, bool open, global::System.DateTimeOffset scanDate, int ID)
+        {
+            CentraStageDevicePortScan centraStageDevicePortScan = new CentraStageDevicePortScan();
+            centraStageDevicePortScan.DeviceId = deviceId;
+            centraStageDevicePortScan.Open = open;
+            centraStageDevicePortScan.ScanDate = scanDate;
+            centraStageDevicePortScan.Id = ID;
+            return centraStageDevicePortScan;
+        }
+        /// <summary>
+        /// There are no comments for Property DeviceId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public long DeviceId
+        {
+            get
+            {
+                return this._DeviceId;
+            }
+            set
+            {
+                this.OnDeviceIdChanging(value);
+                this._DeviceId = value;
+                this.OnDeviceIdChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private long _DeviceId;
+        partial void OnDeviceIdChanging(long value);
+        partial void OnDeviceIdChanged();
+        /// <summary>
+        /// There are no comments for Property IpAddress in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public string IpAddress
+        {
+            get
+            {
+                return this._IpAddress;
+            }
+            set
+            {
+                this.OnIpAddressChanging(value);
+                this._IpAddress = value;
+                this.OnIpAddressChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _IpAddress;
+        partial void OnIpAddressChanging(string value);
+        partial void OnIpAddressChanged();
+        /// <summary>
+        /// There are no comments for Property Name in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public string Name
+        {
+            get
+            {
+                return this._Name;
+            }
+            set
+            {
+                this.OnNameChanging(value);
+                this._Name = value;
+                this.OnNameChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Name;
+        partial void OnNameChanging(string value);
+        partial void OnNameChanged();
+        /// <summary>
+        /// There are no comments for Property Open in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public bool Open
+        {
+            get
+            {
+                return this._Open;
+            }
+            set
+            {
+                this.OnOpenChanging(value);
+                this._Open = value;
+                this.OnOpenChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _Open;
+        partial void OnOpenChanging(bool value);
+        partial void OnOpenChanged();
+        /// <summary>
+        /// There are no comments for Property ScanDate in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::System.DateTimeOffset ScanDate
+        {
+            get
+            {
+                return this._ScanDate;
+            }
+            set
+            {
+                this.OnScanDateChanging(value);
+                this._ScanDate = value;
+                this.OnScanDateChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _ScanDate;
+        partial void OnScanDateChanging(global::System.DateTimeOffset value);
+        partial void OnScanDateChanged();
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public int Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _Id;
+        partial void OnIdChanging(int value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property Device in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Portal.CentraStage.Entities.CentraStageDevice Device
+        {
+            get
+            {
+                return this._Device;
+            }
+            set
+            {
+                this.OnDeviceChanging(value);
+                this._Device = value;
+                this.OnDeviceChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Portal.CentraStage.Entities.CentraStageDevice _Device;
+        partial void OnDeviceChanging(global::Portal.CentraStage.Entities.CentraStageDevice value);
+        partial void OnDeviceChanged();
+    }
+    /// <summary>
     /// There are no comments for CentraStageDeviceCustom in the schema.
     /// </summary>
     public partial class CentraStageDeviceCustom
@@ -18604,29 +18604,6 @@ namespace Portal.CentraStage.Entities
     public static class ExtensionMethods
     {
         /// <summary>
-        /// Get an entity of type global::Portal.CentraStage.Entities.CentraStageDevicePortScan as global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevicePortScan> source, global::System.Collections.Generic.Dictionary<string, object> keys)
-        {
-            return new global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::Portal.CentraStage.Entities.CentraStageDevicePortScan as global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="id">The value of id</param>
-        public static global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevicePortScan> source,
-            int id)
-        {
-            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
-            {
-                { "Id", id }
-            };
-            return new global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
         /// Get an entity of type global::Portal.CentraStage.Entities.CentraStageProfile as global::Portal.CentraStage.Entities.CentraStageProfileSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
@@ -18671,6 +18648,29 @@ namespace Portal.CentraStage.Entities
                 { "Id", id }
             };
             return new global::Portal.CentraStage.Entities.CentraStageDeviceSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Portal.CentraStage.Entities.CentraStageDevicePortScan as global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevicePortScan> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Portal.CentraStage.Entities.CentraStageDevicePortScan as global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevicePortScan> source,
+            int id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::Portal.CentraStage.Entities.CentraStageDevicePortScanSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
         /// Get an entity of type global::Portal.CentraStage.Entities.CentraStageDeviceLogicalDisk as global::Portal.CentraStage.Entities.CentraStageDeviceLogicalDiskSingle specified by key from an entity set
@@ -18723,6 +18723,390 @@ namespace Portal.CentraStage.Entities
 namespace Portal.LicenseMonitoringSystem.Users.Entities
 {
     /// <summary>
+    /// There are no comments for LicenseUserGroupSingle in the schema.
+    /// </summary>
+    public partial class LicenseUserGroupSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserGroup>
+    {
+        /// <summary>
+        /// Initialize a new LicenseUserGroupSingle object.
+        /// </summary>
+        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserGroupSingle object.
+        /// </summary>
+        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserGroupSingle object.
+        /// </summary>
+        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserGroup> query)
+            : base(query) {}
+
+        /// <summary>
+        /// There are no comments for Group in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroupSingle Group
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._Group == null))
+                {
+                    this._Group = new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroupSingle(this.Context, GetPath("Group"));
+                }
+                return this._Group;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroupSingle _Group;
+        /// <summary>
+        /// There are no comments for User in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle User
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._User == null))
+                {
+                    this._User = new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle(this.Context, GetPath("User"));
+                }
+                return this._User;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle _User;
+    }
+    /// <summary>
+    /// There are no comments for LicenseUserGroup in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// GroupId
+    /// UserId
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("GroupId", "UserId")]
+    public partial class LicenseUserGroup : global::Microsoft.OData.Client.BaseEntityType
+    {
+        /// <summary>
+        /// Create a new LicenseUserGroup object.
+        /// </summary>
+        /// <param name="groupId">Initial value of GroupId.</param>
+        /// <param name="userId">Initial value of UserId.</param>
+        /// <param name="group">Initial value of Group.</param>
+        /// <param name="user">Initial value of User.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static LicenseUserGroup CreateLicenseUserGroup(global::System.Guid groupId, global::System.Guid userId, global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup group, global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser user)
+        {
+            LicenseUserGroup licenseUserGroup = new LicenseUserGroup();
+            licenseUserGroup.GroupId = groupId;
+            licenseUserGroup.UserId = userId;
+            if ((group == null))
+            {
+                throw new global::System.ArgumentNullException("group");
+            }
+            licenseUserGroup.Group = group;
+            if ((user == null))
+            {
+                throw new global::System.ArgumentNullException("user");
+            }
+            licenseUserGroup.User = user;
+            return licenseUserGroup;
+        }
+        /// <summary>
+        /// There are no comments for Property GroupId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::System.Guid GroupId
+        {
+            get
+            {
+                return this._GroupId;
+            }
+            set
+            {
+                this.OnGroupIdChanging(value);
+                this._GroupId = value;
+                this.OnGroupIdChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _GroupId;
+        partial void OnGroupIdChanging(global::System.Guid value);
+        partial void OnGroupIdChanged();
+        /// <summary>
+        /// There are no comments for Property UserId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::System.Guid UserId
+        {
+            get
+            {
+                return this._UserId;
+            }
+            set
+            {
+                this.OnUserIdChanging(value);
+                this._UserId = value;
+                this.OnUserIdChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _UserId;
+        partial void OnUserIdChanging(global::System.Guid value);
+        partial void OnUserIdChanged();
+        /// <summary>
+        /// There are no comments for Property Group in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup Group
+        {
+            get
+            {
+                return this._Group;
+            }
+            set
+            {
+                this.OnGroupChanging(value);
+                this._Group = value;
+                this.OnGroupChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup _Group;
+        partial void OnGroupChanging(global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup value);
+        partial void OnGroupChanged();
+        /// <summary>
+        /// There are no comments for Property User in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser User
+        {
+            get
+            {
+                return this._User;
+            }
+            set
+            {
+                this.OnUserChanging(value);
+                this._User = value;
+                this.OnUserChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser _User;
+        partial void OnUserChanging(global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser value);
+        partial void OnUserChanged();
+    }
+    /// <summary>
+    /// There are no comments for LicenseGroupSingle in the schema.
+    /// </summary>
+    public partial class LicenseGroupSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseGroup>
+    {
+        /// <summary>
+        /// Initialize a new LicenseGroupSingle object.
+        /// </summary>
+        public LicenseGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new LicenseGroupSingle object.
+        /// </summary>
+        public LicenseGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new LicenseGroupSingle object.
+        /// </summary>
+        public LicenseGroupSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseGroup> query)
+            : base(query) {}
+
+        /// <summary>
+        /// There are no comments for UserGroups in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> UserGroups
+        {
+            get
+            {
+                if (!this.IsComposable)
+                {
+                    throw new global::System.NotSupportedException("The previous function is not composable.");
+                }
+                if ((this._UserGroups == null))
+                {
+                    this._UserGroups = Context.CreateQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup>(GetPath("UserGroups"));
+                }
+                return this._UserGroups;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> _UserGroups;
+    }
+    /// <summary>
+    /// There are no comments for LicenseGroup in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// Id
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("Id")]
+    public partial class LicenseGroup : global::Microsoft.OData.Client.BaseEntityType
+    {
+        /// <summary>
+        /// Create a new LicenseGroup object.
+        /// </summary>
+        /// <param name="whenCreated">Initial value of WhenCreated.</param>
+        /// <param name="isDeleted">Initial value of IsDeleted.</param>
+        /// <param name="tenantId">Initial value of TenantId.</param>
+        /// <param name="ID">Initial value of Id.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static LicenseGroup CreateLicenseGroup(global::System.DateTimeOffset whenCreated, bool isDeleted, int tenantId, global::System.Guid ID)
+        {
+            LicenseGroup licenseGroup = new LicenseGroup();
+            licenseGroup.WhenCreated = whenCreated;
+            licenseGroup.IsDeleted = isDeleted;
+            licenseGroup.TenantId = tenantId;
+            licenseGroup.Id = ID;
+            return licenseGroup;
+        }
+        /// <summary>
+        /// There are no comments for Property Name in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public string Name
+        {
+            get
+            {
+                return this._Name;
+            }
+            set
+            {
+                this.OnNameChanging(value);
+                this._Name = value;
+                this.OnNameChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private string _Name;
+        partial void OnNameChanging(string value);
+        partial void OnNameChanged();
+        /// <summary>
+        /// There are no comments for Property WhenCreated in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::System.DateTimeOffset WhenCreated
+        {
+            get
+            {
+                return this._WhenCreated;
+            }
+            set
+            {
+                this.OnWhenCreatedChanging(value);
+                this._WhenCreated = value;
+                this.OnWhenCreatedChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _WhenCreated;
+        partial void OnWhenCreatedChanging(global::System.DateTimeOffset value);
+        partial void OnWhenCreatedChanged();
+        /// <summary>
+        /// There are no comments for Property IsDeleted in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public bool IsDeleted
+        {
+            get
+            {
+                return this._IsDeleted;
+            }
+            set
+            {
+                this.OnIsDeletedChanging(value);
+                this._IsDeleted = value;
+                this.OnIsDeletedChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private bool _IsDeleted;
+        partial void OnIsDeletedChanging(bool value);
+        partial void OnIsDeletedChanged();
+        /// <summary>
+        /// There are no comments for Property TenantId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public int TenantId
+        {
+            get
+            {
+                return this._TenantId;
+            }
+            set
+            {
+                this.OnTenantIdChanging(value);
+                this._TenantId = value;
+                this.OnTenantIdChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private int _TenantId;
+        partial void OnTenantIdChanging(int value);
+        partial void OnTenantIdChanged();
+        /// <summary>
+        /// There are no comments for Property Id in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::System.Guid Id
+        {
+            get
+            {
+                return this._Id;
+            }
+            set
+            {
+                this.OnIdChanging(value);
+                this._Id = value;
+                this.OnIdChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _Id;
+        partial void OnIdChanging(global::System.Guid value);
+        partial void OnIdChanged();
+        /// <summary>
+        /// There are no comments for Property UserGroups in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> UserGroups
+        {
+            get
+            {
+                return this._UserGroups;
+            }
+            set
+            {
+                this.OnUserGroupsChanging(value);
+                this._UserGroups = value;
+                this.OnUserGroupsChanged();
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> _UserGroups = new global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup>();
+        partial void OnUserGroupsChanging(global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> value);
+        partial void OnUserGroupsChanged();
+    }
+    /// <summary>
     /// There are no comments for LicenseUserSingle in the schema.
     /// </summary>
     public partial class LicenseUserSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUser>
@@ -18746,10 +19130,10 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
             : base(query) {}
 
         /// <summary>
-        /// There are no comments for Groups in the schema.
+        /// There are no comments for UserGroups in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup> Groups
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> UserGroups
         {
             get
             {
@@ -18757,15 +19141,15 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
                 {
                     throw new global::System.NotSupportedException("The previous function is not composable.");
                 }
-                if ((this._Groups == null))
+                if ((this._UserGroups == null))
                 {
-                    this._Groups = Context.CreateQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup>(GetPath("Groups"));
+                    this._UserGroups = Context.CreateQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup>(GetPath("UserGroups"));
                 }
-                return this._Groups;
+                return this._UserGroups;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup> _Groups;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> _UserGroups;
         /// <summary>
         /// There are no comments for History in the schema.
         /// </summary>
@@ -19148,26 +19532,26 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         partial void OnIdChanging(global::System.Guid value);
         partial void OnIdChanged();
         /// <summary>
-        /// There are no comments for Property Groups in the schema.
+        /// There are no comments for Property UserGroups in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup> Groups
+        public global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> UserGroups
         {
             get
             {
-                return this._Groups;
+                return this._UserGroups;
             }
             set
             {
-                this.OnGroupsChanging(value);
-                this._Groups = value;
-                this.OnGroupsChanged();
+                this.OnUserGroupsChanging(value);
+                this._UserGroups = value;
+                this.OnUserGroupsChanged();
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup> _Groups = new global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup>();
-        partial void OnGroupsChanging(global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup> value);
-        partial void OnGroupsChanged();
+        private global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> _UserGroups = new global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup>();
+        partial void OnUserGroupsChanging(global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> value);
+        partial void OnUserGroupsChanged();
         /// <summary>
         /// There are no comments for Property History in the schema.
         /// </summary>
@@ -19189,204 +19573,6 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         private global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserHistory> _History = new global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserHistory>();
         partial void OnHistoryChanging(global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserHistory> value);
         partial void OnHistoryChanged();
-    }
-    /// <summary>
-    /// There are no comments for LicenseGroupSingle in the schema.
-    /// </summary>
-    public partial class LicenseGroupSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseGroup>
-    {
-        /// <summary>
-        /// Initialize a new LicenseGroupSingle object.
-        /// </summary>
-        public LicenseGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
-            : base(context, path) {}
-
-        /// <summary>
-        /// Initialize a new LicenseGroupSingle object.
-        /// </summary>
-        public LicenseGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
-            : base(context, path, isComposable) {}
-
-        /// <summary>
-        /// Initialize a new LicenseGroupSingle object.
-        /// </summary>
-        public LicenseGroupSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseGroup> query)
-            : base(query) {}
-
-        /// <summary>
-        /// There are no comments for Users in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> Users
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._Users == null))
-                {
-                    this._Users = Context.CreateQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser>(GetPath("Users"));
-                }
-                return this._Users;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> _Users;
-    }
-    /// <summary>
-    /// There are no comments for LicenseGroup in the schema.
-    /// </summary>
-    /// <KeyProperties>
-    /// Id
-    /// </KeyProperties>
-    [global::Microsoft.OData.Client.Key("Id")]
-    public partial class LicenseGroup : global::Microsoft.OData.Client.BaseEntityType
-    {
-        /// <summary>
-        /// Create a new LicenseGroup object.
-        /// </summary>
-        /// <param name="whenCreated">Initial value of WhenCreated.</param>
-        /// <param name="isDeleted">Initial value of IsDeleted.</param>
-        /// <param name="tenantId">Initial value of TenantId.</param>
-        /// <param name="ID">Initial value of Id.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static LicenseGroup CreateLicenseGroup(global::System.DateTimeOffset whenCreated, bool isDeleted, int tenantId, global::System.Guid ID)
-        {
-            LicenseGroup licenseGroup = new LicenseGroup();
-            licenseGroup.WhenCreated = whenCreated;
-            licenseGroup.IsDeleted = isDeleted;
-            licenseGroup.TenantId = tenantId;
-            licenseGroup.Id = ID;
-            return licenseGroup;
-        }
-        /// <summary>
-        /// There are no comments for Property Name in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Name
-        {
-            get
-            {
-                return this._Name;
-            }
-            set
-            {
-                this.OnNameChanging(value);
-                this._Name = value;
-                this.OnNameChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Name;
-        partial void OnNameChanging(string value);
-        partial void OnNameChanged();
-        /// <summary>
-        /// There are no comments for Property WhenCreated in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.DateTimeOffset WhenCreated
-        {
-            get
-            {
-                return this._WhenCreated;
-            }
-            set
-            {
-                this.OnWhenCreatedChanging(value);
-                this._WhenCreated = value;
-                this.OnWhenCreatedChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _WhenCreated;
-        partial void OnWhenCreatedChanging(global::System.DateTimeOffset value);
-        partial void OnWhenCreatedChanged();
-        /// <summary>
-        /// There are no comments for Property IsDeleted in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool IsDeleted
-        {
-            get
-            {
-                return this._IsDeleted;
-            }
-            set
-            {
-                this.OnIsDeletedChanging(value);
-                this._IsDeleted = value;
-                this.OnIsDeletedChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsDeleted;
-        partial void OnIsDeletedChanging(bool value);
-        partial void OnIsDeletedChanged();
-        /// <summary>
-        /// There are no comments for Property TenantId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public int TenantId
-        {
-            get
-            {
-                return this._TenantId;
-            }
-            set
-            {
-                this.OnTenantIdChanging(value);
-                this._TenantId = value;
-                this.OnTenantIdChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _TenantId;
-        partial void OnTenantIdChanging(int value);
-        partial void OnTenantIdChanged();
-        /// <summary>
-        /// There are no comments for Property Id in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Guid Id
-        {
-            get
-            {
-                return this._Id;
-            }
-            set
-            {
-                this.OnIdChanging(value);
-                this._Id = value;
-                this.OnIdChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Guid _Id;
-        partial void OnIdChanging(global::System.Guid value);
-        partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property Users in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> Users
-        {
-            get
-            {
-                return this._Users;
-            }
-            set
-            {
-                this.OnUsersChanging(value);
-                this._Users = value;
-                this.OnUsersChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> _Users = new global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser>();
-        partial void OnUsersChanging(global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> value);
-        partial void OnUsersChanged();
     }
     /// <summary>
     /// There are no comments for ManagedSupportSingle in the schema.
@@ -19411,27 +19597,6 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         public ManagedSupportSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<ManagedSupport> query)
             : base(query) {}
 
-        /// <summary>
-        /// There are no comments for Users in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> Users
-        {
-            get
-            {
-                if (!this.IsComposable)
-                {
-                    throw new global::System.NotSupportedException("The previous function is not composable.");
-                }
-                if ((this._Users == null))
-                {
-                    this._Users = Context.CreateQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser>(GetPath("Users"));
-                }
-                return this._Users;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> _Users;
     }
     /// <summary>
     /// There are no comments for ManagedSupport in the schema.
@@ -19771,27 +19936,6 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         private int _Id;
         partial void OnIdChanging(int value);
         partial void OnIdChanged();
-        /// <summary>
-        /// There are no comments for Property Users in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> Users
-        {
-            get
-            {
-                return this._Users;
-            }
-            set
-            {
-                this.OnUsersChanging(value);
-                this._Users = value;
-                this.OnUsersChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> _Users = new global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser>();
-        partial void OnUsersChanging(global::System.Collections.ObjectModel.Collection<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> value);
-        partial void OnUsersChanged();
     }
     /// <summary>
     /// There are no comments for LicenseUserHistorySingle in the schema.
@@ -20306,27 +20450,30 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
     public static class ExtensionMethods
     {
         /// <summary>
-        /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser as global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle specified by key from an entity set
+        /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup as global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
         /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        public static global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> source, global::System.Collections.Generic.Dictionary<string, object> keys)
         {
-            return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
-        /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser as global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle specified by key from an entity set
+        /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup as global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle specified by key from an entity set
         /// </summary>
         /// <param name="source">source entity set</param>
-        /// <param name="id">The value of id</param>
-        public static global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> source,
-            global::System.Guid id)
+        /// <param name="groupId">The value of groupId</param>
+        /// <param name="userId">The value of userId</param>
+        public static global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> source,
+            global::System.Guid groupId, 
+            global::System.Guid userId)
         {
             global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
             {
-                { "Id", id }
+                { "GroupId", groupId }, 
+                { "UserId", userId }
             };
-            return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+            return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
         /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup as global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroupSingle specified by key from an entity set
@@ -20350,6 +20497,29 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
                 { "Id", id }
             };
             return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser as global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser as global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="id">The value of id</param>
+        public static global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> source,
+            global::System.Guid id)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "Id", id }
+            };
+            return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
         /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.ManagedSupport as global::Portal.LicenseMonitoringSystem.Users.Entities.ManagedSupportSingle specified by key from an entity set
@@ -21221,27 +21391,6 @@ namespace Portal.Office365.Entities
         private global::Portal.Office365.Office365SubscriptionState _State;
         partial void OnStateChanging(global::Portal.Office365.Office365SubscriptionState value);
         partial void OnStateChanged();
-        /// <summary>
-        /// There are no comments for Property SuspensionReasons in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Collections.ObjectModel.Collection<string> SuspensionReasons
-        {
-            get
-            {
-                return this._SuspensionReasons;
-            }
-            set
-            {
-                this.OnSuspensionReasonsChanging(value);
-                this._SuspensionReasons = value;
-                this.OnSuspensionReasonsChanged();
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Collections.ObjectModel.Collection<string> _SuspensionReasons = new global::System.Collections.ObjectModel.Collection<string>();
-        partial void OnSuspensionReasonsChanging(global::System.Collections.ObjectModel.Collection<string> value);
-        partial void OnSuspensionReasonsChanged();
         /// <summary>
         /// There are no comments for Property Id in the schema.
         /// </summary>
@@ -24055,7 +24204,7 @@ namespace Tools
         /// <summary>
         /// There are no comments for GetAccountId in the schema.
         /// </summary>
-        public static global::Microsoft.OData.Client.DataServiceQuerySingle<int> GetAccountId(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageProfile> source, global::System.Guid deviceId)
+        public static global::Microsoft.OData.Client.DataServiceQuerySingle<int> GetAccountId(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevice> source, global::System.Guid deviceId)
         {
             if (!source.IsComposable)
             {
@@ -24087,6 +24236,39 @@ namespace Tools
             }
 
             return source.CreateFunctionQuerySingle<int>("Tools.NewUploadId", false);
+        }
+    }
+}
+namespace LicenseUserService
+{
+    /// <summary>
+    /// Class containing all extension methods
+    /// </summary>
+    public static class ExtensionMethods
+    {
+        /// <summary>
+        /// There are no comments for AddUserToGroup in the schema.
+        /// </summary>
+        public static global::Microsoft.OData.Client.DataServiceActionQuery AddUserToGroup(this global::Microsoft.OData.Client.DataServiceQuerySingle<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> source, global::System.Guid GroupId)
+        {
+            if (!source.IsComposable)
+            {
+                throw new global::System.NotSupportedException("The previous function is not composable.");
+            }
+
+            return new global::Microsoft.OData.Client.DataServiceActionQuery(source.Context, source.AppendRequestUri("LicenseUserService.AddUserToGroup"), new global::Microsoft.OData.Client.BodyOperationParameter("GroupId", GroupId));
+        }
+        /// <summary>
+        /// There are no comments for RemoveUserFromGroup in the schema.
+        /// </summary>
+        public static global::Microsoft.OData.Client.DataServiceActionQuery RemoveUserFromGroup(this global::Microsoft.OData.Client.DataServiceQuerySingle<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> source, global::System.Guid GroupId)
+        {
+            if (!source.IsComposable)
+            {
+                throw new global::System.NotSupportedException("The previous function is not composable.");
+            }
+
+            return new global::Microsoft.OData.Client.DataServiceActionQuery(source.Context, source.AppendRequestUri("LicenseUserService.RemoveUserFromGroup"), new global::Microsoft.OData.Client.BodyOperationParameter("GroupId", GroupId));
         }
     }
 }
@@ -24147,19 +24329,19 @@ namespace Actions
         /// There are no comments for AutotaskContacts in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.AutotaskContact> AutotaskContacts
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.Entities.AutotaskContact> AutotaskContacts
         {
             get
             {
                 if ((this._AutotaskContacts == null))
                 {
-                    this._AutotaskContacts = base.CreateQuery<global::Portal.Autotask.Contact.AutotaskContact>("AutotaskContacts");
+                    this._AutotaskContacts = base.CreateQuery<global::Portal.Autotask.Contact.Entities.AutotaskContact>("AutotaskContacts");
                 }
                 return this._AutotaskContacts;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.AutotaskContact> _AutotaskContacts;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.Contact.Entities.AutotaskContact> _AutotaskContacts;
         /// <summary>
         /// There are no comments for AutotaskContractBlocks in the schema.
         /// </summary>
@@ -24266,19 +24448,19 @@ namespace Actions
         /// There are no comments for AutotaskContractServiceUnits in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit> AutotaskContractServiceUnits
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit> AutotaskContractServiceUnits
         {
             get
             {
                 if ((this._AutotaskContractServiceUnits == null))
                 {
-                    this._AutotaskContractServiceUnits = base.CreateQuery<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit>("AutotaskContractServiceUnits");
+                    this._AutotaskContractServiceUnits = base.CreateQuery<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit>("AutotaskContractServiceUnits");
                 }
                 return this._AutotaskContractServiceUnits;
             }
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit> _AutotaskContractServiceUnits;
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit> _AutotaskContractServiceUnits;
         /// <summary>
         /// There are no comments for AutotaskInstalledProducts in the schema.
         /// </summary>
@@ -24467,6 +24649,57 @@ namespace Actions
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.BackupMonitoring.BackupMonitorJob> _BackupJobs;
         /// <summary>
+        /// There are no comments for BackupResults in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.BackupMonitoring.BackupMonitorResult> BackupResults
+        {
+            get
+            {
+                if ((this._BackupResults == null))
+                {
+                    this._BackupResults = base.CreateQuery<global::Portal.BackupMonitoring.BackupMonitorResult>("BackupResults");
+                }
+                return this._BackupResults;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.BackupMonitoring.BackupMonitorResult> _BackupResults;
+        /// <summary>
+        /// There are no comments for Profiles in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageProfile> Profiles
+        {
+            get
+            {
+                if ((this._Profiles == null))
+                {
+                    this._Profiles = base.CreateQuery<global::Portal.CentraStage.Entities.CentraStageProfile>("Profiles");
+                }
+                return this._Profiles;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageProfile> _Profiles;
+        /// <summary>
+        /// There are no comments for Devices in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevice> Devices
+        {
+            get
+            {
+                if ((this._Devices == null))
+                {
+                    this._Devices = base.CreateQuery<global::Portal.CentraStage.Entities.CentraStageDevice>("Devices");
+                }
+                return this._Devices;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevice> _Devices;
+        /// <summary>
         /// There are no comments for DevicePortScans in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -24483,6 +24716,23 @@ namespace Actions
         }
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevicePortScan> _DevicePortScans;
+        /// <summary>
+        /// There are no comments for LicenseUserGroups in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> LicenseUserGroups
+        {
+            get
+            {
+                if ((this._LicenseUserGroups == null))
+                {
+                    this._LicenseUserGroups = base.CreateQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup>("LicenseUserGroups");
+                }
+                return this._LicenseUserGroups;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> _LicenseUserGroups;
         /// <summary>
         /// There are no comments for LicenseUsers in the schema.
         /// </summary>
@@ -24569,23 +24819,6 @@ namespace Actions
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.Office365.Entities.Office365Customer> _Office365Customers;
         /// <summary>
-        /// There are no comments for Profiles in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageProfile> Profiles
-        {
-            get
-            {
-                if ((this._Profiles == null))
-                {
-                    this._Profiles = base.CreateQuery<global::Portal.CentraStage.Entities.CentraStageProfile>("Profiles");
-                }
-                return this._Profiles;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageProfile> _Profiles;
-        /// <summary>
         /// There are no comments for Sites in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -24639,7 +24872,7 @@ namespace Actions
         /// There are no comments for AutotaskContacts in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToAutotaskContacts(global::Portal.Autotask.Contact.AutotaskContact autotaskContact)
+        public void AddToAutotaskContacts(global::Portal.Autotask.Contact.Entities.AutotaskContact autotaskContact)
         {
             base.AddObject("AutotaskContacts", autotaskContact);
         }
@@ -24695,7 +24928,7 @@ namespace Actions
         /// There are no comments for AutotaskContractServiceUnits in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToAutotaskContractServiceUnits(global::Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit autotaskContractServiceUnit)
+        public void AddToAutotaskContractServiceUnits(global::Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit autotaskContractServiceUnit)
         {
             base.AddObject("AutotaskContractServiceUnits", autotaskContractServiceUnit);
         }
@@ -24788,12 +25021,44 @@ namespace Actions
             base.AddObject("BackupJobs", backupMonitorJob);
         }
         /// <summary>
+        /// There are no comments for BackupResults in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToBackupResults(global::Portal.BackupMonitoring.BackupMonitorResult backupMonitorResult)
+        {
+            base.AddObject("BackupResults", backupMonitorResult);
+        }
+        /// <summary>
+        /// There are no comments for Profiles in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToProfiles(global::Portal.CentraStage.Entities.CentraStageProfile centraStageProfile)
+        {
+            base.AddObject("Profiles", centraStageProfile);
+        }
+        /// <summary>
+        /// There are no comments for Devices in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToDevices(global::Portal.CentraStage.Entities.CentraStageDevice centraStageDevice)
+        {
+            base.AddObject("Devices", centraStageDevice);
+        }
+        /// <summary>
         /// There are no comments for DevicePortScans in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         public void AddToDevicePortScans(global::Portal.CentraStage.Entities.CentraStageDevicePortScan centraStageDevicePortScan)
         {
             base.AddObject("DevicePortScans", centraStageDevicePortScan);
+        }
+        /// <summary>
+        /// There are no comments for LicenseUserGroups in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToLicenseUserGroups(global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup licenseUserGroup)
+        {
+            base.AddObject("LicenseUserGroups", licenseUserGroup);
         }
         /// <summary>
         /// There are no comments for LicenseUsers in the schema.
@@ -24836,14 +25101,6 @@ namespace Actions
             base.AddObject("Office365Customers", office365Customer);
         }
         /// <summary>
-        /// There are no comments for Profiles in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToProfiles(global::Portal.CentraStage.Entities.CentraStageProfile centraStageProfile)
-        {
-            base.AddObject("Profiles", centraStageProfile);
-        }
-        /// <summary>
         /// There are no comments for Sites in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -24872,34 +25129,34 @@ namespace Actions
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
-        <Property Name=""AccountName"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""AccountNumber"" Type=""Edm.String"" />
+        <Property Name=""AccountName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""100"" />
+        <Property Name=""AccountNumber"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""AccountType"" Type=""Edm.Int16"" Nullable=""false"" />
         <Property Name=""Active"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""AdditionalAddressInformation"" Type=""Edm.String"" />
-        <Property Name=""Address1"" Type=""Edm.String"" />
-        <Property Name=""Address2"" Type=""Edm.String"" />
+        <Property Name=""AdditionalAddressInformation"" Type=""Edm.String"" MaxLength=""100"" />
+        <Property Name=""Address1"" Type=""Edm.String"" MaxLength=""128"" />
+        <Property Name=""Address2"" Type=""Edm.String"" MaxLength=""128"" />
         <Property Name=""AemId"" Type=""Edm.Int32"" />
-        <Property Name=""AlternatePhone1"" Type=""Edm.String"" />
-        <Property Name=""AlternatePhone2"" Type=""Edm.String"" />
+        <Property Name=""AlternatePhone1"" Type=""Edm.String"" MaxLength=""25"" />
+        <Property Name=""AlternatePhone2"" Type=""Edm.String"" MaxLength=""25"" />
         <Property Name=""AssetValue"" Type=""Edm.Double"" />
-        <Property Name=""BillToAdditionalAddressInformation"" Type=""Edm.String"" />
-        <Property Name=""BillToAddress1"" Type=""Edm.String"" />
-        <Property Name=""BillToAddress2"" Type=""Edm.String"" />
+        <Property Name=""BillToAdditionalAddressInformation"" Type=""Edm.String"" MaxLength=""100"" />
+        <Property Name=""BillToAddress1"" Type=""Edm.String"" MaxLength=""150"" />
+        <Property Name=""BillToAddress2"" Type=""Edm.String"" MaxLength=""150"" />
         <Property Name=""BillToAddressToUse"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""BillToAttention"" Type=""Edm.String"" />
-        <Property Name=""BillToCity"" Type=""Edm.String"" />
+        <Property Name=""BillToAttention"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""BillToCity"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""BillToCountryID"" Type=""Edm.Int32"" />
-        <Property Name=""BillToState"" Type=""Edm.String"" />
-        <Property Name=""BillToZipCode"" Type=""Edm.String"" />
-        <Property Name=""City"" Type=""Edm.String"" />
+        <Property Name=""BillToState"" Type=""Edm.String"" MaxLength=""128"" />
+        <Property Name=""BillToZipCode"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""City"" Type=""Edm.String"" MaxLength=""30"" />
         <Property Name=""ClientPortalActive"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""CompetitorID"" Type=""Edm.Int32"" />
-        <Property Name=""Country"" Type=""Edm.String"" />
+        <Property Name=""Country"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""CountryID"" Type=""Edm.Int32"" />
         <Property Name=""CreateDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""CsProfileUid"" Type=""Edm.Guid"" />
-        <Property Name=""Fax"" Type=""Edm.String"" />
+        <Property Name=""Fax"" Type=""Edm.String"" MaxLength=""25"" />
         <Property Name=""InvoiceEmailMessageID"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""InvoiceMethod"" Type=""Edm.Int32"" />
         <Property Name=""InvoiceNonContractItemsToParentAccount"" Type=""Edm.Boolean"" />
@@ -24909,24 +25166,24 @@ namespace Actions
         <Property Name=""MarketSegmentID"" Type=""Edm.Int32"" />
         <Property Name=""OwnerResourceID"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""ParentAccountID"" Type=""Edm.Int32"" />
-        <Property Name=""Phone"" Type=""Edm.String"" />
-        <Property Name=""PostalCode"" Type=""Edm.String"" />
+        <Property Name=""Phone"" Type=""Edm.String"" MaxLength=""25"" />
+        <Property Name=""PostalCode"" Type=""Edm.String"" MaxLength=""10"" />
         <Property Name=""QuoteEmailMessageID"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""QuoteTemplateID"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""ServiceManager"" Type=""Edm.String"" />
-        <Property Name=""SICCode"" Type=""Edm.String"" />
-        <Property Name=""State"" Type=""Edm.String"" />
-        <Property Name=""StockMarket"" Type=""Edm.String"" />
-        <Property Name=""StockSymbol"" Type=""Edm.String"" />
+        <Property Name=""ServiceManager"" Type=""Edm.String"" MaxLength=""101"" />
+        <Property Name=""SICCode"" Type=""Edm.String"" MaxLength=""32"" />
+        <Property Name=""State"" Type=""Edm.String"" MaxLength=""40"" />
+        <Property Name=""StockMarket"" Type=""Edm.String"" MaxLength=""10"" />
+        <Property Name=""StockSymbol"" Type=""Edm.String"" MaxLength=""10"" />
         <Property Name=""SupportAccountNumber"" Type=""Edm.Double"" />
         <Property Name=""SupportCallList"" Type=""Edm.String"" />
         <Property Name=""SupportPin"" Type=""Edm.Double"" />
         <Property Name=""TaskFireActive"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""TaxExempt"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""TaxID"" Type=""Edm.String"" />
+        <Property Name=""TaxID"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""TaxRegionID"" Type=""Edm.Int32"" />
         <Property Name=""TerritoryID"" Type=""Edm.Int32"" />
-        <Property Name=""WebAddress"" Type=""Edm.String"" />
+        <Property Name=""WebAddress"" Type=""Edm.String"" MaxLength=""255"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DeleterUserId"" Type=""Edm.Int64"" />
         <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
@@ -24935,7 +25192,7 @@ namespace Actions
         <Property Name=""CreationTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""CreatorUserId"" Type=""Edm.Int64"" />
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <NavigationProperty Name=""Contacts"" Type=""Collection(Portal.Autotask.Contact.AutotaskContact)"" />
+        <NavigationProperty Name=""Contacts"" Type=""Collection(Portal.Autotask.Contact.Entities.AutotaskContact)"" />
         <NavigationProperty Name=""Contracts"" Type=""Collection(Portal.Autotask.Contract.Entities.AutotaskContract)"" />
         <NavigationProperty Name=""InstalledProducts"" Type=""Collection(Portal.Autotask.InstalledProduct.Entities.AutotaskInstalledProduct)"" />
         <NavigationProperty Name=""Opportunities"" Type=""Collection(Portal.Autotask.Opportunity.Entities.AutotaskOpportunity)"" />
@@ -24950,13 +25207,13 @@ namespace Actions
         </Key>
         <Property Name=""AllocationCodeType"" Type=""Edm.Int32"" />
         <Property Name=""Department"" Type=""Edm.Int32"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
-        <Property Name=""ExternalNumber"" Type=""Edm.String"" />
+        <Property Name=""Description"" Type=""Edm.String"" MaxLength=""500"" />
+        <Property Name=""ExternalNumber"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""GeneralLedgerCode"" Type=""Edm.Int32"" />
         <Property Name=""Active"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsExcludedFromNewContracts"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""MarkupRate"" Type=""Edm.Double"" />
-        <Property Name=""Name"" Type=""Edm.String"" />
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""Taxable"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""TaxCategoryID"" Type=""Edm.Int32"" />
         <Property Name=""Type"" Type=""Edm.Int32"" />
@@ -24966,51 +25223,51 @@ namespace Actions
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
       </EntityType>
     </Schema>
-    <Schema Namespace=""Portal.Autotask.Contact"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
+    <Schema Namespace=""Portal.Autotask.Contact.Entities"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <EntityType Name=""AutotaskContact"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""AccountID"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Active"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""AdditionalAddressInformation"" Type=""Edm.String"" />
-        <Property Name=""AddressLine"" Type=""Edm.String"" />
-        <Property Name=""AddressLine1"" Type=""Edm.String"" />
-        <Property Name=""AlternatePhone"" Type=""Edm.String"" />
+        <Property Name=""AdditionalAddressInformation"" Type=""Edm.String"" MaxLength=""100"" />
+        <Property Name=""AddressLine"" Type=""Edm.String"" MaxLength=""128"" />
+        <Property Name=""AddressLine1"" Type=""Edm.String"" MaxLength=""128"" />
+        <Property Name=""AlternatePhone"" Type=""Edm.String"" MaxLength=""32"" />
         <Property Name=""BulkEmailOptOut"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""BulkEmailOptOutTime"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""City"" Type=""Edm.String"" />
-        <Property Name=""Country"" Type=""Edm.String"" />
+        <Property Name=""City"" Type=""Edm.String"" MaxLength=""32"" />
+        <Property Name=""Country"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""CountryID"" Type=""Edm.Int32"" />
         <Property Name=""CreateDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""EMailAddress"" Type=""Edm.String"" />
         <Property Name=""EMailAddress2"" Type=""Edm.String"" />
         <Property Name=""EMailAddress3"" Type=""Edm.String"" />
         <Property Name=""ExcludeDuplicate"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""Extension"" Type=""Edm.String"" />
-        <Property Name=""ExternalID"" Type=""Edm.String"" />
-        <Property Name=""FacebookUrl"" Type=""Edm.String"" />
-        <Property Name=""FaxNumber"" Type=""Edm.String"" />
-        <Property Name=""FirstName"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""Extension"" Type=""Edm.String"" MaxLength=""10"" />
+        <Property Name=""ExternalID"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""FacebookUrl"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""FaxNumber"" Type=""Edm.String"" MaxLength=""25"" />
+        <Property Name=""FirstName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""80"" />
         <Property Name=""LastActivityDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""LastModifiedDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""LastName"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""LinkedInUrl"" Type=""Edm.String"" />
-        <Property Name=""MiddleInitial"" Type=""Edm.String"" />
-        <Property Name=""MobilePhone"" Type=""Edm.String"" />
+        <Property Name=""LastName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""80"" />
+        <Property Name=""LinkedInUrl"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""MiddleInitial"" Type=""Edm.String"" MaxLength=""2"" />
+        <Property Name=""MobilePhone"" Type=""Edm.String"" MaxLength=""25"" />
         <Property Name=""NamePrefix"" Type=""Edm.Int32"" />
         <Property Name=""NameSuffix"" Type=""Edm.Int32"" />
-        <Property Name=""Note"" Type=""Edm.String"" />
+        <Property Name=""Note"" Type=""Edm.String"" MaxLength=""20"" />
         <Property Name=""Notification"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""Phone"" Type=""Edm.String"" />
+        <Property Name=""Phone"" Type=""Edm.String"" MaxLength=""25"" />
         <Property Name=""PrimaryContact"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""RoomNumber"" Type=""Edm.String"" />
-        <Property Name=""SendReport"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""State"" Type=""Edm.String"" />
+        <Property Name=""RoomNumber"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""SendMonthlyReport"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""State"" Type=""Edm.String"" MaxLength=""40"" />
         <Property Name=""SurveyOptOut"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""Title"" Type=""Edm.String"" />
-        <Property Name=""TwitterUrl"" Type=""Edm.String"" />
-        <Property Name=""ZipCode"" Type=""Edm.String"" />
+        <Property Name=""Title"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""TwitterUrl"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""ZipCode"" Type=""Edm.String"" MaxLength=""16"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DeleterUserId"" Type=""Edm.Int64"" />
         <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
@@ -25033,9 +25290,9 @@ namespace Actions
         <Property Name=""HourlyRate"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""Hours"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""HoursApproved"" Type=""Edm.Double"" Nullable=""false"" />
-        <Property Name=""InvoiceNumber"" Type=""Edm.String"" />
-        <Property Name=""IsPaid"" Type=""Edm.String"" />
-        <Property Name=""PaymentNumber"" Type=""Edm.String"" />
+        <Property Name=""InvoiceNumber"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""IsPaid"" Type=""Edm.String"" MaxLength=""10"" />
+        <Property Name=""PaymentNumber"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""PaymentType"" Type=""Edm.Int32"" />
         <Property Name=""StartDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""Status"" Type=""Edm.Int32"" />
@@ -25063,13 +25320,13 @@ namespace Actions
         <Property Name=""BillingPreference"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Compliance"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""ContactID"" Type=""Edm.Int32"" />
-        <Property Name=""ContactName"" Type=""Edm.String"" />
+        <Property Name=""ContactName"" Type=""Edm.String"" MaxLength=""250"" />
         <Property Name=""ContractCategory"" Type=""Edm.Int32"" />
-        <Property Name=""ContractName"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""ContractNumber"" Type=""Edm.String"" />
-        <Property Name=""ContractPeriodType"" Type=""Edm.String"" />
+        <Property Name=""ContractName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""100"" />
+        <Property Name=""ContractNumber"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""ContractPeriodType"" Type=""Edm.String"" MaxLength=""1"" />
         <Property Name=""ContractType"" Type=""Edm.Int32"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
+        <Property Name=""Description"" Type=""Edm.String"" MaxLength=""2000"" />
         <Property Name=""EndDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""EstimatedCost"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""EstimatedHours"" Type=""Edm.Double"" Nullable=""false"" />
@@ -25077,7 +25334,7 @@ namespace Actions
         <Property Name=""IsDefaultContract"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""OpportunityID"" Type=""Edm.Int32"" />
         <Property Name=""OverageBillingRate"" Type=""Edm.Double"" />
-        <Property Name=""PurchaseOrderNumber"" Type=""Edm.String"" />
+        <Property Name=""PurchaseOrderNumber"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""RenewedContractID"" Type=""Edm.Int32"" />
         <Property Name=""ServiceLevelAgreementID"" Type=""Edm.Int32"" />
         <Property Name=""SetupFee"" Type=""Edm.Double"" Nullable=""false"" />
@@ -25099,7 +25356,7 @@ namespace Actions
         <NavigationProperty Name=""ContractServiceBundles"" Type=""Collection(Portal.Autotask.ContractServiceBundle.Entities.AutotaskContractServiceBundle)"" />
         <NavigationProperty Name=""ContractServiceBundleUnits"" Type=""Collection(Portal.Autotask.ContractServiceBundleUnit.Entities.AutotaskContractServiceBundleUnit)"" />
         <NavigationProperty Name=""ContractServices"" Type=""Collection(Portal.Autotask.ContractService.Entities.AutotaskContractService)"" />
-        <NavigationProperty Name=""ContractServiceUnits"" Type=""Collection(Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit)"" />
+        <NavigationProperty Name=""ContractServiceUnits"" Type=""Collection(Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit)"" />
       </EntityType>
     </Schema>
     <Schema Namespace=""Portal.Autotask.ContractServiceBundle.Entities"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
@@ -25169,7 +25426,7 @@ namespace Actions
         <NavigationProperty Name=""Contract"" Type=""Portal.Autotask.Contract.Entities.AutotaskContract"" />
       </EntityType>
     </Schema>
-    <Schema Namespace=""Portal.Autotask.ContractServiceUnit"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
+    <Schema Namespace=""Portal.Autotask.ContractServiceUnit.Entities"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <EntityType Name=""AutotaskContractServiceUnit"">
         <Key>
           <PropertyRef Name=""Id"" />
@@ -25210,16 +25467,16 @@ namespace Actions
         <Property Name=""InstalledByContactID"" Type=""Edm.Int64"" />
         <Property Name=""InstalledByID"" Type=""Edm.Int64"" />
         <Property Name=""LastModifiedTime"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""Location"" Type=""Edm.String"" />
+        <Property Name=""Location"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""MonthlyCost"" Type=""Edm.Double"" />
-        <Property Name=""Notes"" Type=""Edm.String"" />
+        <Property Name=""Notes"" Type=""Edm.String"" MaxLength=""5000"" />
         <Property Name=""NumberOfUsers"" Type=""Edm.Double"" />
         <Property Name=""ParentInstalledProductID"" Type=""Edm.Int32"" />
         <Property Name=""PerUseCost"" Type=""Edm.Double"" />
         <Property Name=""ProductID"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""ReferenceNumber"" Type=""Edm.String"" />
-        <Property Name=""ReferenceTitle"" Type=""Edm.String"" />
-        <Property Name=""SerialNumber"" Type=""Edm.String"" />
+        <Property Name=""ReferenceNumber"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""ReferenceTitle"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""SerialNumber"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""ServiceBundleID"" Type=""Edm.Int64"" />
         <Property Name=""ServiceID"" Type=""Edm.Int64"" />
         <Property Name=""SetupFee"" Type=""Edm.Double"" />
@@ -25250,19 +25507,19 @@ namespace Actions
         <Property Name=""AdvancedField5"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""Amount"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""AssessmentScore"" Type=""Edm.Double"" />
-        <Property Name=""Barriers"" Type=""Edm.String"" />
+        <Property Name=""Barriers"" Type=""Edm.String"" MaxLength=""500"" />
         <Property Name=""ClosedDate"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""ContactID"" Type=""Edm.Int32"" />
         <Property Name=""Cost"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""CreateDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""DateStamp"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""HelpNeeded"" Type=""Edm.String"" />
+        <Property Name=""HelpNeeded"" Type=""Edm.String"" MaxLength=""500"" />
         <Property Name=""LastActivity"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""LeadReferral"" Type=""Edm.Int32"" />
         <Property Name=""LossReason"" Type=""Edm.Int32"" />
-        <Property Name=""LossReasonDetail"" Type=""Edm.String"" />
-        <Property Name=""Market"" Type=""Edm.String"" />
-        <Property Name=""NextStep"" Type=""Edm.String"" />
+        <Property Name=""LossReasonDetail"" Type=""Edm.String"" MaxLength=""500"" />
+        <Property Name=""Market"" Type=""Edm.String"" MaxLength=""500"" />
+        <Property Name=""NextStep"" Type=""Edm.String"" MaxLength=""500"" />
         <Property Name=""NextStepDescription"" Type=""Edm.String"" />
         <Property Name=""OwnerResourceID"" Type=""Edm.Int32"" />
         <Property Name=""PrimaryCompetitor"" Type=""Edm.Int32"" />
@@ -25270,22 +25527,22 @@ namespace Actions
         <Property Name=""ProductID"" Type=""Edm.Int32"" />
         <Property Name=""ProjectedCloseDate"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""ProjectedLiveDate"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""PromotionName"" Type=""Edm.String"" />
+        <Property Name=""PromotionName"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""Rating"" Type=""Edm.Int32"" />
         <Property Name=""RelationshipAssessmentScore"" Type=""Edm.Double"" />
         <Property Name=""RevenueSpread"" Type=""Edm.Int32"" />
-        <Property Name=""RevenueSpreadUnit"" Type=""Edm.String"" />
+        <Property Name=""RevenueSpreadUnit"" Type=""Edm.String"" MaxLength=""10"" />
         <Property Name=""SalesOrderID"" Type=""Edm.Int32"" />
         <Property Name=""SalesProcessPercentComplete"" Type=""Edm.Double"" />
         <Property Name=""Stage"" Type=""Edm.Int32"" />
         <Property Name=""Status"" Type=""Edm.Int32"" />
         <Property Name=""TechnicalAssessmentScore"" Type=""Edm.Double"" />
         <Property Name=""ThroughDate"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""Title"" Type=""Edm.String"" />
+        <Property Name=""Title"" Type=""Edm.String"" MaxLength=""128"" />
         <Property Name=""TotalAmountMonths"" Type=""Edm.Int32"" />
         <Property Name=""UseQuoteTotals"" Type=""Edm.Boolean"" />
         <Property Name=""WinReason"" Type=""Edm.Int32"" />
-        <Property Name=""WinReasonDetail"" Type=""Edm.String"" />
+        <Property Name=""WinReasonDetail"" Type=""Edm.String"" MaxLength=""500"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DeleterUserId"" Type=""Edm.Int64"" />
         <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
@@ -25315,9 +25572,9 @@ namespace Actions
         <Property Name=""LaborID"" Type=""Edm.Int32"" />
         <Property Name=""LineDiscount"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""MarkupRate"" Type=""Edm.Double"" />
-        <Property Name=""Name"" Type=""Edm.String"" />
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""PercentageDiscount"" Type=""Edm.Double"" Nullable=""false"" />
-        <Property Name=""PeriodType"" Type=""Edm.String"" />
+        <Property Name=""PeriodType"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""ProductID"" Type=""Edm.Int32"" />
         <Property Name=""Quantity"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""QuoteID"" Type=""Edm.Int64"" Nullable=""false"" />
@@ -25342,25 +25599,25 @@ namespace Actions
         <Property Name=""AccountID"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""BillToLocationID"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""CalculateTaxSeparately"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""Comment"" Type=""Edm.String"" />
+        <Property Name=""Comment"" Type=""Edm.String"" MaxLength=""1000"" />
         <Property Name=""ContactID"" Type=""Edm.Int32"" />
         <Property Name=""CreateDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""CreatorResourceID"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
+        <Property Name=""Description"" Type=""Edm.String"" MaxLength=""2000"" />
         <Property Name=""EffectiveDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""eQuoteActive"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""ExpirationDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""ExternalQuoteNumber"" Type=""Edm.String"" />
+        <Property Name=""ExternalQuoteNumber"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""GroupByID"" Type=""Edm.Int32"" />
         <Property Name=""LastActivityDate"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""LastModifiedBy"" Type=""Edm.Int32"" />
-        <Property Name=""Name"" Type=""Edm.String"" />
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""OpportunityID"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""PaymentTerm"" Type=""Edm.Int32"" />
         <Property Name=""PaymentType"" Type=""Edm.Int32"" />
         <Property Name=""PrimaryQuote"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""ProposalProjectID"" Type=""Edm.Int32"" />
-        <Property Name=""PurchaseOrderNumber"" Type=""Edm.String"" />
+        <Property Name=""PurchaseOrderNumber"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""QuoteTemplateID"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""ShippingType"" Type=""Edm.Int32"" />
         <Property Name=""ShipToLocationID"" Type=""Edm.Int32"" Nullable=""false"" />
@@ -25385,37 +25642,37 @@ namespace Actions
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
-        <Property Name=""AccountingReferenceID"" Type=""Edm.String"" />
+        <Property Name=""AccountingReferenceID"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""Active"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""DateFormat"" Type=""Edm.String"" />
+        <Property Name=""DateFormat"" Type=""Edm.String"" MaxLength=""20"" />
         <Property Name=""DefaultServiceDeskRoleID"" Type=""Edm.Int64"" />
         <Property Name=""Email"" Type=""Edm.String"" />
         <Property Name=""Email2"" Type=""Edm.String"" />
         <Property Name=""Email3"" Type=""Edm.String"" />
-        <Property Name=""EmailTypeCode"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""EmailTypeCode2"" Type=""Edm.String"" />
-        <Property Name=""EmailTypeCode3"" Type=""Edm.String"" />
-        <Property Name=""FirstName"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""Gender"" Type=""Edm.String"" />
+        <Property Name=""EmailTypeCode"" Type=""Edm.String"" Nullable=""false"" MaxLength=""20"" />
+        <Property Name=""EmailTypeCode2"" Type=""Edm.String"" MaxLength=""20"" />
+        <Property Name=""EmailTypeCode3"" Type=""Edm.String"" MaxLength=""20"" />
+        <Property Name=""FirstName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""50"" />
+        <Property Name=""Gender"" Type=""Edm.String"" MaxLength=""1"" />
         <Property Name=""Greeting"" Type=""Edm.Int32"" />
         <Property Name=""HireDate"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""HomePhone"" Type=""Edm.String"" />
-        <Property Name=""Initials"" Type=""Edm.String"" />
+        <Property Name=""HomePhone"" Type=""Edm.String"" MaxLength=""25"" />
+        <Property Name=""Initials"" Type=""Edm.String"" MaxLength=""32"" />
         <Property Name=""InternalCost"" Type=""Edm.Double"" Nullable=""false"" />
-        <Property Name=""LastName"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""LastName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""50"" />
         <Property Name=""LocationID"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""MiddleName"" Type=""Edm.String"" />
-        <Property Name=""MobilePhone"" Type=""Edm.String"" />
-        <Property Name=""NumberFormat"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""OfficeExtension"" Type=""Edm.String"" />
-        <Property Name=""OfficePhone"" Type=""Edm.String"" />
+        <Property Name=""MiddleName"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""MobilePhone"" Type=""Edm.String"" MaxLength=""25"" />
+        <Property Name=""NumberFormat"" Type=""Edm.String"" Nullable=""false"" MaxLength=""20"" />
+        <Property Name=""OfficeExtension"" Type=""Edm.String"" MaxLength=""10"" />
+        <Property Name=""OfficePhone"" Type=""Edm.String"" MaxLength=""25"" />
         <Property Name=""PayrollType"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""ResourceType"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""Suffix"" Type=""Edm.String"" />
-        <Property Name=""TimeFormat"" Type=""Edm.String"" />
-        <Property Name=""Title"" Type=""Edm.String"" />
-        <Property Name=""TravelAvailabilityPct"" Type=""Edm.String"" />
-        <Property Name=""UserName"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""ResourceType"" Type=""Edm.String"" Nullable=""false"" MaxLength=""15"" />
+        <Property Name=""Suffix"" Type=""Edm.String"" MaxLength=""10"" />
+        <Property Name=""TimeFormat"" Type=""Edm.String"" MaxLength=""20"" />
+        <Property Name=""Title"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""TravelAvailabilityPct"" Type=""Edm.String"" MaxLength=""15"" />
+        <Property Name=""UserName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""32"" />
         <Property Name=""UserType"" Type=""Edm.Int32"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DeleterUserId"" Type=""Edm.Int64"" />
@@ -25435,13 +25692,13 @@ namespace Actions
         <Property Name=""AllocationCodeID"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""CreateDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""CreatorResourceID"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
+        <Property Name=""Description"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""InvoiceDescription"" Type=""Edm.String"" />
         <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""LastModifiedDate"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""Name"" Type=""Edm.String"" />
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""PercentageDiscount"" Type=""Edm.Double"" Nullable=""false"" />
-        <Property Name=""PeriodType"" Type=""Edm.String"" />
+        <Property Name=""PeriodType"" Type=""Edm.String"" MaxLength=""1"" />
         <Property Name=""ServiceLevelAgreementID"" Type=""Edm.Int64"" />
         <Property Name=""UnitCost"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""UnitDiscount"" Type=""Edm.Double"" Nullable=""false"" />
@@ -25470,7 +25727,7 @@ namespace Actions
         <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""LastModifiedDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""Name"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""PeriodType"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""PeriodType"" Type=""Edm.String"" Nullable=""false"" MaxLength=""1"" />
         <Property Name=""ServiceLevelAgreementID"" Type=""Edm.Int64"" />
         <Property Name=""UnitCost"" Type=""Edm.Double"" Nullable=""false"" />
         <Property Name=""UnitPrice"" Type=""Edm.Double"" Nullable=""false"" />
@@ -25497,7 +25754,7 @@ namespace Actions
         <Property Name=""NoteType"" Type=""Edm.Int32"" />
         <Property Name=""Publish"" Type=""Edm.Int32"" />
         <Property Name=""TicketID"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""Title"" Type=""Edm.String"" />
+        <Property Name=""Title"" Type=""Edm.String"" MaxLength=""250"" />
         <Property Name=""Id"" Type=""Edm.Int64"" Nullable=""false"" />
         <NavigationProperty Name=""Ticket"" Type=""Portal.Autotask.Ticket.Entities.AutotaskTicket"" />
       </EntityType>
@@ -25508,18 +25765,18 @@ namespace Actions
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""AccountID"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""AEMAlertID"" Type=""Edm.String"" />
+        <Property Name=""AEMAlertID"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""AllocationCodeID"" Type=""Edm.Int32"" />
         <Property Name=""AssignedResourceID"" Type=""Edm.Int32"" />
         <Property Name=""AssignedResourceRoleID"" Type=""Edm.Int32"" />
         <Property Name=""ChangeApprovalBoard"" Type=""Edm.Int32"" />
         <Property Name=""ChangeApprovalStatus"" Type=""Edm.Int32"" />
         <Property Name=""ChangeApprovalType"" Type=""Edm.Int32"" />
-        <Property Name=""ChangeInfoField1"" Type=""Edm.String"" />
-        <Property Name=""ChangeInfoField2"" Type=""Edm.String"" />
-        <Property Name=""ChangeInfoField3"" Type=""Edm.String"" />
-        <Property Name=""ChangeInfoField4"" Type=""Edm.String"" />
-        <Property Name=""ChangeInfoField5"" Type=""Edm.String"" />
+        <Property Name=""ChangeInfoField1"" Type=""Edm.String"" MaxLength=""8000"" />
+        <Property Name=""ChangeInfoField2"" Type=""Edm.String"" MaxLength=""8000"" />
+        <Property Name=""ChangeInfoField3"" Type=""Edm.String"" MaxLength=""8000"" />
+        <Property Name=""ChangeInfoField4"" Type=""Edm.String"" MaxLength=""8000"" />
+        <Property Name=""ChangeInfoField5"" Type=""Edm.String"" MaxLength=""8000"" />
         <Property Name=""CompletedDate"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""ContactID"" Type=""Edm.Int64"" />
         <Property Name=""ContractID"" Type=""Edm.Int32"" />
@@ -25527,7 +25784,7 @@ namespace Actions
         <Property Name=""ContractServiceID"" Type=""Edm.Int64"" />
         <Property Name=""CreateDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""CreatorResourceID"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
+        <Property Name=""Description"" Type=""Edm.String"" MaxLength=""8000"" />
         <Property Name=""DueDateTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""EstimatedHours"" Type=""Edm.Double"" />
         <Property Name=""FirstResponseDateTime"" Type=""Edm.DateTimeOffset"" />
@@ -25544,9 +25801,9 @@ namespace Actions
         <Property Name=""OpportunityId"" Type=""Edm.Int32"" />
         <Property Name=""Priority"" Type=""Edm.Int32"" />
         <Property Name=""ProblemTicketId"" Type=""Edm.Int32"" />
-        <Property Name=""PurchaseOrderNumber"" Type=""Edm.String"" />
+        <Property Name=""PurchaseOrderNumber"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""QueueID"" Type=""Edm.Int32"" />
-        <Property Name=""Resolution"" Type=""Edm.String"" />
+        <Property Name=""Resolution"" Type=""Edm.String"" MaxLength=""32000"" />
         <Property Name=""ResolutionPlanDateTime"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""ResolutionPlanDueDateTime"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""ResolvedDateTime"" Type=""Edm.DateTimeOffset"" />
@@ -25557,9 +25814,9 @@ namespace Actions
         <Property Name=""Status"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""SubIssueType"" Type=""Edm.Int32"" />
         <Property Name=""ThreeStrikeRulePhase"" Type=""Edm.String"" />
-        <Property Name=""TicketNumber"" Type=""Edm.String"" />
+        <Property Name=""TicketNumber"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""TicketType"" Type=""Edm.Int32"" />
-        <Property Name=""Title"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""Title"" Type=""Edm.String"" Nullable=""false"" MaxLength=""255"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DeleterUserId"" Type=""Edm.Int64"" />
         <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
@@ -25614,8 +25871,8 @@ namespace Actions
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
-        <Property Name=""FromAddress"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""JobName"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""FromAddress"" Type=""Edm.String"" Nullable=""false"" MaxLength=""254"" />
+        <Property Name=""JobName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""300"" />
         <Property Name=""LastNotificationSent"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""LastNotificationType"" Type=""Portal.BackupMonitoring.NotificationType"" Nullable=""false"" />
         <Property Name=""LastResult"" Type=""Portal.BackupMonitoring.JobResult"" Nullable=""false"" />
@@ -25623,7 +25880,7 @@ namespace Actions
         <Property Name=""ManualScheduleDateTime"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""Override"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""ResourceId"" Type=""Edm.Int64"" Nullable=""false"" />
-        <Property Name=""Schedule"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""Schedule"" Type=""Edm.String"" Nullable=""false"" MaxLength=""300"" />
         <Property Name=""ScheduleType"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Status"" Type=""Portal.BackupMonitoring.JobResult"" Nullable=""false"" />
         <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
@@ -25643,15 +25900,15 @@ namespace Actions
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""Acknowledged"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""Comments"" Type=""Edm.String"" />
-        <Property Name=""FromAddress"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""Comments"" Type=""Edm.String"" MaxLength=""8000"" />
+        <Property Name=""FromAddress"" Type=""Edm.String"" Nullable=""false"" MaxLength=""254"" />
         <Property Name=""JobId"" Type=""Edm.Int32"" />
-        <Property Name=""JobName"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""MessageId"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""JobName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""300"" />
+        <Property Name=""MessageId"" Type=""Edm.String"" Nullable=""false"" MaxLength=""254"" />
         <Property Name=""Result"" Type=""Portal.BackupMonitoring.JobResult"" Nullable=""false"" />
-        <Property Name=""Subject"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""Subject"" Type=""Edm.String"" Nullable=""false"" MaxLength=""300"" />
         <Property Name=""TicketId"" Type=""Edm.Int64"" />
-        <Property Name=""TicketRef"" Type=""Edm.String"" />
+        <Property Name=""TicketRef"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""Timestamp"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""Type"" Type=""Portal.BackupMonitoring.VendorType"" Nullable=""false"" />
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
@@ -25685,29 +25942,17 @@ namespace Actions
       </EnumType>
     </Schema>
     <Schema Namespace=""Portal.CentraStage.Entities"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
-      <EntityType Name=""CentraStageDevicePortScan"">
-        <Key>
-          <PropertyRef Name=""Id"" />
-        </Key>
-        <Property Name=""DeviceId"" Type=""Edm.Int64"" Nullable=""false"" />
-        <Property Name=""IpAddress"" Type=""Edm.String"" />
-        <Property Name=""Name"" Type=""Edm.String"" />
-        <Property Name=""Open"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""ScanDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <NavigationProperty Name=""Device"" Type=""Portal.CentraStage.Entities.CentraStageDevice"" />
-      </EntityType>
       <EntityType Name=""CentraStageProfile"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""AccountId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""AutotaskCompanyId"" Type=""Edm.Int64"" />
-        <Property Name=""AutotaskCompanyName"" Type=""Edm.String"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
-        <Property Name=""Name"" Type=""Edm.String"" />
-        <Property Name=""Notes"" Type=""Edm.String"" />
-        <Property Name=""Url"" Type=""Edm.String"" />
+        <Property Name=""AutotaskCompanyName"" Type=""Edm.String"" MaxLength=""100"" />
+        <Property Name=""Description"" Type=""Edm.String"" MaxLength=""2000"" />
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""Notes"" Type=""Edm.String"" MaxLength=""2000"" />
+        <Property Name=""Url"" Type=""Edm.String"" MaxLength=""2083"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
@@ -25721,29 +25966,41 @@ namespace Actions
         <Property Name=""AntiVirusInstalled"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""CagVersion"" Type=""Edm.Int32"" />
         <Property Name=""Custom"" Type=""Portal.CentraStage.Entities.CentraStageDeviceCustom"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
+        <Property Name=""Description"" Type=""Edm.String"" MaxLength=""2000"" />
         <Property Name=""DeviceType"" Type=""Portal.CentraStage.Entities.CentraStageDeviceType"" />
-        <Property Name=""DisplayVersion"" Type=""Edm.String"" />
-        <Property Name=""Domain"" Type=""Edm.String"" />
+        <Property Name=""DisplayVersion"" Type=""Edm.String"" MaxLength=""50"" />
+        <Property Name=""Domain"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""ExtIpAddress"" Type=""Edm.String"" />
         <Property Name=""FirewallEnabled"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""Hostname"" Type=""Edm.String"" />
-        <Property Name=""IpAddress"" Type=""Edm.String"" />
+        <Property Name=""IpAddress"" Type=""Edm.String"" MaxLength=""39"" />
         <Property Name=""LastAudit"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""LastLoggedInUser"" Type=""Edm.String"" />
-        <Property Name=""Name"" Type=""Edm.String"" />
+        <Property Name=""LastLoggedInUser"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""Online"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""OperatingSystem"" Type=""Edm.String"" />
+        <Property Name=""OperatingSystem"" Type=""Edm.String"" MaxLength=""100"" />
         <Property Name=""ProfileId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Suspended"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""SystemInfo"" Type=""Portal.CentraStage.Entities.CentraStageDeviceSystemInformation"" />
-        <Property Name=""Uid"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""Url"" Type=""Edm.String"" />
+        <Property Name=""Uid"" Type=""Edm.String"" Nullable=""false"" MaxLength=""50"" />
+        <Property Name=""Url"" Type=""Edm.String"" MaxLength=""2083"" />
         <Property Name=""Id"" Type=""Edm.Int64"" Nullable=""false"" />
         <NavigationProperty Name=""LogicalDisks"" Type=""Collection(Portal.CentraStage.Entities.CentraStageDeviceLogicalDisk)"" />
         <NavigationProperty Name=""PortScans"" Type=""Collection(Portal.CentraStage.Entities.CentraStageDevicePortScan)"" />
         <NavigationProperty Name=""Profile"" Type=""Portal.CentraStage.Entities.CentraStageProfile"" />
         <NavigationProperty Name=""Software"" Type=""Collection(Portal.CentraStage.Entities.CentraStageDeviceSoftware)"" />
+      </EntityType>
+      <EntityType Name=""CentraStageDevicePortScan"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""DeviceId"" Type=""Edm.Int64"" Nullable=""false"" />
+        <Property Name=""IpAddress"" Type=""Edm.String"" MaxLength=""39"" />
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""Open"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""ScanDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
+        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
+        <NavigationProperty Name=""Device"" Type=""Portal.CentraStage.Entities.CentraStageDevice"" />
       </EntityType>
       <ComplexType Name=""CentraStageDeviceCustom"">
         <Property Name=""Custom1"" Type=""Edm.String"" />
@@ -25758,8 +26015,8 @@ namespace Actions
         <Property Name=""Custom9"" Type=""Edm.String"" />
       </ComplexType>
       <ComplexType Name=""CentraStageDeviceType"">
-        <Property Name=""Category"" Type=""Edm.String"" />
-        <Property Name=""Type"" Type=""Edm.String"" />
+        <Property Name=""Category"" Type=""Edm.String"" MaxLength=""100"" />
+        <Property Name=""Type"" Type=""Edm.String"" MaxLength=""100"" />
       </ComplexType>
       <EntityType Name=""CentraStageDeviceLogicalDisk"">
         <Key>
@@ -25768,7 +26025,7 @@ namespace Actions
         <Property Name=""DateCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""Description"" Type=""Edm.String"" />
         <Property Name=""DeviceId"" Type=""Edm.Int64"" Nullable=""false"" />
-        <Property Name=""Drive"" Type=""Edm.String"" />
+        <Property Name=""Drive"" Type=""Edm.String"" MaxLength=""4096"" />
         <Property Name=""FreeSpace"" Type=""Edm.Int64"" Nullable=""false"" />
         <Property Name=""Instance"" Type=""Edm.String"" />
         <Property Name=""LastUpdated"" Type=""Edm.DateTimeOffset"" />
@@ -25781,62 +26038,72 @@ namespace Actions
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""DeviceId"" Type=""Edm.Int64"" Nullable=""false"" />
-        <Property Name=""Name"" Type=""Edm.String"" />
-        <Property Name=""Version"" Type=""Edm.String"" />
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""500"" />
+        <Property Name=""Version"" Type=""Edm.String"" MaxLength=""500"" />
         <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
         <NavigationProperty Name=""Device"" Type=""Portal.CentraStage.Entities.CentraStageDevice"" />
       </EntityType>
       <ComplexType Name=""CentraStageDeviceSystemInformation"">
         <Property Name=""DateCreated"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""Instance"" Type=""Edm.String"" />
+        <Property Name=""Instance"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""LastUpdated"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""Manufacturer"" Type=""Edm.String"" />
-        <Property Name=""Model"" Type=""Edm.String"" />
-        <Property Name=""Name"" Type=""Edm.String"" />
+        <Property Name=""Manufacturer"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""Model"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""TotalPhysicalMemory"" Type=""Edm.Int64"" Nullable=""false"" />
       </ComplexType>
     </Schema>
     <Schema Namespace=""Portal.LicenseMonitoringSystem.Users.Entities"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
+      <EntityType Name=""LicenseUserGroup"">
+        <Key>
+          <PropertyRef Name=""GroupId"" />
+          <PropertyRef Name=""UserId"" />
+        </Key>
+        <Property Name=""GroupId"" Type=""Edm.Guid"" Nullable=""false"" />
+        <Property Name=""UserId"" Type=""Edm.Guid"" Nullable=""false"" />
+        <NavigationProperty Name=""Group"" Type=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup"" Nullable=""false"" />
+        <NavigationProperty Name=""User"" Type=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser"" Nullable=""false"" />
+      </EntityType>
+      <EntityType Name=""LicenseGroup"">
+        <Key>
+          <PropertyRef Name=""Id"" />
+        </Key>
+        <Property Name=""Name"" Type=""Edm.String"" MaxLength=""256"" />
+        <Property Name=""WhenCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
+        <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
+        <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
+        <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
+        <NavigationProperty Name=""UserGroups"" Type=""Collection(Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup)"" />
+      </EntityType>
       <EntityType Name=""LicenseUser"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
-        <Property Name=""DisplayName"" Type=""Edm.String"" />
-        <Property Name=""Email"" Type=""Edm.String"" />
+        <Property Name=""DisplayName"" Type=""Edm.String"" MaxLength=""256"" />
+        <Property Name=""Email"" Type=""Edm.String"" MaxLength=""256"" />
         <Property Name=""Enabled"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""FirstName"" Type=""Edm.String"" />
+        <Property Name=""FirstName"" Type=""Edm.String"" MaxLength=""64"" />
         <Property Name=""LastLoginDate"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""ManagedSupportId"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""SamAccountName"" Type=""Edm.String"" />
+        <Property Name=""SamAccountName"" Type=""Edm.String"" MaxLength=""256"" />
         <Property Name=""UserType"" Type=""Portal.LicenseMonitoringSystem.Users.Entities.UserType"" Nullable=""false"" />
-        <Property Name=""Surname"" Type=""Edm.String"" />
+        <Property Name=""Surname"" Type=""Edm.String"" MaxLength=""64"" />
         <Property Name=""WhenCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsExcluded"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
-        <NavigationProperty Name=""Groups"" Type=""Collection(Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup)"" />
+        <NavigationProperty Name=""UserGroups"" Type=""Collection(Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup)"" />
         <NavigationProperty Name=""History"" Type=""Collection(Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserHistory)"" />
-      </EntityType>
-      <EntityType Name=""LicenseGroup"">
-        <Key>
-          <PropertyRef Name=""Id"" />
-        </Key>
-        <Property Name=""Name"" Type=""Edm.String"" />
-        <Property Name=""WhenCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
-        <NavigationProperty Name=""Users"" Type=""Collection(Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser)"" />
       </EntityType>
       <EntityType Name=""ManagedSupport"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""DeviceId"" Type=""Edm.Guid"" Nullable=""false"" />
-        <Property Name=""Hostname"" Type=""Edm.String"" />
-        <Property Name=""IpAddress"" Type=""Edm.String"" />
+        <Property Name=""Hostname"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""IpAddress"" Type=""Edm.String"" MaxLength=""39"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""DeleterUserId"" Type=""Edm.Int64"" />
@@ -25848,24 +26115,23 @@ namespace Actions
         <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-        <NavigationProperty Name=""Users"" Type=""Collection(Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser)"" />
       </EntityType>
       <EntityType Name=""LicenseUserHistory"">
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""DisplayName"" Type=""Edm.String"" />
-        <Property Name=""Email"" Type=""Edm.String"" />
+        <Property Name=""DisplayName"" Type=""Edm.String"" MaxLength=""256"" />
+        <Property Name=""Email"" Type=""Edm.String"" MaxLength=""256"" />
         <Property Name=""Enabled"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""FirstName"" Type=""Edm.String"" />
+        <Property Name=""FirstName"" Type=""Edm.String"" MaxLength=""64"" />
         <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""IsExcluded"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""LastLoginDate"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""SamAccountName"" Type=""Edm.String"" />
+        <Property Name=""SamAccountName"" Type=""Edm.String"" MaxLength=""256"" />
         <Property Name=""SerializedGroups"" Type=""Edm.String"" />
-        <Property Name=""Surname"" Type=""Edm.String"" />
+        <Property Name=""Surname"" Type=""Edm.String"" MaxLength=""64"" />
         <Property Name=""UploadId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""UserId"" Type=""Edm.Guid"" Nullable=""false"" />
         <Property Name=""WhenCreated"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
@@ -25913,7 +26179,7 @@ namespace Actions
         <Property Name=""ContextId"" Type=""Edm.String"" Nullable=""false"" />
         <Property Name=""ContractType"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""DefaultDomainName"" Type=""Edm.String"" />
-        <Property Name=""DisplayName"" Type=""Edm.String"" Nullable=""false"" />
+        <Property Name=""DisplayName"" Type=""Edm.String"" Nullable=""false"" MaxLength=""200"" />
         <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
         <NavigationProperty Name=""Subscriptions"" Type=""Collection(Portal.Office365.Entities.Office365Subscription)"" />
       </EntityType>
@@ -25925,11 +26191,10 @@ namespace Actions
         <Property Name=""CreationDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""CustomerId"" Type=""Edm.Guid"" Nullable=""false"" />
         <Property Name=""EffectiveStartDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""FriendlyName"" Type=""Edm.String"" />
+        <Property Name=""FriendlyName"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""OrderId"" Type=""Edm.String"" />
         <Property Name=""Quantity"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""State"" Type=""Portal.Office365.Office365SubscriptionState"" Nullable=""false"" />
-        <Property Name=""SuspensionReasons"" Type=""Collection(Edm.String)"" />
         <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
         <NavigationProperty Name=""Customer"" Type=""Portal.Office365.Entities.Office365Customer"" />
       </EntityType>
@@ -25940,18 +26205,18 @@ namespace Actions
           <PropertyRef Name=""Id"" />
         </Key>
         <Property Name=""AccessLevel"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""AccountKeyCode"" Type=""Edm.String"" />
+        <Property Name=""AccountKeyCode"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""AllKeysExpired"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""BillingCycle"" Type=""Edm.String"" />
-        <Property Name=""BillingDate"" Type=""Edm.String"" />
-        <Property Name=""CompanyComments"" Type=""Edm.String"" />
-        <Property Name=""CreatedBy"" Type=""Edm.String"" />
+        <Property Name=""BillingCycle"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""BillingDate"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""CompanyComments"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""CreatedBy"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""Deactivated"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""DeactivatedBy"" Type=""Edm.String"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
+        <Property Name=""DeactivatedBy"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""Description"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""Device"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DevicesAllowed"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""Emails"" Type=""Edm.String"" />
+        <Property Name=""Emails"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""EndDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""GlobalAlerts"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""GlobalOverrides"" Type=""Edm.Boolean"" Nullable=""false"" />
@@ -25960,13 +26225,13 @@ namespace Actions
         <Property Name=""Infect"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""MobileSeats"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""PCsInfected24"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""PolicyDescription"" Type=""Edm.String"" />
-        <Property Name=""PolicyId"" Type=""Edm.String"" />
-        <Property Name=""PolicyName"" Type=""Edm.String"" />
-        <Property Name=""SiteName"" Type=""Edm.String"" />
-        <Property Name=""SiteType"" Type=""Edm.String"" />
+        <Property Name=""PolicyDescription"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""PolicyId"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""PolicyName"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""SiteName"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""SiteType"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""Suspended"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""SuspendedBy"" Type=""Edm.String"" />
+        <Property Name=""SuspendedBy"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""TotalEndpoints"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <NavigationProperty Name=""Endpoints"" Type=""Collection(Portal.Webroot.Entities.WebrootEndpoint)"" />
@@ -25975,39 +26240,39 @@ namespace Actions
         <Key>
           <PropertyRef Name=""Id"" />
         </Key>
-        <Property Name=""ADDomain"" Type=""Edm.String"" />
-        <Property Name=""ADOU"" Type=""Edm.String"" />
-        <Property Name=""AgentLanguage"" Type=""Edm.String"" />
-        <Property Name=""AgentVersion"" Type=""Edm.String"" />
-        <Property Name=""CurrentUser"" Type=""Edm.String"" />
+        <Property Name=""ADDomain"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""ADOU"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""AgentLanguage"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""AgentVersion"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""CurrentUser"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""Deactivated"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""Expired"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""FirstSeen"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""FriendlyPCName"" Type=""Edm.String"" />
+        <Property Name=""FriendlyPCName"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""GroupId"" Type=""Edm.Guid"" Nullable=""false"" />
-        <Property Name=""GroupName"" Type=""Edm.String"" />
-        <Property Name=""HostName"" Type=""Edm.String"" />
+        <Property Name=""GroupName"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""HostName"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
         <Property Name=""InfectedNow"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""InternalIP"" Type=""Edm.String"" />
-        <Property Name=""LastChangesUserId"" Type=""Edm.String"" />
+        <Property Name=""InternalIP"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""LastChangesUserId"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""LastInfected"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""LastPublicIP"" Type=""Edm.String"" />
-        <Property Name=""LastScanSeq"" Type=""Edm.String"" />
+        <Property Name=""LastPublicIP"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""LastScanSeq"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""LastSeen"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""LicenseKey"" Type=""Edm.String"" />
+        <Property Name=""LicenseKey"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""Mac"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""MACAddress"" Type=""Edm.String"" />
-        <Property Name=""MachineId"" Type=""Edm.String"" />
+        <Property Name=""MACAddress"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""MachineId"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""MaxUsers"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""ModifiedDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""NumUsers"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""PolicyId"" Type=""Edm.String"" />
-        <Property Name=""PolicyName"" Type=""Edm.String"" />
+        <Property Name=""PolicyId"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""PolicyName"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""SiteId"" Type=""Edm.Guid"" Nullable=""false"" />
         <Property Name=""VM"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""WindowsFullOS"" Type=""Edm.String"" />
-        <Property Name=""Workgroup"" Type=""Edm.String"" />
+        <Property Name=""WindowsFullOS"" Type=""Edm.String"" MaxLength=""200"" />
+        <Property Name=""Workgroup"" Type=""Edm.String"" MaxLength=""200"" />
         <NavigationProperty Name=""Site"" Type=""Portal.Webroot.Entities.WebrootSite"" />
       </EntityType>
     </Schema>
@@ -26023,7 +26288,7 @@ namespace Actions
         <Property Name=""HyperV"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""LicenseType"" Type=""Portal.LicenseMonitoringSystem.Veeam.Entities.LicenseTypeEx"" Nullable=""false"" />
         <Property Name=""ProgramVersion"" Type=""Edm.String"" Nullable=""false"" />
-        <Property Name=""SupportId"" Type=""Edm.String"" />
+        <Property Name=""SupportId"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""vSphere"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
@@ -26051,7 +26316,7 @@ namespace Actions
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""LicenseType"" Type=""Portal.LicenseMonitoringSystem.Veeam.Entities.LicenseTypeEx"" Nullable=""false"" />
         <Property Name=""ProgramVersion"" Type=""Edm.String"" />
-        <Property Name=""SupportId"" Type=""Edm.String"" />
+        <Property Name=""SupportId"" Type=""Edm.String"" MaxLength=""50"" />
         <Property Name=""UploadId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""VeeamId"" Type=""Edm.Guid"" />
         <Property Name=""vSphere"" Type=""Edm.Int32"" Nullable=""false"" />
@@ -26092,7 +26357,7 @@ namespace Actions
     </Schema>
     <Schema Namespace=""Tools"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <Function Name=""GetAccountId"" IsBound=""true"">
-        <Parameter Name=""bindingParameter"" Type=""Collection(Portal.CentraStage.Entities.CentraStageProfile)"" />
+        <Parameter Name=""bindingParameter"" Type=""Collection(Portal.CentraStage.Entities.CentraStageDevice)"" />
         <Parameter Name=""deviceId"" Type=""Edm.Guid"" Nullable=""false"" />
         <ReturnType Type=""Edm.Int32"" Nullable=""false"" />
       </Function>
@@ -26105,11 +26370,17 @@ namespace Actions
         <ReturnType Type=""Edm.Int32"" Nullable=""false"" />
       </Function>
     </Schema>
-    <Schema Namespace=""Actions"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
-      <Action Name=""AddToGroup"" IsBound=""true"">
+    <Schema Namespace=""LicenseUserService"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
+      <Action Name=""AddUserToGroup"" IsBound=""true"">
         <Parameter Name=""bindingParameter"" Type=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser"" />
         <Parameter Name=""GroupId"" Type=""Edm.Guid"" Nullable=""false"" />
       </Action>
+      <Action Name=""RemoveUserFromGroup"" IsBound=""true"">
+        <Parameter Name=""bindingParameter"" Type=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser"" />
+        <Parameter Name=""GroupId"" Type=""Edm.Guid"" Nullable=""false"" />
+      </Action>
+    </Schema>
+    <Schema Namespace=""Actions"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <Function Name=""GetUploadId"" IsBound=""true"">
         <Parameter Name=""bindingParameter"" Type=""Collection(Portal.LicenseMonitoringSystem.Users.Entities.ManagedSupport)"" />
         <Parameter Name=""deviceId"" Type=""Edm.Guid"" Nullable=""false"" />
@@ -26130,7 +26401,7 @@ namespace Actions
           <NavigationPropertyBinding Path=""Tickets"" Target=""AutotaskTickets"" />
         </EntitySet>
         <EntitySet Name=""AutotaskAllocationCodes"" EntityType=""Portal.Autotask.AllocationCode.Entities.AutotaskAllocationCode"" />
-        <EntitySet Name=""AutotaskContacts"" EntityType=""Portal.Autotask.Contact.AutotaskContact"">
+        <EntitySet Name=""AutotaskContacts"" EntityType=""Portal.Autotask.Contact.Entities.AutotaskContact"">
           <NavigationPropertyBinding Path=""Account"" Target=""AutotaskAccounts"" />
         </EntitySet>
         <EntitySet Name=""AutotaskContractBlocks"" EntityType=""Portal.Autotask.ContractBlock.Entities.AutotaskContractBlock"">
@@ -26157,7 +26428,7 @@ namespace Actions
         <EntitySet Name=""AutotaskContractServices"" EntityType=""Portal.Autotask.ContractService.Entities.AutotaskContractService"">
           <NavigationPropertyBinding Path=""Contract"" Target=""AutotaskContracts"" />
         </EntitySet>
-        <EntitySet Name=""AutotaskContractServiceUnits"" EntityType=""Portal.Autotask.ContractServiceUnit.AutotaskContractServiceUnit"">
+        <EntitySet Name=""AutotaskContractServiceUnits"" EntityType=""Portal.Autotask.ContractServiceUnit.Entities.AutotaskContractServiceUnit"">
           <NavigationPropertyBinding Path=""Contract"" Target=""AutotaskContracts"" />
         </EntitySet>
         <EntitySet Name=""AutotaskInstalledProducts"" EntityType=""Portal.Autotask.InstalledProduct.Entities.AutotaskInstalledProduct"">
@@ -26187,20 +26458,35 @@ namespace Actions
         <EntitySet Name=""AutotaskTimeEntries"" EntityType=""Portal.Autotask.TimeEntry.Entities.AutotaskTimeEntry"">
           <NavigationPropertyBinding Path=""Ticket"" Target=""AutotaskTickets"" />
         </EntitySet>
-        <EntitySet Name=""BackupJobs"" EntityType=""Portal.BackupMonitoring.BackupMonitorJob"" />
-        <EntitySet Name=""DevicePortScans"" EntityType=""Portal.CentraStage.Entities.CentraStageDevicePortScan"" />
+        <EntitySet Name=""BackupJobs"" EntityType=""Portal.BackupMonitoring.BackupMonitorJob"">
+          <NavigationPropertyBinding Path=""Results"" Target=""BackupResults"" />
+        </EntitySet>
+        <EntitySet Name=""BackupResults"" EntityType=""Portal.BackupMonitoring.BackupMonitorResult"">
+          <NavigationPropertyBinding Path=""Job"" Target=""BackupJobs"" />
+        </EntitySet>
+        <EntitySet Name=""Profiles"" EntityType=""Portal.CentraStage.Entities.CentraStageProfile"">
+          <NavigationPropertyBinding Path=""Devices"" Target=""Devices"" />
+        </EntitySet>
+        <EntitySet Name=""Devices"" EntityType=""Portal.CentraStage.Entities.CentraStageDevice"">
+          <NavigationPropertyBinding Path=""PortScans"" Target=""DevicePortScans"" />
+          <NavigationPropertyBinding Path=""Profile"" Target=""Profiles"" />
+        </EntitySet>
+        <EntitySet Name=""DevicePortScans"" EntityType=""Portal.CentraStage.Entities.CentraStageDevicePortScan"">
+          <NavigationPropertyBinding Path=""Device"" Target=""Devices"" />
+        </EntitySet>
+        <EntitySet Name=""LicenseUserGroups"" EntityType=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup"">
+          <NavigationPropertyBinding Path=""Group"" Target=""LicenseGroups"" />
+          <NavigationPropertyBinding Path=""User"" Target=""LicenseUsers"" />
+        </EntitySet>
         <EntitySet Name=""LicenseUsers"" EntityType=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser"">
-          <NavigationPropertyBinding Path=""Groups"" Target=""LicenseGroups"" />
+          <NavigationPropertyBinding Path=""UserGroups"" Target=""LicenseUserGroups"" />
         </EntitySet>
         <EntitySet Name=""LicenseGroups"" EntityType=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup"">
-          <NavigationPropertyBinding Path=""Users"" Target=""LicenseUsers"" />
+          <NavigationPropertyBinding Path=""UserGroups"" Target=""LicenseUserGroups"" />
         </EntitySet>
-        <EntitySet Name=""ManagedSupports"" EntityType=""Portal.LicenseMonitoringSystem.Users.Entities.ManagedSupport"">
-          <NavigationPropertyBinding Path=""Users"" Target=""LicenseUsers"" />
-        </EntitySet>
+        <EntitySet Name=""ManagedSupports"" EntityType=""Portal.LicenseMonitoringSystem.Users.Entities.ManagedSupport"" />
         <EntitySet Name=""Office365Contracts"" EntityType=""Portal.Office365.Models.Office365BillingModel"" />
         <EntitySet Name=""Office365Customers"" EntityType=""Portal.Office365.Entities.Office365Customer"" />
-        <EntitySet Name=""Profiles"" EntityType=""Portal.CentraStage.Entities.CentraStageProfile"" />
         <EntitySet Name=""Sites"" EntityType=""Portal.Webroot.Entities.WebrootSite"" />
         <EntitySet Name=""Veeams"" EntityType=""Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam"" />
       </EntityContainer>
@@ -26260,18 +26546,6 @@ namespace Actions
             }
 
             return source.CreateFunctionQuerySingle<global::Portal.Common.Enums.CallInStatus>("Actions.GetCallInStatus", false, new global::Microsoft.OData.Client.UriOperationParameter("key", key));
-        }
-        /// <summary>
-        /// There are no comments for AddToGroup in the schema.
-        /// </summary>
-        public static global::Microsoft.OData.Client.DataServiceActionQuery AddToGroup(this global::Microsoft.OData.Client.DataServiceQuerySingle<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser> source, global::System.Guid GroupId)
-        {
-            if (!source.IsComposable)
-            {
-                throw new global::System.NotSupportedException("The previous function is not composable.");
-            }
-
-            return new global::Microsoft.OData.Client.DataServiceActionQuery(source.Context, source.AppendRequestUri("Actions.AddToGroup"), new global::Microsoft.OData.Client.BodyOperationParameter("GroupId", GroupId));
         }
     }
 }

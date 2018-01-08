@@ -9,7 +9,7 @@
         public LicenseUserProfile()
         {
             CreateMap<LicenseUserDto, LicenseUser>()
-                .ForMember(dest => dest.Groups, opt => opt.Ignore())
+                .ForMember(dest => dest.UserGroups, opt => opt.Ignore())
                 .ForMember(dest => dest.History, opt => opt.Ignore())
                 .ForMember(dest => dest.IsActive, opt => opt.Ignore())
                 .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())

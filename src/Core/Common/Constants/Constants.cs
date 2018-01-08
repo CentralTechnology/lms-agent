@@ -47,12 +47,12 @@
 #if DEBUG /// <summary>
 ///     Default endpoint for OData
 /// </summary>
-        public const string DefaultServiceUrl = "http://localhost:61814/odata/v1";
+        public const string DefaultServiceUrl = "http://localhost:51078/odata/v1";
 #else
         /// <summary>
         ///     Default endpoint for OData
         /// </summary>
-        public const string DefaultServiceUrl = "https://portal.ct.co.uk/odata/v1";
+        public const string DefaultServiceUrl = "https://api.portal.ct.co.uk/odata/v1";
 
 #endif
 

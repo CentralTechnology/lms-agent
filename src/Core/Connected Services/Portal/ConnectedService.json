@@ -9,7 +9,7 @@
     "IgnoreUnexpectedElementsAndAttributes": false,
     "IncludeT4File": false,
     "ServiceName": "Portal",
-    "Endpoint": "https://portal.ct.co.uk/odata/v1/$metadata",
+    "Endpoint": "http://localhost:51078/odata/v1/$metadata",
     "EdmxVersion": {
       "Major": 4,
       "Minor": 0,

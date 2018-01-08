@@ -62,6 +62,9 @@
                             veeamWorkerManager.Object.Start(null);
                         }
                     }
+
+                    Console.WriteLine("Press [Enter] to continue.");
+                    Console.ReadLine();
                 }
                 catch (Exception ex) when (
                     ex is DataServiceClientException
