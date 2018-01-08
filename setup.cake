@@ -5,8 +5,13 @@ Environment.SetVariableNames();
 BuildParameters.Tasks.UploadAppVeyorArtifactsTask.Task.Actions.Clear();
 BuildParameters.Tasks.UploadAppVeyorArtifactsTask
     .WithCriteria(() => BuildParameters.IsRunningOnAppVeyor)
+	.WithCriteria(() => DirectoryExists(BuildParameters.Paths.Directories.PublishedApplications))
     .Does(() => {
-	Information("*** Upload files goes here. ***");
+	    foreach(var package in GetFiles(BuildParameters.Paths.Directories.PublishedApplications + "/**/LMS.Setup.exe") +
+		                       GetFiles(BuildParameters.Paths.Directories.PublishedApplications + "/**/LMS.Deploy.exe"))
+    {
+        AppVeyor.UploadArtifact(package);
+    }
 });
 
 BuildParameters.SetParameters(context: Context, 
@@ -23,7 +28,7 @@ BuildParameters.SetParameters(context: Context,
 
 ToolSettings.SetToolSettings(context: Context,
 							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/Core/Connected Services/**/*.cs"},
-							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]*");
+							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]* -[*]Portal.* -[*]Core.Migrations.* -[*]Migrations.* -[*]Actions.*");
 
 Build.Run();
 
