@@ -5,6 +5,7 @@
       Assistant
       LMS.Core
       LMS.EntityFramework
+      System.Collections.Immutable
     </ExcludeAssemblies>
-  </Costura>
+    </Costura >
 </Weavers>
