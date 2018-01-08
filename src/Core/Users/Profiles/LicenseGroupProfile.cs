@@ -10,7 +10,7 @@
         {
             CreateMap<LicenseGroupDto, LicenseGroup>()
                 .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-                .ForMember(dest => dest.Users, opt => opt.Ignore());
+                .ForMember(dest => dest.UserGroups, opt => opt.Ignore());
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
@@ -10,35 +11,30 @@
     using System.Threading.Tasks;
     using Abp.Configuration;
     using Actions;
-    using Castle.Core.Logging;
-    using CentraStage;
-    using Common.Client;
     using Common.Constants;
     using Common.Extensions;
     using Common.Managers;
     using Configuration;
+    using LicenseUserService;
     using Microsoft.OData.Client;
     using Polly;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
-    using SharpRaven;
     using SharpRaven.Data;
     using Tools;
     using Users.Compare;
     using Users.Extensions;
     using Users.Models;
 
+    [SuppressMessage("ReSharper", "ReplaceWithSingleCallToFirstOrDefault")]
+    [SuppressMessage("ReSharper", "ReplaceWithSingleCallToSingleOrDefault")]
     public class PortalManager : LMSManagerBase, IPortalManager
     {
-        private readonly PortalWebApiClient _portalWebApiClient;
-        private readonly LicenseUserCompareLogic _licenseUserCompareLogic = new LicenseUserCompareLogic();
+        private readonly Policy _defaultPolicy;
         private readonly LicenseGroupCompareLogic _licenseGroupCompareLogic = new LicenseGroupCompareLogic();
+        private readonly LicenseUserCompareLogic _licenseUserCompareLogic = new LicenseUserCompareLogic();
 
-        public Container Container { get; set; }
-
-        protected Policy DefaultPolicy;
-
-        public PortalManager(PortalWebApiClient portalWebApiClient)
+        public PortalManager()
         {
             Container = new Container(new Uri(Constants.DefaultServiceUrl))
             {
@@ -46,14 +42,11 @@
                 MergeOption = MergeOption.NoTracking
             };
 
-
-            _portalWebApiClient = portalWebApiClient;
-
             Container.BuildingRequest += Container_BuildingRequest;
             Container.SendingRequest2 += Container_SendingRequest2;
             Container.Timeout = 600;
 
-            DefaultPolicy = Policy
+            _defaultPolicy = Policy
                 .Handle<DataServiceClientException>(e => e.StatusCode != 404)
                 .Or<DataServiceRequestException>()
                 .Or<WebException>()
@@ -75,6 +68,8 @@
                 });
         }
 
+        public Container Container { get; set; }
+
         public void Detach(object entity)
         {
             Container.Detach(entity);
@@ -83,14 +78,14 @@
         public void AddGroup(LicenseGroup licenseGroup) => Container.AddToLicenseGroups(licenseGroup);
 
         /// <summary>
-        /// Add License User to License Group. License Group should be attached to the container before calling this method.
+        ///     Add License User to License Group. License Group should be attached to the container before calling this method.
         /// </summary>
         /// <param name="licenseUser"></param>
         /// <param name="licenseGroup"></param>
         public void AddGroupToUser(LicenseUser licenseUser, LicenseGroup licenseGroup)
         {
-            Container.AttachTo("LicenseUsers", licenseUser);
-            Container.AddLink(licenseUser, "Groups", licenseGroup);
+            OperationResponse response = Container.LicenseUsers.ByKey(licenseUser.Id).AddUserToGroup(licenseGroup.Id).Execute();
+            ProcessResponse(response);
         }
 
         public void AddManagedSupport(ManagedSupport managedSupport) => Container.AddToManagedSupports(managedSupport);
@@ -104,15 +99,6 @@
             DataServiceResponse serviceResponse = Container.SaveChanges();
             ProcessResponse(serviceResponse);
         }
-
-        private void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
-        {
-            e.Headers.Add("AccountId", SettingManager.GetSettingValue(AppSettingNames.AutotaskAccountId));
-            e.Headers.Add("XSRF-TOKEN", _portalWebApiClient.GetAntiForgeryToken());
-            e.Headers.Add("Authorization", $"Device {SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId)}");
-        }
-
-        private void Container_SendingRequest2(object sender, SendingRequest2EventArgs e) => Logger.Debug($"{e.RequestMessage.Method} {e.RequestMessage.Url}");
 
         public void DeleteGroup(Guid id)
         {
@@ -130,8 +116,10 @@
 
         public void DeleteGroupFromUser(LicenseUser licenseUser, LicenseGroup licenseGroup)
         {
-            Container.AttachTo("LicenseUsers", licenseUser);
-            Container.DeleteLink(licenseUser, "Groups", licenseGroup);
+            OperationResponse response = Container.LicenseUsers.ByKey(licenseUser.Id).RemoveUserFromGroup(licenseGroup.Id).Execute();
+            ProcessResponse(response);
+            //Container.AttachTo("LicenseUsers", licenseUser);
+            //Container.DeleteLink(licenseUser, "UserGroups", licenseGroup);
         }
 
         public void DeleteUser(Guid id)
@@ -148,132 +136,64 @@
             ProcessResponse(serviceResponse);
         }
 
-        public int GenerateUploadId() => DefaultPolicy.Execute(() => Container.ManagedSupports.NewUploadId().GetValue());
+        public int GenerateUploadId() => _defaultPolicy.Execute(() => Container.ManagedSupports.NewUploadId().GetValue());
 
-        public int GetAccountIdByDeviceId(Guid deviceId) => DefaultPolicy.Execute(() => Container.Profiles.GetAccountId(deviceId).GetValue());
+        public int GetAccountIdByDeviceId(Guid deviceId) => _defaultPolicy.Execute(() => Container.Devices.GetAccountId(deviceId).GetValue());
 
-        public int GetManagedSupportId(Guid deviceId) => DefaultPolicy.Execute(() => Container.ManagedSupports.GetUploadId(deviceId).GetValue());
-
-        protected void HandleRetryException(Exception ex)
-        {
-            switch (ex)
-            {
-                case DataServiceClientException dataServiceClient:
-                    if (dataServiceClient.StatusCode == 404)
-                    {
-                        Logger.Error($"{dataServiceClient.StatusCode} - {dataServiceClient.Message}");
-                        Logger.Debug(dataServiceClient.ToString());
-                        break;
-                    }
-
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(dataServiceClient.ToString());
-                    RavenClient.Capture(new SentryEvent(ex));
-
-                    break;
-                case SocketException socket:
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(socket.ToString());
-                    break;
-                case IOException io:
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(io.ToString());
-                    break;
-                case WebException web:
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(web.ToString());
-                    break;
-                case TaskCanceledException taskCanceled:
-                    Logger.Error(taskCanceled.Message);
-                    Logger.Debug("Exception when querying the API.", taskCanceled);
-                    break;
-                default:
-                    Logger.Error(ex.Message);
-                    Logger.Debug(ex.ToString());
-                    RavenClient.Capture(new SentryEvent(ex));
-                    break;
-            }
-        }
+        public int GetManagedSupportId(Guid deviceId) => _defaultPolicy.Execute(() => Container.ManagedSupports.GetUploadId(deviceId).GetValue());
 
         public List<LicenseGroupSummary> ListAllGroupIds()
         {
-            return DefaultPolicy.Execute(() => Container.LicenseGroups
-                .Select(g => new LicenseGroupSummary { Id = g.Id, Name = g.Name })
+            return _defaultPolicy.Execute(() => Container.LicenseGroups
+                .Select(g => new LicenseGroupSummary {Id = g.Id, Name = g.Name})
                 .ToList());
         }
 
         public List<LicenseGroupSummary> ListAllGroupIds(Expression<Func<LicenseGroup, bool>> predicate)
         {
-            return DefaultPolicy.Execute(() => Container.LicenseGroups
+            return _defaultPolicy.Execute(() => Container.LicenseGroups
                 .Where(predicate)
-                .Select(g => new LicenseGroupSummary { Id = g.Id, Name = g.Name })
+                .Select(g => new LicenseGroupSummary {Id = g.Id, Name = g.Name})
                 .ToList());
         }
 
         public List<LicenseUserSummary> ListAllUserIds(Expression<Func<LicenseUser, bool>> predicate)
         {
-            return DefaultPolicy.Execute(() => Container.LicenseUsers
+            return _defaultPolicy.Execute(() => Container.LicenseUsers
                 .Where(predicate)
-                .Select(u => new LicenseUserSummary { Id = u.Id, DisplayName = u.DisplayName })
+                .Select(u => new LicenseUserSummary {Id = u.Id, DisplayName = u.DisplayName})
                 .ToList());
         }
 
         public List<LicenseUserSummary> ListAllUserIds()
         {
-            return DefaultPolicy.Execute(() => Container.LicenseUsers
-                .Select(u => new LicenseUserSummary { Id = u.Id, DisplayName = u.DisplayName })
+            return _defaultPolicy.Execute(() => Container.LicenseUsers
+                .Select(u => new LicenseUserSummary {Id = u.Id, DisplayName = u.DisplayName})
                 .ToList());
         }
 
         public List<LicenseUserSummary> ListAllUserIdsByGroupId(Guid groupId)
         {
-            return DefaultPolicy.Execute(() =>
+            return _defaultPolicy.Execute(() =>
                     Container.LicenseUsers
-                        .Where(u => u.Groups.Any(g => g.Id == groupId))
-                        .Select(u => new LicenseUserSummary { DisplayName = u.DisplayName, Id = u.Id }))
+                        .Where(u => u.UserGroups.Any(g => g.GroupId == groupId))
+                        .Select(u => new LicenseUserSummary {DisplayName = u.DisplayName, Id = u.Id}))
                 .ToList();
         }
 
-        public List<LicenseUser> ListAllUsersByGroupId(Guid groupId) => DefaultPolicy.Execute(() => Container.LicenseUsers.Where(u => u.Groups.Any(g => g.Id == groupId)).ToList());
+        public List<LicenseUser> ListAllUsersByGroupId(Guid groupId) => _defaultPolicy.Execute(() => Container.LicenseUsers.Where(u => u.UserGroups.Any(g => g.GroupId == groupId)).ToList());
 
-        public LicenseGroup ListGroupById(Guid id) => DefaultPolicy.Execute(() => Container.LicenseGroups.Where(g => g.Id == id).SingleOrDefault());
+        public LicenseGroup ListGroupById(Guid id) => _defaultPolicy.Execute(() => Container.LicenseGroups.Where(g => g.Id == id).SingleOrDefault());
 
-        public ManagedSupport ListManagedSupportById(int id) => DefaultPolicy.Execute(() => Container.ManagedSupports.Where(ms => ms.Id == id).SingleOrDefault());
+        public ManagedSupport ListManagedSupportById(int id) => _defaultPolicy.Execute(() => Container.ManagedSupports.Where(ms => ms.Id == id).SingleOrDefault());
 
-        public Veeam ListVeeamById(Guid id) => DefaultPolicy.Execute(() => Container.Veeams.Where(u => u.Id == id).SingleOrDefault());
+        public Veeam ListVeeamById(Guid id) => _defaultPolicy.Execute(() => Container.Veeams.Where(u => u.Id == id).SingleOrDefault());
 
-        protected void ProcessResponse(DataServiceResponse serviceResponse)
+        public void SaveChanges()
         {
-            if (serviceResponse == null)
+            _defaultPolicy.Execute(() =>
             {
-                return;
-            }
-
-            foreach (OperationResponse operationResponse in serviceResponse)
-            {
-                if (operationResponse == null)
-                {
-                    continue;
-                }
-
-                Logger.Debug($"Status Code: {operationResponse.StatusCode}");
-
-                if (operationResponse.Error == null)
-                {
-                    continue;
-                }
-
-                Logger.Error($"Error: {operationResponse.Error.GetFullMessage()}");
-                Logger.Debug(operationResponse.Error.ToString());
-                throw operationResponse.Error;
-            }
-        }
-
-        public void SaveChanges(bool isBatch = false)
-        {
-            DefaultPolicy.Execute(() =>
-            {
-                DataServiceResponse serviceResponse = isBatch ? Container.SaveChanges(SaveChangesOptions.BatchWithSingleChangeset) : Container.SaveChanges();
+                DataServiceResponse serviceResponse = Container.SaveChanges();
                 ProcessResponse(serviceResponse);
             });
         }
@@ -359,6 +279,87 @@
 
             Container.UpdateObject(veeam);
             Container.SaveChanges();
+        }
+
+        private void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
+        {
+            e.Headers.Add("AccountId", SettingManager.GetSettingValue(AppSettingNames.AutotaskAccountId));
+            e.Headers.Add("Authorization", $"Device {SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId)}");
+        }
+
+        private void Container_SendingRequest2(object sender, SendingRequest2EventArgs e) => Logger.Debug($"{e.RequestMessage.Method} {e.RequestMessage.Url}");
+
+        private void HandleRetryException(Exception ex)
+        {
+            switch (ex)
+            {
+                case DataServiceClientException dataServiceClient:
+                    if (dataServiceClient.StatusCode == 404)
+                    {
+                        Logger.Error($"{dataServiceClient.StatusCode} - {dataServiceClient.Message}");
+                        Logger.Debug(dataServiceClient.ToString());
+                        break;
+                    }
+
+                    Logger.Error("Portal api unavailable.");
+                    Logger.Debug(dataServiceClient.ToString());
+                    RavenClient.Capture(new SentryEvent(ex));
+
+                    break;
+                case SocketException socket:
+                    Logger.Error("Portal api unavailable.");
+                    Logger.Debug(socket.ToString());
+                    break;
+                case IOException io:
+                    Logger.Error("Portal api unavailable.");
+                    Logger.Debug(io.ToString());
+                    break;
+                case WebException web:
+                    Logger.Error("Portal api unavailable.");
+                    Logger.Debug(web.ToString());
+                    break;
+                case TaskCanceledException taskCanceled:
+                    Logger.Error(taskCanceled.Message);
+                    Logger.Debug("Exception when querying the API.", taskCanceled);
+                    break;
+                default:
+                    Logger.Error(ex.Message);
+                    Logger.Debug(ex.ToString());
+                    RavenClient.Capture(new SentryEvent(ex));
+                    break;
+            }
+        }
+
+        private void ProcessResponse(DataServiceResponse serviceResponse)
+        {
+            if (serviceResponse == null)
+            {
+                return;
+            }
+
+            foreach (OperationResponse operationResponse in serviceResponse)
+            {
+                ProcessResponse(operationResponse);
+            }
+        }
+
+        private void ProcessResponse(OperationResponse operationResponse)
+        {
+            if (operationResponse == null)
+            {
+                return;
+            }
+
+            Logger.Debug($"Status Code: {operationResponse.StatusCode}");
+
+            if (operationResponse.Error == null)
+            {
+                return;
+            }
+
+            Logger.Error($"Error: {operationResponse.Error.GetFullMessage()}");
+            Logger.Debug(operationResponse.Error.ToString());
+            throw operationResponse.Error;
         }
     }
 }

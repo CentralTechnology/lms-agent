@@ -33,7 +33,7 @@
         LicenseGroup ListGroupById(Guid id);
         ManagedSupport ListManagedSupportById(int id);
         Veeam ListVeeamById(Guid id);
-        void SaveChanges(bool isBatch = false);
+        void SaveChanges();
         bool UpdateGroup(LicenseGroup licenseGroup);
         void UpdateManagedSupport(ManagedSupport managedSupport);
         bool UpdateUser(LicenseUser licenseUser);
