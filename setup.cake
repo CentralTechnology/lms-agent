@@ -2,6 +2,7 @@
 
 Environment.SetVariableNames();
 
+BuildParameters.Tasks.UploadAppVeyorArtifactsTask.Task.Actions.Clear();
 BuildParameters.Tasks.UploadAppVeyorArtifactsTask
     .IsDependentOn("Package")
     .WithCriteria(() => BuildParameters.IsRunningOnAppVeyor)
