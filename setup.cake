@@ -22,7 +22,8 @@ BuildParameters.SetParameters(context: Context,
                             repositoryName: "lms-agent",
 							isPublicRepository: false,
                             appVeyorAccountName: "CentralTechnologyLtd",
-							shouldExecuteGitLink: false);
+							shouldExecuteGitLink: false,
+							shouldDownloadMilestoneReleaseNotes: true);
 
 ToolSettings.SetToolSettings(context: Context,
 							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/Core/Connected Services/**/*.cs"},
