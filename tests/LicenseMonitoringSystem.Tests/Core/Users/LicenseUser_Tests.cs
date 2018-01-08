@@ -108,7 +108,6 @@
                 Enabled = true,
                 FirstName = "John",
                 LastLoginDate = new DateTime(2017, 8, 25),
-                Groups = new DataServiceCollection<LicenseGroup>(new List<LicenseGroup>(), TrackingMode.None),
                 Id = Guid.Parse("d03939b9-1f70-4c76-8cf0-ee121809591d"),
                 ManagedSupportId = 5787878,
                 SamAccountName = "john.doe",
