@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam
+﻿namespace LMS.Veeam.Models
 {
     using System;
     using Backup.Common;

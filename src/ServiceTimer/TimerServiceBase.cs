@@ -10,14 +10,15 @@ namespace ServiceTimer
     using System;
     using System.Collections;
     using System.Threading;
-    using NLog;
+    using Abp.Dependency;
+    using Castle.Core.Logging;
 
     /// <summary>
     ///     A class that derives from ServiceBase, and that you can derive from, for developing NT-style services
     ///     that use Timer-based workers. Theoretically, this would be an abstract class,
     ///     but making it so "breaks" the VS designer component for Services.
     /// </summary>
-    public class TimerServiceBase
+    public class TimerServiceBase : ITransientDependency
     {
         /// <summary>
         ///     A reference object to facilitate thread-locking the _serviceState
@@ -28,7 +29,9 @@ namespace ServiceTimer
         /// <summary>
         ///     The log4net logger
         /// </summary>
-        private Logger _log;
+        //private Logger _log;
+
+        public ILogger Logger { get; set; }
 
         /// <summary>
         ///     Track the state of this service
@@ -43,9 +46,10 @@ namespace ServiceTimer
 
         public TimerServiceBase()
         {
-            DefaultLog();
+            Logger = NullLogger.Instance;
+            //DefaultLog();
 
-            _log?.Info(logmessages.ServiceInitialised);
+            Logger?.Info(logmessages.ServiceInitialised);
         }
 
         /// <summary>
@@ -75,7 +79,7 @@ namespace ServiceTimer
         /// <summary>
         ///     Log
         /// </summary>
-        protected Logger Log => _log;
+        //protected Logger Log => _log;
 
         /// <summary>
         ///     Register a worker
@@ -89,10 +93,10 @@ namespace ServiceTimer
             worker.GetServiceStateHandler = GetServiceState;
 
             // If this service is using a logger, set a logger for the worker too
-            if (_log != null)
-            {
-                worker.SetLog(LogManager.GetLogger(worker.GetType().Name));
-            }
+            //if (_log != null)
+            //{
+            //    worker.SetLog(LogManager.GetLogger(worker.GetType().Name));
+            //}
 
             // Add it to the collection 
 
@@ -118,7 +122,7 @@ namespace ServiceTimer
             }
 
 #if BASELOG
-            _log?.Info(logmessages.ServiceSignalsReset);
+            Logger?.Info(logmessages.ServiceSignalsReset);
 #endif
         }
 
@@ -128,13 +132,13 @@ namespace ServiceTimer
         private void _waitSignals()
         {
 #if BASELOG
-            _log?.Info(logmessages.ServiceSignalsWait);
+            Logger?.Info(logmessages.ServiceSignalsWait);
 #endif
 
             WaitHandle.WaitAll(GetSignals);
 
 #if BASELOG
-            _log?.Info(logmessages.ServiceSignalsSet);
+            Logger?.Info(logmessages.ServiceSignalsSet);
 #endif
         }
 
@@ -142,7 +146,7 @@ namespace ServiceTimer
         {
             // Set the service state to "Running". Each worker will detect the change
             //  and respond accordingly. Reset signals, also.
-            _log?.Info(logmessages.ServiceOnContinue);
+            Logger?.Info(logmessages.ServiceOnContinue);
 
             _resetSignals();
 
@@ -152,12 +156,12 @@ namespace ServiceTimer
             }
         }
 
-        protected void DefaultLog()
-        {
-            LogManager.ReconfigExistingLoggers();
+        //protected void DefaultLog()
+        //{
+        //    LogManager.ReconfigExistingLoggers();
 
-            _log = LogManager.GetLogger(GetType().Name);
-        }
+        //    _log = LogManager.GetLogger(GetType().Name);
+        //}
 
         /// <summary>
         ///     Get the state of this service. Signature matches
@@ -174,7 +178,7 @@ namespace ServiceTimer
 
         public void Pause()
         {
-            _log?.Info(logmessages.ServiceOnPause);
+            Logger?.Info(logmessages.ServiceOnPause);
 
             // Reset the signals for state transitions
             _resetSignals();
@@ -196,7 +200,7 @@ namespace ServiceTimer
                 _serviceState = ServiceState.Paused;
             }
 
-            _log?.Info(logmessages.ServicePaused);
+            Logger?.Info(logmessages.ServicePaused);
         }
 
         protected void RegisterWorker(TimerWorker worker)
@@ -208,16 +212,16 @@ namespace ServiceTimer
         ///     Set the log4net logger
         /// </summary>
         /// <param name="log"></param>
-        protected void SetLog(Logger log)
-        {
-            LogManager.ReconfigExistingLoggers();
+        //protected void SetLog(Logger log)
+        //{
+        //    LogManager.ReconfigExistingLoggers();
 
-            _log = log;
-        }
+        //    _log = log;
+        //}
 
         public void Shutdown()
         {
-            _log?.Info(logmessages.ServiceOnShutdown);
+            Logger?.Info(logmessages.ServiceOnShutdown);
 
             // Reset the signals for state transitions
             _resetSignals();
@@ -239,18 +243,17 @@ namespace ServiceTimer
                 _serviceState = ServiceState.Stopped;
             }
 
-            _log?.Info(logmessages.ServiceStopped);
+            Logger?.Info(logmessages.ServiceStopped);
         }
 
-        /// <inheritdoc />
         public virtual bool Start()
         {
             throw new NotImplementedException();
         }
 
-        public bool Stop()
+        public virtual bool Stop()
         {
-            _log?.Info(logmessages.ServiceOnStop);
+            Logger?.Info(logmessages.ServiceOnStop);
 
             // Reset the signals for state transitions
             _resetSignals();
@@ -272,7 +275,7 @@ namespace ServiceTimer
                 _serviceState = ServiceState.Stopped;
             }
 
-            _log?.Info(logmessages.ServiceStopped);
+            Logger?.Info(logmessages.ServiceStopped);
 
             return true;
         }

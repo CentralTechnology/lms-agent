@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam.Backup.Common
+﻿namespace LMS.Veeam.Backup.Common
 {
     public enum EPlatform
     {

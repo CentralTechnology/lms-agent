@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam.Managers
+﻿namespace LMS.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -7,51 +7,18 @@
     using System.Text;
     using Abp;
     using Common.Extensions;
+    using Common.Managers;
     using Microsoft.Win32;
-    using NLog;
 
-    public class LicenseManager : IDisposable
+    public class LicenseManager : LMSManagerBase, ILicenseManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private bool _disposed;
         private Dictionary<string, string> _lic;
-        private string _licenseFile;
+        public string LicenseFile { get; private set; }
 
-        public LicenseManager()
+
+        public  Dictionary<string, string> ExtractPropertiesFromLicense()
         {
-            Initialize(LoadFromRegistry());
-        }
-
-        public LicenseManager(string licenseFile)
-        {
-            Initialize(licenseFile);
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    Logger.Debug("Disposing LicenseManager");
-                    _lic = null;
-                    _licenseFile = null;
-                }
-
-                _disposed = true;
-            }
-        }
-
-        internal Dictionary<string, string> ExtractPropertiesFromLicense()
-        {
-            string[] licenseArray = _licenseFile.Split(new[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] licenseArray = LicenseFile.Split(new[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries);
 
             return licenseArray.Select(x => x.Split('=')).ToDictionary(x => x[0], x => x[1]);
         }
@@ -98,13 +65,7 @@
             }
         }
 
-        public void Initialize(string licenseFile)
-        {
-            _licenseFile = licenseFile;
-            _lic = ExtractPropertiesFromLicense();
-        }
-
-        internal string LoadFromRegistry()
+        public string LoadFromRegistry()
         {
             try
             {
@@ -128,6 +89,20 @@
                 Logger.Error(ex.Message);
                 throw;
             }
+        }
+
+        public void SetLicenseFile(string licenseFile = null)
+        {
+            if (licenseFile == null)
+            {
+                LicenseFile = LoadFromRegistry();
+            }
+            else
+            {
+                LicenseFile = licenseFile;
+            }
+
+            _lic = ExtractPropertiesFromLicense();
         }
     }
 }

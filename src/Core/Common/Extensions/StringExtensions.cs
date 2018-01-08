@@ -1,55 +1,28 @@
-﻿namespace Core.Common.Extensions
-{
-    using System;
-    using System.Text;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace LMS.Common.Extensions
+{
     public static class StringExtensions
     {
-        public static bool IsValidJson(this string strInput)
+        /// <summary>
+        ///     removes all whitespace from a string
+        /// </summary>
+        /// <param name="input">this string object</param>
+        /// <returns></returns>
+        public static string RemoveWhitespace(this string input)
         {
-            strInput = strInput.Trim();
-            if (strInput.StartsWith("{") && strInput.EndsWith("}") || //For object
-                strInput.StartsWith("[") && strInput.EndsWith("]")) //For array
+            if (input == null)
             {
-                try
-                {
-                    JToken obj = JToken.Parse(strInput);
-                    return true;
-                }
-                catch (JsonReaderException jex)
-                {
-                    //Exception in parsing json
-                    Console.WriteLine(jex.Message);
-                    return false;
-                }
-                catch (Exception ex) //some other exception
-                {
-                    Console.WriteLine(ex.ToString());
-                    return false;
-                }
+                return null;
             }
-            return false;
-        }
 
-        public static string SectionTitle(this string title)
-        {
-            int defaultWidth = 80;
-
-            var sb = new StringBuilder();
-
-            string dash = new string('-', defaultWidth);
-            int titleWidth = defaultWidth - (title.Length + 6);
-
-            string titleLine = new string(' ', titleWidth / 2);
-
-            sb.Append(Environment.NewLine);
-            sb.AppendLine(dash);
-            sb.AppendLine($"{titleLine} {title} {titleLine}");
-            sb.AppendLine(dash);
-
-            return sb.ToString();
+            return new string(input.ToCharArray()
+                .Where(c => !char.IsWhiteSpace(c))
+                .ToArray());
         }
     }
 }

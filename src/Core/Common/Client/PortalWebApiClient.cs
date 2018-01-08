@@ -1,25 +1,19 @@
-﻿namespace Core.Common.Client
+﻿namespace LMS.Common.Client
 {
     using System.Threading.Tasks;
+    using Abp.Dependency;
+    using Abp.Threading;
     using Abp.WebApi.Client;
-    using Administration;
     using Constants;
 
     /// <summary>
     ///     Class used for standard api calls
     /// </summary>
-    public class PortalWebApiClient
+    public class PortalWebApiClient : ITransientDependency
     {
-        private readonly AbpWebApiClient _abpWebApiClient;
-        protected readonly SettingManager SettingManager = new SettingManager();
+        private readonly IAbpWebApiClient _abpWebApiClient;
 
-        public PortalWebApiClient()
-            :this(new AbpWebApiClient())
-        {
-            
-        }
-
-        public PortalWebApiClient(AbpWebApiClient abpWebApiClient)
+        public PortalWebApiClient(IAbpWebApiClient abpWebApiClient)
         {
             BaseUrl = Constants.BaseServiceUrl;
             _abpWebApiClient = abpWebApiClient;
@@ -27,9 +21,8 @@
 
         public string BaseUrl { get; set; }
 
-        public virtual async Task<string> GetTokenCookie()
-        {
-            return await _abpWebApiClient.PostAsync<string>($"{BaseUrl}/api/AntiForgery");
-        }
+        public async Task<string> GetAntiForgeryTokenAsync() => await _abpWebApiClient.PostAsync<string>($"{BaseUrl}/api/AntiForgery");
+
+        public string GetAntiForgeryToken() => AsyncHelper.RunSync(GetAntiForgeryTokenAsync);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Core.Common.Helpers
+﻿namespace LMS.Common.Helpers
 {
     using System.Diagnostics;
 

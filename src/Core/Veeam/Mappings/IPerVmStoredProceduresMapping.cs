@@ -1,4 +1,4 @@
-﻿namespace Core.Veeam
+﻿namespace LMS.Veeam.Mappings
 {
     interface IPerVmStoredProceduresMapping
     {

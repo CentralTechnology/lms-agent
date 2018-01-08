@@ -1,4 +1,4 @@
-﻿namespace Core.Common.Constants
+﻿namespace LMS.Common.Constants
 {
     using System.Diagnostics.CodeAnalysis;
 
@@ -47,19 +47,18 @@
 #if DEBUG /// <summary>
 ///     Default endpoint for OData
 /// </summary>
-        public const string DefaultServiceUrl = "http://localhost:61814/odata/v1";
+        public const string DefaultServiceUrl = "http://localhost:51078/odata/v1";
 #else
         /// <summary>
         ///     Default endpoint for OData
         /// </summary>
-        public const string DefaultServiceUrl = "https://portal.ct.co.uk/odata/v1";
+        public const string DefaultServiceUrl = "https://api.portal.ct.co.uk/odata/v1";
 
 #endif
+        public const string SentryDSN = "https://1fbf4ff918e144cdb86e5f71cacb7650:8f3633dc11734def9a1cd3f833259a91@sentry.io/198304";
 
         public const string ServiceDisplayName = "License Monitoring System";
         public const string ServiceName = "LicenseMonitoringSystem";
         public const string ServiceDescription = "A tool used to monitor various licenses.";
-
-        public const string SentryDSN = "https://1fbf4ff918e144cdb86e5f71cacb7650:8f3633dc11734def9a1cd3f833259a91@sentry.io/198304";
     }
 }

@@ -1,251 +1,187 @@
-﻿namespace Core.Startup
+﻿namespace LMS.Startup
 {
     using System;
-    using Administration;
-    using Common.Constants;
+    using Abp.Configuration;
+    using Abp.Logging;
+    using Autotask;
+    using CentraStage;
     using Common.Extensions;
-    using Common.Helpers;
-    using DirectoryServices;
-    using NLog;
-    using SharpRaven;
+    using Common.Managers;
+    using Configuration;
+    using global::Hangfire.Server;
     using SharpRaven.Data;
-    using Veeam;
+    using Users.Managers;
     using Veeam.Managers;
 
-    public class StartupManager
+    public class StartupManager : LMSManagerBase, IStartupManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        protected OData.PortalClient PortalClient = new OData.PortalClient();
+        private readonly IActiveDirectoryManager _activeDirectoryManager;
+        private readonly IAutotaskManager _autotaskManager;
+        private readonly ICentraStageManager _centraStageManager;
+        private readonly IVeeamManager _veeamManager;
 
-        protected RavenClient RavenClient = Sentry.RavenClient.Instance;
-        protected SettingManager SettingManager = new SettingManager();
-
-        public bool Init()
+        public StartupManager(
+            ICentraStageManager centraStageManager,
+            IAutotaskManager autotaskManager,
+            IActiveDirectoryManager activeDirectoryManager,
+            IVeeamManager veeamManager)
         {
-            Logger.Info("Running initialisation...");
-            Console.WriteLine(Environment.NewLine);
+            _centraStageManager = centraStageManager;
+            _autotaskManager = autotaskManager;
+            _activeDirectoryManager = activeDirectoryManager;
+            _veeamManager = veeamManager;
+        }
+
+        public bool Init(PerformContext performContext)
+        {
+            Logger.Log(LogSeverity.Info, performContext, "Running startup process");
 
             try
             {
-                ValidateCredentials();
+                ValidateCredentials(performContext);
             }
             catch (Exception ex)
             {
                 RavenClient.Capture(new SentryEvent(ex));
-                Logger.Error(ex.Message);
-            }
-
-            Console.WriteLine(Environment.NewLine);
-
-            try
-            {
-                bool monUsers = MonitorUsers();
-                SettingManager.ChangeSetting(SettingNames.MonitorUsers, monUsers.ToString());
-                Logger.Info(monUsers ? "Monitoring Users" : "Not Monitoring Users");
-                Console.WriteLine(Environment.NewLine);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.Message);
+                Logger.Log(LogSeverity.Error, performContext, ex.Message);
             }
 
             try
             {
-                bool monVeeam = MonitorVeeam();
-                SettingManager.ChangeSetting(SettingNames.MonitorVeeam, monVeeam.ToString());
-                Logger.Info(monVeeam ? "Monitoring Veeam" : "Not Monitoring Veeam");
-                Console.WriteLine(Environment.NewLine);
+                bool monUsers = ShouldMonitorUsers(performContext);
+                SettingManager.ChangeSettingForApplication(AppSettingNames.MonitorUsers, monUsers.ToString());
+
+                Logger.Log(LogSeverity.Info, performContext, monUsers ? "Monitoring Users" : "Not Monitoring Users");
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                Logger.Log(LogSeverity.Error, performContext, ex.Message);
             }
 
-            Logger.Info("************ Initialisation  Successful ************");
+            try
+            {
+                bool monVeeam = MonitorVeeam(performContext);
+                SettingManager.ChangeSettingForApplication(AppSettingNames.MonitorVeeam, monVeeam.ToString());
+
+                Logger.Log(LogSeverity.Info, performContext, monVeeam ? "Monitoring Veeam" : "Not Monitoring Veeam");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogSeverity.Error, performContext, ex.Message);
+            }
+
+            Logger.Log(LogSeverity.Info, performContext, "************ Initialisation  Successful ************");
+
             return true;
         }
 
-        private bool MonitorUsers()
+        public bool ShouldMonitorUsers(PerformContext performContext)
         {
-            Logger.Info("Dermining whether to monitor users...");
-            var directoryServicesManager = new DirectoryServicesManager();
+            Logger.Log(LogSeverity.Info, performContext, "Dermining whether to monitor users...");
+
             try
             {
-                bool userOverride = SettingManager.GetSettingValue<bool>(SettingNames.UsersOverride);
+                bool userOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.UsersOverride);
                 if (userOverride)
                 {
-                    Logger.Warn("User monitoring has been manually disabled.");
+                    Logger.Log(LogSeverity.Warn, performContext, "User monitoring has been manually disabled.");
+
                     return false;
                 }
 
                 // check if a domain exists
-                bool domainExists = directoryServicesManager.DomainExist();
+                bool domainExists = _activeDirectoryManager.IsOnDomain(performContext);
                 if (!domainExists)
                 {
-                    Logger.Warn("Check Domain: FAIL");
+                    Logger.Log(LogSeverity.Warn, performContext, "Check Domain: FAIL");
+
                     return false;
                 }
 
-                Logger.Info("Check Domain: OK");
+                Logger.Log(LogSeverity.Info, performContext, "Check Domain: OK");
 
                 // check if this is a primary domain controller
-                bool pdc = directoryServicesManager.PrimaryDomainController();
+                bool pdc = _activeDirectoryManager.IsPrimaryDomainController(performContext);
                 if (!pdc)
                 {
-                    Logger.Warn("Check PDC: FAIL");
+                    Logger.Log(LogSeverity.Warn, performContext, "Check PDC: FAIL");
 
                     // check override is enabled
-                    bool pdcOverride = SettingManager.GetSettingValue<bool>(SettingNames.PrimaryDomainControllerOverride);
+                    bool pdcOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.PrimaryDomainControllerOverride);
                     if (!pdcOverride)
                     {
-                        Logger.Warn("Check PDC Override: FAIL");
+                        Logger.Log(LogSeverity.Warn, performContext, "Check PDC Override: FAIL");
                         return false;
                     }
 
-                    Logger.Warn("Check PDC Override: OK");
+                    Logger.Log(LogSeverity.Info, performContext, "Check PDC Override: OK");
                 }
 
-                Logger.Info("Check PDC: OK");
+                Logger.Log(LogSeverity.Info, performContext, "Check PDC: OK");
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
-                Logger.Debug(ex);
+                Logger.Log(LogSeverity.Error, performContext, ex.Message);
+                Logger.Log(LogSeverity.Debug, performContext, ex.Message, ex);
+
                 return false;
             }
 
             return true;
         }
 
-        private bool MonitorVeeam()
+        public bool MonitorVeeam(PerformContext performContext)
         {
-            Logger.Info("Dermining whether to monitor veeam...");
+            Logger.Log(LogSeverity.Info, performContext, "Dermining whether to monitor veeam...");
+
             try
             {
-                bool veeamOverride = SettingManager.GetSettingValue<bool>(SettingNames.VeeamOverride);
+                bool veeamOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.VeeamOverride);
                 if (veeamOverride)
                 {
-                    Logger.Warn("Veeam monitoring has been manually disabled.");
+                    Logger.Log(LogSeverity.Warn, performContext, "Veeam monitoring has been manually disabled.");
+
                     return false;
                 }
 
-                var veeamManager = new VeeamManager();
-
-                // check if veeam is installed
-                bool veeamInstalled = veeamManager.VeeamInstalled();
+                bool veeamInstalled = _veeamManager.IsInstalled(performContext);
                 if (!veeamInstalled)
                 {
-                    Logger.Warn("Check Veeam Installed: FAIL");
+                    Logger.Log(LogSeverity.Warn, performContext, "Check Veeam Installed: FAIL");
+
                     return false;
                 }
 
-                Logger.Info("Check Veeam Installed: OK");
+                Logger.Log(LogSeverity.Info, performContext, "Check Veeam Installed: OK");
 
                 // check the veeam version
-                string veeamVersion = veeamManager.VeeamVersion();
+                string veeamVersion = _veeamManager.GetVersion();
                 if (veeamVersion == null)
                 {
-                    Logger.Warn("Check Veeam Version: FAIL");
+                    Logger.Log(LogSeverity.Warn, performContext, "Check Veeam Version: FAIL");
+
                     return false;
                 }
 
-                Logger.Info("Check Veeam Version: OK");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.Message);
-                Logger.Debug(ex);
-                return false;
-            }
+                Logger.Log(LogSeverity.Info, performContext, "Check Veeam Version: OK");
 
-            return true;
-        }
-
-        protected bool ValidateAutotask()
-        {
-            try
-            {
-                Guid deviceId = SettingManagerHelper.Instance.DeviceId;
-
-                int accountId;
-                int storedAccount = SettingManagerHelper.Instance.AccountId;
-
-                if (storedAccount == default(int))
-                {
-                    int reportedAccount = PortalClient.GetAccountIdByDeviceId(deviceId);
-
-                    if (reportedAccount == default(int))
-                    {
-                        Logger.Warn("Check Account: FAIL");
-                        Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
-                        return false;
-                    }
-
-                    SettingManager.ChangeSetting(SettingNames.AutotaskAccountId, reportedAccount.ToString());
-                    accountId = reportedAccount.To<int>();
-                }
-                else
-                {
-                    accountId = storedAccount;
-                }
-
-                Logger.Info("Check Account: OK");
-                Logger.Info($"Account: {accountId}");
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.Warn("Check Account: FAIL");
-                Logger.Error("Failed to get the autotask account id from the api. This application cannot work without the autotask account id. Please enter it manually through the menu system.");
-                Logger.Error(ex.Message);
-                Logger.Debug(ex);
+                Logger.Log(LogSeverity.Error, performContext, ex.Message);
+                Logger.Log(LogSeverity.Info, performContext, ex.Message, ex);
+
                 return false;
             }
         }
 
-        protected bool ValidateCentraStage()
+        public bool ValidateCredentials(PerformContext performContext)
         {
-            try
-            {
-                Guid deviceId;
-                var storedDevice = SettingManager.GetSettingValue<Guid>(SettingNames.CentrastageDeviceId);
-                if (storedDevice == default(Guid))
-                {
-                    Guid? reportedDevice = Constants.CentraStage.GetCentrastageId();
+            Logger.Log(LogSeverity.Info, performContext, "Validating api credentials...");
 
-                    if (reportedDevice == null)
-                    {
-                        Logger.Warn("Check Centrastage: FAIL");
-                        Logger.Error("Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
-                        return false;
-                    }
-
-                    SettingManager.ChangeSetting(SettingNames.CentrastageDeviceId, reportedDevice.ToString());
-                    deviceId = reportedDevice.To<Guid>();
-                }
-                else
-                {
-                    deviceId = storedDevice;
-                }
-
-                Logger.Info("Check Centrastage: OK");
-                Logger.Info($"Device: {deviceId}");
-                return true;
-            }
-            catch (Exception)
-            {
-                Logger.Warn("Check Centrastage: FAIL");
-                Logger.Error("Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
-                return false;
-            }
-        }
-
-        public bool ValidateCredentials()
-        {
-            Logger.Info("Validating api credentials...");
-
-            bool centraStage = ValidateCentraStage();
-            return centraStage && ValidateAutotask();
+            bool centraStage = _centraStageManager.IsValid(performContext);
+            return centraStage && _autotaskManager.IsValid(performContext);
         }
     }
 }

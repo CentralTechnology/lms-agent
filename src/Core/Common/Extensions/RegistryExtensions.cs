@@ -1,4 +1,4 @@
-﻿namespace Core.Common.Extensions
+﻿namespace LMS.Common.Extensions
 {
     using Abp;
     using Microsoft.Win32;
