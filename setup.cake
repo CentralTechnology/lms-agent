@@ -7,6 +7,7 @@ BuildParameters.Tasks.UploadAppVeyorArtifactsTask
     .WithCriteria(() => BuildParameters.IsRunningOnAppVeyor)
 	.WithCriteria(() => DirectoryExists(BuildParameters.Paths.Directories.PublishedApplications))
     .Does(() => {
+		Information("Finding artifacts");
 	    foreach(var package in GetFiles(BuildParameters.Paths.Directories.PublishedApplications + "/**/LMS.Setup.exe") +
 		                       GetFiles(BuildParameters.Paths.Directories.PublishedApplications + "/**/LMS.Deploy.exe"))
     {
