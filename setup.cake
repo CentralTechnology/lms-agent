@@ -7,6 +7,7 @@ BuildParameters.Tasks.UploadAppVeyorArtifactsTask
     .WithCriteria(() => BuildParameters.IsRunningOnAppVeyor)
 	.WithCriteria(() => DirectoryExists(BuildParameters.Paths.Directories.PublishedApplications))
     .Does(() => {
+		Information("Finding artifacts");
 	    foreach(var package in GetFiles(BuildParameters.Paths.Directories.PublishedApplications + "/**/LMS.Setup.exe") +
 		                       GetFiles(BuildParameters.Paths.Directories.PublishedApplications + "/**/LMS.Deploy.exe"))
     {
@@ -22,7 +23,8 @@ BuildParameters.SetParameters(context: Context,
                             repositoryName: "lms-agent",
 							isPublicRepository: false,
                             appVeyorAccountName: "CentralTechnologyLtd",
-							shouldExecuteGitLink: false);
+							shouldExecuteGitLink: false,
+							shouldDownloadMilestoneReleaseNotes: true);
 
 ToolSettings.SetToolSettings(context: Context,
 							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/Core/Connected Services/**/*.cs"},
