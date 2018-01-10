@@ -5,7 +5,7 @@ Environment.SetVariableNames();
 BuildParameters.Tasks.UploadAppVeyorArtifactsTask.Task.Actions.Clear();
 BuildParameters.Tasks.UploadAppVeyorArtifactsTask
     .WithCriteria(() => BuildParameters.IsRunningOnAppVeyor)
-	.WithCriteria(() => DirectoryExists(BuildParameters.Paths.Directories.PublishedApplications))
+	//.WithCriteria(() => DirectoryExists(BuildParameters.Paths.Directories.PublishedApplications))
     .Does(() => {
 		Information("Finding artifacts");
 	    foreach(var package in GetFiles(BuildParameters.Paths.Directories.PublishedApplications + "/**/LMS.Setup.exe") +
