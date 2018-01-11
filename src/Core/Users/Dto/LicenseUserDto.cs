@@ -9,7 +9,7 @@
         public string Email { get; set; }
         public bool Enabled { get; set; }
         public string FirstName { get; set; }
-        public DateTimeOffset? LastLogon { get; set; }
+        public DateTimeOffset? LastLogonDate { get; set; }
         public string SamAccountName { get; set; }
         public string Surname { get; set; }
         public DateTimeOffset WhenCreated { get; set; }

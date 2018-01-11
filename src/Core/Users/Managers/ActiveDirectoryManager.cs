@@ -100,7 +100,7 @@
                     FirstName = user.GivenName,
                     // ReSharper disable once PossibleInvalidOperationException
                     Id = user.Guid.Value,
-                    LastLogon = lastLogon,
+                    LastLogonDate = lastLogon,
                     SamAccountName = user.SamAccountName,
                     Surname = user.Surname,
                     WhenCreated = whenCreated
