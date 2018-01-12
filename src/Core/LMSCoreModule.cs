@@ -6,6 +6,7 @@
     using Abp.Modules;
     using Abp.WebApi;
     using Abp.WebApi.Client;
+    using AutoMapper;
     using Common.Extensions;
     using Configuration;
 
@@ -30,5 +31,7 @@
                 config.AddProfiles(thisAssembly);
             });
         }
+
+        public override void PostInitialize() => Mapper.AssertConfigurationIsValid();
     }
 }
