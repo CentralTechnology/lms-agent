@@ -38,7 +38,12 @@
                     using (var settingManager = IocManager.ResolveAsDisposable<ISettingManager>())
                     {
                         var averageRuntime = settingManager.Object.GetSettingValue<int>(AppSettingNames.UsersAverageRuntime);
-                        string schedule = $"*/{(averageRuntime == default(int) ? 15 : averageRuntime)} * * * *";
+                        if (averageRuntime == default(int) || averageRuntime < 15)
+                        {
+                            averageRuntime = 15;
+                        }
+
+                        string schedule = $"*/{averageRuntime} * * * *";
 
                         recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), schedule);
                     }                   
