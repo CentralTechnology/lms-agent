@@ -1,5 +1,6 @@
 ﻿namespace LMS.Service
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using Abp.Castle.Logging.Log4Net;
@@ -61,9 +62,13 @@
 
             Configuration.BackgroundJobs.UseHangfire(config =>
             {
-                config.GlobalConfiguration.UseMemoryStorage();
-                config.Server = new BackgroundJobServer(new BackgroundJobServerOptions
+                config.GlobalConfiguration.UseMemoryStorage(new MemoryStorageOptions
                 {
+                    JobExpirationCheckInterval = TimeSpan.FromMinutes(30)
+                });
+
+                config.Server = new BackgroundJobServer(new BackgroundJobServerOptions
+                {                  
                     WorkerCount = 1
                 });
                 config.GlobalConfiguration.UseConsole();
