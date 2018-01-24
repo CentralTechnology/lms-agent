@@ -37,7 +37,7 @@
                 UI = WUI.WixUI_Common
             };
 
-            //project.SetVersionFrom("LMS.exe");
+            project.ExtractVersionFrom("LMS.exe");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
             project.CustomIdAlgorithm = project.HashedTargetPathIdAlgorithm;
             service.ServiceInstaller = new ServiceInstaller
