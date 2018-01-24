@@ -36,14 +36,14 @@
                 bool userIsMember = remoteUsers.ContainsKey(user.Id);
                 if (userIsMember)
                 {
-                    Logger.Info(performContext, $"= {user.Format(Logger.IsDebugEnabled)}");
+                    Logger.Debug(performContext, $"= {user.Format(Logger.IsDebugEnabled)}");
                 }
                 else
                 {
                     _portalManager.AddGroupToUser(user, group);
                     _portalManager.SaveChanges();
 
-                    Logger.Info(performContext, $"+ {user.Format(Logger.IsDebugEnabled)}");
+                    Logger.Debug(performContext, $"+ {user.Format(Logger.IsDebugEnabled)}");
                     _portalManager.Detach(user);
                 }
             }
@@ -66,7 +66,7 @@
                 _portalManager.DeleteGroupFromUser(staleMember, group);
                 _portalManager.SaveChanges();
 
-                Logger.Info(performContext, $"- {staleMember.Format(Logger.IsDebugEnabled)}");
+                Logger.Debug(performContext, $"- {staleMember.Format(Logger.IsDebugEnabled)}");
                 _portalManager.Detach(staleMember);
             }
 

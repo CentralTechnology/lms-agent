@@ -95,11 +95,13 @@
             {
                 performContext?.Cancel();
 
-                Logger.Info(performContext, $"** {group.Name} **");
+                
                 LicenseGroupUsersDto localMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
 
                 _userGroupManager.AddUsersToGroup(performContext, localMembers);
                 _userGroupManager.DeleteUsersFromGroup(performContext, localMembers);
+
+                Logger.Info(performContext, $"{group.Name} - Processed");
             }
 
             Logger.Info(performContext, "--------------- PROCESS GROUP MEMBERSHIP END ---------------");
