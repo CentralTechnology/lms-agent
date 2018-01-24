@@ -249,3 +249,4 @@ tools/*
 # build artifacts
 [Bb]uildArtifacts
 src/Installer/wix/
+/src/Installer/LMS.msi

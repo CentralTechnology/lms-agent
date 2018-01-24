@@ -80,7 +80,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
-    <None Include="wix\$(ProjectName).g.wxs" />
+    <None Include="wix\Installer.g.wxs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

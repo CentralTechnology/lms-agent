@@ -25,7 +25,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{17B86A6B-C865-4931-8154-E2CCB28DCC5F}"
 	ProjectSection(SolutionItems) = preProject
 		..\tools\packages.config = ..\tools\packages.config
-		..\tools\SolutionInfo.cs = ..\tools\SolutionInfo.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{C26EC769-9729-452C-84D1-363C8B72F90F}"
