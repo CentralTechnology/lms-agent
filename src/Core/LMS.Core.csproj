@@ -53,6 +53,7 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>7</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>CS0618</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Abp, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
