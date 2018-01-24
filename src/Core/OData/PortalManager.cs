@@ -143,7 +143,7 @@
         public List<LicenseGroupSummary> ListAllGroupIds()
         {
             return _defaultPolicy.Execute(() => Container.LicenseGroups
-                .Select(g => new LicenseGroupSummary {Id = g.Id, Name = g.Name})
+                .Select(g => new LicenseGroupSummary { Id = g.Id, Name = g.Name })
                 .ToList());
         }
 
@@ -151,7 +151,7 @@
         {
             return _defaultPolicy.Execute(() => Container.LicenseGroups
                 .Where(predicate)
-                .Select(g => new LicenseGroupSummary {Id = g.Id, Name = g.Name})
+                .Select(g => new LicenseGroupSummary { Id = g.Id, Name = g.Name })
                 .ToList());
         }
 
@@ -159,14 +159,14 @@
         {
             return _defaultPolicy.Execute(() => Container.LicenseUsers
                 .Where(predicate)
-                .Select(u => new LicenseUserSummary {Id = u.Id, DisplayName = u.DisplayName})
+                .Select(u => new LicenseUserSummary { Id = u.Id, DisplayName = u.DisplayName })
                 .ToList());
         }
 
         public List<LicenseUserSummary> ListAllUserIds()
         {
             return _defaultPolicy.Execute(() => Container.LicenseUsers
-                .Select(u => new LicenseUserSummary {Id = u.Id, DisplayName = u.DisplayName})
+                .Select(u => new LicenseUserSummary { Id = u.Id, DisplayName = u.DisplayName })
                 .ToList());
         }
 
@@ -175,7 +175,7 @@
             return _defaultPolicy.Execute(() =>
                     Container.LicenseUsers
                         .Where(u => u.UserGroups.Any(g => g.GroupId == groupId))
-                        .Select(u => new LicenseUserSummary {DisplayName = u.DisplayName, Id = u.Id}))
+                        .Select(u => new LicenseUserSummary { DisplayName = u.DisplayName, Id = u.Id }))
                 .ToList();
         }
 
@@ -300,32 +300,36 @@
                     }
 
                     Logger.Error(dataServiceClient.Message);
-                    Logger.Debug(dataServiceClient.Message,dataServiceClient);
+                    Logger.Debug(dataServiceClient.Message, dataServiceClient);
                     RavenClient.Capture(new SentryEvent(dataServiceClient));
                     break;
-                    case DataServiceRequestException dataServiceRequest:
-                        Logger.Error(dataServiceRequest.Message);
-                        Logger.Debug(dataServiceRequest.Message, dataServiceRequest);
-                        break;
+                case DataServiceQueryException dataServiceQuery:
+                    Logger.Error(dataServiceQuery.Message);
+                    Logger.Debug(dataServiceQuery.Message, dataServiceQuery);
+                    break;
+                case DataServiceRequestException dataServiceRequest:
+                    Logger.Error(dataServiceRequest.Message);
+                    Logger.Debug(dataServiceRequest.Message, dataServiceRequest);
+                    break;
                 case SocketException socket:
                     Logger.Error($"Portal api unavailable - {socket.Message}");
-                    Logger.Debug(socket.Message,socket);
+                    Logger.Debug(socket.Message, socket);
                     break;
                 case IOException io:
                     Logger.Error($"Portal api unavailable - {io.Message}");
-                    Logger.Debug(io.Message,io);
+                    Logger.Debug(io.Message, io);
                     break;
                 case WebException web:
                     Logger.Error($"Portal api unavailable - {web.Message}");
-                    Logger.Debug(web.Message,web);
+                    Logger.Debug(web.Message, web);
                     break;
                 case TaskCanceledException taskCanceled:
                     Logger.Error(taskCanceled.Message);
-                    Logger.Debug(taskCanceled.Message,taskCanceled);
+                    Logger.Debug(taskCanceled.Message, taskCanceled);
                     break;
                 default:
                     Logger.Error(ex.Message);
-                    Logger.Debug(ex.Message,ex);
+                    Logger.Debug(ex.Message, ex);
                     RavenClient.Capture(new SentryEvent(ex));
                     break;
             }

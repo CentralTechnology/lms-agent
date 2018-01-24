@@ -14,7 +14,6 @@
         IEnumerable<LicenseGroupDto> GetGroups(PerformContext performContext);
         LicenseUserDto GetUserById(PerformContext performContext, Guid? userId);
         LicenseUserDto GetUserByPrincipalName(PerformContext performContext, string principalName);
-        LicenseUserDto ValidateUser(PerformContext performContext, UserPrincipal princiapl);
         LicenseUserDto GetUser(PerformContext performContext, IdentityType type, string key);
 
         IEnumerable<LicenseUserDto> GetUsers(PerformContext performContext);

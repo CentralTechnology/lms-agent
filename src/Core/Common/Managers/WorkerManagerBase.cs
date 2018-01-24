@@ -51,7 +51,7 @@
             }
         }
 
-        protected void HandleException(PerformContext performContext, Exception ex)
+        private void HandleException(PerformContext performContext, Exception ex)
         {
             if (ex is AggregateException aggex)
             {
@@ -66,7 +66,7 @@
             }
         }
 
-        protected void HandleExceptionInternal(PerformContext performContext, Exception ex)
+        private void HandleExceptionInternal(PerformContext performContext, Exception ex)
         {
             switch (ex)
             {

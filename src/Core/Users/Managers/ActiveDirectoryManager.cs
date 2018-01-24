@@ -23,11 +23,6 @@
             return GetUser(performContext, IdentityType.UserPrincipalName, principalName);
         }
 
-        public LicenseUserDto ValidateUser(PerformContext performContext, UserPrincipal princiapl)
-        {
-            throw new NotImplementedException();
-        }
-
         public LicenseUserDto GetUser(PerformContext performContext, IdentityType type, string key)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
