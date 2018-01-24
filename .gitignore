@@ -248,3 +248,4 @@ tools/*
 
 # build artifacts
 [Bb]uildArtifacts
+src/Installer/wix/
