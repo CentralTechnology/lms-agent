@@ -8,9 +8,14 @@
 
     public class OperationManager : DomainService, ISingletonDependency
     {
+        private const int OffSet = 5;
         private readonly object _listLock = new object();
         protected internal List<int> MinutesHistory { get; private set; }
 
+        /// <summary>
+        ///     Add's the given <paramref name="minute" /> value to the internal list.
+        /// </summary>
+        /// <param name="minute"></param>
         public void Add(int minute)
         {
             lock (_listLock)
@@ -35,11 +40,16 @@
             }
         }
 
+        /// <summary>
+        ///     Returns the average time taken plus an offset. We don't want the jobs to be running straight after one another now
+        ///     do we.
+        /// </summary>
+        /// <returns></returns>
         public int Get()
         {
             lock (_listLock)
             {
-                return (int) Math.Floor(MinutesHistory.Average());
+                return Convert.ToInt32(Math.Floor(MinutesHistory.Average() + OffSet));
             }
         }
     }
