@@ -60,7 +60,7 @@ namespace LicenseMonitoringSystem.Tests.Core.Common.Managers
             _operationManager.Add(5);
 
             // assert
-            _operationManager.Get().ShouldBe(7);
+            _operationManager.Get().ShouldBe(12);
         }
     }
 }
