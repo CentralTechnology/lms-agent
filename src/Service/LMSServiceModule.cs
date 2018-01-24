@@ -4,11 +4,13 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using Abp.Castle.Logging.Log4Net;
+    using Abp.Configuration;
     using Abp.Dependency;
     using Abp.Hangfire;
     using Abp.Hangfire.Configuration;
     using Abp.Modules;
     using Castle.Facilities.Logging;
+    using Configuration;
     using global::Hangfire;
     using global::Hangfire.Common;
     using global::Hangfire.Console;
@@ -33,7 +35,13 @@
             {
                 if (startupManager.Object.ShouldMonitorUsers(null))
                 {
-                    recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), "*/15 * * * *");
+                    using (var settingManager = IocManager.ResolveAsDisposable<ISettingManager>())
+                    {
+                        var averageRuntime = settingManager.Object.GetSettingValue<int>(AppSettingNames.UsersAverageRuntime);
+                        string schedule = $"*/{(averageRuntime == default(int) ? 15 : averageRuntime)} * * * *";
+
+                        recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), schedule);
+                    }                   
 
                     // setup event log monitoring
                     ServiceHost.ConfigureEventLog();

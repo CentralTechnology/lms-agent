@@ -145,6 +145,7 @@
     <Compile Include="AbpIntegratedTestBase.cs" />
     <Compile Include="ConnectionStrings.cs" />
     <Compile Include="Core\Common\Extensions\ObjectExtension_Tests.cs" />
+    <Compile Include="Core\Common\Managers\OperationManager_Tests.cs" />
     <Compile Include="Core\Users\LicenseGroupExtensions_Tests.cs" />
     <Compile Include="Core\Users\LicenseUser_Tests.cs" />
     <Compile Include="Core\Veeam\VeeamLicenseManager_Tests.cs" />

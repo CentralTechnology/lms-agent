@@ -19,6 +19,7 @@
                 new SettingDefinition(AppSettingNames.VeeamOverride, false.ToString()),
                 new SettingDefinition(AppSettingNames.VeeamVersion, string.Empty),
                 new SettingDefinition(AppSettingNames.UsersOverride, false.ToString()),
+                new SettingDefinition(AppSettingNames.UsersAverageRuntime, 0.ToString())
             };
         }
     }

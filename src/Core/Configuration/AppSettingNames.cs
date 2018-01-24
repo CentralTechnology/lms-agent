@@ -46,5 +46,10 @@
         /// Override to disable User monitoring
         /// </summary>
         public const string UsersOverride = "Setting.Users.Override";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string UsersAverageRuntime = "Setting.Users.AverageRuntime";
     }
 }

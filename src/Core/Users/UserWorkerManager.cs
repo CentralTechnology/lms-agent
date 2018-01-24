@@ -4,10 +4,10 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using Abp.Logging;
+    using Abp.Configuration;
     using Common.Extensions;
-    using Common.Interfaces;
     using Common.Managers;
+    using Configuration;
     using Dto;
     using global::Hangfire.Console;
     using global::Hangfire.Server;
@@ -22,10 +22,11 @@
         private readonly IActiveDirectoryManager _activeDirectoryManager;
         private readonly IGroupManager _groupManager;
         private readonly IManagedSupportManager _managedSupportManager;
+        private readonly OperationManager _operationManager;
         private readonly IPortalManager _portalManager;
+        private readonly IStartupManager _startupManager;
         private readonly IUserGroupManager _userGroupManager;
         private readonly IUserManager _userManager;
-        private readonly IStartupManager _startupManager;
 
         public UserWorkerManager(
             IPortalManager portalManager,
@@ -33,6 +34,7 @@
             IUserManager userManager,
             IGroupManager groupManager,
             IManagedSupportManager managedSupportManager,
+            OperationManager operationManager,
             IUserGroupManager userGroupManager,
             IStartupManager startupManager
         )
@@ -42,14 +44,15 @@
             _userManager = userManager;
             _groupManager = groupManager;
             _managedSupportManager = managedSupportManager;
+            _operationManager = operationManager;
             _userGroupManager = userGroupManager;
             _startupManager = startupManager;
         }
-     
+
         public void ProcessGroups(PerformContext performContext, ManagedSupport managedSupport)
         {
             Console.WriteLine(Environment.NewLine);
-            Logger.Info(performContext,"--------------- PROCESS GROUPS BEGIN ---------------");
+            Logger.Info(performContext, "--------------- PROCESS GROUPS BEGIN ---------------");
 
             IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetGroups(performContext);
             List<LicenseGroupSummary> remoteGroups = _portalManager.ListAllGroupIds();
@@ -79,27 +82,27 @@
                 _groupManager.Delete(performContext, group.Id);
             }
 
-            Logger.Info(performContext,"--------------- PROCESS GROUPS END ---------------");
+            Logger.Info(performContext, "--------------- PROCESS GROUPS END ---------------");
         }
 
         public void ProcessUserGroups(PerformContext performContext)
         {
             Console.WriteLine(Environment.NewLine);
-            Logger.Info(performContext,"--------------- PROCESS GROUP MEMBERSHIP BEGIN ---------------");
+            Logger.Info(performContext, "--------------- PROCESS GROUP MEMBERSHIP BEGIN ---------------");
 
             IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetGroups(performContext);
             foreach (LicenseGroupDto group in groups)
             {
                 performContext?.Cancel();
 
-                Logger.Info(performContext,$"** {group.Name} **");
+                Logger.Info(performContext, $"** {group.Name} **");
                 LicenseGroupUsersDto localMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
 
                 _userGroupManager.AddUsersToGroup(performContext, localMembers);
                 _userGroupManager.DeleteUsersFromGroup(performContext, localMembers);
             }
 
-            Logger.Info(performContext,"--------------- PROCESS GROUP MEMBERSHIP END ---------------");
+            Logger.Info(performContext, "--------------- PROCESS GROUP MEMBERSHIP END ---------------");
         }
 
         /// <summary>
@@ -144,6 +147,9 @@
 
         public override void Start(PerformContext performContext)
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             Execute(performContext, () =>
             {
                 _startupManager.ValidateCredentials(performContext);
@@ -159,6 +165,22 @@
                 // let the api know we have completed the task
                 _managedSupportManager.Update(managedSupport);
             });
+
+            stopWatch.Stop();
+            var timeTaken = stopWatch.Elapsed;
+
+            try
+            {
+                _operationManager.Add(timeTaken.Minutes);
+                var averageRunTime = _operationManager.Get();
+                SettingManager.ChangeSettingForApplication(AppSettingNames.UsersAverageRuntime, averageRunTime.ToString());
+                performContext?.WriteLine($"Average runtime (minutes): {averageRunTime}");
+            }
+            catch (Exception)
+            {
+                Logger.Error("Failed to update the Average runtime.");
+                // ignored
+            }
         }
     }
 }
