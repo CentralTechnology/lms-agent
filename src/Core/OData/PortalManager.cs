@@ -299,13 +299,14 @@
                         break;
                     }
 
-
-
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(dataServiceClient.ToString());
+                    Logger.Error(dataServiceClient.Message);
+                    Logger.Debug(dataServiceClient.Message,dataServiceClient);
                     RavenClient.Capture(new SentryEvent(dataServiceClient));
-
                     break;
+                    case DataServiceRequestException dataServiceRequest:
+                        Logger.Error(dataServiceRequest.Message);
+                        Logger.Debug(dataServiceRequest.Message, dataServiceRequest);
+                        break;
                 case SocketException socket:
                     Logger.Error($"Portal api unavailable - {socket.Message}");
                     Logger.Debug(socket.Message,socket);
