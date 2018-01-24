@@ -32,7 +32,7 @@
             catch (Exception ex)
             {
                 Logger.Error(performContext, $"An error occurred while creating {userToAdd.Format()}");
-                Logger.Debug(performContext, "Exception when creating LicenseUser", ex);
+                Logger.Debug(performContext, ex.Message, ex);
                 throw;
             }
 

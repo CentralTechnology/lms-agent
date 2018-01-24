@@ -38,5 +38,7 @@
         void UpdateManagedSupport(ManagedSupport managedSupport);
         bool UpdateUser(LicenseUser licenseUser);
         void UpdateVeeam(Veeam veeam);
+
+        bool UserExist(Guid userId);
     }
 }

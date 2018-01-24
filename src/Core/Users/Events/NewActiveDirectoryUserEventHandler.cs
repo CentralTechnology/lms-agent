@@ -2,31 +2,35 @@
 {
     using System;
     using System.Text.RegularExpressions;
-    using System.Threading;
     using Abp.Configuration;
     using Abp.Dependency;
     using Abp.Events.Bus.Handlers;
     using Abp.Extensions;
     using Castle.Core.Logging;
     using Common.Extensions;
-    using Common.Helpers;
-    using Common.Managers;
     using Configuration;
     using Dto;
     using Managers;
+    using OData;
 
     public class NewActiveDirectoryUserEventHandler : IEventHandler<NewActiveDirectoryUserEventData>, ITransientDependency
     {
         private readonly IActiveDirectoryManager _activeDirectoryManager;
         private readonly object _newUserLock = new object();
+        private readonly IPortalManager _portalManager;
         private readonly ISettingManager _settingManager;
         private readonly IUserManager _userManager;
 
-        public NewActiveDirectoryUserEventHandler(IActiveDirectoryManager activeDirectoryManager, IUserManager userManager, ISettingManager settingManager)
+        public NewActiveDirectoryUserEventHandler(
+            IActiveDirectoryManager activeDirectoryManager,
+            IPortalManager portalManager,
+            IUserManager userManager,
+            ISettingManager settingManager)
         {
             Logger = NullLogger.Instance;
 
             _activeDirectoryManager = activeDirectoryManager;
+            _portalManager = portalManager;
             _userManager = userManager;
             _settingManager = settingManager;
         }
@@ -35,9 +39,6 @@
 
         public void HandleEvent(NewActiveDirectoryUserEventData eventData)
         {
-            Logger.Debug("Waiting 10 seconds for the background job to finish cancelling.");
-            Thread.Sleep(10000);
-
             lock (_newUserLock)
             {
                 try
@@ -67,12 +68,20 @@
                     }
 
                     int accountId = _settingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
+                    if (_portalManager.UserExist(user.Id))
+                    {
+                        _userManager.Update(null, user);
+                        Logger.Info($"Updated existing user {user.DisplayName}");
+                        return;
+                    }
+
                     _userManager.Add(null, user, managedSupportId, accountId);
+                    Logger.Info($"Created new user {user.DisplayName}");
                 }
                 catch (Exception ex)
                 {
                     Logger.Error("There was an error while processing the new user.");
-                    Logger.Error(ex.Message);
+                    Logger.Error(ex.Message, ex);
                     Logger.Debug(ex.Message, ex);
                 }
             }

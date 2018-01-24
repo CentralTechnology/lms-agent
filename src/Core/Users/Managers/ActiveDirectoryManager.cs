@@ -23,11 +23,6 @@
             return GetUser(performContext, IdentityType.UserPrincipalName, principalName);
         }
 
-        public LicenseUserDto ValidateUser(PerformContext performContext, UserPrincipal princiapl)
-        {
-            throw new NotImplementedException();
-        }
-
         public LicenseUserDto GetUser(PerformContext performContext, IdentityType type, string key)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
@@ -260,31 +255,43 @@
 
                 var licenseGroupUsers = new LicenseGroupUsersDto(groupId, group.Name);
 
-                PrincipalSearchResult<Principal> members = group.GetMembers();
-                if (!members.Any())
+                try
                 {
+                    using (PrincipalSearchResult<Principal> members = group.GetMembers())
+                    {
+                        if (!members.Any())
+                        {
+                            return licenseGroupUsers;
+                        }
+
+                        foreach (Principal principal in members)
+                        {
+                            var user = principal.Validate(performContext);
+                            if (user?.Guid == null)
+                            {
+                                continue;
+                            }
+
+                            LicenseUserDto localUser = GetUserById(performContext, user.Guid.Value);
+                            if (localUser == null)
+                            {
+                                continue;
+                            }
+
+                            licenseGroupUsers.Users.Add(localUser);
+                        }
+
+                        return licenseGroupUsers;
+                    }
+                }
+                catch (PrincipalOperationException ex)
+                {
+                    Logger.Error($"Group: {group.Name} has some invalid members. This will need to be manually corrected in Active Directory.");
+                    Logger.Debug(ex.Message, ex);
                     return licenseGroupUsers;
                 }
-
-                foreach (Principal principal in members)
-                {
-                    var user = principal.Validate(performContext);
-                    if (user?.Guid == null)
-                    {
-                        continue;
-                    }
-
-                    LicenseUserDto localUser = GetUserById(performContext, user.Guid.Value);
-                    if (localUser == null)
-                    {
-                        continue;
-                    }
-
-                    licenseGroupUsers.Users.Add(localUser);
-                }
-
-                return licenseGroupUsers;
             }
+
         }
 
         public bool IsOnDomain(PerformContext performContext)

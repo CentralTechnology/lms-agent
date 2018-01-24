@@ -33,7 +33,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -218,6 +218,7 @@
     <Compile Include="Common\Helpers\Log4NetHelper.cs" />
     <Compile Include="Common\Helpers\SettingManagerHelper.cs" />
     <Compile Include="Common\Interfaces\IWorkerManager.cs" />
+    <Compile Include="Common\Managers\OperationManager.cs" />
     <Compile Include="Common\Managers\WorkerManagerBase.cs" />
     <Compile Include="Common\Managers\LMSManagerBase.cs" />
     <Compile Include="Configuration\AppSettingNames.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="Configuration\SettingStore.cs" />
     <Compile Include="Connected Services\Portal\PortalProxy.cs" />
     <Compile Include="Hangfire\BackgroundJobNames.cs" />
+    <Compile Include="Hangfire\DisableMultipleQueuedItemsFilter.cs" />
     <Compile Include="LMSCoreModule.cs" />
     <Compile Include="Migrations\201707140955114_Initial.cs" />
     <Compile Include="Migrations\201707140955114_Initial.Designer.cs">
