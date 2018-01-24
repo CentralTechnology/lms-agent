@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{660406F8-9991-484F-B375-04BD0B3FF917}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,13 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4AB0291F-E60
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{43F09060-A65A-4B48-B7E0-18CD8429A236}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5409286F-26C9-4B0C-AC0E-78F63AAA1B65}"
-	ProjectSection(SolutionItems) = preProject
-		..\.nuget\NuGet.Config = ..\.nuget\NuGet.Config
-		..\.nuget\NuGet.exe = ..\.nuget\NuGet.exe
-		..\.nuget\NuGet.targets = ..\.nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{17B86A6B-C865-4931-8154-E2CCB28DCC5F}"
 	ProjectSection(SolutionItems) = preProject
