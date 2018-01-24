@@ -279,6 +279,11 @@
             Container.SaveChanges();
         }
 
+        public bool UserExist(Guid userId)
+        {
+            return Container.LicenseUsers.Any(lu => lu.Id == userId);
+        }
+
         private void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
         {
             e.Headers.Add("AccountId", SettingManager.GetSettingValue(AppSettingNames.AutotaskAccountId));
