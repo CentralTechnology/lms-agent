@@ -49,6 +49,7 @@
             _defaultPolicy = Policy
                 .Handle<DataServiceClientException>(e => e.StatusCode != 404 || e.StatusCode != 401)
                 .Or<DataServiceRequestException>()
+                .Or<DataServiceTransportException>()
                 .Or<WebException>()
                 .Or<SocketException>()
                 .Or<IOException>()
@@ -315,6 +316,10 @@
                 case DataServiceRequestException dataServiceRequest:
                     Logger.Error(dataServiceRequest.Message);
                     Logger.Debug(dataServiceRequest.Message, dataServiceRequest);
+                    break;
+                case DataServiceTransportException dataServiceTransport:
+                    Logger.Error(dataServiceTransport.Message);
+                    Logger.Debug(dataServiceTransport.Message, dataServiceTransport);
                     break;
                 case SocketException socket:
                     Logger.Error($"Portal api unavailable - {socket.Message}");
