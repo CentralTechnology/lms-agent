@@ -47,7 +47,7 @@
             Container.Timeout = 600;
 
             _defaultPolicy = Policy
-                .Handle<DataServiceClientException>(e => e.StatusCode != 404)
+                .Handle<DataServiceClientException>(e => e.StatusCode != 404 || e.StatusCode != 401)
                 .Or<DataServiceRequestException>()
                 .Or<WebException>()
                 .Or<SocketException>()
@@ -118,8 +118,6 @@
         {
             OperationResponse response = Container.LicenseUsers.ByKey(licenseUser.Id).RemoveUserFromGroup(licenseGroup.Id).Execute();
             ProcessResponse(response);
-            //Container.AttachTo("LicenseUsers", licenseUser);
-            //Container.DeleteLink(licenseUser, "UserGroups", licenseGroup);
         }
 
         public void DeleteUser(Guid id)
@@ -294,37 +292,39 @@
             switch (ex)
             {
                 case DataServiceClientException dataServiceClient:
-                    if (dataServiceClient.StatusCode == 404)
+                    if (dataServiceClient.StatusCode == 404 || dataServiceClient.StatusCode == 401)
                     {
                         Logger.Error($"{dataServiceClient.StatusCode} - {dataServiceClient.Message}");
-                        Logger.Debug(dataServiceClient.ToString());
+                        Logger.Debug(dataServiceClient.Message, dataServiceClient);
                         break;
                     }
 
+
+
                     Logger.Error("Portal api unavailable.");
                     Logger.Debug(dataServiceClient.ToString());
-                    RavenClient.Capture(new SentryEvent(ex));
+                    RavenClient.Capture(new SentryEvent(dataServiceClient));
 
                     break;
                 case SocketException socket:
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(socket.ToString());
+                    Logger.Error($"Portal api unavailable - {socket.Message}");
+                    Logger.Debug(socket.Message,socket);
                     break;
                 case IOException io:
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(io.ToString());
+                    Logger.Error($"Portal api unavailable - {io.Message}");
+                    Logger.Debug(io.Message,io);
                     break;
                 case WebException web:
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(web.ToString());
+                    Logger.Error($"Portal api unavailable - {web.Message}");
+                    Logger.Debug(web.Message,web);
                     break;
                 case TaskCanceledException taskCanceled:
                     Logger.Error(taskCanceled.Message);
-                    Logger.Debug("Exception when querying the API.", taskCanceled);
+                    Logger.Debug(taskCanceled.Message,taskCanceled);
                     break;
                 default:
                     Logger.Error(ex.Message);
-                    Logger.Debug(ex.ToString());
+                    Logger.Debug(ex.Message,ex);
                     RavenClient.Capture(new SentryEvent(ex));
                     break;
             }
