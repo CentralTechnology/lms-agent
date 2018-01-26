@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
     using System.DirectoryServices.ActiveDirectory;
@@ -37,74 +36,30 @@
 
                 Logger.Debug(performContext, $"Retrieving {user.GetDisplayText()} from Active Directory.");
 
-                bool isAccountDisabled;
-                try
-                {
-                    var dirEntry = user.GetUnderlyingObject() as DirectoryEntry;
-                    isAccountDisabled = !dirEntry.IsAccountDisabled();
-                }
-                catch (Exception ex)
-                {
-                    isAccountDisabled = true;
-                    Logger.Error(performContext, $"Failed to determine whether {user.GetDisplayText()} is enabled or not. Therefore we have to assumed they are enabled.");
-                    Logger.Debug(performContext, "Exception getting DirectoryEntry status", ex);
-                }
+                bool enabled = GetUserStatus(user);
+                DateTimeOffset? lastLogon = GetLastLogonDate(user);
+                DateTimeOffset whenCreated = GetWhenCreated(user);
 
-                DateTimeOffset? lastLogon = null;
-                if (user.LastLogon != null)
+                if (user.Guid != null)
                 {
-                    bool validLastLogon = DateTimeOffset.TryParse(user.LastLogon.ToString(), out DateTimeOffset lastLogonValue);
-                    if (validLastLogon)
+                    return new LicenseUserDto
                     {
-                        lastLogon = lastLogonValue;
-                    }
-                    else
-                    {
-                        Logger.Debug(performContext, $"Failed to determine the last logon date for {user.GetDisplayText()}. Therefore we have to assume they have never logged on.");
-                    }
+                        DisplayName = user.DisplayName,
+                        Email = user.EmailAddress,
+                        Enabled = enabled,
+                        FirstName = user.GivenName,
+                        Id = user.Guid.Value,
+                        LastLoginDate = lastLogon,
+                        SamAccountName = user.SamAccountName,
+                        Surname = user.Surname,
+                        WhenCreated = whenCreated
+                    };
                 }
 
-                DateTimeOffset whenCreated;
-                try
-                {
-                    string getWhenCreated = user.GetProperty("whenCreated");
-                    if (getWhenCreated.IsNullOrEmpty())
-                    {
-                        throw new NullReferenceException($"WhenCreated property for {user.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
-                    }
-
-                    whenCreated = DateTimeOffset.Parse(getWhenCreated);
-                }
-                catch (NullReferenceException nullRef)
-                {
-                    Logger.Error(performContext, nullRef.Message);
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(performContext, $"Failed to determine the when created date for {user.GetDisplayText()}. Task cannot continue.");
-                    Logger.Debug(performContext, "Exception getting WhenCreated UserPrincipal property.", ex);
-                    throw;
-                }
-
-                return new LicenseUserDto
-                {
-                    DisplayName = user.DisplayName,
-                    Email = user.EmailAddress,
-                    Enabled = isAccountDisabled,
-                    FirstName = user.GivenName,
-                    // ReSharper disable once PossibleInvalidOperationException
-                    Id = user.Guid.Value,
-                    LastLoginDate = lastLogon,
-                    SamAccountName = user.SamAccountName,
-                    Surname = user.Surname,
-                    WhenCreated = whenCreated
-                };
+                return null;
             }
         }
 
-        /// <param name="performContext"></param>
-        /// <inheritdoc />
         public IEnumerable<LicenseUserDto> GetUsers(PerformContext performContext)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
@@ -136,8 +91,6 @@
             return GetUser(performContext, IdentityType.Guid, userId.ToString());
         }
 
-        /// <param name="performContext"></param>
-        /// <inheritdoc />
         public IEnumerable<LicenseGroupDto> GetGroups(PerformContext performContext)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
@@ -184,17 +137,6 @@
             }
         }
 
-        private GroupPrincipal GetGroupPrincipal(PrincipalContext principalContext, Guid id)
-        {
-            GroupPrincipal group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, id.ToString());
-            if (group == null)
-            {
-                throw new AbpException($"Cannot find Group Principal with Guid {id}");
-            }
-
-            return group;
-        }
-
         public LicenseGroupDto GetGroup(PerformContext performContext, Guid groupId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
@@ -207,8 +149,7 @@
                     return null;
                 }
 
-                bool isValidSecurityGroup = bool.TryParse(group.IsSecurityGroup.ToString(), out bool isSecurityGroup);
-                if (!isValidSecurityGroup)
+                if (!bool.TryParse(group.IsSecurityGroup.ToString(), out bool _))
                 {
                     Logger.Warn($"Cannot process {group.GetDisplayText()} because the IsSecurityGroup value is not valid");
                     return null;
@@ -246,7 +187,6 @@
             }
         }
 
-        /// <inheritdoc />
         public LicenseGroupUsersDto GetGroupMembers(PerformContext performContext, Guid groupId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
@@ -291,14 +231,13 @@
                     return licenseGroupUsers;
                 }
             }
-
         }
 
         public bool IsOnDomain(PerformContext performContext)
         {
             try
             {
-                using (var principalContext = new PrincipalContext(ContextType.Domain))
+                using (new PrincipalContext(ContextType.Domain))
                 {
                     return true;
                 }
@@ -325,6 +264,111 @@
             {
                 Logger.Debug(performContext, ex.Message, ex);
                 return false;
+            }
+        }
+
+        private long ConvertActiveDirectoryLargeIntegerToLong(object adsLargeInteger)
+        {
+            try
+            {
+                var highPart = (int) adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+                var lowPart = (int) adsLargeInteger.GetType().InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+                return highPart * ((long) uint.MaxValue + 1) + lowPart;
+            }
+            catch (Exception ex)
+            {
+                Logger.Debug("Error converting active directory DateTime to Epoch Time.", ex);
+                return default(long);
+            }
+        }
+
+        private GroupPrincipal GetGroupPrincipal(PrincipalContext principalContext, Guid id)
+        {
+            GroupPrincipal group = GroupPrincipal.FindByIdentity(principalContext, IdentityType.Guid, id.ToString());
+            if (group == null)
+            {
+                throw new AbpException($"Cannot find Group Principal with Guid {id}");
+            }
+
+            return group;
+        }
+
+        private DateTimeOffset? GetLastLogonDate(UserPrincipal user)
+        {
+            try
+            {
+                if (!(user.GetUnderlyingObject() is DirectoryEntry dirEntry))
+                {
+                    return null;
+                }
+
+                if (dirEntry.Properties["lastLogon"].Value != null)
+                {
+                    var adDateTime = ConvertActiveDirectoryLargeIntegerToLong(dirEntry.Properties["lastLogon"].Value);
+                    if (adDateTime != default(long))
+                    {
+                        return DateTimeOffset.FromFileTime(adDateTime);
+                    }
+                }
+
+                if (DateTimeOffset.TryParse(user.LastLogon.ToString(), out DateTimeOffset lastLogonValue))
+                {
+                    return lastLogonValue;
+                }
+
+                Logger.Debug($"Failed to determine the last logon date for {user.GetDisplayText()}. Therefore we have to assume they have never logged on.");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message, ex);
+                return null;
+            }
+        }
+
+        private bool GetUserStatus(UserPrincipal user)
+        {
+            try
+            {
+                if (!(user.GetUnderlyingObject() is DirectoryEntry dirEntry))
+                {
+                    return true;
+                }
+
+                return !dirEntry.IsAccountDisabled();
+            }
+            catch (Exception ex)
+            {
+                Logger.Debug($"Failed to determine the account status for {user.GetDisplayText()}. Therefore we have to assume they are Enabled.", ex);
+
+                // always assume they are enabled
+                return true;
+            }
+        }
+
+        private DateTimeOffset GetWhenCreated(UserPrincipal user)
+        {
+            try
+            {
+                if (!(user.GetUnderlyingObject() is DirectoryEntry dirEntry))
+                {
+                    throw new AbpException($"Failed to determine the when created date for {user.GetDisplayText()}.");
+                }
+
+                if (dirEntry.Properties["whenCreated"].Value != null)
+                {
+                    if (DateTimeOffset.TryParse(dirEntry.Properties["whenCreated"].Value.ToString(), out DateTimeOffset whenCreated))
+                    {
+                        return whenCreated;
+                    }
+                }
+
+                throw new AbpException($"Failed to determine the when created date for {user.GetDisplayText()}.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message, ex);
+                throw;
             }
         }
     }
