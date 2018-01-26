@@ -31,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Abp, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -145,6 +146,7 @@
     <Compile Include="AbpIntegratedTestBase.cs" />
     <Compile Include="ConnectionStrings.cs" />
     <Compile Include="Core\Common\Extensions\ObjectExtension_Tests.cs" />
+    <Compile Include="Core\Common\Managers\OperationManager_Tests.cs" />
     <Compile Include="Core\Users\LicenseGroupExtensions_Tests.cs" />
     <Compile Include="Core\Users\LicenseUser_Tests.cs" />
     <Compile Include="Core\Veeam\VeeamLicenseManager_Tests.cs" />

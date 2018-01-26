@@ -1,13 +1,16 @@
 ﻿namespace LMS.Service
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using Abp.Castle.Logging.Log4Net;
+    using Abp.Configuration;
     using Abp.Dependency;
     using Abp.Hangfire;
     using Abp.Hangfire.Configuration;
     using Abp.Modules;
     using Castle.Facilities.Logging;
+    using Configuration;
     using global::Hangfire;
     using global::Hangfire.Common;
     using global::Hangfire.Console;
@@ -32,7 +35,18 @@
             {
                 if (startupManager.Object.ShouldMonitorUsers(null))
                 {
-                    recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), "*/15 * * * *");
+                    using (var settingManager = IocManager.ResolveAsDisposable<ISettingManager>())
+                    {
+                        var averageRuntime = settingManager.Object.GetSettingValue<int>(AppSettingNames.UsersAverageRuntime);
+                        if (averageRuntime == default(int) || averageRuntime < 15)
+                        {
+                            averageRuntime = 15;
+                        }
+
+                        string schedule = $"*/{averageRuntime} * * * *";
+
+                        recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), schedule);
+                    }                   
 
                     // setup event log monitoring
                     ServiceHost.ConfigureEventLog();
@@ -61,9 +75,13 @@
 
             Configuration.BackgroundJobs.UseHangfire(config =>
             {
-                config.GlobalConfiguration.UseMemoryStorage();
-                config.Server = new BackgroundJobServer(new BackgroundJobServerOptions
+                config.GlobalConfiguration.UseMemoryStorage(new MemoryStorageOptions
                 {
+                    JobExpirationCheckInterval = TimeSpan.FromMinutes(30)
+                });
+
+                config.Server = new BackgroundJobServer(new BackgroundJobServerOptions
+                {                  
                     WorkerCount = 1
                 });
                 config.GlobalConfiguration.UseConsole();

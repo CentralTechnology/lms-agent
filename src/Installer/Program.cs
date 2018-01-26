@@ -36,10 +36,10 @@
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
                 UI = WUI.WixUI_Common
             };
-
-            project.SetVersionFrom("LMS.exe");
+           
+            project.ExtractVersionFrom("LMS.exe");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
-
+            project.CustomIdAlgorithm = project.HashedTargetPathIdAlgorithm;
             service.ServiceInstaller = new ServiceInstaller
             {
                 DelayedAutoStart = true,
@@ -90,7 +90,7 @@
                         Vital = true
                     },
                     new ExePackage
-                    {                        
+                    {
                         Compressed = true,
                         InstallCommand = "/i /qb",
                         InstallCondition = "VersionNT64",

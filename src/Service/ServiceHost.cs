@@ -1,6 +1,7 @@
 ﻿namespace LMS.Service
 {
     using System.Diagnostics;
+    using System.Threading;
     using Abp.Events.Bus;
     using Abp.Logging;
     using Common.Helpers;
@@ -24,10 +25,14 @@
                 return;
             }
 
-            LogHelper.Logger.Debug($"New Event - Instance {e.Entry.InstanceId}  Type {e.Entry.EntryType}  Source {e.Entry.Source}");
+            LogHelper.Logger.Info($"New Event - Instance {e.Entry.InstanceId}  Type {e.Entry.EntryType}  Source {e.Entry.Source}");
             EventLogEntry entry = e.Entry;
 
+            // sometimes it reschedules the jobs straight away.
+            // make sure they are cancelled!
             LogHelper.Logger.Info("Event triggered - Cancelling any running jobs");
+            HangfireHelper.CancelAllJobs();
+            Thread.Sleep(10000);
             HangfireHelper.CancelAllJobs();
 
             EventBus.Default.Trigger(new NewActiveDirectoryUserEventData(entry));

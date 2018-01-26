@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Configuration;
     using System.Reflection;
+    using Common.Extensions;
     using global::Hangfire;
     using Microsoft.Owin.Hosting;
     using Topshelf;
@@ -11,8 +13,13 @@
     {
         private IDisposable _webapp;
         public bool Start(HostControl hostControl)
-        { 
-            _webapp = WebApp.Start<Startup>("http://localhost:9000");
+        {
+            int port = ConfigurationManager.AppSettings.Get("Port").To<int>();
+            if (port == default(int))
+            {
+                port = 9000; // set default
+            }
+            _webapp = WebApp.Start<Startup>($"http://localhost:{port}");
            
             return true;
         }

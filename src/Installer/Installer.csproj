@@ -48,27 +48,28 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BootstrapperCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\BootstrapperCore.dll</HintPath>
+      <HintPath>..\packages\WixSharp.bin.1.6.1.0\lib\BootstrapperCore.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Deployment.WindowsInstaller, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\Microsoft.Deployment.WindowsInstaller.dll</HintPath>
+      <HintPath>..\packages\WixSharp.bin.1.6.1.0\lib\Microsoft.Deployment.WindowsInstaller.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
-    <Reference Include="WixSharp, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\WixSharp.dll</HintPath>
+    <Reference Include="WixSharp, Version=1.6.1.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixSharp.bin.1.6.1.0\lib\WixSharp.dll</HintPath>
     </Reference>
-    <Reference Include="WixSharp.Msi, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\WixSharp.Msi.dll</HintPath>
+    <Reference Include="WixSharp.Msi, Version=1.6.1.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixSharp.bin.1.6.1.0\lib\WixSharp.Msi.dll</HintPath>
     </Reference>
-    <Reference Include="WixSharp.UI, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\WixSharp.UI.dll</HintPath>
+    <Reference Include="WixSharp.UI, Version=1.6.1.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixSharp.bin.1.6.1.0\lib\WixSharp.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -79,7 +80,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
-    <None Include="wix\$(ProjectName).g.wxs" />
+    <None Include="wix\Installer.g.wxs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -100,12 +101,12 @@
   <Target Name="BeforeBuild">
     <SetEnvVar Values="ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);SolutionName=$(SolutionName);SolutionDir=$(SolutionDir);Configuration=$(Configuration)" />
   </Target>
-  <Import Project="..\packages\WixSharp.1.5.0.0\build\WixSharp.targets" Condition="Exists('..\packages\WixSharp.1.5.0.0\build\WixSharp.targets')" />
+  <Import Project="..\packages\WixSharp.1.6.1.0\build\WixSharp.targets" Condition="Exists('..\packages\WixSharp.1.6.1.0\build\WixSharp.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\WixSharp.1.5.0.0\build\WixSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WixSharp.1.5.0.0\build\WixSharp.targets'))" />
+    <Error Condition="!Exists('..\packages\WixSharp.1.6.1.0\build\WixSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WixSharp.1.6.1.0\build\WixSharp.targets'))" />
   </Target>
-  <UsingTask AssemblyFile="$(SolutionDir)packages\WixSharp.1.5.0.0\build\SetEnvVar.dll" TaskName="SetEnvVar" />
+  <UsingTask AssemblyFile="$(SolutionDir)packages\WixSharp.1.6.1.0\build\SetEnvVar.dll" TaskName="SetEnvVar" />
 </Project>

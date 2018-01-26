@@ -47,8 +47,9 @@
             Container.Timeout = 600;
 
             _defaultPolicy = Policy
-                .Handle<DataServiceClientException>(e => e.StatusCode != 404)
+                .Handle<DataServiceClientException>(e => e.StatusCode != 404 || e.StatusCode != 401)
                 .Or<DataServiceRequestException>()
+                .Or<DataServiceTransportException>()
                 .Or<WebException>()
                 .Or<SocketException>()
                 .Or<IOException>()
@@ -118,8 +119,6 @@
         {
             OperationResponse response = Container.LicenseUsers.ByKey(licenseUser.Id).RemoveUserFromGroup(licenseGroup.Id).Execute();
             ProcessResponse(response);
-            //Container.AttachTo("LicenseUsers", licenseUser);
-            //Container.DeleteLink(licenseUser, "UserGroups", licenseGroup);
         }
 
         public void DeleteUser(Guid id)
@@ -138,14 +137,14 @@
 
         public int GenerateUploadId() => _defaultPolicy.Execute(() => Container.ManagedSupports.NewUploadId().GetValue());
 
-        public int GetAccountIdByDeviceId(Guid deviceId) => _defaultPolicy.Execute(() => Container.Devices.GetAccountId(deviceId).GetValue());
+        public int GetAccountIdByDeviceId(Guid deviceId) => _defaultPolicy.Execute(() => Container.CentraStageDevices.GetAccountId(deviceId).GetValue());
 
         public int GetManagedSupportId(Guid deviceId) => _defaultPolicy.Execute(() => Container.ManagedSupports.GetUploadId(deviceId).GetValue());
 
         public List<LicenseGroupSummary> ListAllGroupIds()
         {
             return _defaultPolicy.Execute(() => Container.LicenseGroups
-                .Select(g => new LicenseGroupSummary {Id = g.Id, Name = g.Name})
+                .Select(g => new LicenseGroupSummary { Id = g.Id, Name = g.Name })
                 .ToList());
         }
 
@@ -153,7 +152,7 @@
         {
             return _defaultPolicy.Execute(() => Container.LicenseGroups
                 .Where(predicate)
-                .Select(g => new LicenseGroupSummary {Id = g.Id, Name = g.Name})
+                .Select(g => new LicenseGroupSummary { Id = g.Id, Name = g.Name })
                 .ToList());
         }
 
@@ -161,14 +160,14 @@
         {
             return _defaultPolicy.Execute(() => Container.LicenseUsers
                 .Where(predicate)
-                .Select(u => new LicenseUserSummary {Id = u.Id, DisplayName = u.DisplayName})
+                .Select(u => new LicenseUserSummary { Id = u.Id, DisplayName = u.DisplayName })
                 .ToList());
         }
 
         public List<LicenseUserSummary> ListAllUserIds()
         {
             return _defaultPolicy.Execute(() => Container.LicenseUsers
-                .Select(u => new LicenseUserSummary {Id = u.Id, DisplayName = u.DisplayName})
+                .Select(u => new LicenseUserSummary { Id = u.Id, DisplayName = u.DisplayName })
                 .ToList());
         }
 
@@ -177,7 +176,7 @@
             return _defaultPolicy.Execute(() =>
                     Container.LicenseUsers
                         .Where(u => u.UserGroups.Any(g => g.GroupId == groupId))
-                        .Select(u => new LicenseUserSummary {DisplayName = u.DisplayName, Id = u.Id}))
+                        .Select(u => new LicenseUserSummary { DisplayName = u.DisplayName, Id = u.Id }))
                 .ToList();
         }
 
@@ -281,6 +280,11 @@
             Container.SaveChanges();
         }
 
+        public bool UserExist(Guid userId)
+        {
+            return Container.LicenseUsers.Any(lu => lu.Id == userId);
+        }
+
         private void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
         {
             e.Headers.Add("AccountId", SettingManager.GetSettingValue(AppSettingNames.AutotaskAccountId));
@@ -294,37 +298,48 @@
             switch (ex)
             {
                 case DataServiceClientException dataServiceClient:
-                    if (dataServiceClient.StatusCode == 404)
+                    if (dataServiceClient.StatusCode == 404 || dataServiceClient.StatusCode == 401)
                     {
                         Logger.Error($"{dataServiceClient.StatusCode} - {dataServiceClient.Message}");
-                        Logger.Debug(dataServiceClient.ToString());
+                        Logger.Debug(dataServiceClient.Message, dataServiceClient);
                         break;
                     }
 
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(dataServiceClient.ToString());
-                    RavenClient.Capture(new SentryEvent(ex));
-
+                    Logger.Error(dataServiceClient.Message);
+                    Logger.Debug(dataServiceClient.Message, dataServiceClient);
+                    RavenClient.Capture(new SentryEvent(dataServiceClient));
+                    break;
+                case DataServiceQueryException dataServiceQuery:
+                    Logger.Error(dataServiceQuery.Message);
+                    Logger.Debug(dataServiceQuery.Message, dataServiceQuery);
+                    break;
+                case DataServiceRequestException dataServiceRequest:
+                    Logger.Error(dataServiceRequest.Message);
+                    Logger.Debug(dataServiceRequest.Message, dataServiceRequest);
+                    break;
+                case DataServiceTransportException dataServiceTransport:
+                    Logger.Error(dataServiceTransport.Message);
+                    Logger.Debug(dataServiceTransport.Message, dataServiceTransport);
                     break;
                 case SocketException socket:
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(socket.ToString());
+                    Logger.Error($"Portal api unavailable - {socket.Message}");
+                    Logger.Debug(socket.Message, socket);
                     break;
                 case IOException io:
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(io.ToString());
+                    Logger.Error($"Portal api unavailable - {io.Message}");
+                    Logger.Debug(io.Message, io);
                     break;
                 case WebException web:
-                    Logger.Error("Portal api unavailable.");
-                    Logger.Debug(web.ToString());
+                    Logger.Error($"Portal api unavailable - {web.Message}");
+                    Logger.Debug(web.Message, web);
                     break;
                 case TaskCanceledException taskCanceled:
                     Logger.Error(taskCanceled.Message);
-                    Logger.Debug("Exception when querying the API.", taskCanceled);
+                    Logger.Debug(taskCanceled.Message, taskCanceled);
                     break;
                 default:
                     Logger.Error(ex.Message);
-                    Logger.Debug(ex.ToString());
+                    Logger.Debug(ex.Message, ex);
                     RavenClient.Capture(new SentryEvent(ex));
                     break;
             }

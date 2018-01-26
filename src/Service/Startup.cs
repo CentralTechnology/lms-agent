@@ -8,6 +8,7 @@ namespace LMS.Service
     using System.Diagnostics.CodeAnalysis;
     using Abp.Owin;
     using global::Hangfire;
+    using Hangfire;
     using Owin;
 
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
@@ -17,6 +18,7 @@ namespace LMS.Service
         {
             app.UseAbp<LMSServiceModule>();
             app.UseHangfireDashboard("");
+            GlobalJobFilters.Filters.Add(new DisableMultipleQueuedItemsFilter());
         }
     }
 }
