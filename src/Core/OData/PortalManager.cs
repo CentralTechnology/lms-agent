@@ -137,7 +137,7 @@
 
         public int GenerateUploadId() => _defaultPolicy.Execute(() => Container.ManagedSupports.NewUploadId().GetValue());
 
-        public int GetAccountIdByDeviceId(Guid deviceId) => _defaultPolicy.Execute(() => Container.Devices.GetAccountId(deviceId).GetValue());
+        public int GetAccountIdByDeviceId(Guid deviceId) => _defaultPolicy.Execute(() => Container.CentraStageDevices.GetAccountId(deviceId).GetValue());
 
         public int GetManagedSupportId(Guid deviceId) => _defaultPolicy.Execute(() => Container.ManagedSupports.GetUploadId(deviceId).GetValue());
 
