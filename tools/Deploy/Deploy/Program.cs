@@ -22,7 +22,7 @@
         private const string Owner = "CentralTechnology";
 
         private static GitHubClient _client;
-        private static readonly string LogFilename = Path.Combine(Directory.GetCurrentDirectory(), "LMS.Setup.log");
+        private static readonly string LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
         private static readonly TimeSpan PauseBetweenFailures = TimeSpan.FromSeconds(5);
         private static readonly string SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
 
@@ -154,7 +154,7 @@
             Log.Information("Installing the new version");
             try
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/install /quiet /log {LogFilename}");
+                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/i /qr /log {LogFilename}");
 
                 Process proc = Process.Start(processStartInfo);
                 if (proc == null)
@@ -163,25 +163,22 @@
                 }
 
                 proc.WaitForExit();
-                if (proc.ExitCode != 0)
-                {
-                    throw new Exception("Installation Failed");
-                }
+                Log.Information($"Exit code {proc.ExitCode}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Log.Error("Installation failed");
+                Log.Error(ex, "Installation failed.");
                 throw;
             }
 
-            Log.Information("Installation complete");
+            Log.Information("Installation successful");
         }
 
         private static void Main()
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console(theme: AnsiConsoleTheme.Code)
-                .WriteTo.File("deploy.txt")
+                .WriteTo.File(Path.Combine(Directory.GetCurrentDirectory(), "Deploy.txt"))
                 .CreateLogger();
 
             Log.Information("Starting deployment....");
@@ -226,7 +223,7 @@
                 }
                 catch (HttpRequestException ex)
                 {
-                    Log.Error(ex.Message);
+                    Log.Error(ex,ex.Message);
                     if (ex.InnerException != null)
                     {
                         Log.Error(ex.InnerException.Message);
@@ -256,6 +253,7 @@
                     stopwatch.Stop();
                     Log.Error($"Time elapsed: {stopwatch.Elapsed}");
                     Log.Error($"Download failed. Attempt: {attempts} - will retry after delay {delay}. Reason: Http Timeout.");
+                    Log.Error(ex, ex.Message);
                     Task.Delay(delay).Wait();
                 }
                 catch (Exception ex)
@@ -267,6 +265,7 @@
                     }
 
                     Log.Error($"Exception caught on attempt {attempts} - will retry after delay {delay}");
+                    Log.Error(ex, ex.Message);
 
                     Task.Delay(delay).Wait();
                 }
