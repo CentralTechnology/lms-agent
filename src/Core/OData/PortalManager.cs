@@ -28,6 +28,7 @@
 
     [SuppressMessage("ReSharper", "ReplaceWithSingleCallToFirstOrDefault")]
     [SuppressMessage("ReSharper", "ReplaceWithSingleCallToSingleOrDefault")]
+    [SuppressMessage("ReSharper", "ReplaceWithSingleCallToAny")]
     public class PortalManager : LMSManagerBase, IPortalManager
     {
         private readonly Policy _defaultPolicy;
@@ -282,7 +283,7 @@
 
         public bool UserExist(Guid userId)
         {
-            return Container.LicenseUsers.Any(lu => lu.Id == userId);
+            return Container.LicenseUsers.Where(lu => lu.Id == userId).Any();
         }
 
         private void Container_BuildingRequest(object sender, BuildingRequestEventArgs e)
