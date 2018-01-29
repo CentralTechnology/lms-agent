@@ -1,6 +1,4 @@
-﻿using static Deploy.ConsoleExtensions;
-
-namespace Deploy
+﻿namespace Deploy
 {
     using System;
     using System.Collections.Generic;
@@ -9,14 +7,14 @@ namespace Deploy
     using System.Linq;
     using System.Net;
     using System.Net.Http;
-    using System.Reflection;
     using System.Threading.Tasks;
     using Microsoft.Win32;
-    using Nito.AsyncEx;
     using Octokit;
+    using Serilog;
+    using Serilog.Sinks.SystemConsole.Themes;
     using Version = SemVer.Version;
 
-    class Program
+    internal class Program
     {
         private const int MaxRetryAttempts = 3;
         private const string Name = "lms-agent";
@@ -24,7 +22,7 @@ namespace Deploy
         private const string Owner = "CentralTechnology";
 
         private static GitHubClient _client;
-        private static readonly string LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
+        private static readonly string LogFilename = Path.Combine(Directory.GetCurrentDirectory(), "LMS.Setup.log");
         private static readonly TimeSpan PauseBetweenFailures = TimeSpan.FromSeconds(5);
         private static readonly string SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
 
@@ -35,20 +33,19 @@ namespace Deploy
             RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
         };
 
-        public static void CopyStream(Stream input, Stream output)
+        private static void CopyStream(Stream input, Stream output)
         {
             input.CopyTo(output);
         }
 
-        static void Deploy()
+        private static void Deploy()
         {
             Release release = null;
             RetryOnException(MaxRetryAttempts, PauseBetweenFailures, () => { release = AsyncHelper.RunSync(() => _client.Repository.Release.GetLatest(Owner, Name)); });
 
             if (release == null)
             {
-                Error("Failed to download the latest release information.");
-                throw new NullReferenceException();
+                throw new NullReferenceException("Failed to download the latest release information.");
             }
 
             Version latestVersion;
@@ -69,12 +66,12 @@ namespace Deploy
             }
             catch (Exception)
             {
-                Information("Unable to determine the version of the agent installed. So i'm going to make one up.");
+                Log.Information("Unable to determine the version of the agent installed. Using the default baseline version.");
                 installedVersion = new Version("1.0.0");
             }
 
-            Information($"Version Installed: {installedVersion}");
-            Information($"Version Available: {latestVersion}");
+            Log.Information($"Version Installed: {installedVersion}");
+            Log.Information($"Version Available: {latestVersion}");
 
             if (installedVersion.CompareTo(latestVersion) < 0)
             {
@@ -83,18 +80,18 @@ namespace Deploy
 
             if (installedVersion.CompareTo(latestVersion) > 0)
             {
-                Information("Somehow the installed version is newer than whats available");
-                Information("Can't really do much about that");
+                Log.Information("Somehow the installed version is newer than whats available");
+                Log.Information("Can't really do much about that");
                 return;
             }
 
             if (installedVersion.CompareTo(latestVersion) == 0)
             {
-                Information("No update required.");
+                Log.Information("No update required.");
             }
         }
 
-        static System.Version GetApplicationVersion(string pName)
+        private static System.Version GetApplicationVersion(string pName)
         {
             foreach (RegistryKey key in UninstallKeys)
             {
@@ -112,7 +109,7 @@ namespace Deploy
             return null;
         }
 
-        static void GetAsset(Release release)
+        private static void GetAsset(Release release)
         {
             int assetId = release.Assets.Where(x => x.Name == "LMS.Setup.exe").Select(x => x.Id).SingleOrDefault();
 
@@ -121,23 +118,23 @@ namespace Deploy
 
             if (asset == null)
             {
-                Error("Failed to download the latest asset information.");
+                Log.Error("Failed to download the latest assetLog.Information.");
                 throw new NullReferenceException();
             }
 
             IApiResponse<byte[]> response = null;
 
-            Information($"Downloading: {release.TagName}");
+            Log.Information($"Downloading: {release.TagName}");
 
             RetryOnException(MaxRetryAttempts, PauseBetweenFailures, () => { response = AsyncHelper.RunSync(() => _client.Connection.Get<byte[]>(new Uri(asset.Url), new Dictionary<string, string>(), "application/octet-stream")); });
 
             if (response == null)
             {
-                Error("Failed to download the latest asset file.");
+                Log.Error("Failed to download the latest asset file.");
                 throw new NullReferenceException();
             }
 
-            Information("Saving the new version");
+            Log.Information("Saving the new version");
             try
             {
                 using (var streamReader = new MemoryStream(response.Body))
@@ -150,35 +147,46 @@ namespace Deploy
             }
             catch (Exception)
             {
-                Error("Saving failed");
+                Log.Error("Saving failed");
                 throw;
             }
 
-            Information("Installing the new version");
+            Log.Information("Installing the new version");
             try
             {
-                Process proc = Process.Start(SetupFilename, $"/install /quiet /log {LogFilename}");
+                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/install /quiet /log {LogFilename}");
+
+                Process proc = Process.Start(processStartInfo);
                 if (proc == null)
                 {
                     throw new NullReferenceException("Unable to launch the installer process");
                 }
 
                 proc.WaitForExit();
+                if (proc.ExitCode != 0)
+                {
+                    throw new Exception("Installation Failed");
+                }
             }
             catch (Exception)
             {
-                Error("Installation failed");
+                Log.Error("Installation failed");
                 throw;
             }
 
-            Success("Installation complete");
+            Log.Information("Installation complete");
         }
 
         private static void Main()
         {
-            Information("Starting deployment....");
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+                .WriteTo.File("deploy.txt")
+                .CreateLogger();
 
-            Information("Getting credentials");
+            Log.Information("Starting deployment....");
+
+            Log.Information("Configuring the GitHub client.");
 
             ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => true;
 
@@ -191,15 +199,15 @@ namespace Deploy
             }
             catch (Exception ex)
             {
-                Error(ex.Message);
-                Error("************ Deployment  Failed ************");
+                Log.Error(ex, ex.Message);
+                Log.Error("************ Deployment  Failed ************");
                 throw;
             }
 
-            Success("************ Deployment  Successful ************");
+            Log.Information("************ Deployment  Successful ************");
         }
 
-        static void RetryOnException(int times, TimeSpan delay, Action operation)
+        private static void RetryOnException(int times, TimeSpan delay, Action operation)
         {
             int attempts = 0;
             var stopwatch = new Stopwatch();
@@ -213,22 +221,22 @@ namespace Deploy
                     stopwatch.Start();
                     operation();
                     stopwatch.Stop();
-                    Information($"Request took: {stopwatch.Elapsed} to complete.");
+                    Log.Information($"Request took: {stopwatch.Elapsed} to complete.");
                     break;
                 }
                 catch (HttpRequestException ex)
                 {
-                    Error(ex.Message);
+                    Log.Error(ex.Message);
                     if (ex.InnerException != null)
                     {
-                        Error(ex.InnerException.Message);
+                        Log.Error(ex.InnerException.Message);
                     }
                     if (attempts == times)
                     {
                         throw;
                     }
 
-                    Error($"Exception caught on attempt {attempts} - will retry after delay {delay}");
+                    Log.Error($"Exception caught on attempt {attempts} - will retry after delay {delay}");
 
                     Task.Delay(delay).Wait();
                 }
@@ -241,176 +249,28 @@ namespace Deploy
 
                     if (ex.CancellationToken.IsCancellationRequested)
                     {
-                        Error("Download failed - Cancelled by end user");
+                        Log.Error("Download failed - Cancelled by end user");
                         throw;
                     }
 
                     stopwatch.Stop();
-                    Error($"Time elapsed: {stopwatch.Elapsed}");
-                    Error($"Download failed. Attempt: {attempts} - will retry after delay {delay}. Reason: Http Timeout.");
+                    Log.Error($"Time elapsed: {stopwatch.Elapsed}");
+                    Log.Error($"Download failed. Attempt: {attempts} - will retry after delay {delay}. Reason: Http Timeout.");
                     Task.Delay(delay).Wait();
                 }
                 catch (Exception ex)
                 {
-                    Error(ex.Message);
+                    Log.Error(ex.Message);
                     if (attempts == times)
                     {
                         throw;
                     }
 
-                    Error($"Exception caught on attempt {attempts} - will retry after delay {delay}");
+                    Log.Error($"Exception caught on attempt {attempts} - will retry after delay {delay}");
 
                     Task.Delay(delay).Wait();
                 }
             } while (true);
         }
-    }
-
-    public static class RegistryExtensions
-    {
-        public static (bool exist, string value) GetSubKeyValue(this RegistryKey key, string[] subKeyNames, NameValue filterBy = null, string requestedKeyName = null, string requestedValue = null)
-        {
-            if (string.IsNullOrEmpty(requestedValue))
-            {
-                requestedValue = "DisplayName";
-            }
-
-            if (requestedKeyName == null)
-            {
-                foreach (string keyName in subKeyNames)
-                {
-                    RegistryKey subkey = key.OpenSubKey(keyName);
-                    if (subkey != null)
-                    {
-                        if (filterBy == null)
-                        {
-                            if (subkey.GetValue(requestedValue) is string value)
-                            {
-                                return (true, value);
-                            }
-                        }
-                        else
-                        {
-                            string filterByValue = subkey.GetValue(filterBy.Name) as string;
-                            if (filterBy.Value.Equals(filterByValue, StringComparison.OrdinalIgnoreCase))
-                            {
-                                if (subkey.GetValue(requestedValue) is string value)
-                                {
-                                    return (true, value);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                foreach (string keyName in subKeyNames.Where(skn => skn.Equals(requestedKeyName, StringComparison.OrdinalIgnoreCase)))
-                {
-                    RegistryKey subkey = key.OpenSubKey(keyName);
-                    if (subkey?.GetValue(requestedValue) is string value && !string.IsNullOrEmpty(value))
-                    {
-                        return (true, value);
-                    }
-                }
-            }
-
-            return (false, string.Empty);
-        }
-    }
-
-    /// <summary>
-    ///     Provides some helper methods to work with async methods.
-    /// </summary>
-    public static class AsyncHelper
-    {
-        /// <summary>
-        ///     Checks if given method is an async method.
-        /// </summary>
-        /// <param name="method">A method to check</param>
-        public static bool IsAsyncMethod(MethodInfo method)
-        {
-            return method.ReturnType == typeof(Task) ||
-                method.ReturnType.GetTypeInfo().IsGenericType && method.ReturnType.GetGenericTypeDefinition() == typeof(Task<>);
-        }
-
-        /// <summary>
-        ///     Runs a async method synchronously.
-        /// </summary>
-        /// <param name="func">A function that returns a result</param>
-        /// <typeparam name="TResult">Result type</typeparam>
-        /// <returns>Result of the async operation</returns>
-        public static TResult RunSync<TResult>(Func<Task<TResult>> func)
-        {
-            return AsyncContext.Run(func);
-        }
-
-        /// <summary>
-        ///     Runs a async method synchronously.
-        /// </summary>
-        /// <param name="action">An async action</param>
-        public static void RunSync(Func<Task> action)
-        {
-            AsyncContext.Run(action);
-        }
-    }
-
-    /// <inheritdoc />
-    /// <summary>
-    ///     Can be used to store Name/Value (or Key/Value) pairs.
-    /// </summary>
-    [Serializable]
-    public class NameValue : NameValue<string>
-    {
-        /// <inheritdoc />
-        /// <summary>
-        ///     Creates a new <see cref="T:Deploy.NameValue" />.
-        /// </summary>
-        public NameValue()
-        {
-        }
-
-        /// <inheritdoc />
-        /// <summary>
-        ///     Creates a new <see cref="T:Deploy.NameValue" />.
-        /// </summary>
-        public NameValue(string name, string value)
-        {
-            Name = name;
-            Value = value;
-        }
-    }
-
-    /// <summary>
-    ///     Can be used to store Name/Value (or Key/Value) pairs.
-    /// </summary>
-    [Serializable]
-    public class NameValue<T>
-    {
-        /// <summary>
-        ///     Creates a new <see cref="NameValue" />.
-        /// </summary>
-        public NameValue()
-        {
-        }
-
-        /// <summary>
-        ///     Creates a new <see cref="NameValue" />.
-        /// </summary>
-        public NameValue(string name, T value)
-        {
-            Name = name;
-            Value = value;
-        }
-
-        /// <summary>
-        ///     Name.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        ///     Value.
-        /// </summary>
-        public T Value { get; set; }
     }
 }
