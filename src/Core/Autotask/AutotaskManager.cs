@@ -29,7 +29,16 @@
                 var deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
 
                 int accountId;
-                int storedAccount = SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
+                int storedAccount;
+                try
+                {
+                    storedAccount = SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex.Message);
+                    storedAccount = default(int);
+                }
 
                 if (storedAccount == default(int))
                 {

@@ -1,14 +1,13 @@
 ﻿namespace LMS
 {
-    using System.Data.Entity;
+    using System;
     using System.Data.Entity.Migrations;
     using System.Reflection;
     using Abp.EntityFramework;
+    using Abp.Logging;
     using Abp.Modules;
-    using EntityFramework;
-    using Core;
 
-    [DependsOn(typeof(AbpEntityFrameworkModule),typeof(LMSCoreModule))]
+    [DependsOn(typeof(AbpEntityFrameworkModule), typeof(LMSCoreModule))]
     public class LMSEntityFrameworkModule : AbpModule
     {
         public override void Initialize()
@@ -20,11 +19,18 @@
 
         public override void PreInitialize()
         {
-            var dbMigrator = new DbMigrator(new Migrations.Configuration());
-            dbMigrator.Update();
+            try
+            {
+                var dbMigrator = new DbMigrator(new Migrations.Configuration());
+                dbMigrator.Update();
 
-            Configuration.DefaultNameOrConnectionString = "Default";
-            Configuration.UnitOfWork.IsTransactional = false;
+                Configuration.DefaultNameOrConnectionString = "Default";
+                Configuration.UnitOfWork.IsTransactional = false;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Logger.Error(ex.Message, ex);
+            }
         }
     }
 }

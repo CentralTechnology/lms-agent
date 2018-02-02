@@ -16,9 +16,9 @@
                 new SettingDefinition(AppSettingNames.MonitorUsers,false.ToString()),
                 new SettingDefinition(AppSettingNames.MonitorVeeam,false.ToString()),
                 new SettingDefinition(AppSettingNames.PrimaryDomainControllerOverride,false.ToString()),
-                new SettingDefinition(AppSettingNames.VeeamOverride, false.ToString()),
+                new SettingDefinition(AppSettingNames.VeeamMonitorEnabled, true.ToString()),
                 new SettingDefinition(AppSettingNames.VeeamVersion, string.Empty),
-                new SettingDefinition(AppSettingNames.UsersOverride, false.ToString()),
+                new SettingDefinition(AppSettingNames.UserMonitorEnabled, true.ToString()),
                 new SettingDefinition(AppSettingNames.UsersAverageRuntime, 0.ToString())
             };
         }

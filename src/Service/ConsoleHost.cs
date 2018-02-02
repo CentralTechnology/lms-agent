@@ -26,10 +26,6 @@
         {
             using (var bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
             {
-                bootstrapper.IocManager
-                    .IocContainer
-                    .AddFacility<LoggingFacility>(f => f.LogUsing<Log4NetLoggerFactory>().WithConfig("log4net.config"));
-
                 bootstrapper.Initialize();
 
                 using (var settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
@@ -40,10 +36,13 @@
                         Console.WriteLine($"Account ID: {opts.AccountId}");
                     }
 
-                    if (opts.DeviceId != default(Guid))
+                    if (!string.IsNullOrEmpty(opts.DeviceId))
                     {
-                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, opts.DeviceId.ToString());
-                        Console.WriteLine($"Device ID: {opts.DeviceId}");
+                        if (Guid.TryParse(opts.DeviceId, out Guid deviceId))
+                        {
+                            settingsManager.Object.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, deviceId.ToString());
+                            Console.WriteLine($"Device ID: {deviceId}");
+                        }
                     }
 
                     if (opts.PdcOverride.HasValue)
@@ -54,13 +53,13 @@
 
                     if (opts.UsersOverride.HasValue)
                     {
-                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.UsersOverride, opts.UsersOverride.Value.ToString());
+                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.UserMonitorEnabled, opts.UsersOverride.Value.ToString());
                         Console.WriteLine($"Users Override: {opts.UsersOverride.Value}");
                     }
 
                     if (opts.VeeamOverride.HasValue)
                     {
-                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.VeeamOverride, opts.VeeamOverride.Value.ToString());
+                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.VeeamMonitorEnabled, opts.VeeamOverride.Value.ToString());
                         Console.WriteLine($"Veeam Override: {opts.VeeamOverride.Value}");
                     }
                 }

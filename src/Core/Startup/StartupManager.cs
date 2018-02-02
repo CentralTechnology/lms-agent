@@ -81,8 +81,8 @@
 
             try
             {
-                bool userOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.UsersOverride);
-                if (userOverride)
+                bool userMonitorEnabled = SettingManager.GetSettingValue<bool>(AppSettingNames.UserMonitorEnabled);
+                if (!userMonitorEnabled)
                 {
                     Logger.Log(LogSeverity.Warn, performContext, "User monitoring has been manually disabled.");
 
@@ -136,8 +136,8 @@
 
             try
             {
-                bool veeamOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.VeeamOverride);
-                if (veeamOverride)
+                bool veeamMonitorEnabled = SettingManager.GetSettingValue<bool>(AppSettingNames.VeeamMonitorEnabled);
+                if (!veeamMonitorEnabled)
                 {
                     Logger.Log(LogSeverity.Warn, performContext, "Veeam monitoring has been manually disabled.");
 

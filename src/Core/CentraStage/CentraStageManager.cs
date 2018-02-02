@@ -12,7 +12,7 @@
     public class CentraStageManager : DomainService, ICentraStageManager
     {
         /// <inheritdoc />
-        public Guid? GetId()
+        public Guid? GetIdFromRegistry()
         {
 #if DEBUG
             return new Guid("2a5d23dc-1b9a-9341-32c6-1160a5df7883");
@@ -45,48 +45,61 @@
             return null;
         }
 
-        /// <param name="performContext"></param>
-        /// <inheritdoc />
+        private void HandleNullDeviceId(PerformContext performContext)
+        {
+            Logger.Log(LogSeverity.Warn, performContext, "Check Centrastage: FAIL");
+            Logger.Log(LogSeverity.Error,
+                performContext, "Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
+        }
+
+        private void HandleFoundDeviceId(PerformContext performContext, Guid deviceId)
+        {
+            SettingManager.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, deviceId.ToString());
+            Logger.Log(LogSeverity.Info, performContext, "Check Centrastage: OK");
+            Logger.Log(LogSeverity.Info, performContext, $"Device: {deviceId}");
+        }
+
         public bool IsValid(PerformContext performContext)
         {
             try
             {
-                Guid deviceId;
-                var storedDevice = SettingManager.GetSettingValueForApplication(AppSettingNames.CentrastageDeviceId).To<Guid>();
-                if (storedDevice == default(Guid))
+                var centraStageDeviceId = SettingManager.GetSettingValueForApplication(AppSettingNames.CentrastageDeviceId);
+                if (Guid.TryParse(centraStageDeviceId, out Guid deviceId))
                 {
-                    Guid? reportedDevice = GetId();
-
-                    if (reportedDevice == null)
+                    if (deviceId == default(Guid))
                     {
-                        Logger.Log(LogSeverity.Warn, performContext, "Check Centrastage: FAIL");
-                        Logger.Log(LogSeverity.Error,
-                            performContext, "Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
-
-                        return false;
+                        return LookHarder();
                     }
 
-                    SettingManager.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, reportedDevice.ToString());
-                    deviceId = reportedDevice.To<Guid>();
+                    HandleFoundDeviceId(performContext, deviceId);
+                    return true;
                 }
-                else
+
+                if (string.IsNullOrEmpty(centraStageDeviceId) || string.IsNullOrWhiteSpace(centraStageDeviceId))
                 {
-                    deviceId = storedDevice;
+                    return LookHarder();
                 }
 
-                Logger.Log(LogSeverity.Info, performContext, "Check Centrastage: OK");
-                Logger.Log(LogSeverity.Info, performContext, $"Device: {deviceId}");
-
-                return true;
+                return false;
             }
             catch (Exception ex)
             {
-                Logger.Log(LogSeverity.Error, performContext, "Check Centrastage: FAIL");
-                Logger.Log(LogSeverity.Error, performContext, "Failed to get the centrastage device id from the registry. This application cannot work without the centrastage device id. Please enter it manually through the menu system.");
-                Logger.Log(LogSeverity.Error, performContext, ex.Message);
-                Logger.Log(LogSeverity.Debug, performContext, ex.Message, ex);
-
+                HandleNullDeviceId(performContext);
+                Logger.Log(LogSeverity.Error, performContext, ex.Message, ex);
                 return false;
+            }
+
+            bool LookHarder()
+            {
+                Guid? reportedDevice = GetIdFromRegistry();
+                if (reportedDevice == null)
+                {
+                    HandleNullDeviceId(performContext);
+                    return false;
+                }
+
+                HandleFoundDeviceId(performContext, reportedDevice.Value);
+                return true;
             }
         }
     }
