@@ -26,10 +26,6 @@
         {
             using (var bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
             {
-                bootstrapper.IocManager
-                    .IocContainer
-                    .AddFacility<LoggingFacility>(f => f.LogUsing<Log4NetLoggerFactory>().WithConfig("log4net.config"));
-
                 bootstrapper.Initialize();
 
                 using (var settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
