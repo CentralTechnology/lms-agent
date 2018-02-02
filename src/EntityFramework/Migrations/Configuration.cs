@@ -7,7 +7,7 @@
     {
         public Configuration()
         {
-            AutomaticMigrationDataLossAllowed = false;
+            AutomaticMigrationDataLossAllowed = true;
             AutomaticMigrationsEnabled = true;
             ContextKey = "LMS";
         }

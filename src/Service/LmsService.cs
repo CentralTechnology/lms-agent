@@ -4,8 +4,10 @@
     using System.Collections.Concurrent;
     using System.Configuration;
     using System.Reflection;
+    using Abp.Dependency;
     using Common.Extensions;
     using global::Hangfire;
+    using LMS.Startup;
     using Microsoft.Owin.Hosting;
     using Topshelf;
 
@@ -20,6 +22,11 @@
                 port = 9000; // set default
             }
             _webapp = WebApp.Start<Startup>($"http://localhost:{port}");
+
+            using (var startupManager = IocManager.Instance.ResolveAsDisposable<IStartupManager>())
+            {
+                startupManager.Object.Init(null);
+            }
            
             return true;
         }

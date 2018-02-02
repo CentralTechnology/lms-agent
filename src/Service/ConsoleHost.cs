@@ -50,13 +50,13 @@
 
                     if (opts.UsersOverride.HasValue)
                     {
-                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.UsersOverride, opts.UsersOverride.Value.ToString());
+                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.UserMonitorEnabled, opts.UsersOverride.Value.ToString());
                         Console.WriteLine($"Users Override: {opts.UsersOverride.Value}");
                     }
 
                     if (opts.VeeamOverride.HasValue)
                     {
-                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.VeeamOverride, opts.VeeamOverride.Value.ToString());
+                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.VeeamMonitorEnabled, opts.VeeamOverride.Value.ToString());
                         Console.WriteLine($"Veeam Override: {opts.VeeamOverride.Value}");
                     }
                 }
