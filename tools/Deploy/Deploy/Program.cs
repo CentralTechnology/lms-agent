@@ -14,8 +14,39 @@
     using Serilog.Sinks.SystemConsole.Themes;
     using Version = SemVer.Version;
 
-    internal class Program
+     class Program
     {
+        private static void Main()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .WriteTo.File("deploy.txt")
+                .CreateLogger();
+
+            Log.Information("Starting deployment....");
+
+            Log.Information("Configuring the GitHub client.");
+
+            ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => true;
+
+            _client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"));
+            _client.SetRequestTimeout(TimeSpan.FromMinutes(5));
+
+            try
+            {
+                Deploy();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
+                Log.Error("************ Deployment  Failed ************");
+                throw;
+            }
+
+            Log.Information("************ Deployment  Successful ************");
+        }
+
+
         private const int MaxRetryAttempts = 3;
         private const string Name = "lms-agent";
 
@@ -175,36 +206,6 @@
             }
 
             Log.Information("Installation complete");
-        }
-
-        private static void Main()
-        {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
-                .WriteTo.File("deploy.txt")
-                .CreateLogger();
-
-            Log.Information("Starting deployment....");
-
-            Log.Information("Configuring the GitHub client.");
-
-            ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => true;
-
-            _client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"));
-            _client.SetRequestTimeout(TimeSpan.FromMinutes(5));
-
-            try
-            {
-                Deploy();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, ex.Message);
-                Log.Error("************ Deployment  Failed ************");
-                throw;
-            }
-
-            Log.Information("************ Deployment  Successful ************");
         }
 
         private static void RetryOnException(int times, TimeSpan delay, Action operation)
