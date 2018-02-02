@@ -68,15 +68,7 @@
                 {
                     if (deviceId == default(Guid))
                     {
-                        Guid? reportedDevice = GetIdFromRegistry();
-                        if (reportedDevice == null)
-                        {
-                            HandleNullDeviceId(performContext);
-                            return false;
-                        }
-
-                        HandleFoundDeviceId(performContext, reportedDevice.Value);
-                        return true;
+                        return LookHarder();
                     }
 
                     HandleFoundDeviceId(performContext, deviceId);
@@ -85,15 +77,7 @@
 
                 if (string.IsNullOrEmpty(centraStageDeviceId) || string.IsNullOrWhiteSpace(centraStageDeviceId))
                 {
-                    Guid? reportedDevice = GetIdFromRegistry();
-                    if (reportedDevice == null)
-                    {
-                        HandleNullDeviceId(performContext);
-                        return false;
-                    }
-
-                    HandleFoundDeviceId(performContext, reportedDevice.Value);
-                    return true;
+                    return LookHarder();
                 }
 
                 return false;
@@ -103,6 +87,19 @@
                 HandleNullDeviceId(performContext);
                 Logger.Log(LogSeverity.Error, performContext, ex.Message, ex);
                 return false;
+            }
+
+            bool LookHarder()
+            {
+                Guid? reportedDevice = GetIdFromRegistry();
+                if (reportedDevice == null)
+                {
+                    HandleNullDeviceId(performContext);
+                    return false;
+                }
+
+                HandleFoundDeviceId(performContext, reportedDevice.Value);
+                return true;
             }
         }
     }
