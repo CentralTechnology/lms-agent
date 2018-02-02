@@ -36,10 +36,13 @@
                         Console.WriteLine($"Account ID: {opts.AccountId}");
                     }
 
-                    if (opts.DeviceId != default(Guid))
+                    if (!string.IsNullOrEmpty(opts.DeviceId))
                     {
-                        settingsManager.Object.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, opts.DeviceId.ToString());
-                        Console.WriteLine($"Device ID: {opts.DeviceId}");
+                        if (Guid.TryParse(opts.DeviceId, out Guid deviceId))
+                        {
+                            settingsManager.Object.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, deviceId.ToString());
+                            Console.WriteLine($"Device ID: {deviceId}");
+                        }
                     }
 
                     if (opts.PdcOverride.HasValue)

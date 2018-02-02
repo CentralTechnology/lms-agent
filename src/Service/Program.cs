@@ -102,7 +102,7 @@
         public int? AccountId { get; set; }
 
         [Option('d', "device", HelpText = "CentraStage device id")]
-        public Guid? DeviceId { get; set; }
+        public string DeviceId { get; set; }
 
         [Usage(ApplicationAlias = "lms.exe")]
         public static IEnumerable<Example> Examples
@@ -110,7 +110,7 @@
             get
             {
                 yield return new Example("Update Autotask Account", new UpdateOptions{AccountId = 12345});
-                yield return new Example("Update CentraStage Device", new UpdateOptions{DeviceId =  Guid.NewGuid()});
+                yield return new Example("Update CentraStage Device", new UpdateOptions{DeviceId =  Guid.NewGuid().ToString()});
                 yield return new Example("Enable PDC override", new UpdateOptions{ PdcOverride = true });
                 yield return new Example("Force user monitoring", new UpdateOptions{UsersOverride = true});
                 yield return new Example("Force veeam monitoring", new UpdateOptions{VeeamOverride = true});
