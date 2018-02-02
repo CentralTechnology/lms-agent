@@ -40,12 +40,12 @@
         /// <summary>
         ///     Override to disable Veeam monitoring
         /// </summary>
-        public const string VeeamOverride = "Setting.Veeam.Override";
+        public const string VeeamMonitorEnabled = "Setting.Veeam.Override";
 
         /// <summary>
         /// Override to disable User monitoring
         /// </summary>
-        public const string UsersOverride = "Setting.Users.Override";
+        public const string UserMonitorEnabled = "Setting.Users.Override";
 
         /// <summary>
         /// 

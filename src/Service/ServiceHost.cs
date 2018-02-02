@@ -1,5 +1,6 @@
 ﻿namespace LMS.Service
 {
+    using System;
     using System.Diagnostics;
     using System.Threading;
     using Abp.Events.Bus;
@@ -9,11 +10,19 @@
 
     public static class ServiceHost
     {
-        public static void ConfigureEventLog()
+        public static void SetupActiveDirectoryListener()
         {
-            var eventLog = new EventLog("security");
-            eventLog.EntryWritten += ListenForNewUsers;
-            eventLog.EnableRaisingEvents = true;
+            try
+            {
+                var eventLog = new EventLog("security");
+                eventLog.EntryWritten += ListenForNewUsers;
+                eventLog.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Logger.Error(ex.Message,ex);
+                throw;
+            }
 
             LogHelper.Logger.Info("Monitoring the system for new users.");
         }

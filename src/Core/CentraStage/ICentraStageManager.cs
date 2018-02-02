@@ -11,7 +11,7 @@ namespace LMS.CentraStage
 
     public interface ICentraStageManager : IDomainService
     {
-        Guid? GetId();
+        Guid? GetIdFromRegistry();
         bool IsValid(PerformContext performContext);
     }
 }

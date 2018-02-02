@@ -31,32 +31,33 @@
             recurringJobManager.RemoveIfExists(BackgroundJobNames.Users);
             recurringJobManager.RemoveIfExists(BackgroundJobNames.Veeam);
 
-            using (IDisposableDependencyObjectWrapper<IStartupManager> startupManager = IocManager.ResolveAsDisposable<IStartupManager>())
+
+            using (var settingManager = IocManager.ResolveAsDisposable<ISettingManager>())
             {
-                if (startupManager.Object.ShouldMonitorUsers(null))
+                if (settingManager.Object.GetSettingValue<bool>(AppSettingNames.MonitorUsers))
                 {
-                    using (var settingManager = IocManager.ResolveAsDisposable<ISettingManager>())
-                    {
-                        var averageRuntime = settingManager.Object.GetSettingValue<int>(AppSettingNames.UsersAverageRuntime);
-                        if (averageRuntime == default(int) || averageRuntime < 15)
-                        {
-                            averageRuntime = 15;
-                        }
-
-                        string schedule = $"*/{averageRuntime} * * * *";
-
-                        recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), schedule);
-                    }                   
-
                     // setup event log monitoring
-                    ServiceHost.ConfigureEventLog();
+                    ServiceHost.SetupActiveDirectoryListener();
+
+                    var averageRuntime = settingManager.Object.GetSettingValue<int>(AppSettingNames.UsersAverageRuntime);
+                    if (averageRuntime == default(int) || averageRuntime < 15)
+                    {
+                        averageRuntime = 15;
+                    }
+
+                    string schedule = $"*/{averageRuntime} * * * *";
+
+                    recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), schedule);
                 }
 
-                if (startupManager.Object.MonitorVeeam(null))
+                if (settingManager.Object.GetSettingValue<bool>(AppSettingNames.MonitorVeeam))
                 {
                     recurringJobManager.AddOrUpdate(BackgroundJobNames.Veeam, Job.FromExpression<VeeamWorkerManager>(j => j.Start(null)), "*/15 * * * *");
                 }
             }
+
+
+
         }
 
         public override void Initialize()
@@ -66,7 +67,12 @@
 
         public override void PostInitialize()
         {
-            ConfigureHangfireJobs();           
+            using (IDisposableDependencyObjectWrapper<StartupManager> startupManager = IocManager.ResolveAsDisposable<StartupManager>())
+            {
+                startupManager.Object.Init(null);
+            }
+
+            ConfigureHangfireJobs();
         }
 
         public override void PreInitialize()
@@ -81,7 +87,7 @@
                 });
 
                 config.Server = new BackgroundJobServer(new BackgroundJobServerOptions
-                {                  
+                {
                     WorkerCount = 1
                 });
                 config.GlobalConfiguration.UseConsole();
