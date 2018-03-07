@@ -7,12 +7,6 @@ BuildParameters.Tasks.PublishGitHubReleaseTask
 		Information("Ignore");
 	});
 
-BuildParameters.Tasks.UploadCodecovReportTask.Task.Actions.Clear();
-BuildParameters.Tasks.UploadCodecovReportTask
-	.Does(() => {
-		Information("Ignore");
-	});
-
 BuildParameters.SetParameters(context: Context, 
                             buildSystem: BuildSystem,
                             sourceDirectoryPath: "./src",
