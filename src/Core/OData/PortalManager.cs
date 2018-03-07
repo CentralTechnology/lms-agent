@@ -9,6 +9,7 @@
     using System.Net;
     using System.Net.Sockets;
     using System.Threading.Tasks;
+    using Abp;
     using Abp.Configuration;
     using Actions;
     using Common.Constants;
@@ -64,7 +65,11 @@
                     TimeSpan.FromSeconds(600)
                 }, (exception, timeSpan, retryCount, context) =>
                 {
-                    HandleRetryException(exception);
+                    foreach (var ex in exception.GetAllExceptions())
+                    {
+                        HandleRetryException(ex);
+
+                    }
 
                     Logger.Error($"Retry {retryCount} of {context.PolicyKey} at {context.ExecutionKey}");
                 });
@@ -299,11 +304,12 @@
             switch (ex)
             {
                 case DataServiceClientException dataServiceClient:
+                    // if its unauthorized then we need to stop execution
                     if (dataServiceClient.StatusCode == 404 || dataServiceClient.StatusCode == 401)
                     {
                         Logger.Error($"{dataServiceClient.StatusCode} - {dataServiceClient.Message}");
                         Logger.Debug(dataServiceClient.Message, dataServiceClient);
-                        break;
+                        throw new AbpException($"{dataServiceClient.StatusCode} - {dataServiceClient.Message}");
                     }
 
                     Logger.Error(dataServiceClient.Message);
@@ -341,7 +347,6 @@
                 default:
                     Logger.Error(ex.Message);
                     Logger.Debug(ex.Message, ex);
-                    RavenClient.Capture(new SentryEvent(ex));
                     break;
             }
         }
