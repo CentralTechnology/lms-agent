@@ -68,7 +68,6 @@
                     foreach (var ex in exception.GetAllExceptions())
                     {
                         HandleRetryException(ex);
-
                     }
 
                     Logger.Error($"Retry {retryCount} of {context.PolicyKey} at {context.ExecutionKey}");
