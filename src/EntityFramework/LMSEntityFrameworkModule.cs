@@ -19,18 +19,8 @@
 
         public override void PreInitialize()
         {
-            try
-            {
-                var dbMigrator = new DbMigrator(new Migrations.Configuration());
-                dbMigrator.Update();
-
-                Configuration.DefaultNameOrConnectionString = "Default";
-                Configuration.UnitOfWork.IsTransactional = false;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Logger.Error(ex.Message, ex);
-            }
+            Configuration.DefaultNameOrConnectionString = "Default";
+            Configuration.UnitOfWork.IsTransactional = false;
         }
     }
 }

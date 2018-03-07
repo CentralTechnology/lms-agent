@@ -6,7 +6,7 @@
 
     public static class ExceptionExtensions
     {
-        public static IEnumerable<TSource> FromHierarchy<TSource>(
+        private static IEnumerable<TSource> FromHierarchy<TSource>(
             this TSource source,
             Func<TSource, TSource> nextItem,
             Func<TSource, bool> canContinue)
@@ -17,7 +17,7 @@
             }
         }
 
-        public static IEnumerable<TSource> FromHierarchy<TSource>(
+        private static IEnumerable<TSource> FromHierarchy<TSource>(
             this TSource source,
             Func<TSource, TSource> nextItem)
             where TSource : class
@@ -30,6 +30,11 @@
             IEnumerable<string> messages = exception.FromHierarchy(ex => ex.InnerException)
                 .Select(ex => ex.Message);
             return string.Join(Environment.NewLine, messages);
+        }
+
+        public static IEnumerable<Exception> GetAllExceptions(this Exception exception)
+        {
+            return exception.FromHierarchy(ex => ex.InnerException).Select(ex => ex.InnerException);
         }
     }
 }

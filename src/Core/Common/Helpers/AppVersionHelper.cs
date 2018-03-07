@@ -42,7 +42,6 @@
                     }
 
                     _version = version;
-                    return version;
                 }
 
                 return _version;

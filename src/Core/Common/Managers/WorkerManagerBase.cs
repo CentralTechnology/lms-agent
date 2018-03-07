@@ -8,6 +8,7 @@
     using global::Hangfire.Console;
     using global::Hangfire.Server;
     using Interfaces;
+    using Microsoft.OData.Client;
 
     public abstract class WorkerManagerBase : LMSManagerBase, IWorkerManager
     {
@@ -16,9 +17,9 @@
         private const string SuccessMessage = "Action Success.";
         public abstract void Start(PerformContext performContext);
 
-        public static bool InProgress { get; private set; }
+        private static bool InProgress { get; set; }
 
-        protected void SetJobRunning(bool status)
+        private static void SetJobRunning(bool status)
         {
             InProgress = status;
         }
@@ -43,7 +44,7 @@
             {
                 HandleException(performContext, ex);
                 Logger.Error(performContext, FailedMessage);
-                throw;
+                throw; // throw to fail the background job
             }
             finally
             {
@@ -73,27 +74,43 @@
                 case AbpException abp:
                     Logger.Error(performContext, abp.Message);
                     Logger.Debug(performContext, abp.Message, abp);
-                    throw abp;
+                    break;
+
+                case DataServiceClientException dataServiceClient:
+                    Logger.Error(performContext, dataServiceClient.Message);
+                    Logger.Debug(performContext, dataServiceClient.Message, dataServiceClient);
+                    break;
+
+                case DataServiceRequestException dataServiceRequest:
+                    Logger.Error(performContext, dataServiceRequest.Message);
+                    Logger.Debug(performContext, dataServiceRequest.Message, dataServiceRequest);
+                    break;
 
                 case JobAbortedException jobAborted:
                     Logger.Error(performContext, jobAborted.Message);
                     Logger.Debug(performContext, jobAborted.Message, jobAborted);
-                    throw jobAborted;
+                    break;
 
                 case OperationCanceledException operationCancelled:
                     Logger.Error(performContext, operationCancelled.Message);
                     Logger.Debug(performContext, operationCancelled.Message, operationCancelled);
-                    throw operationCancelled;
+                    break;
+
+                case OutOfMemoryException outOfMemory:
+                    Logger.Error(performContext, outOfMemory.Message);
+                    Logger.Debug(performContext, outOfMemory.Message, outOfMemory);
+                    break;
 
                 case WebException web:
                     Logger.Error(performContext, web.Message, web);
-                    throw web;
+                    Logger.Debug(performContext, web.Message, web);
+                    break;
 
                 default:
                     RavenClient.Capture(new SharpRaven.Data.SentryEvent(ex));
                     Logger.Error(performContext, ex.Message);
                     Logger.Debug(performContext, ex.Message, ex);
-                    throw ex;
+                    break;
             }
         }
     }
