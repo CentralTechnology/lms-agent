@@ -6,7 +6,7 @@
   },
   "ExtendedData": {
     "EnableNamingAlias": false,
-    "IgnoreUnexpectedElementsAndAttributes": false,
+    "IgnoreUnexpectedElementsAndAttributes": true,
     "IncludeT4File": false,
     "ServiceName": "Portal",
     "Endpoint": "http://localhost:51078/odata/v1/$metadata",

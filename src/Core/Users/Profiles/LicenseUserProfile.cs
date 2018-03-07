@@ -10,9 +10,7 @@
         {
             CreateMap<LicenseUserDto, LicenseUser>()
                 .ForMember(dest => dest.UserGroups, opt => opt.Ignore())
-                .ForMember(dest => dest.IsActive, opt => opt.Ignore())
                 .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-                .ForMember(dest => dest.IsExcluded, opt => opt.Ignore())
                 .ForMember(dest => dest.ManagedSupportId, opt => opt.Ignore())
                 .ForMember(dest => dest.TenantId, opt => opt.Ignore())
                 .ForMember(dest => dest.UserType, opt => opt.Ignore());
