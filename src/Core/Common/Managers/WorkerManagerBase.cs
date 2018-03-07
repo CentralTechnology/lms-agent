@@ -96,6 +96,11 @@
                     Logger.Debug(performContext, operationCancelled.Message, operationCancelled);
                     break;
 
+                case OutOfMemoryException outOfMemory:
+                    Logger.Error(performContext, outOfMemory.Message);
+                    Logger.Debug(performContext, outOfMemory.Message, outOfMemory);
+                    break;
+
                 case WebException web:
                     Logger.Error(performContext, web.Message, web);
                     Logger.Debug(performContext, web.Message, web);

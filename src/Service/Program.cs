@@ -23,6 +23,8 @@
         /// </summary>
         static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;           
+
             Clock.Provider = ClockProviders.Utc;
 
             if (args.IsNullOrEmpty())
@@ -49,6 +51,16 @@
             Parser.Default.ParseArguments<UpdateOptions, RunOptions>(args)
                 .WithParsed<UpdateOptions>(ConsoleHost.Update)
                 .WithParsed<RunOptions>(ConsoleHost.Run);
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is OutOfMemoryException)
+            {
+                // its out of memory so attempt to restart the service.
+                System.Diagnostics.Process.Start("net", "stop LicenseMonitoringSystem");
+                System.Diagnostics.Process.Start("net", "start LicenseMonitoringSystem");
+            }
         }
     }
 
