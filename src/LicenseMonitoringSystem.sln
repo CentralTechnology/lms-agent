@@ -42,7 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotNetFramework", "DotNetFramework", "{F6FEB52F-E2AB-4517-8161-D22DE634F926}"
 	ProjectSection(SolutionItems) = preProject
-		Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe = Resources\DotNetFramework\NDP452-KB2901907-x86-x64-AllOS-ENU.exe
+		Resources\DotNetFramework\NDP452-KB2901954-Web.exe = Resources\DotNetFramework\NDP452-KB2901954-Web.exe
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLCompact", "SQLCompact", "{3D72B542-2480-4547-9F1F-AFEB02985684}"

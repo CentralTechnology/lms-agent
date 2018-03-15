@@ -81,10 +81,10 @@
                     new ExePackage
                     {
                         DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED",
-                        Id = "NetFx452FullExe",
-                        InstallCommand = "/q /norestart",
+                        Id = "NetFx452WebExe",
+                        InstallCommand = "/q /norestart /ChainingPackage LMS.Setup.exe",
                         Compressed = true,
-                        SourceFile = "../Resources/DotNetFramework/NDP452-KB2901907-x86-x64-AllOS-ENU.exe",
+                        SourceFile = "../Resources/DotNetFramework/NDP452-KB2901954-Web.exe",
                         PerMachine = true,
                         Permanent = true,
                         Vital = true
