@@ -5,18 +5,30 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
     using Microsoft.Win32;
     using Octokit;
+    using Polly;
     using Serilog;
-    using Serilog.Sinks.SystemConsole.Themes;
     using Version = SemVer.Version;
 
-     class Program
+    public class Program
     {
-        private static void Main()
+        private const string Name = "lms-agent";
+
+        private const string Owner = "CentralTechnology";
+
+        private static readonly string LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
+        private static readonly string SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
+
+        private static readonly RegistryKey[] UninstallKeys =
+        {
+            Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
+            RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
+            RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
+        };
+
+        public static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
@@ -25,16 +37,12 @@
 
             Log.Information("Starting deployment....");
 
-            Log.Information("Configuring the GitHub client.");
+            Log.Information("Building the GitHub client.");
 
-            ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) => true;
-
-            _client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"));
-            _client.SetRequestTimeout(TimeSpan.FromMinutes(5));
-
+            var client = BuildClient();
             try
             {
-                Deploy();
+                await StartDeployment(client);
             }
             catch (Exception ex)
             {
@@ -46,92 +54,47 @@
             Log.Information("************ Deployment  Successful ************");
         }
 
-
-        private const int MaxRetryAttempts = 3;
-        private const string Name = "lms-agent";
-
-        private const string Owner = "CentralTechnology";
-
-        private static GitHubClient _client;
-        private static readonly string LogFilename = Path.Combine(Directory.GetCurrentDirectory(), "LMS.Setup.log");
-        private static readonly TimeSpan PauseBetweenFailures = TimeSpan.FromSeconds(5);
-        private static readonly string SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
-
-        private static readonly RegistryKey[] UninstallKeys =
+        public static GitHubClient BuildClient()
         {
-            Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
-            RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
-            RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-        };
-
-        private static void CopyStream(Stream input, Stream output)
-        {
-            input.CopyTo(output);
+            var client = new GitHubClient(new ProductHeaderValue("LMS.Deploy"));
+            client.SetRequestTimeout(TimeSpan.FromMinutes(10));
+            return client;
         }
 
-        private static void Deploy()
+        private static void CopyStream(Stream input, Stream output) => input.CopyTo(output);
+
+        public static async Task<IApiResponse<byte[]>> DownloadLatestRelease(GitHubClient client, string url)
         {
-            Release release = null;
-            RetryOnException(MaxRetryAttempts, PauseBetweenFailures, () => { release = AsyncHelper.RunSync(() => _client.Repository.Release.GetLatest(Owner, Name)); });
+            var policy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(6, // We can also do this with WaitAndRetryForever... but chose WaitAndRetry this time.
+                    attempt => TimeSpan.FromSeconds(0.1 * Math.Pow(2, attempt)), // Back off!  2, 4, 8, 16 etc times 1/4-second
+                    (exception, calculatedWaitDuration) => // Capture some info for logging!
+                    {
+                        // This is your new exception handler! 
+                        // Tell the user what they've won!
+                        Log.Warning("Exception: " + exception.Message);
+                        Log.Warning(" ... automatically delaying for " + calculatedWaitDuration.TotalMilliseconds + "ms.");
+                    });
 
-            if (release == null)
+            var response = await policy.ExecuteAsync(() => client.Connection.Get<byte[]>(new Uri(url), new Dictionary<string, string>(), "application/octet-stream"));
+            if (response == null)
             {
-                throw new NullReferenceException("Failed to download the latest release information.");
-            }
-
-            Version latestVersion;
-            try
-            {
-                latestVersion = new Version(release.TagName);
-            }
-            catch (FormatException)
-            {
-                throw new FormatException("GitHub tag name is not in the correct format");
-            }
-
-            Version installedVersion;
-            try
-            {
-                System.Version appVersion = GetApplicationVersion("License Monitoring System");
-                installedVersion = new Version(appVersion.Major, appVersion.Minor, appVersion.Build);
-            }
-            catch (Exception)
-            {
-                Log.Information("Unable to determine the version of the agent installed. Using the default baseline version.");
-                installedVersion = new Version("1.0.0");
+                throw new Exception("Failed to download the latest release!");
             }
 
-            Log.Information($"Version Installed: {installedVersion}");
-            Log.Information($"Version Available: {latestVersion}");
-
-            if (installedVersion.CompareTo(latestVersion) < 0)
-            {
-                GetAsset(release);
-            }
-
-            if (installedVersion.CompareTo(latestVersion) > 0)
-            {
-                Log.Information("Somehow the installed version is newer than whats available");
-                Log.Information("Can't really do much about that");
-                return;
-            }
-
-            if (installedVersion.CompareTo(latestVersion) == 0)
-            {
-                Log.Information("No update required.");
-            }
+            return response;
         }
 
-        private static System.Version GetApplicationVersion(string pName)
+        public static System.Version GetApplicationVersion(string pName)
         {
             foreach (RegistryKey key in UninstallKeys)
             {
                 if (key != null)
                 {
-                    (bool exist, string value) data = key.GetSubKeyValue(key.GetSubKeyNames(), new NameValue("DisplayName", pName), requestedValue: "DisplayVersion");
-                    if (data.exist)
+                    (bool exist, string value) = key.GetSubKeyValue(key.GetSubKeyNames(), new NameValue("DisplayName", pName), requestedValue: "DisplayVersion");
+                    if (exist)
                     {
-                        return new System.Version(data.value);
+                        return new System.Version(value);
                     }
                 }
             }
@@ -140,52 +103,88 @@
             return null;
         }
 
-        private static void GetAsset(Release release)
+        public static Version GetCurrentInstalledVersion()
         {
-            int assetId = release.Assets.Where(x => x.Name == "LMS.Setup.exe").Select(x => x.Id).SingleOrDefault();
+            try
+            {
+                System.Version appVersion = GetApplicationVersion("License Monitoring System");
+                return new Version(appVersion.Major, appVersion.Minor, appVersion.Build);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
+                Log.Information("Unable to determine the version of the agent installed. Using the default baseline version.");
+                return new Version("1.0.0");
+            }
+        }
 
-            ReleaseAsset asset = null;
-            RetryOnException(MaxRetryAttempts, PauseBetweenFailures, () => { asset = AsyncHelper.RunSync(() => _client.Repository.Release.GetAsset(Owner, Name, assetId)); });
+        public static async Task<string> GetDownloadUrlAsync(GitHubClient client, Release release)
+        {
+            var policy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(6, // We can also do this with WaitAndRetryForever... but chose WaitAndRetry this time.
+                    attempt => TimeSpan.FromSeconds(0.1 * Math.Pow(2, attempt)), // Back off!  2, 4, 8, 16 etc times 1/4-second
+                    (exception, calculatedWaitDuration) => // Capture some info for logging!
+                    {
+                        // This is your new exception handler! 
+                        // Tell the user what they've won!
+                        Log.Warning("Exception: " + exception.Message);
+                        Log.Warning(" ... automatically delaying for " + calculatedWaitDuration.TotalMilliseconds + "ms.");
+                    });
 
+            var asset = await policy.ExecuteAsync(() => client.Repository.Release.GetAsset(Owner, Name, release.Assets.Where(a => a.Name == "LMS.Setup.exe").Select(a => a.Id).Single()));
             if (asset == null)
             {
-                Log.Error("Failed to download the latest assetLog.Information.");
-                throw new NullReferenceException();
+                throw new Exception("Failed to get the latest release download url!");
             }
 
-            IApiResponse<byte[]> response = null;
+            return asset.Url;
+        }
 
-            Log.Information($"Downloading: {release.TagName}");
-
-            RetryOnException(MaxRetryAttempts, PauseBetweenFailures, () => { response = AsyncHelper.RunSync(() => _client.Connection.Get<byte[]>(new Uri(asset.Url), new Dictionary<string, string>(), "application/octet-stream")); });
-
-            if (response == null)
-            {
-                Log.Error("Failed to download the latest asset file.");
-                throw new NullReferenceException();
-            }
-
-            Log.Information("Saving the new version");
-            try
-            {
-                using (var streamReader = new MemoryStream(response.Body))
-                {
-                    using (FileStream output = File.OpenWrite(SetupFilename))
+        public static async Task<Release> GetLatestRelease(GitHubClient client)
+        {
+            var policy = Policy.Handle<Exception>()
+                .WaitAndRetryAsync(6, // We can also do this with WaitAndRetryForever... but chose WaitAndRetry this time.
+                    attempt => TimeSpan.FromSeconds(0.1 * Math.Pow(2, attempt)), // Back off!  2, 4, 8, 16 etc times 1/4-second
+                    (exception, calculatedWaitDuration) => // Capture some info for logging!
                     {
-                        CopyStream(streamReader, output);
-                    }
-                }
-            }
-            catch (Exception)
+                        // This is your new exception handler! 
+                        // Tell the user what they've won!
+                        Log.Warning("Exception: " + exception.Message);
+                        Log.Warning(" ... automatically delaying for " + calculatedWaitDuration.TotalMilliseconds + "ms.");
+                    });
+
+            Release release = await policy.ExecuteAsync(() => client.Repository.Release.GetLatest(Owner, Name));
+            if (release == null)
             {
-                Log.Error("Saving failed");
-                throw;
+                throw new Exception("Unable to download the latest release");
             }
 
-            Log.Information("Installing the new version");
+            return release;
+        }
+
+        public static Version GetLatestVersion(Release release)
+        {
+            if (release == null)
+            {
+                throw new Exception("Cannot determine the latest version if the release is empty!");
+            }
+
             try
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/install /quiet /log {LogFilename}");
+                return new Version(release.TagName);
+            }
+            catch (FormatException ex)
+            {
+                Log.Error(ex, ex.Message);
+                throw new FormatException("GitHub tag name is not in the correct format");
+            }
+        }
+
+        public static void InstallLatestRelease()
+        {
+            try
+            {
+                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/i /qr /log {LogFilename}");
 
                 Process proc = Process.Start(processStartInfo);
                 if (proc == null)
@@ -194,84 +193,69 @@
                 }
 
                 proc.WaitForExit();
-                if (proc.ExitCode != 0)
+                Log.Information($"Exit code {proc.ExitCode}");
+                if (proc.ExitCode == 0)
                 {
-                    throw new Exception("Installation Failed");
+                    Log.Information("Successfully updated to the latest version.");
+                    return;
                 }
+
+                throw new Exception("Something went wrong during the installation.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Log.Error("Installation failed");
+                Log.Error(ex, ex.Message);
                 throw;
             }
-
-            Log.Information("Installation complete");
         }
 
-        private static void RetryOnException(int times, TimeSpan delay, Action operation)
+        public static void SaveLatestRelease(IApiResponse<byte[]> release)
         {
-            int attempts = 0;
-            var stopwatch = new Stopwatch();
-            do
+            using (var streamReader = new MemoryStream(release.Body))
             {
-                try
+                using (FileStream output = File.OpenWrite(SetupFilename))
                 {
-                    attempts++;
-
-                    stopwatch.Reset();
-                    stopwatch.Start();
-                    operation();
-                    stopwatch.Stop();
-                    Log.Information($"Request took: {stopwatch.Elapsed} to complete.");
-                    break;
+                    CopyStream(streamReader, output);
                 }
-                catch (HttpRequestException ex)
-                {
-                    Log.Error(ex.Message);
-                    if (ex.InnerException != null)
-                    {
-                        Log.Error(ex.InnerException.Message);
-                    }
-                    if (attempts == times)
-                    {
-                        throw;
-                    }
+            }
+        }
 
-                    Log.Error($"Exception caught on attempt {attempts} - will retry after delay {delay}");
+        public static async Task StartDeployment(GitHubClient client)
+        {
+            var latestRelease = await GetLatestRelease(client);
+            var latestVersion = GetLatestVersion(latestRelease);
+            var currentVersion = GetCurrentInstalledVersion();
 
-                    Task.Delay(delay).Wait();
-                }
-                catch (TaskCanceledException ex)
-                {
-                    if (attempts == times)
-                    {
-                        throw;
-                    }
+            Log.Information($"Installed: {currentVersion}    Available: {latestVersion}");
 
-                    if (ex.CancellationToken.IsCancellationRequested)
-                    {
-                        Log.Error("Download failed - Cancelled by end user");
-                        throw;
-                    }
+            if (currentVersion.CompareTo(latestVersion) < 0)
+            {
+                Log.Information("Update required!");
 
-                    stopwatch.Stop();
-                    Log.Error($"Time elapsed: {stopwatch.Elapsed}");
-                    Log.Error($"Download failed. Attempt: {attempts} - will retry after delay {delay}. Reason: Http Timeout.");
-                    Task.Delay(delay).Wait();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.Message);
-                    if (attempts == times)
-                    {
-                        throw;
-                    }
+                Log.Information("Getting the download url.");
+                var url = await GetDownloadUrlAsync(client, latestRelease);
 
-                    Log.Error($"Exception caught on attempt {attempts} - will retry after delay {delay}");
+                Log.Information("Download started. This could take some time...");
+                var response = await DownloadLatestRelease(client, url);
 
-                    Task.Delay(delay).Wait();
-                }
-            } while (true);
+                Log.Information("Saving file to disk.");
+                SaveLatestRelease(response);
+
+                Log.Information("Installation started.");
+                InstallLatestRelease();
+            }
+
+            if (currentVersion.CompareTo(latestVersion) > 0)
+            {
+                Log.Error("The installed version is newer than what is currently available.");
+                Log.Error("Please uninstall the current version and rerun the deploy utility.");
+                throw new Exception("Installed version is newer than what is currently available.");
+            }
+
+            if (currentVersion.CompareTo(latestVersion) == 0)
+            {
+                Log.Information("No update is required at this time.");
+            }
         }
     }
 }

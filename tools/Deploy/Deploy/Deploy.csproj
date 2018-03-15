@@ -50,6 +50,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
@@ -82,6 +83,9 @@
     </Reference>
     <Reference Include="Octokit, Version=0.29.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\src\packages\Octokit.0.29.0\lib\net45\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Polly, Version=5.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\packages\Polly.5.8.0\lib\net45\Polly.dll</HintPath>
     </Reference>
     <Reference Include="SemVer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a89bb7dc6f7a145c, processorArchitecture=MSIL">
       <HintPath>..\..\..\src\packages\SemanticVersioning.1.0.0\lib\net45\SemVer.dll</HintPath>

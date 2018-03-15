@@ -23,7 +23,8 @@
                     HelpTelephone = "0845 413 88 99",
                     Manufacturer = "Central Technology Ltd",
                     NoModify = true,
-                    NoRepair = true
+                    NoRepair = true,
+                    ProductIcon = "app_icon.ico"
                 },
                 InstallScope = InstallScope.perMachine,
                 MajorUpgrade = new MajorUpgrade
@@ -70,7 +71,11 @@
 
             var bootstrapper = new Bundle(Constants.ServiceDisplayName)
             {
+                HelpTelephone = "0845 413 88 99",
                 Manufacturer = "Central Technology Ltd",
+                DisableModify = "yes",
+                DisableRollback = true,
+                IconFile = "app_icon.ico",
                 OutDir = "bin/%Configuration%",
                 OutFileName = "LMS.Setup",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
@@ -81,10 +86,10 @@
                     new ExePackage
                     {
                         DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED",
-                        Id = "NetFx452FullExe",
-                        InstallCommand = "/q /norestart",
+                        Id = "NetFx452WebExe",
+                        InstallCommand = "/q /norestart /ChainingPackage LMS.Setup.exe",
                         Compressed = true,
-                        SourceFile = "../Resources/DotNetFramework/NDP452-KB2901907-x86-x64-AllOS-ENU.exe",
+                        SourceFile = "../Resources/DotNetFramework/NDP452-KB2901954-Web.exe",
                         PerMachine = true,
                         Permanent = true,
                         Vital = true
