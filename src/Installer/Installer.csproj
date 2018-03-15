@@ -96,6 +96,11 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="app_icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild">
     <SetEnvVar Values="ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);SolutionName=$(SolutionName);SolutionDir=$(SolutionDir);Configuration=$(Configuration)" />
