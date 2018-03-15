@@ -80,8 +80,8 @@
     <Reference Include="Nito.AsyncEx.Enlightenment, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\src\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit, Version=0.28.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\src\packages\Octokit.0.28.0\lib\net45\Octokit.dll</HintPath>
+    <Reference Include="Octokit, Version=0.29.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\packages\Octokit.0.29.0\lib\net45\Octokit.dll</HintPath>
     </Reference>
     <Reference Include="SemVer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a89bb7dc6f7a145c, processorArchitecture=MSIL">
       <HintPath>..\..\..\src\packages\SemanticVersioning.1.0.0\lib\net45\SemVer.dll</HintPath>
@@ -136,9 +136,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\..\src\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\src\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets'))" />
     <Error Condition="!Exists('..\..\..\src\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\src\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
-    <Error Condition="!Exists('..\..\..\src\packages\Fody.2.3.23\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\src\packages\Fody.2.3.23\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\..\..\src\packages\Fody.2.4.6\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\src\packages\Fody.2.4.6\build\Fody.targets'))" />
   </Target>
   <Import Project="..\..\..\src\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\..\..\src\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
   <Import Project="..\..\..\src\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\..\src\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Import Project="..\..\..\src\packages\Fody.2.3.23\build\Fody.targets" Condition="Exists('..\..\..\src\packages\Fody.2.3.23\build\Fody.targets')" />
+  <Import Project="..\..\..\src\packages\Fody.2.4.6\build\Fody.targets" Condition="Exists('..\..\..\src\packages\Fody.2.4.6\build\Fody.targets')" />
 </Project>
