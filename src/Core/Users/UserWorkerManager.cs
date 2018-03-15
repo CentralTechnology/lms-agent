@@ -11,6 +11,7 @@
     using Dto;
     using global::Hangfire.Console;
     using global::Hangfire.Server;
+    using Hangfire;
     using Managers;
     using Models;
     using OData;
@@ -95,7 +96,6 @@
             {
                 performContext?.Cancel();
 
-                
                 LicenseGroupUsersDto localMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
 
                 _userGroupManager.AddUsersToGroup(performContext, localMembers);
@@ -147,6 +147,7 @@
             Logger.Info(performContext, " ---------------PROCESS USERS END ---------------");
         }
 
+        [Mutex("UserWorkerManager")]
         public override void Start(PerformContext performContext)
         {
             var stopWatch = new Stopwatch();
