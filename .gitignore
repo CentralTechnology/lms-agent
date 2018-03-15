@@ -250,3 +250,5 @@ tools/*
 [Bb]uildArtifacts
 src/Installer/wix/
 /src/Installer/LMS.msi
+/src/Core/App_Readme
+/tests/LicenseMonitoringSystem.Tests/App_Readme

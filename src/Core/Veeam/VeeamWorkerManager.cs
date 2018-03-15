@@ -4,10 +4,10 @@
     using Abp.Configuration;
     using Abp.Timing;
     using Common.Extensions;
-    using Common.Interfaces;
     using Common.Managers;
     using Configuration;
     using global::Hangfire.Server;
+    using Hangfire;
     using Managers;
     using OData;
     using Portal.Common.Enums;
@@ -29,6 +29,7 @@
             _startupManager = startupManager;
         }
 
+        [Mutex("VeeamWorkerManager")]
         public override void Start(PerformContext performContext)
         {
             Execute(performContext, () =>
