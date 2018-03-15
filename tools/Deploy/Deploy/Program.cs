@@ -184,7 +184,7 @@
         {
             try
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/i /qr /log {LogFilename}");
+                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/install /quiet /norestart /log {LogFilename}");
 
                 Process proc = Process.Start(processStartInfo);
                 if (proc == null)
