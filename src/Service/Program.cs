@@ -3,17 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using Abp;
-    using Abp.Castle.Logging.Log4Net;
     using Abp.Collections.Extensions;
-    using Abp.Configuration;
-    using Abp.Dependency;
     using Abp.Timing;
-    using Castle.Facilities.Logging;
     using CommandLine;
     using CommandLine.Text;
     using Common.Constants;
-    using Configuration;
     using Topshelf;
 
     class Runner
@@ -38,7 +32,7 @@
                         sc.WhenStarted((tc, hostControl) => tc.Start(hostControl));
                         sc.WhenStopped((tc, hostControl) => tc.Stop(hostControl));
                     });
-
+                    
                     x.UseLog4Net();
                     x.RunAsLocalSystem();
                     x.SetServiceName(Constants.ServiceName);

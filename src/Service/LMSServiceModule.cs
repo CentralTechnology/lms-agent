@@ -24,55 +24,9 @@
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class LMSServiceModule : AbpModule
     {
-        private void ConfigureHangfireJobs()
-        {
-            var recurringJobManager = new RecurringJobManager();
-
-            recurringJobManager.RemoveIfExists(BackgroundJobNames.Users);
-            recurringJobManager.RemoveIfExists(BackgroundJobNames.Veeam);
-
-
-            using (var settingManager = IocManager.ResolveAsDisposable<ISettingManager>())
-            {
-                if (settingManager.Object.GetSettingValue<bool>(AppSettingNames.MonitorUsers))
-                {
-                    // setup event log monitoring
-                    ServiceHost.SetupActiveDirectoryListener();
-
-                    var averageRuntime = settingManager.Object.GetSettingValue<int>(AppSettingNames.UsersAverageRuntime);
-                    if (averageRuntime == default(int) || averageRuntime < 15)
-                    {
-                        averageRuntime = 15;
-                    }
-
-                    string schedule = $"*/{averageRuntime} * * * *";
-
-                    recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), schedule);
-                }
-
-                if (settingManager.Object.GetSettingValue<bool>(AppSettingNames.MonitorVeeam))
-                {
-                    recurringJobManager.AddOrUpdate(BackgroundJobNames.Veeam, Job.FromExpression<VeeamWorkerManager>(j => j.Start(null)), "*/15 * * * *");
-                }
-            }
-
-
-
-        }
-
         public override void Initialize()
         {
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
-        }
-
-        public override void PostInitialize()
-        {
-            using (IDisposableDependencyObjectWrapper<StartupManager> startupManager = IocManager.ResolveAsDisposable<StartupManager>())
-            {
-                startupManager.Object.Init(null);
-            }
-
-            ConfigureHangfireJobs();
         }
 
         public override void PreInitialize()
