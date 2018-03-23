@@ -56,4 +56,49 @@
             return (false, string.Empty);
         }
     }
+
+    public class Register
+    {
+        public bool CheckInstalled(string cName,out string kName)
+        {
+            string displayName;
+            
+            string registryKey = @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall";
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(registryKey);
+            
+            if (key != null)
+            {
+                foreach (RegistryKey subkey in key.GetSubKeyNames().Select(keyName => key.OpenSubKey(keyName)))
+                {
+                    displayName = subkey.GetValue("DisplayName") as string;
+                    kName = subkey.ToString();
+                    if (displayName != null && displayName.Contains(cName))
+                    {
+                        
+                        return true;
+                    }
+                }
+                key.Close();
+            }
+
+            registryKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
+            key = Registry.LocalMachine.OpenSubKey(registryKey);
+            if (key != null)
+            {
+                foreach (RegistryKey subkey in key.GetSubKeyNames().Select(keyName => key.OpenSubKey(keyName)))
+                {                    
+                    displayName = subkey.GetValue("DisplayName") as string;
+                    kName = subkey.ToString();
+                    if (displayName != null && displayName.Contains(cName))
+                    {
+                        kName = subkey.ToString();
+                        return true;
+                    }
+                }
+                key.Close();
+            }
+            kName = null;
+            return false;
+        }
+    }
 }
