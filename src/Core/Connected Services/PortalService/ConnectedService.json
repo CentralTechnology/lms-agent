@@ -6,10 +6,10 @@
   },
   "ExtendedData": {
     "EnableNamingAlias": false,
-    "IgnoreUnexpectedElementsAndAttributes": true,
+    "IgnoreUnexpectedElementsAndAttributes": false,
     "IncludeT4File": false,
-    "ServiceName": "Portal",
-    "Endpoint": "http://localhost:51078/odata/v1/$metadata",
+    "ServiceName": "PortalService",
+    "Endpoint": "https://api-v2.portal.ct.co.uk/odata/$metadata",
     "EdmxVersion": {
       "Major": 4,
       "Minor": 0,
@@ -18,9 +18,9 @@
       "MajorRevision": 0,
       "MinorRevision": 0
     },
-    "GeneratedFileNamePrefix": "PortalProxy",
+    "GeneratedFileNamePrefix": "PortalService",
     "UseNameSpacePrefix": false,
     "NamespacePrefix": null,
-    "UseDataServiceCollection": false
+    "UseDataServiceCollection": true
   }
 }
