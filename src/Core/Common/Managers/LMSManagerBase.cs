@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Common.Managers
+﻿namespace LMS.Core.Common.Managers
 {
     using Abp.Domain.Services;
     using SharpRaven;
@@ -13,7 +7,7 @@ namespace LMS.Common.Managers
     {
         public LMSManagerBase()
         {
-            RavenClient = Core.Sentry.RavenClient.Instance;
+            RavenClient = Sentry.RavenClient.Instance;
         }
 
         public RavenClient RavenClient { get; set; }

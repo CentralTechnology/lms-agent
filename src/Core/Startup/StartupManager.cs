@@ -8,6 +8,7 @@
     using Common.Extensions;
     using Common.Managers;
     using Configuration;
+    using Core.Common.Managers;
     using global::Hangfire.Server;
     using SharpRaven.Data;
     using Users.Managers;

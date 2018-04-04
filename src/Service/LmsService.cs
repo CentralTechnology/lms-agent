@@ -4,6 +4,7 @@
     using System.Collections.Concurrent;
     using System.Configuration;
     using System.Reflection;
+    using Abp.Configuration;
     using Abp.Dependency;
     using Common.Extensions;
     using global::Hangfire;
@@ -21,12 +22,20 @@
             {
                 port = 9000; // set default
             }
+
             _webapp = WebApp.Start<Startup>($"http://localhost:{port}");
 
-            using (var startupManager = IocManager.Instance.ResolveAsDisposable<IStartupManager>())
+            using (var iocResolver = IocManager.Instance.ResolveAsDisposable<IIocResolver>())
             {
-                startupManager.Object.Init(null);
-            }
+                using (var scope = iocResolver.Object.CreateScope())
+                {
+                    var startupManager = scope.Resolve<IStartupManager>();
+                    var settingManager = scope.Resolve<ISettingManager>();
+
+                    StartupHelper.Initiliaze(startupManager);
+                    StartupHelper.ConfigureBackgroundJobs(settingManager);
+                }
+            }                      
            
             return true;
         }

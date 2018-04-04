@@ -1,4 +1,4 @@
-﻿namespace Core.Sentry
+﻿namespace LMS.Core.Sentry
 {
     using LMS.Common.Constants;
     using LMS.Common.Helpers;

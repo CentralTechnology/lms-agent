@@ -17,10 +17,6 @@
         {
             _portalManager = portalManager;
         }
-        public int GetId()
-        {
-            return SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
-        }
 
         public bool IsValid(PerformContext performContext)
         {
@@ -28,23 +24,23 @@
             {
                 var deviceId = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
 
-                int accountId;
-                int storedAccount;
+                long accountId;
+                long storedAccount;
                 try
                 {
-                    storedAccount = SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
+                    storedAccount = SettingManager.GetSettingValue<long>(AppSettingNames.AutotaskAccountId);
                 }
                 catch (Exception ex)
                 {
                     Logger.Error(ex.Message);
-                    storedAccount = default(int);
+                    storedAccount = default(long);
                 }
 
-                if (storedAccount == default(int))
+                if (storedAccount == default(long))
                 {
-                    int reportedAccount = _portalManager.GetAccountIdByDeviceId(deviceId);
+                    long reportedAccount = _portalManager.GetAccountIdByDeviceId(deviceId);
 
-                    if (reportedAccount == default(int))
+                    if (reportedAccount == default(long))
                     {
                         Logger.Log(LogSeverity.Warn, performContext, "Check Account: FAIL");
                         Logger.Log(LogSeverity.Error,
@@ -54,7 +50,7 @@
                     }
 
                     SettingManager.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, reportedAccount.ToString());
-                    accountId = reportedAccount.To<int>();
+                    accountId = reportedAccount.To<long>();
                 }
                 else
                 {

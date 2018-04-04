@@ -1,349 +1,40 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6981655A-0373-4F38-A3AE-4A7262FA7150}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LMS</RootNamespace>
+    <TargetFramework>net452</TargetFramework>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <IsPackable>false</IsPackable>
     <AssemblyName>LMS.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>15.0</OldToolsVersion>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>7</LangVersion>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <NoWarn>CS0618</NoWarn>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Abp, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Abp.1.5.1\lib\net452\Abp.dll</HintPath>
-    </Reference>
-    <Reference Include="Abp.AutoMapper, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Abp.AutoMapper.1.5.1\lib\net452\Abp.AutoMapper.dll</HintPath>
-    </Reference>
-    <Reference Include="Abp.Web, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Abp.Web.1.5.1\lib\net452\Abp.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Abp.Web.Api, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Abp.Web.Api.1.5.1\lib\net452\Abp.Web.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Abp.Web.Common, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Abp.Web.Common.1.5.1\lib\net452\Abp.Web.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="AutoMapper, Version=5.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.5.2.0\lib\net45\AutoMapper.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Facilities.Logging, Version=3.4.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.LoggingFacility.3.4.0\lib\net45\Castle.Facilities.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor, Version=3.4.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Windsor.3.4.0\lib\net45\Castle.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Hangfire.Console, Version=1.3.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Hangfire.Console.1.3.10\lib\net45\Hangfire.Console.dll</HintPath>
-    </Reference>
-    <Reference Include="Hangfire.Core, Version=1.6.17.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Hangfire.Core.1.6.17\lib\net45\Hangfire.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=4.52.0.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
-      <HintPath>..\packages\CompareNETObjects.4.52.0.0\lib\net452\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.OData.Client, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.OData.Client.6.18.0\lib\net40\Microsoft.OData.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.OData.Core, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.OData.Core.6.18.0\lib\portable-net45+win+wpa81\Microsoft.OData.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.OData.Edm, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.OData.Edm.6.18.0\lib\portable-net45+win+wpa81\Microsoft.OData.Edm.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Spatial, Version=6.18.0.10905, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Spatial.6.18.0\lib\portable-net45+win+wpa81\Microsoft.Spatial.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Threading.Tasks.Extensions, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Nito.AsyncEx, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.dll</HintPath>
-    </Reference>
-    <Reference Include="Nito.AsyncEx.Concurrent, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.Concurrent.dll</HintPath>
-    </Reference>
-    <Reference Include="Nito.AsyncEx.Enlightenment, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
-    </Reference>
-    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Polly, Version=5.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Polly.5.8.0\lib\net45\Polly.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpRaven, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpRaven.2.2.0\lib\net45\SharpRaven.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.3.1\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-    </Reference>
+    <Compile Include="..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Abp.AutoMapper" Version="1.5.1" />
+    <PackageReference Include="CompareNETObjects" Version="4.52.0" />
+    <PackageReference Include="Hangfire.Console" Version="1.3.10" />
+    <PackageReference Include="Microsoft.OData.Client" Version="7.4.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Polly" Version="5.8.0" />
+    <PackageReference Include="SharpRaven" Version="2.3.2" />
+    <PackageReference Include="System.DirectoryServices" Version="4.5.0-preview1-26216-02" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="4.5.0-preview1-26216-02" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Client\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.DirectoryServices.AccountManagement" />
-    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="Autotask\AutotaskManager.cs" />
-    <Compile Include="Autotask\IAutotaskManager.cs" />
-    <Compile Include="CentraStage\CentraStageManager.cs" />
-    <Compile Include="CentraStage\ICentraStageManager.cs" />
-    <Compile Include="Common\Caster.cs" />
-    <Compile Include="Common\Client\PortalWebApiClient.cs" />
-    <Compile Include="Common\Constants\Constants.cs" />
-    <Compile Include="Common\Extensions\ExceptionExtensions.cs" />
-    <Compile Include="Common\Extensions\IDataReaderExtensions.cs" />
-    <Compile Include="Common\Extensions\LoggerExtensions.cs" />
-    <Compile Include="Common\Extensions\PerformContextExtensions.cs" />
-    <Compile Include="Common\Extensions\StringExtensions.cs" />
-    <Compile Include="Common\Extensions\TypeExtensions.cs" />
-    <Compile Include="Common\Extensions\UserFlagExtensions.cs" />
-    <Compile Include="Common\Extensions\VeeamExtensions.cs" />
-    <Compile Include="Common\Extensions\DirectoryEntryExtensions.cs" />
-    <Compile Include="Common\Extensions\CommonExtensions.cs" />
-    <Compile Include="Common\Extensions\ObjectExtensions.cs" />
-    <Compile Include="Common\Extensions\RegistryExtensions.cs" />
-    <Compile Include="Common\Extensions\PrincipleExtensions.cs" />
-    <Compile Include="Common\Helpers\AppVersionHelper.cs" />
-    <Compile Include="Common\Helpers\CommonHelpers.cs" />
-    <Compile Include="Common\Helpers\DebuggingService.cs" />
-    <Compile Include="Common\Helpers\HangfireHelper.cs" />
-    <Compile Include="Common\Helpers\Log4NetHelper.cs" />
-    <Compile Include="Common\Helpers\SettingManagerHelper.cs" />
-    <Compile Include="Common\Interfaces\IWorkerManager.cs" />
-    <Compile Include="Common\Managers\OperationManager.cs" />
-    <Compile Include="Common\Managers\WorkerManagerBase.cs" />
-    <Compile Include="Common\Managers\LMSManagerBase.cs" />
-    <Compile Include="Configuration\AppSettingNames.cs" />
-    <Compile Include="Configuration\AppSettingProvider.cs" />
-    <Compile Include="Configuration\Setting.cs" />
-    <Compile Include="Configuration\SettingExtensions.cs" />
-    <Compile Include="Configuration\SettingStore.cs" />
-    <Compile Include="Connected Services\Portal\PortalProxy.cs" />
-    <Compile Include="Hangfire\BackgroundJobNames.cs" />
-    <Compile Include="Hangfire\MutexAttribute.cs" />
-    <Compile Include="LMSCoreModule.cs" />
-    <Compile Include="Migrations\201707140955114_Initial.cs" />
-    <Compile Include="Migrations\201707140955114_Initial.Designer.cs">
-      <DependentUpon>201707140955114_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="OData\IPortalManager.cs" />
-    <Compile Include="Startup\IStartupManager.cs" />
-    <Compile Include="Users\Compare\LicenseGroupCompareLogic.cs" />
-    <Compile Include="Users\Compare\LicenseUserCompareLogic.cs" />
-    <Compile Include="Users\Compare\LicenseUserComparer.cs" />
-    <Compile Include="Users\Dto\LicenseGroupDto.cs" />
-    <Compile Include="Users\Dto\LicenseUserDto.cs" />
-    <Compile Include="Users\Dto\LicenseGroupUsersDto.cs" />
-    <Compile Include="Users\Enums\Enums.cs" />
-    <Compile Include="Users\Events\NewActiveDirectoryUserEventData.cs" />
-    <Compile Include="Users\Events\NewActiveDirectoryUserEventHandler.cs" />
-    <Compile Include="Users\Extensions\GroupPrincipalExtensions.cs" />
-    <Compile Include="Users\Extensions\LicenseGroupExtensions.cs" />
-    <Compile Include="Users\Extensions\LicenseUserExtensions.cs" />
-    <Compile Include="Users\Extensions\UserPrincipalExtensions.cs" />
-    <Compile Include="Users\IUserWorkerManager.cs" />
-    <Compile Include="Users\Managers\GroupManager.cs" />
-    <Compile Include="Users\Managers\IActiveDirectoryManager.cs" />
-    <Compile Include="Users\Managers\IGroupManager.cs" />
-    <Compile Include="Users\Managers\IManagedSupportManager.cs" />
-    <Compile Include="Users\Managers\IUserGroupManager.cs" />
-    <Compile Include="Users\Managers\IUserManager.cs" />
-    <Compile Include="Users\Managers\ManagedSupportManager.cs" />
-    <Compile Include="Users\Managers\UserGroupManager.cs" />
-    <Compile Include="Users\Managers\UserManager.cs" />
-    <Compile Include="Users\Models\LicenseGroupSummary.cs" />
-    <Compile Include="Users\Models\LicenseUserSummary.cs" />
-    <Compile Include="OData\PortalManager.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sentry\RavenClient.cs" />
-    <Compile Include="Startup\StartupManager.cs" />
-    <Compile Include="Users\Managers\ActiveDirectoryManager.cs" />
-    <Compile Include="Users\Profiles\LicenseGroupProfile.cs" />
-    <Compile Include="Users\Profiles\LicenseUserProfile.cs" />
-    <Compile Include="Users\UserWorkerManager.cs" />
-    <Compile Include="Veeam\Backup\Common\EPlatform.cs" />
-    <Compile Include="Veeam\Entities\Veeam.cs" />
-    <Compile Include="Veeam\IVeeamWorkerManager.cs" />
-    <Compile Include="Veeam\Managers\ILicenseManager.cs" />
-    <Compile Include="Veeam\Managers\IVeeamManager.cs" />
-    <Compile Include="Veeam\Mappings\CPerVmStoredProceduresMapping.cs" />
-    <Compile Include="Veeam\Mappings\CPerVmTrialStoredProceduresMapping.cs" />
-    <Compile Include="Veeam\DBManager\DbAccessor.cs" />
-    <Compile Include="Veeam\DBManager\ISqlFieldDescriptor.cs" />
-    <Compile Include="Veeam\DBManager\ISqlFieldDescriptorOfType.cs" />
-    <Compile Include="Veeam\DBManager\LocalDbAccessor.cs" />
-    <Compile Include="Veeam\DBManager\SqlCastableTypeFieldDescriptor.cs" />
-    <Compile Include="Veeam\DBManager\SqlExtendableReferenceTypeFieldDescriptor.cs" />
-    <Compile Include="Veeam\DBManager\SqlFieldDescriptor.cs" />
-    <Compile Include="Veeam\DBManager\SqlNullableTypeFieldDescriptor.cs" />
-    <Compile Include="Veeam\DBManager\SqlReferenceTypeFieldDescriptor.cs" />
-    <Compile Include="Veeam\DBManager\SqlValueTypeFieldDescriptor.cs" />
-    <Compile Include="Veeam\Enums\Enums.cs" />
-    <Compile Include="Veeam\Mappings\IPerVmStoredProceduresMapping.cs" />
-    <Compile Include="Veeam\Managers\LicenseManager.cs" />
-    <Compile Include="Veeam\Models\VeeamLicense.cs" />
-    <Compile Include="Veeam\Managers\VeeamManager.cs" />
-    <Compile Include="Veeam\VeeamWorkerManager.cs" />
-    <Compile Include="Veeam\Models\VmLicensingInfo.cs" />
-    <Compile Include="Veeam\Models\VmsCounterInfo.cs" />
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\Portal\ConnectedService.json" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="EntityFramework\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201707140955114_Initial.resx">
-      <DependentUpon>201707140955114_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_Readme\Compare-NET-Objects-Help.txt" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
-    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
-    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
-    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
-  </Target>
+
 </Project>

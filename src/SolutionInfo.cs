@@ -7,4 +7,4 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyCompany("Central Technology Ltd")]
 
-[assembly: InternalsVisibleTo("LicenseMonitoringSystem.Tests")]
+[assembly: InternalsVisibleTo("LMS.Tests")]

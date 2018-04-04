@@ -33,7 +33,7 @@
                     DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
                 },
                 Name = Constants.ServiceDisplayName,
-                OutDir = "bin/%Configuration%",
+                OutDir = "bin/%Configuration%/",
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
                 UI = WUI.WixUI_Common
             };
@@ -76,7 +76,7 @@
                 DisableModify = "yes",
                 DisableRollback = true,
                 IconFile = "app_icon.ico",
-                OutDir = "bin/%Configuration%",
+                OutDir = "bin/%Configuration%/",
                 OutFileName = "LMS.Setup",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
                 Version = new Version(version),

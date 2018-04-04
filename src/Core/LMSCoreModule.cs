@@ -2,10 +2,7 @@
 {
     using System.Reflection;
     using Abp.AutoMapper;
-    using Abp.Dependency;
     using Abp.Modules;
-    using Abp.WebApi;
-    using Abp.WebApi.Client;
     using AutoMapper;
     using Common.Extensions;
     using Configuration;
@@ -15,8 +12,6 @@
     {
         public override void PreInitialize()
         {
-            IocManager.Register<IAbpWebApiClient,AbpWebApiClient>();
-
             Configuration.MultiTenancy.IsEnabled = false;
             Configuration.Settings.Providers.Add<AppSettingProvider>();   
         }

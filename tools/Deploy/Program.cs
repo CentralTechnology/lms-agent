@@ -12,7 +12,7 @@
     using Serilog;
     using Version = SemVer.Version;
 
-    public class Program
+    class Program
     {
         private const string Name = "lms-agent";
 
@@ -28,7 +28,7 @@
             RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
         };
 
-        public static async Task Main(string[] args)
+        static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
@@ -85,30 +85,34 @@
             return response;
         }
 
-        public static System.Version GetApplicationVersion(string pName)
+        public static Version GetApplicationVersion(string pName)
         {
-            foreach (RegistryKey key in UninstallKeys)
+            try
             {
-                if (key != null)
-                {
-                    (bool exist, string value) = key.GetSubKeyValue(key.GetSubKeyNames(), new NameValue("DisplayName", pName), requestedValue: "DisplayVersion");
-                    if (exist)
-                    {
-                        return new System.Version(value);
-                    }
-                }
+                FileVersionInfo x64Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files (x86)\License Monitoring System\LMS.exe");
+                return new Version(x64Info.FileVersion,true);
+            }
+            catch (FileNotFoundException)
+            {
+
             }
 
-            // NOT FOUND
-            return null;
+            try
+            {
+                FileVersionInfo x86Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files\License Monitoring System\LMS.exe");
+                return new Version(x86Info.FileVersion, true);
+            }
+            catch (FileNotFoundException)
+            {
+                return new Version(1, 0, 0);
+            }
         }
 
         public static Version GetCurrentInstalledVersion()
         {
             try
             {
-                System.Version appVersion = GetApplicationVersion("License Monitoring System");
-                return new Version(appVersion.Major, appVersion.Minor, appVersion.Build);
+                return GetApplicationVersion("License Monitoring System");
             }
             catch (Exception ex)
             {
@@ -184,7 +188,7 @@
         {
             try
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/i /qr /log {LogFilename}");
+                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/install /quiet /norestart /log {LogFilename}");
 
                 Process proc = Process.Start(processStartInfo);
                 if (proc == null)
@@ -197,6 +201,12 @@
                 if (proc.ExitCode == 0)
                 {
                     Log.Information("Successfully updated to the latest version.");
+                    return;
+                }
+
+                if (proc.ExitCode == 3010)
+                {
+                    Log.Warning("Successfully updated to the latest version but a reboot is required!");
                     return;
                 }
 

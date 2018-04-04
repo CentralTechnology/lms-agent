@@ -24,7 +24,7 @@
         void DeleteUser(Guid id);
         void Detach(object entity);
         int GenerateUploadId();
-        int GetAccountIdByDeviceId(Guid deviceId);
+        long GetAccountIdByDeviceId(Guid deviceId);
         int GetManagedSupportId(Guid deviceId);
         List<LicenseGroupSummary> ListAllGroupIds();
         List<LicenseGroupSummary> ListAllGroupIds(Expression<Func<LicenseGroup,bool>> predicate);

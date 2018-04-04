@@ -8,6 +8,7 @@
     using Abp;
     using Common.Extensions;
     using Common.Managers;
+    using Core.Common.Managers;
     using Microsoft.Win32;
 
     public class LicenseManager : LMSManagerBase, ILicenseManager

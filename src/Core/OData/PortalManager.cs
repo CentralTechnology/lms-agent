@@ -16,6 +16,7 @@
     using Common.Extensions;
     using Common.Managers;
     using Configuration;
+    using Core.Common.Managers;
     using LicenseUserService;
     using Microsoft.OData.Client;
     using Polly;
@@ -142,7 +143,7 @@
 
         public int GenerateUploadId() => _defaultPolicy.Execute(() => Container.ManagedSupports.NewUploadId().GetValue());
 
-        public int GetAccountIdByDeviceId(Guid deviceId) => _defaultPolicy.Execute(() => Container.CentraStageDevices.GetAccountId(deviceId).GetValue());
+        public long GetAccountIdByDeviceId(Guid deviceId) => _defaultPolicy.Execute(() => Container.CentraStageDevices.GetAccountId(deviceId).GetValue());
 
         public int GetManagedSupportId(Guid deviceId) => _defaultPolicy.Execute(() => Container.ManagedSupports.GetUploadId(deviceId).GetValue());
 
