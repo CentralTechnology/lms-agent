@@ -9,6 +9,7 @@
     using global::Hangfire.Server;
     using OData;
 
+    [Obsolete]
     public class AutotaskManager : DomainService, IAutotaskManager
     {
         private readonly IPortalManager _portalManager;

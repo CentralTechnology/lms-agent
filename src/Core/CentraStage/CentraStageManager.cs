@@ -9,6 +9,7 @@
     using global::Hangfire.Server;
     using Microsoft.Win32;
 
+    [Obsolete]
     public class CentraStageManager : DomainService, ICentraStageManager
     {
         /// <inheritdoc />
