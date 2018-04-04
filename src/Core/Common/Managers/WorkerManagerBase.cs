@@ -4,6 +4,7 @@
     using System.Diagnostics;
     using System.Net;
     using Abp;
+    using Core.Common.Managers;
     using Extensions;
     using global::Hangfire.Console;
     using global::Hangfire.Server;

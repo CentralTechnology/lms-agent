@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("License Monitoring System Assistant")]
 [assembly: AssemblyDescription("Helper application for the License Monitoring System")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Central Technology Ltd")]
 [assembly: AssemblyProduct("Assistant")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]

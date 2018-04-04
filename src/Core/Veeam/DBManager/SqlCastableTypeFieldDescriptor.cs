@@ -2,7 +2,7 @@
 {
     using System.Data;
     using System.Data.SqlClient;
-    using Core.Common;
+    using global::Core.Common;
 
     public sealed class SqlCastableTypeFieldDescriptor<TExternal, TInternal> : ISqlFieldDescriptor<TExternal>, ISqlFieldDescriptor
     {

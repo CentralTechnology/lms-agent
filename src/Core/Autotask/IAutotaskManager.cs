@@ -11,7 +11,6 @@ namespace LMS.Autotask
 
     public interface IAutotaskManager : IDomainService
     {
-        int GetId();
         bool IsValid(PerformContext performContext);
     }
 }
