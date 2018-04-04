@@ -6,6 +6,7 @@
     using Abp.Logging;
     using Common.Extensions;
     using Configuration;
+    using Core.Common.Extensions;
     using global::Hangfire.Server;
     using Microsoft.Win32;
 

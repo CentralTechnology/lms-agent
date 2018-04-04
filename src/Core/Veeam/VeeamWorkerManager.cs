@@ -1,76 +1,53 @@
-﻿namespace LMS.Veeam
+﻿namespace LMS.Core.Veeam
 {
     using System;
-    using Abp.Configuration;
-    using Abp.Timing;
+    using System.Threading.Tasks;
     using Common.Extensions;
-    using Common.Managers;
-    using Configuration;
     using global::Hangfire.Server;
     using Hangfire;
-    using Managers;
-    using OData;
-    using Portal.Common.Enums;
+    using LMS.Common.Managers;
+    using LMS.Veeam;
+    using LMS.Veeam.Managers;
+    using Newtonsoft.Json;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
-    using Startup;
 
     public class VeeamWorkerManager : WorkerManagerBase, IVeeamWorkerManager
     {
-        private readonly IPortalManager _portalManager;
-        private readonly ISettingManager _settingManager;
-        private readonly IStartupManager _startupManager;
         private readonly IVeeamManager _veeamManager;
 
-        public VeeamWorkerManager(IPortalManager portalManager, ISettingManager settingManager, IVeeamManager veeamManager, IStartupManager startupManager)
+        public VeeamWorkerManager(IVeeamManager veeamManager)
         {
-            _portalManager = portalManager;
-            _settingManager = settingManager;
             _veeamManager = veeamManager;
-            _startupManager = startupManager;
         }
 
         [Mutex("VeeamWorkerManager")]
-        public override void Start(PerformContext performContext)
-        {
-            Execute(performContext, () =>
-            {
-                _startupManager.ValidateCredentials(performContext);
+        public override void Start(PerformContext performContext) => throw new NotImplementedException();
 
+        [Mutex("VeeamWorkerManager")]
+        public override async Task StartAsync(PerformContext performContext)
+        {
+            await ExecuteAsync(performContext, async () =>
+            {
                 if (!_veeamManager.IsOnline())
                 {
+                    performContext?.WriteErrorLine("The Veeam server does not appear to be online. Please make sure all Veeam services are started before retrying this operation again.");
                     Logger.Error("Veeam server not online.");
                     return;
                 }
 
-                var deviceId = _settingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
-                Veeam veeam = _portalManager.ListVeeamById(deviceId);
-                bool newVeeam = false;
-                if (veeam == null)
-                {
-                    veeam = new Veeam();
-                    newVeeam = true;
-                }
-
                 Logger.Info(performContext, "Collecting information...this could take some time.");
 
-                veeam = _veeamManager.GetLicensingInformation(performContext, veeam);
-                veeam.Validate();
+                Veeam payload = _veeamManager.GetLicensingInformation(performContext);
 
-                Logger.Info(veeam.ToString());
+                Logger.Info(performContext, "done");
+                Logger.Info(performContext, "Validating the payload...");
 
-                // set additional properties
-                veeam.CheckInTime = new DateTimeOffset(Clock.Now);
-                veeam.Status = CallInStatus.CalledIn;
-                veeam.UploadId = _portalManager.GenerateUploadId();
+                payload.Validate();
 
-                if (newVeeam)
-                {
-                    _portalManager.AddVeeam(veeam);
-                }
-                else
-                {
-                    _portalManager.UpdateVeeam(veeam);
-                }
+                Logger.Info(performContext, "Payload is valid!");
+                Logger.Info($"Payload details: {JsonConvert.SerializeObject(payload, Formatting.None)}");
+
+                await PortalService.UpdateVeeamServerAsync(payload);
             });
         }
     }

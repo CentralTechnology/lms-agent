@@ -11,6 +11,7 @@
     using Abp.Domain.Services;
     using Abp.Extensions;
     using Common.Extensions;
+    using Core.Common.Extensions;
     using Dto;
     using Extensions;
     using global::Hangfire.Server;

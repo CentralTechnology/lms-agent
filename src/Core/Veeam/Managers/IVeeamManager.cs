@@ -12,7 +12,7 @@ namespace LMS.Veeam.Managers
 
     public interface IVeeamManager: IDomainService
     {
-        Veeam GetLicensingInformation(PerformContext performContext, Veeam veeam);
+        Veeam GetLicensingInformation(PerformContext performContext);
 
         bool IsInstalled(PerformContext performContext);
 

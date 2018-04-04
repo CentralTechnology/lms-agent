@@ -9,6 +9,7 @@
     using Abp.Timing;
     using Common.Helpers;
     using Configuration;
+    using Core.Veeam;
     using global::Hangfire;
     using global::Hangfire.Common;
     using Hangfire;
@@ -67,7 +68,7 @@
             {
                 string runtime = GetRunTime();
 
-                recurringJobManager.AddOrUpdate(BackgroundJobNames.Veeam, Job.FromExpression<VeeamWorkerManager>(j => j.Start(null)), runtime);
+                recurringJobManager.AddOrUpdate(BackgroundJobNames.Veeam, Job.FromExpression<VeeamWorkerManager>(j => j.StartAsync(null)), runtime);
             }
         }
 

@@ -7,6 +7,7 @@
     using Abp.Logging;
     using Common.Helpers;
     using Configuration;
+    using Core.Veeam;
     using LMS.Startup;
     using Users;
     using Veeam;

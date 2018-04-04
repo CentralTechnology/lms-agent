@@ -14,11 +14,13 @@
     using Abp;
     using Abp.Configuration;
     using Abp.Domain.Services;
+    using Abp.Timing;
     using Backup.Common;
     using Common.Constants;
     using Common.Extensions;
     using Common.Helpers;
     using Configuration;
+    using Core.Common.Extensions;
     using DBManager;
     using Enums;
     using global::Hangfire.Server;
@@ -220,8 +222,10 @@
         }
 
 
-        public Veeam GetLicensingInformation(PerformContext performContext, Veeam veeam)
+        public Veeam GetLicensingInformation(PerformContext performContext)
         {
+            Veeam veeam = new Veeam();
+
             try
             {
                 veeam.LicenseType = VeeamLicense.TypeEx;
@@ -230,6 +234,7 @@
             {
                 Logger.Error(performContext,"There was an error while getting the license information from the registry. We'll therefore assume its an evaluation license.");
                 Logger.Debug(performContext,ex.Message, ex);
+
                 veeam.LicenseType = LicenseTypeEx.Evaluation;
             }
 
@@ -237,16 +242,18 @@
 
             Version programVersion = Version.Parse(veeam.ProgramVersion);
 
-            var virtualMachines = GetVirtualMachineCount(performContext, programVersion, veeam.LicenseType);
-            veeam.vSphere = virtualMachines.vsphere;
-            veeam.HyperV = virtualMachines.hyperv;
+            var (vsphere, hyperv) = GetVirtualMachineCount(performContext, programVersion, veeam.LicenseType);
+            veeam.vSphere = vsphere;
+            veeam.HyperV = hyperv;
 
+            veeam.CheckInTime = new DateTimeOffset(Clock.Now);
             veeam.ClientVersion = SettingManagerHelper.ClientVersion;
             veeam.Edition = VeeamLicense.Edition;
             veeam.ExpirationDate = VeeamLicense.ExpirationDate;
-            veeam.Id = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
+            veeam.Id = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>(); // auth service
             veeam.SupportId = VeeamLicense.SupportId;
-            veeam.TenantId = SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
+            veeam.TenantId = SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId); // auth service
+
 
             return veeam;
         }

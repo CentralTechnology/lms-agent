@@ -7,6 +7,7 @@
     using Common.Extensions;
     using Common.Helpers;
     using Configuration;
+    using Core.Common.Extensions;
     using global::Hangfire.Server;
     using OData;
     using Portal.Common.Enums;

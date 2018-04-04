@@ -4,6 +4,7 @@
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
     using Abp.Logging;
+    using Core.Common.Extensions;
     using global::Hangfire.Server;
 
     public static class PrincipleExtensions

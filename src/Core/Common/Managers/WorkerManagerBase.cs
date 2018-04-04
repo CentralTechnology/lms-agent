@@ -3,8 +3,13 @@
     using System;
     using System.Diagnostics;
     using System.Net;
+    using System.Threading.Tasks;
     using Abp;
+    using Abp.Configuration;
+    using Abp.UI;
+    using Core.Common.Extensions;
     using Core.Common.Managers;
+    using Core.Services;
     using Extensions;
     using global::Hangfire.Console;
     using global::Hangfire.Server;
@@ -16,7 +21,13 @@
         private const string FailedMessage = "Action Failed.";
         private const string StartMessage = "Action Start.";
         private const string SuccessMessage = "Action Success.";
+
+        [Obsolete]
         public abstract void Start(PerformContext performContext);
+
+        public abstract Task StartAsync(PerformContext performContext);
+
+        public IPortalService PortalService {get;set;}
 
         private static bool InProgress { get; set; }
 
@@ -24,6 +35,34 @@
         {
             InProgress = status;
         }
+
+        protected async Task ExecuteAsync(PerformContext performContext, Func<Task> action)
+        {
+            try
+            {
+                SetJobRunning(true);
+
+                performContext?.WriteLine(StartMessage);
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                await action.Invoke();
+
+                stopwatch.Stop();
+                performContext?.WriteSuccessLine(SuccessMessage);
+                performContext?.WriteSuccessLine($"Action took {stopwatch.Elapsed}");
+            }
+            catch (Exception ex)
+            {
+                HandleException(performContext, ex);
+                performContext?.WriteErrorLine(FailedMessage);
+                throw;
+            }
+            finally
+            {
+                SetJobRunning(false);
+            }
+        }
+
 
         protected void Execute(PerformContext performContext, Action action)
         {
@@ -72,11 +111,6 @@
         {
             switch (ex)
             {
-                case AbpException abp:
-                    Logger.Error(performContext, abp.Message);
-                    Logger.Debug(performContext, abp.Message, abp);
-                    break;
-
                 case DataServiceClientException dataServiceClient:
                     Logger.Error(performContext, dataServiceClient.Message);
                     Logger.Debug(performContext, dataServiceClient.Message, dataServiceClient);
@@ -100,6 +134,11 @@
                 case OutOfMemoryException outOfMemory:
                     Logger.Error(performContext, outOfMemory.Message);
                     Logger.Debug(performContext, outOfMemory.Message, outOfMemory);
+                    break;
+
+                case UserFriendlyException userFriendly:
+                    Logger.Error(performContext, userFriendly.Message);
+                    Logger.Debug(performContext, userFriendly.Message, userFriendly);
                     break;
 
                 case WebException web:

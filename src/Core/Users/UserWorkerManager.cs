@@ -8,6 +8,7 @@
     using Common.Extensions;
     using Common.Managers;
     using Configuration;
+    using Core.Common.Extensions;
     using Dto;
     using global::Hangfire.Console;
     using global::Hangfire.Server;
