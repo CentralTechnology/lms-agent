@@ -10,12 +10,18 @@
     using LMS.Veeam.Managers;
     using Newtonsoft.Json;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
+    using Services;
+    using Services.Authentication;
 
     public class VeeamWorkerManager : WorkerManagerBase, IVeeamWorkerManager
     {
         private readonly IVeeamManager _veeamManager;
 
-        public VeeamWorkerManager(IVeeamManager veeamManager)
+        public VeeamWorkerManager(
+            IPortalService portalService, 
+            IPortalAuthenticationService authService,
+            IVeeamManager veeamManager) 
+            : base(portalService,authService)
         {
             _veeamManager = veeamManager;
         }

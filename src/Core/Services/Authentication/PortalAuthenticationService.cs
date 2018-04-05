@@ -59,7 +59,10 @@ namespace LMS.Core.Services.Authentication
 
             if (long.TryParse(account, out long accountId))
             {
-                return accountId;
+                if (accountId != default(long))
+                {
+                    return accountId;
+                }               
             }
 
             var id = GetAccountFromService(device);
@@ -102,7 +105,10 @@ namespace LMS.Core.Services.Authentication
 
             if (Guid.TryParse(device, out Guid deviceId))
             {
-                return deviceId;
+                if (deviceId != default(Guid))
+                {
+                    return deviceId;
+                }               
             }
 
             Guid id = GetDeviceFromRegistry();

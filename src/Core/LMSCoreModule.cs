@@ -6,6 +6,7 @@
     using AutoMapper;
     using Common.Extensions;
     using Configuration;
+    using Core.Services;
 
     [DependsOn(typeof(AbpAutoMapperModule))]
     public class LMSCoreModule : AbpModule
@@ -17,6 +18,8 @@
         }
         public override void Initialize()
         {
+            IocManager.Register<IPortalService, PortalService>();
+
             var thisAssembly = typeof(LMSCoreModule).GetAssembly();
 
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());

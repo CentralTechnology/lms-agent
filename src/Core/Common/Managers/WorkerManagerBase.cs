@@ -10,6 +10,7 @@
     using Core.Common.Extensions;
     using Core.Common.Managers;
     using Core.Services;
+    using Core.Services.Authentication;
     using Extensions;
     using global::Hangfire.Console;
     using global::Hangfire.Server;
@@ -27,7 +28,15 @@
 
         public abstract Task StartAsync(PerformContext performContext);
 
+
+        protected WorkerManagerBase(IPortalService portalService, IPortalAuthenticationService authService)
+        {
+            PortalService = portalService;
+            AuthService = authService;
+        }
+
         public IPortalService PortalService {get;set;}
+        public IPortalAuthenticationService AuthService { get; set; }
 
         private static bool InProgress { get; set; }
 

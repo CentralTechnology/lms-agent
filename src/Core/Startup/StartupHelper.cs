@@ -58,7 +58,7 @@
 
                 string runtime = GetRunTime();
 
-                recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), runtime);
+                recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.StartAsync(null)), runtime);
             }
         }
 

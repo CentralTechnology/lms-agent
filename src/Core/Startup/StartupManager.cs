@@ -3,10 +3,7 @@
     using System;
     using Abp.Configuration;
     using Abp.Logging;
-    using Autotask;
     using CentraStage;
-    using Common.Extensions;
-    using Common.Managers;
     using Configuration;
     using Core.Common.Extensions;
     using Core.Common.Managers;
@@ -18,18 +15,15 @@
     public class StartupManager : LMSManagerBase, IStartupManager
     {
         private readonly IActiveDirectoryManager _activeDirectoryManager;
-        private readonly IAutotaskManager _autotaskManager;
         private readonly ICentraStageManager _centraStageManager;
         private readonly IVeeamManager _veeamManager;
 
         public StartupManager(
             ICentraStageManager centraStageManager,
-            IAutotaskManager autotaskManager,
             IActiveDirectoryManager activeDirectoryManager,
             IVeeamManager veeamManager)
         {
             _centraStageManager = centraStageManager;
-            _autotaskManager = autotaskManager;
             _activeDirectoryManager = activeDirectoryManager;
             _veeamManager = veeamManager;
         }
@@ -38,15 +32,15 @@
         {
             Logger.Log(LogSeverity.Info, performContext, "Running startup process");
 
-            try
-            {
-                ValidateCredentials(performContext);
-            }
-            catch (Exception ex)
-            {
-                RavenClient.Capture(new SentryEvent(ex));
-                Logger.Log(LogSeverity.Error, performContext, ex.Message);
-            }
+            //try
+            //{
+            //    ValidateCredentials(performContext);
+            //}
+            //catch (Exception ex)
+            //{
+            //    RavenClient.Capture(new SentryEvent(ex));
+            //    Logger.Log(LogSeverity.Error, performContext, ex.Message);
+            //}
 
             try
             {
@@ -178,12 +172,12 @@
             }
         }
 
-        public bool ValidateCredentials(PerformContext performContext)
-        {
-            Logger.Log(LogSeverity.Info, performContext, "Validating api credentials...");
+        //public bool ValidateCredentials(PerformContext performContext)
+        //{
+        //    Logger.Log(LogSeverity.Info, performContext, "Validating api credentials...");
 
-            bool centraStage = _centraStageManager.IsValid(performContext);
-            return centraStage && _autotaskManager.IsValid(performContext);
-        }
+        //    bool centraStage = _centraStageManager.IsValid(performContext);
+        //    return centraStage && _autotaskManager.IsValid(performContext);
+        //}
     }
 }

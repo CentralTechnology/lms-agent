@@ -5,6 +5,9 @@
     using Abp.Configuration;
     using Abp.Dependency;
     using Abp.Logging;
+    using Abp.Threading;
+    using Castle.Facilities.Logging;
+    using Castle.Services.Logging.SerilogIntegration;
     using Common.Helpers;
     using Configuration;
     using Core.Veeam;
@@ -19,6 +22,9 @@
             using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
             {
                 bootstrapper.Initialize();
+
+                bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(
+                    f => f.LogUsing<SerilogFactory>());
 
                 if (opts.Verbose)
                 {            
@@ -47,14 +53,14 @@
                             if (opts.Monitor == Monitor.Users)
                             {
                                 var userWorkerManager = scope.Resolve<UserWorkerManager>();
-                                userWorkerManager.Start(null);
+                                AsyncHelper.RunSync(() => userWorkerManager.StartAsync(null));
                                 return;
                             }
 
                             if (opts.Monitor == Monitor.Veeam)
                             {
                                 var veeamWorkerManager = scope.Resolve<VeeamWorkerManager>();
-                                veeamWorkerManager.Start(null);
+                                AsyncHelper.RunSync(() => veeamWorkerManager.StartAsync(null));
                                 return;
                             }
 

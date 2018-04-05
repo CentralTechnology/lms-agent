@@ -8,6 +8,6 @@
         bool Init(PerformContext performContext);
         bool ShouldMonitorUsers(PerformContext performContext);
         bool MonitorVeeam(PerformContext performContext);
-        bool ValidateCredentials(PerformContext performContext);
+    //    bool ValidateCredentials(PerformContext performContext);
     }
 }

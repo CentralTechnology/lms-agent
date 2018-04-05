@@ -8,1051 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 04/04/2018 13:26:21
-namespace Portal.CentraStage.Entities
-{
-    /// <summary>
-    /// There are no comments for CentraStageDeviceSingle in the schema.
-    /// </summary>
-    public partial class CentraStageDeviceSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<CentraStageDevice>
-    {
-        /// <summary>
-        /// Initialize a new CentraStageDeviceSingle object.
-        /// </summary>
-        public CentraStageDeviceSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
-            : base(context, path) {}
-
-        /// <summary>
-        /// Initialize a new CentraStageDeviceSingle object.
-        /// </summary>
-        public CentraStageDeviceSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
-            : base(context, path, isComposable) {}
-
-        /// <summary>
-        /// Initialize a new CentraStageDeviceSingle object.
-        /// </summary>
-        public CentraStageDeviceSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<CentraStageDevice> query)
-            : base(query) {}
-
-    }
-    /// <summary>
-    /// There are no comments for CentraStageDevice in the schema.
-    /// </summary>
-    /// <KeyProperties>
-    /// Id
-    /// </KeyProperties>
-    [global::Microsoft.OData.Client.Key("Id")]
-    public partial class CentraStageDevice : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
-    {
-        /// <summary>
-        /// Create a new CentraStageDevice object.
-        /// </summary>
-        /// <param name="a64Bit">Initial value of A64Bit.</param>
-        /// <param name="creationDate">Initial value of CreationDate.</param>
-        /// <param name="deleted">Initial value of Deleted.</param>
-        /// <param name="online">Initial value of Online.</param>
-        /// <param name="rebootRequired">Initial value of RebootRequired.</param>
-        /// <param name="siteId">Initial value of SiteId.</param>
-        /// <param name="snmpEnabled">Initial value of SnmpEnabled.</param>
-        /// <param name="suspended">Initial value of Suspended.</param>
-        /// <param name="ID">Initial value of Id.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static CentraStageDevice CreateCentraStageDevice(bool a64Bit, 
-                    global::System.DateTimeOffset creationDate, 
-                    bool deleted, 
-                    bool online, 
-                    bool rebootRequired, 
-                    int siteId, 
-                    bool snmpEnabled, 
-                    bool suspended, 
-                    int ID)
-        {
-            CentraStageDevice centraStageDevice = new CentraStageDevice();
-            centraStageDevice.A64Bit = a64Bit;
-            centraStageDevice.CreationDate = creationDate;
-            centraStageDevice.Deleted = deleted;
-            centraStageDevice.Online = online;
-            centraStageDevice.RebootRequired = rebootRequired;
-            centraStageDevice.SiteId = siteId;
-            centraStageDevice.SnmpEnabled = snmpEnabled;
-            centraStageDevice.Suspended = suspended;
-            centraStageDevice.Id = ID;
-            return centraStageDevice;
-        }
-        /// <summary>
-        /// There are no comments for Property A64Bit in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool A64Bit
-        {
-            get
-            {
-                return this._A64Bit;
-            }
-            set
-            {
-                this.OnA64BitChanging(value);
-                this._A64Bit = value;
-                this.OnA64BitChanged();
-                this.OnPropertyChanged("A64Bit");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _A64Bit;
-        partial void OnA64BitChanging(bool value);
-        partial void OnA64BitChanged();
-        /// <summary>
-        /// There are no comments for Property CagVersion in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string CagVersion
-        {
-            get
-            {
-                return this._CagVersion;
-            }
-            set
-            {
-                this.OnCagVersionChanging(value);
-                this._CagVersion = value;
-                this.OnCagVersionChanged();
-                this.OnPropertyChanged("CagVersion");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _CagVersion;
-        partial void OnCagVersionChanging(string value);
-        partial void OnCagVersionChanged();
-        /// <summary>
-        /// There are no comments for Property CreationDate in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.DateTimeOffset CreationDate
-        {
-            get
-            {
-                return this._CreationDate;
-            }
-            set
-            {
-                this.OnCreationDateChanging(value);
-                this._CreationDate = value;
-                this.OnCreationDateChanged();
-                this.OnPropertyChanged("CreationDate");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _CreationDate;
-        partial void OnCreationDateChanging(global::System.DateTimeOffset value);
-        partial void OnCreationDateChanged();
-        /// <summary>
-        /// There are no comments for Property Deleted in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool Deleted
-        {
-            get
-            {
-                return this._Deleted;
-            }
-            set
-            {
-                this.OnDeletedChanging(value);
-                this._Deleted = value;
-                this.OnDeletedChanged();
-                this.OnPropertyChanged("Deleted");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _Deleted;
-        partial void OnDeletedChanging(bool value);
-        partial void OnDeletedChanged();
-        /// <summary>
-        /// There are no comments for Property Description in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Description
-        {
-            get
-            {
-                return this._Description;
-            }
-            set
-            {
-                this.OnDescriptionChanging(value);
-                this._Description = value;
-                this.OnDescriptionChanged();
-                this.OnPropertyChanged("Description");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Description;
-        partial void OnDescriptionChanging(string value);
-        partial void OnDescriptionChanged();
-        /// <summary>
-        /// There are no comments for Property DeviceClass in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string DeviceClass
-        {
-            get
-            {
-                return this._DeviceClass;
-            }
-            set
-            {
-                this.OnDeviceClassChanging(value);
-                this._DeviceClass = value;
-                this.OnDeviceClassChanged();
-                this.OnPropertyChanged("DeviceClass");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _DeviceClass;
-        partial void OnDeviceClassChanging(string value);
-        partial void OnDeviceClassChanged();
-        /// <summary>
-        /// There are no comments for Property DeviceType in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Portal.CentraStage.Entities.CentraStageDeviceType DeviceType
-        {
-            get
-            {
-                return this._DeviceType;
-            }
-            set
-            {
-                this.OnDeviceTypeChanging(value);
-                this._DeviceType = value;
-                this.OnDeviceTypeChanged();
-                this.OnPropertyChanged("DeviceType");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Portal.CentraStage.Entities.CentraStageDeviceType _DeviceType;
-        partial void OnDeviceTypeChanging(global::Portal.CentraStage.Entities.CentraStageDeviceType value);
-        partial void OnDeviceTypeChanged();
-        /// <summary>
-        /// There are no comments for Property DisplayVersion in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string DisplayVersion
-        {
-            get
-            {
-                return this._DisplayVersion;
-            }
-            set
-            {
-                this.OnDisplayVersionChanging(value);
-                this._DisplayVersion = value;
-                this.OnDisplayVersionChanged();
-                this.OnPropertyChanged("DisplayVersion");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _DisplayVersion;
-        partial void OnDisplayVersionChanging(string value);
-        partial void OnDisplayVersionChanged();
-        /// <summary>
-        /// There are no comments for Property Domain in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Domain
-        {
-            get
-            {
-                return this._Domain;
-            }
-            set
-            {
-                this.OnDomainChanging(value);
-                this._Domain = value;
-                this.OnDomainChanged();
-                this.OnPropertyChanged("Domain");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Domain;
-        partial void OnDomainChanging(string value);
-        partial void OnDomainChanged();
-        /// <summary>
-        /// There are no comments for Property ExtIpAddress in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string ExtIpAddress
-        {
-            get
-            {
-                return this._ExtIpAddress;
-            }
-            set
-            {
-                this.OnExtIpAddressChanging(value);
-                this._ExtIpAddress = value;
-                this.OnExtIpAddressChanged();
-                this.OnPropertyChanged("ExtIpAddress");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _ExtIpAddress;
-        partial void OnExtIpAddressChanging(string value);
-        partial void OnExtIpAddressChanged();
-        /// <summary>
-        /// There are no comments for Property Hostname in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Hostname
-        {
-            get
-            {
-                return this._Hostname;
-            }
-            set
-            {
-                this.OnHostnameChanging(value);
-                this._Hostname = value;
-                this.OnHostnameChanged();
-                this.OnPropertyChanged("Hostname");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Hostname;
-        partial void OnHostnameChanging(string value);
-        partial void OnHostnameChanged();
-        /// <summary>
-        /// There are no comments for Property IntIpAddress in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string IntIpAddress
-        {
-            get
-            {
-                return this._IntIpAddress;
-            }
-            set
-            {
-                this.OnIntIpAddressChanging(value);
-                this._IntIpAddress = value;
-                this.OnIntIpAddressChanged();
-                this.OnPropertyChanged("IntIpAddress");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _IntIpAddress;
-        partial void OnIntIpAddressChanging(string value);
-        partial void OnIntIpAddressChanged();
-        /// <summary>
-        /// There are no comments for Property LastAuditDate in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Nullable<global::System.DateTimeOffset> LastAuditDate
-        {
-            get
-            {
-                return this._LastAuditDate;
-            }
-            set
-            {
-                this.OnLastAuditDateChanging(value);
-                this._LastAuditDate = value;
-                this.OnLastAuditDateChanged();
-                this.OnPropertyChanged("LastAuditDate");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<global::System.DateTimeOffset> _LastAuditDate;
-        partial void OnLastAuditDateChanging(global::System.Nullable<global::System.DateTimeOffset> value);
-        partial void OnLastAuditDateChanged();
-        /// <summary>
-        /// There are no comments for Property LastLoggedInUser in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string LastLoggedInUser
-        {
-            get
-            {
-                return this._LastLoggedInUser;
-            }
-            set
-            {
-                this.OnLastLoggedInUserChanging(value);
-                this._LastLoggedInUser = value;
-                this.OnLastLoggedInUserChanged();
-                this.OnPropertyChanged("LastLoggedInUser");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _LastLoggedInUser;
-        partial void OnLastLoggedInUserChanging(string value);
-        partial void OnLastLoggedInUserChanged();
-        /// <summary>
-        /// There are no comments for Property LastReboot in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Nullable<global::System.DateTimeOffset> LastReboot
-        {
-            get
-            {
-                return this._LastReboot;
-            }
-            set
-            {
-                this.OnLastRebootChanging(value);
-                this._LastReboot = value;
-                this.OnLastRebootChanged();
-                this.OnPropertyChanged("LastReboot");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<global::System.DateTimeOffset> _LastReboot;
-        partial void OnLastRebootChanging(global::System.Nullable<global::System.DateTimeOffset> value);
-        partial void OnLastRebootChanged();
-        /// <summary>
-        /// There are no comments for Property LastSeen in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.Nullable<global::System.DateTimeOffset> LastSeen
-        {
-            get
-            {
-                return this._LastSeen;
-            }
-            set
-            {
-                this.OnLastSeenChanging(value);
-                this._LastSeen = value;
-                this.OnLastSeenChanged();
-                this.OnPropertyChanged("LastSeen");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.Nullable<global::System.DateTimeOffset> _LastSeen;
-        partial void OnLastSeenChanging(global::System.Nullable<global::System.DateTimeOffset> value);
-        partial void OnLastSeenChanged();
-        /// <summary>
-        /// There are no comments for Property Online in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool Online
-        {
-            get
-            {
-                return this._Online;
-            }
-            set
-            {
-                this.OnOnlineChanging(value);
-                this._Online = value;
-                this.OnOnlineChanged();
-                this.OnPropertyChanged("Online");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _Online;
-        partial void OnOnlineChanging(bool value);
-        partial void OnOnlineChanged();
-        /// <summary>
-        /// There are no comments for Property OperatingSystem in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string OperatingSystem
-        {
-            get
-            {
-                return this._OperatingSystem;
-            }
-            set
-            {
-                this.OnOperatingSystemChanging(value);
-                this._OperatingSystem = value;
-                this.OnOperatingSystemChanged();
-                this.OnPropertyChanged("OperatingSystem");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _OperatingSystem;
-        partial void OnOperatingSystemChanging(string value);
-        partial void OnOperatingSystemChanged();
-        /// <summary>
-        /// There are no comments for Property PortalUrl in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string PortalUrl
-        {
-            get
-            {
-                return this._PortalUrl;
-            }
-            set
-            {
-                this.OnPortalUrlChanging(value);
-                this._PortalUrl = value;
-                this.OnPortalUrlChanged();
-                this.OnPropertyChanged("PortalUrl");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _PortalUrl;
-        partial void OnPortalUrlChanging(string value);
-        partial void OnPortalUrlChanged();
-        /// <summary>
-        /// There are no comments for Property RebootRequired in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool RebootRequired
-        {
-            get
-            {
-                return this._RebootRequired;
-            }
-            set
-            {
-                this.OnRebootRequiredChanging(value);
-                this._RebootRequired = value;
-                this.OnRebootRequiredChanged();
-                this.OnPropertyChanged("RebootRequired");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _RebootRequired;
-        partial void OnRebootRequiredChanging(bool value);
-        partial void OnRebootRequiredChanged();
-        /// <summary>
-        /// There are no comments for Property SiteId in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public int SiteId
-        {
-            get
-            {
-                return this._SiteId;
-            }
-            set
-            {
-                this.OnSiteIdChanging(value);
-                this._SiteId = value;
-                this.OnSiteIdChanged();
-                this.OnPropertyChanged("SiteId");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _SiteId;
-        partial void OnSiteIdChanging(int value);
-        partial void OnSiteIdChanged();
-        /// <summary>
-        /// There are no comments for Property SiteName in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string SiteName
-        {
-            get
-            {
-                return this._SiteName;
-            }
-            set
-            {
-                this.OnSiteNameChanging(value);
-                this._SiteName = value;
-                this.OnSiteNameChanged();
-                this.OnPropertyChanged("SiteName");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _SiteName;
-        partial void OnSiteNameChanging(string value);
-        partial void OnSiteNameChanged();
-        /// <summary>
-        /// There are no comments for Property SiteUid in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string SiteUid
-        {
-            get
-            {
-                return this._SiteUid;
-            }
-            set
-            {
-                this.OnSiteUidChanging(value);
-                this._SiteUid = value;
-                this.OnSiteUidChanged();
-                this.OnPropertyChanged("SiteUid");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _SiteUid;
-        partial void OnSiteUidChanging(string value);
-        partial void OnSiteUidChanged();
-        /// <summary>
-        /// There are no comments for Property SnmpEnabled in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool SnmpEnabled
-        {
-            get
-            {
-                return this._SnmpEnabled;
-            }
-            set
-            {
-                this.OnSnmpEnabledChanging(value);
-                this._SnmpEnabled = value;
-                this.OnSnmpEnabledChanged();
-                this.OnPropertyChanged("SnmpEnabled");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _SnmpEnabled;
-        partial void OnSnmpEnabledChanging(bool value);
-        partial void OnSnmpEnabledChanged();
-        /// <summary>
-        /// There are no comments for Property Suspended in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool Suspended
-        {
-            get
-            {
-                return this._Suspended;
-            }
-            set
-            {
-                this.OnSuspendedChanging(value);
-                this._Suspended = value;
-                this.OnSuspendedChanged();
-                this.OnPropertyChanged("Suspended");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _Suspended;
-        partial void OnSuspendedChanging(bool value);
-        partial void OnSuspendedChanged();
-        /// <summary>
-        /// There are no comments for Property Udf in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Portal.CentraStage.Entities.CentraStageDeviceUdf Udf
-        {
-            get
-            {
-                return this._Udf;
-            }
-            set
-            {
-                this.OnUdfChanging(value);
-                this._Udf = value;
-                this.OnUdfChanged();
-                this.OnPropertyChanged("Udf");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Portal.CentraStage.Entities.CentraStageDeviceUdf _Udf;
-        partial void OnUdfChanging(global::Portal.CentraStage.Entities.CentraStageDeviceUdf value);
-        partial void OnUdfChanged();
-        /// <summary>
-        /// There are no comments for Property Uid in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Uid
-        {
-            get
-            {
-                return this._Uid;
-            }
-            set
-            {
-                this.OnUidChanging(value);
-                this._Uid = value;
-                this.OnUidChanged();
-                this.OnPropertyChanged("Uid");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Uid;
-        partial void OnUidChanging(string value);
-        partial void OnUidChanged();
-        /// <summary>
-        /// There are no comments for Property Id in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public int Id
-        {
-            get
-            {
-                return this._Id;
-            }
-            set
-            {
-                this.OnIdChanging(value);
-                this._Id = value;
-                this.OnIdChanged();
-                this.OnPropertyChanged("Id");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private int _Id;
-        partial void OnIdChanging(int value);
-        partial void OnIdChanged();
-        /// <summary>
-        /// This event is raised when the value of the property is changed
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The value of the property is changed
-        /// </summary>
-        /// <param name="property">property name</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        protected virtual void OnPropertyChanged(string property)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
-            }
-        }
-    }
-    /// <summary>
-    /// There are no comments for CentraStageDeviceType in the schema.
-    /// </summary>
-    public partial class CentraStageDeviceType : global::System.ComponentModel.INotifyPropertyChanged
-    {
-        /// <summary>
-        /// There are no comments for Property Category in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Category
-        {
-            get
-            {
-                return this._Category;
-            }
-            set
-            {
-                this.OnCategoryChanging(value);
-                this._Category = value;
-                this.OnCategoryChanged();
-                this.OnPropertyChanged("Category");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Category;
-        partial void OnCategoryChanging(string value);
-        partial void OnCategoryChanged();
-        /// <summary>
-        /// There are no comments for Property Type in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Type
-        {
-            get
-            {
-                return this._Type;
-            }
-            set
-            {
-                this.OnTypeChanging(value);
-                this._Type = value;
-                this.OnTypeChanged();
-                this.OnPropertyChanged("Type");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Type;
-        partial void OnTypeChanging(string value);
-        partial void OnTypeChanged();
-        /// <summary>
-        /// This event is raised when the value of the property is changed
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The value of the property is changed
-        /// </summary>
-        /// <param name="property">property name</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        protected virtual void OnPropertyChanged(string property)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
-            }
-        }
-    }
-    /// <summary>
-    /// There are no comments for CentraStageDeviceUdf in the schema.
-    /// </summary>
-    public partial class CentraStageDeviceUdf : global::System.ComponentModel.INotifyPropertyChanged
-    {
-        /// <summary>
-        /// There are no comments for Property Udf1 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf1
-        {
-            get
-            {
-                return this._Udf1;
-            }
-            set
-            {
-                this.OnUdf1Changing(value);
-                this._Udf1 = value;
-                this.OnUdf1Changed();
-                this.OnPropertyChanged("Udf1");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf1;
-        partial void OnUdf1Changing(string value);
-        partial void OnUdf1Changed();
-        /// <summary>
-        /// There are no comments for Property Udf10 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf10
-        {
-            get
-            {
-                return this._Udf10;
-            }
-            set
-            {
-                this.OnUdf10Changing(value);
-                this._Udf10 = value;
-                this.OnUdf10Changed();
-                this.OnPropertyChanged("Udf10");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf10;
-        partial void OnUdf10Changing(string value);
-        partial void OnUdf10Changed();
-        /// <summary>
-        /// There are no comments for Property Udf2 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf2
-        {
-            get
-            {
-                return this._Udf2;
-            }
-            set
-            {
-                this.OnUdf2Changing(value);
-                this._Udf2 = value;
-                this.OnUdf2Changed();
-                this.OnPropertyChanged("Udf2");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf2;
-        partial void OnUdf2Changing(string value);
-        partial void OnUdf2Changed();
-        /// <summary>
-        /// There are no comments for Property Udf3 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf3
-        {
-            get
-            {
-                return this._Udf3;
-            }
-            set
-            {
-                this.OnUdf3Changing(value);
-                this._Udf3 = value;
-                this.OnUdf3Changed();
-                this.OnPropertyChanged("Udf3");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf3;
-        partial void OnUdf3Changing(string value);
-        partial void OnUdf3Changed();
-        /// <summary>
-        /// There are no comments for Property Udf4 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf4
-        {
-            get
-            {
-                return this._Udf4;
-            }
-            set
-            {
-                this.OnUdf4Changing(value);
-                this._Udf4 = value;
-                this.OnUdf4Changed();
-                this.OnPropertyChanged("Udf4");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf4;
-        partial void OnUdf4Changing(string value);
-        partial void OnUdf4Changed();
-        /// <summary>
-        /// There are no comments for Property Udf5 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf5
-        {
-            get
-            {
-                return this._Udf5;
-            }
-            set
-            {
-                this.OnUdf5Changing(value);
-                this._Udf5 = value;
-                this.OnUdf5Changed();
-                this.OnPropertyChanged("Udf5");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf5;
-        partial void OnUdf5Changing(string value);
-        partial void OnUdf5Changed();
-        /// <summary>
-        /// There are no comments for Property Udf6 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf6
-        {
-            get
-            {
-                return this._Udf6;
-            }
-            set
-            {
-                this.OnUdf6Changing(value);
-                this._Udf6 = value;
-                this.OnUdf6Changed();
-                this.OnPropertyChanged("Udf6");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf6;
-        partial void OnUdf6Changing(string value);
-        partial void OnUdf6Changed();
-        /// <summary>
-        /// There are no comments for Property Udf7 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf7
-        {
-            get
-            {
-                return this._Udf7;
-            }
-            set
-            {
-                this.OnUdf7Changing(value);
-                this._Udf7 = value;
-                this.OnUdf7Changed();
-                this.OnPropertyChanged("Udf7");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf7;
-        partial void OnUdf7Changing(string value);
-        partial void OnUdf7Changed();
-        /// <summary>
-        /// There are no comments for Property Udf8 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf8
-        {
-            get
-            {
-                return this._Udf8;
-            }
-            set
-            {
-                this.OnUdf8Changing(value);
-                this._Udf8 = value;
-                this.OnUdf8Changed();
-                this.OnPropertyChanged("Udf8");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf8;
-        partial void OnUdf8Changing(string value);
-        partial void OnUdf8Changed();
-        /// <summary>
-        /// There are no comments for Property Udf9 in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public string Udf9
-        {
-            get
-            {
-                return this._Udf9;
-            }
-            set
-            {
-                this.OnUdf9Changing(value);
-                this._Udf9 = value;
-                this.OnUdf9Changed();
-                this.OnPropertyChanged("Udf9");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private string _Udf9;
-        partial void OnUdf9Changing(string value);
-        partial void OnUdf9Changed();
-        /// <summary>
-        /// This event is raised when the value of the property is changed
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// The value of the property is changed
-        /// </summary>
-        /// <param name="property">property name</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        protected virtual void OnPropertyChanged(string property)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
-            }
-        }
-    }
-    /// <summary>
-    /// Class containing all extension methods
-    /// </summary>
-    public static class ExtensionMethods
-    {
-        /// <summary>
-        /// Get an entity of type global::Portal.CentraStage.Entities.CentraStageDevice as global::Portal.CentraStage.Entities.CentraStageDeviceSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="keys">dictionary with the names and values of keys</param>
-        public static global::Portal.CentraStage.Entities.CentraStageDeviceSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevice> source, global::System.Collections.Generic.Dictionary<string, object> keys)
-        {
-            return new global::Portal.CentraStage.Entities.CentraStageDeviceSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-        /// <summary>
-        /// Get an entity of type global::Portal.CentraStage.Entities.CentraStageDevice as global::Portal.CentraStage.Entities.CentraStageDeviceSingle specified by key from an entity set
-        /// </summary>
-        /// <param name="source">source entity set</param>
-        /// <param name="id">The value of id</param>
-        public static global::Portal.CentraStage.Entities.CentraStageDeviceSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevice> source,
-            int id)
-        {
-            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
-            {
-                { "Id", id }
-            };
-            return new global::Portal.CentraStage.Entities.CentraStageDeviceSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
-        }
-    }
-}
+// Generation date: 05/04/2018 15:32:13
 namespace Portal.LicenseMonitoringSystem.Users.Entities
 {
     /// <summary>
@@ -1600,6 +556,115 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         }
     }
     /// <summary>
+    /// There are no comments for LicenseUserGroupSingle in the schema.
+    /// </summary>
+    public partial class LicenseUserGroupSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserGroup>
+    {
+        /// <summary>
+        /// Initialize a new LicenseUserGroupSingle object.
+        /// </summary>
+        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path)
+            : base(context, path) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserGroupSingle object.
+        /// </summary>
+        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceContext context, string path, bool isComposable)
+            : base(context, path, isComposable) {}
+
+        /// <summary>
+        /// Initialize a new LicenseUserGroupSingle object.
+        /// </summary>
+        public LicenseUserGroupSingle(global::Microsoft.OData.Client.DataServiceQuerySingle<LicenseUserGroup> query)
+            : base(query) {}
+
+    }
+    /// <summary>
+    /// There are no comments for LicenseUserGroup in the schema.
+    /// </summary>
+    /// <KeyProperties>
+    /// UserId
+    /// GroupId
+    /// </KeyProperties>
+    [global::Microsoft.OData.Client.Key("UserId", "GroupId")]
+    public partial class LicenseUserGroup : global::Microsoft.OData.Client.BaseEntityType, global::System.ComponentModel.INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Create a new LicenseUserGroup object.
+        /// </summary>
+        /// <param name="userId">Initial value of UserId.</param>
+        /// <param name="groupId">Initial value of GroupId.</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public static LicenseUserGroup CreateLicenseUserGroup(global::System.Guid userId, global::System.Guid groupId)
+        {
+            LicenseUserGroup licenseUserGroup = new LicenseUserGroup();
+            licenseUserGroup.UserId = userId;
+            licenseUserGroup.GroupId = groupId;
+            return licenseUserGroup;
+        }
+        /// <summary>
+        /// There are no comments for Property UserId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::System.Guid UserId
+        {
+            get
+            {
+                return this._UserId;
+            }
+            set
+            {
+                this.OnUserIdChanging(value);
+                this._UserId = value;
+                this.OnUserIdChanged();
+                this.OnPropertyChanged("UserId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _UserId;
+        partial void OnUserIdChanging(global::System.Guid value);
+        partial void OnUserIdChanged();
+        /// <summary>
+        /// There are no comments for Property GroupId in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::System.Guid GroupId
+        {
+            get
+            {
+                return this._GroupId;
+            }
+            set
+            {
+                this.OnGroupIdChanging(value);
+                this._GroupId = value;
+                this.OnGroupIdChanged();
+                this.OnPropertyChanged("GroupId");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.Guid _GroupId;
+        partial void OnGroupIdChanging(global::System.Guid value);
+        partial void OnGroupIdChanged();
+        /// <summary>
+        /// This event is raised when the value of the property is changed
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public event global::System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// The value of the property is changed
+        /// </summary>
+        /// <param name="property">property name</param>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        protected virtual void OnPropertyChanged(string property)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new global::System.ComponentModel.PropertyChangedEventArgs(property));
+            }
+        }
+    }
+    /// <summary>
     /// There are no comments for ManagedSupportSingle in the schema.
     /// </summary>
     public partial class ManagedSupportSingle : global::Microsoft.OData.Client.DataServiceQuerySingle<ManagedSupport>
@@ -1636,16 +701,16 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         /// Create a new ManagedSupport object.
         /// </summary>
         /// <param name="deviceId">Initial value of DeviceId.</param>
+        /// <param name="checkInTime">Initial value of CheckInTime.</param>
         /// <param name="tenantId">Initial value of TenantId.</param>
-        /// <param name="isActive">Initial value of IsActive.</param>
         /// <param name="ID">Initial value of Id.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ManagedSupport CreateManagedSupport(global::System.Guid deviceId, int tenantId, bool isActive, int ID)
+        public static ManagedSupport CreateManagedSupport(global::System.Guid deviceId, global::System.DateTimeOffset checkInTime, int tenantId, int ID)
         {
             ManagedSupport managedSupport = new ManagedSupport();
             managedSupport.DeviceId = deviceId;
+            managedSupport.CheckInTime = checkInTime;
             managedSupport.TenantId = tenantId;
-            managedSupport.IsActive = isActive;
             managedSupport.Id = ID;
             return managedSupport;
         }
@@ -1716,6 +781,28 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         partial void OnIpAddressChanging(string value);
         partial void OnIpAddressChanged();
         /// <summary>
+        /// There are no comments for Property CheckInTime in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::System.DateTimeOffset CheckInTime
+        {
+            get
+            {
+                return this._CheckInTime;
+            }
+            set
+            {
+                this.OnCheckInTimeChanging(value);
+                this._CheckInTime = value;
+                this.OnCheckInTimeChanged();
+                this.OnPropertyChanged("CheckInTime");
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::System.DateTimeOffset _CheckInTime;
+        partial void OnCheckInTimeChanging(global::System.DateTimeOffset value);
+        partial void OnCheckInTimeChanged();
+        /// <summary>
         /// There are no comments for Property ClientVersion in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -1759,28 +846,6 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         private int _TenantId;
         partial void OnTenantIdChanging(int value);
         partial void OnTenantIdChanged();
-        /// <summary>
-        /// There are no comments for Property IsActive in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public bool IsActive
-        {
-            get
-            {
-                return this._IsActive;
-            }
-            set
-            {
-                this.OnIsActiveChanging(value);
-                this._IsActive = value;
-                this.OnIsActiveChanged();
-                this.OnPropertyChanged("IsActive");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private bool _IsActive;
-        partial void OnIsActiveChanging(bool value);
-        partial void OnIsActiveChanged();
         /// <summary>
         /// There are no comments for Property Id in the schema.
         /// </summary>
@@ -1886,6 +951,32 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
                 { "Id", id }
             };
             return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup as global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="keys">dictionary with the names and values of keys</param>
+        public static global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> source, global::System.Collections.Generic.Dictionary<string, object> keys)
+        {
+            return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
+        }
+        /// <summary>
+        /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup as global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle specified by key from an entity set
+        /// </summary>
+        /// <param name="source">source entity set</param>
+        /// <param name="userId">The value of userId</param>
+        /// <param name="groupId">The value of groupId</param>
+        public static global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle ByKey(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> source,
+            global::System.Guid userId, 
+            global::System.Guid groupId)
+        {
+            global::System.Collections.Generic.Dictionary<string, object> keys = new global::System.Collections.Generic.Dictionary<string, object>
+            {
+                { "UserId", userId }, 
+                { "GroupId", groupId }
+            };
+            return new global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroupSingle(source.Context, source.GetKeyPath(global::Microsoft.OData.Client.Serializer.GetKeyString(source.Context, keys)));
         }
         /// <summary>
         /// Get an entity of type global::Portal.LicenseMonitoringSystem.Users.Entities.ManagedSupport as global::Portal.LicenseMonitoringSystem.Users.Entities.ManagedSupportSingle specified by key from an entity set
@@ -2432,27 +1523,6 @@ namespace Portal.LicenseMonitoringSystem.Veeam.Entities
         }
     }
 }
-namespace Tools
-{
-    /// <summary>
-    /// Class containing all extension methods
-    /// </summary>
-    public static class ExtensionMethods
-    {
-        /// <summary>
-        /// There are no comments for GetAccountId in the schema.
-        /// </summary>
-        public static global::Microsoft.OData.Client.DataServiceQuerySingle<long> GetAccountId(this global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevice> source, global::System.Guid deviceId)
-        {
-            if (!source.IsComposable)
-            {
-                throw new global::System.NotSupportedException("The previous function is not composable.");
-            }
-
-            return source.CreateFunctionQuerySingle<long>("Tools.GetAccountId", false, new global::Microsoft.OData.Client.UriOperationParameter("deviceId", deviceId));
-        }
-    }
-}
 namespace Default
 {
     /// <summary>
@@ -2472,23 +1542,6 @@ namespace Default
             this.Format.UseJson();
         }
         partial void OnContextCreated();
-        /// <summary>
-        /// There are no comments for Devices in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevice> Devices
-        {
-            get
-            {
-                if ((this._Devices == null))
-                {
-                    this._Devices = base.CreateQuery<global::Portal.CentraStage.Entities.CentraStageDevice>("Devices");
-                }
-                return this._Devices;
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.CentraStage.Entities.CentraStageDevice> _Devices;
         /// <summary>
         /// There are no comments for Users in the schema.
         /// </summary>
@@ -2524,6 +1577,23 @@ namespace Default
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup> _Groups;
         /// <summary>
+        /// There are no comments for UserGroups in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> UserGroups
+        {
+            get
+            {
+                if ((this._UserGroups == null))
+                {
+                    this._UserGroups = base.CreateQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup>("UserGroups");
+                }
+                return this._UserGroups;
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup> _UserGroups;
+        /// <summary>
         /// There are no comments for ManagedServers in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -2558,14 +1628,6 @@ namespace Default
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
         private global::Microsoft.OData.Client.DataServiceQuery<global::Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam> _VeeamServers;
         /// <summary>
-        /// There are no comments for Devices in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public void AddToDevices(global::Portal.CentraStage.Entities.CentraStageDevice centraStageDevice)
-        {
-            base.AddObject("Devices", centraStageDevice);
-        }
-        /// <summary>
         /// There are no comments for Users in the schema.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
@@ -2580,6 +1642,14 @@ namespace Default
         public void AddToGroups(global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup licenseGroup)
         {
             base.AddObject("Groups", licenseGroup);
+        }
+        /// <summary>
+        /// There are no comments for UserGroups in the schema.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
+        public void AddToUserGroups(global::Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup licenseUserGroup)
+        {
+            base.AddObject("UserGroups", licenseUserGroup);
         }
         /// <summary>
         /// There are no comments for ManagedServers in the schema.
@@ -2605,57 +1675,6 @@ namespace Default
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
             private const string Edmx = @"<edmx:Edmx Version=""4.0"" xmlns:edmx=""http://docs.oasis-open.org/odata/ns/edmx"">
   <edmx:DataServices>
-    <Schema Namespace=""Portal.CentraStage.Entities"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
-      <EntityType Name=""CentraStageDevice"">
-        <Key>
-          <PropertyRef Name=""Id"" />
-        </Key>
-        <Property Name=""A64Bit"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""CagVersion"" Type=""Edm.String"" />
-        <Property Name=""CreationDate"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
-        <Property Name=""Deleted"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""Description"" Type=""Edm.String"" />
-        <Property Name=""DeviceClass"" Type=""Edm.String"" />
-        <Property Name=""DeviceType"" Type=""Portal.CentraStage.Entities.CentraStageDeviceType"" />
-        <Property Name=""DisplayVersion"" Type=""Edm.String"" />
-        <Property Name=""Domain"" Type=""Edm.String"" />
-        <Property Name=""ExtIpAddress"" Type=""Edm.String"" />
-        <Property Name=""Hostname"" Type=""Edm.String"" />
-        <Property Name=""IntIpAddress"" Type=""Edm.String"" />
-        <Property Name=""LastAuditDate"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""LastLoggedInUser"" Type=""Edm.String"" />
-        <Property Name=""LastReboot"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""LastSeen"" Type=""Edm.DateTimeOffset"" />
-        <Property Name=""Online"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""OperatingSystem"" Type=""Edm.String"" />
-        <Property Name=""PortalUrl"" Type=""Edm.String"" />
-        <Property Name=""RebootRequired"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""SiteId"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""SiteName"" Type=""Edm.String"" />
-        <Property Name=""SiteUid"" Type=""Edm.String"" />
-        <Property Name=""SnmpEnabled"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""Suspended"" Type=""Edm.Boolean"" Nullable=""false"" />
-        <Property Name=""Udf"" Type=""Portal.CentraStage.Entities.CentraStageDeviceUdf"" />
-        <Property Name=""Uid"" Type=""Edm.String"" />
-        <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
-      </EntityType>
-      <ComplexType Name=""CentraStageDeviceType"">
-        <Property Name=""Category"" Type=""Edm.String"" />
-        <Property Name=""Type"" Type=""Edm.String"" />
-      </ComplexType>
-      <ComplexType Name=""CentraStageDeviceUdf"">
-        <Property Name=""Udf1"" Type=""Edm.String"" />
-        <Property Name=""Udf10"" Type=""Edm.String"" />
-        <Property Name=""Udf2"" Type=""Edm.String"" />
-        <Property Name=""Udf3"" Type=""Edm.String"" />
-        <Property Name=""Udf4"" Type=""Edm.String"" />
-        <Property Name=""Udf5"" Type=""Edm.String"" />
-        <Property Name=""Udf6"" Type=""Edm.String"" />
-        <Property Name=""Udf7"" Type=""Edm.String"" />
-        <Property Name=""Udf8"" Type=""Edm.String"" />
-        <Property Name=""Udf9"" Type=""Edm.String"" />
-      </ComplexType>
-    </Schema>
     <Schema Namespace=""Portal.LicenseMonitoringSystem.Users.Entities"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <EntityType Name=""LicenseUser"">
         <Key>
@@ -2685,6 +1704,14 @@ namespace Default
         <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Id"" Type=""Edm.Guid"" Nullable=""false"" />
       </EntityType>
+      <EntityType Name=""LicenseUserGroup"">
+        <Key>
+          <PropertyRef Name=""UserId"" />
+          <PropertyRef Name=""GroupId"" />
+        </Key>
+        <Property Name=""UserId"" Type=""Edm.Guid"" Nullable=""false"" />
+        <Property Name=""GroupId"" Type=""Edm.Guid"" Nullable=""false"" />
+      </EntityType>
       <EntityType Name=""ManagedSupport"">
         <Key>
           <PropertyRef Name=""Id"" />
@@ -2692,9 +1719,9 @@ namespace Default
         <Property Name=""DeviceId"" Type=""Edm.Guid"" Nullable=""false"" />
         <Property Name=""Hostname"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""IpAddress"" Type=""Edm.String"" MaxLength=""39"" />
+        <Property Name=""CheckInTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""ClientVersion"" Type=""Edm.String"" />
         <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
-        <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
       </EntityType>
       <EnumType Name=""UserType"" IsFlags=""true"">
@@ -2746,18 +1773,11 @@ namespace Default
         <Member Name=""Subscription"" Value=""6"" />
       </EnumType>
     </Schema>
-    <Schema Namespace=""Tools"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
-      <Function Name=""GetAccountId"" IsBound=""true"">
-        <Parameter Name=""bindingParameter"" Type=""Collection(Portal.CentraStage.Entities.CentraStageDevice)"" />
-        <Parameter Name=""deviceId"" Type=""Edm.Guid"" Nullable=""false"" />
-        <ReturnType Type=""Edm.Int64"" Nullable=""false"" />
-      </Function>
-    </Schema>
     <Schema Namespace=""Default"" xmlns=""http://docs.oasis-open.org/odata/ns/edm"">
       <EntityContainer Name=""Container"">
-        <EntitySet Name=""Devices"" EntityType=""Portal.CentraStage.Entities.CentraStageDevice"" />
         <EntitySet Name=""Users"" EntityType=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseUser"" />
         <EntitySet Name=""Groups"" EntityType=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseGroup"" />
+        <EntitySet Name=""UserGroups"" EntityType=""Portal.LicenseMonitoringSystem.Users.Entities.LicenseUserGroup"" />
         <EntitySet Name=""ManagedServers"" EntityType=""Portal.LicenseMonitoringSystem.Users.Entities.ManagedSupport"" />
         <EntitySet Name=""VeeamServers"" EntityType=""Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam"" />
       </EntityContainer>
@@ -2775,7 +1795,7 @@ namespace Default
                 global::System.Xml.XmlReader reader = CreateXmlReader(Edmx);
                 try
                 {
-                    return global::Microsoft.OData.Edm.Csdl.CsdlReader.Parse(reader);
+                    return global::Microsoft.OData.Edm.Csdl.EdmxReader.Parse(reader);
                 }
                 finally
                 {

@@ -61,7 +61,7 @@
             }
         }
 
-        public IEnumerable<LicenseUserDto> GetUsers(PerformContext performContext)
+        public IEnumerable<LicenseUserDto> GetAllUsers(PerformContext performContext)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -87,12 +87,22 @@
             }
         }
 
+        public List<LicenseUserDto> GetAllUsersList(PerformContext performContext)
+        {
+            return GetAllUsers(performContext).ToList();
+        }
+
+        public List<LicenseGroupDto> GetAllGroupsList(PerformContext performContext)
+        {
+            return GetAllGroups(performContext).ToList();
+        }
+
         public LicenseUserDto GetUserById(PerformContext performContext, Guid? userId)
         {
             return GetUser(performContext, IdentityType.Guid, userId.ToString());
         }
 
-        public IEnumerable<LicenseGroupDto> GetGroups(PerformContext performContext)
+        public IEnumerable<LicenseGroupDto> GetAllGroups(PerformContext performContext)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {

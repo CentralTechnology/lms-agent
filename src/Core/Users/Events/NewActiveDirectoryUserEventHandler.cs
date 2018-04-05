@@ -6,32 +6,32 @@
     using Abp.Dependency;
     using Abp.Events.Bus.Handlers;
     using Abp.Extensions;
+    using Abp.Threading;
     using Castle.Core.Logging;
     using Common.Extensions;
     using Configuration;
+    using Core.Services;
     using Dto;
     using Managers;
-    using OData;
+    using Newtonsoft.Json;
+    using Portal.LicenseMonitoringSystem.Users.Entities;
 
     public class NewActiveDirectoryUserEventHandler : IEventHandler<NewActiveDirectoryUserEventData>, ITransientDependency
     {
         private readonly IActiveDirectoryManager _activeDirectoryManager;
         private readonly object _newUserLock = new object();
-        private readonly IPortalManager _portalManager;
+        private readonly IPortalService _portalService;
         private readonly ISettingManager _settingManager;
-        private readonly IUserManager _userManager;
 
         public NewActiveDirectoryUserEventHandler(
             IActiveDirectoryManager activeDirectoryManager,
-            IPortalManager portalManager,
-            IUserManager userManager,
+            IPortalService portalService,
             ISettingManager settingManager)
         {
             Logger = NullLogger.Instance;
 
             _activeDirectoryManager = activeDirectoryManager;
-            _portalManager = portalManager;
-            _userManager = userManager;
+            _portalService = portalService;
             _settingManager = settingManager;
         }
 
@@ -60,23 +60,27 @@
                         return;
                     }
 
-                    int managedSupportId = _settingManager.GetSettingValue<int>(AppSettingNames.ManagedSupportId);
-                    if (managedSupportId == default(int))
+                    var remoteUser = _portalService.GetUserById(user.Id);
+                    if (remoteUser.Count != 1)
                     {
-                        Logger.Warn("Managed Support Id has not been set in the database. This setting is set with the first successful run of the monitor. Automatic creation of users cannot happen until this has been set. The current Event will be discarded.");
+                        var newUser = LicenseUser.Create(
+                            user,
+                                _settingManager.GetSettingValue<int>(AppSettingNames.ManagedSupportId),
+                            _settingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId)
+                        );
+
+                        AsyncHelper.RunSync(() => _portalService.AddUserAsync(newUser));
+                        Logger.Info($"Created: {newUser}");
+                        Logger.Debug($"{JsonConvert.SerializeObject(newUser, Formatting.Indented)}");
                         return;
                     }
 
-                    int accountId = _settingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
-                    if (_portalManager.UserExist(user.Id))
-                    {
-                        _userManager.Update(null, user);
-                        Logger.Info($"Updated existing user {user.DisplayName}");
-                        return;
-                    }
+                    remoteUser[0].UpdateValues(user);
+                    AsyncHelper.RunSync(() => _portalService.UpdateUserAsync(remoteUser[0]));
 
-                    _userManager.Add(null, user, managedSupportId, accountId);
-                    Logger.Info($"Created new user {user.DisplayName}");
+
+                    Logger.Info($"Updated:  {remoteUser}");
+                    Logger.Debug($"{JsonConvert.SerializeObject(remoteUser, Formatting.Indented)}");
                 }
                 catch (Exception ex)
                 {
