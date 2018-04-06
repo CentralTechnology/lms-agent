@@ -31,10 +31,10 @@
                 bootstrapper.IocManager.IocContainer.Register(
                     Component.For<LoggerConfiguration>()
                         .UsingFactoryMethod(
-                            () => new LoggerConfiguration().WriteTo.Console().MinimumLevel.Debug()
-                             //   .MinimumLevel.ControlledBy(LMSCoreModule.CurrentLogLevel)
-                                
-                               // .WriteTo.File("logs/log.txt", fileSizeLimitBytes: 5242880, rollOnFileSizeLimit: true, retainedFileCountLimit: 10)
+                            () => new LoggerConfiguration()
+                                .MinimumLevel.ControlledBy(LMSCoreModule.CurrentLogLevel)
+                                .WriteTo.ColoredConsole()                               
+                                .WriteTo.RollingFile("logs/log.txt", fileSizeLimitBytes: 5242880, retainedFileCountLimit: 10)
                             
                         ).LifestyleSingleton(),
                     Component.For<ILoggerFactory, SerilogFactory>()
