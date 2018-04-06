@@ -5,9 +5,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Abp.UI;
+    using Core.Extensions;
     using Core.Extensions.Helpers;
     using Core.Extensions.Managers;
-    using Core.Extensions;
     using Core.Services;
     using Core.Services.Authentication;
     using Core.Users.Compare;
@@ -35,12 +35,11 @@
 
         public async Task ComputeUsers(PerformContext performContext, int managedSupportId)
         {
-            var adUsers = new HashSet<LicenseUser>(
-                _activeDirectoryManager.GetAllUsersList(performContext),
-                _licenseUserEqualityComparer
-            );
+            Logger.Info(performContext, "Getting the users from Active Directory...");
 
-            List<LicenseUser> remoteUsers = await PortalService.GetAllUsersAsync();
+            var adUsers = _activeDirectoryManager.GetAllUsersList(performContext);
+
+            List<LicenseUser> remoteUsers = (await PortalService.GetAllUsersAsync()).ToList();
 
             foreach (var adUser in adUsers)
             {
@@ -71,10 +70,15 @@
                 Logger.Debug($"{JsonConvert.SerializeObject(remoteUser, Formatting.Indented)}");
             }
 
-            var staleUsers = remoteUsers.Except(adUsers, _licenseUserEqualityComparer);
+            var staleUsers = remoteUsers.Except(adUsers, _licenseUserEqualityComparer).ToList();
             foreach (var staleUser in staleUsers)
             {
                 performContext?.Cancel();
+
+                if (staleUser.IsDeleted)
+                {
+                    continue;
+                }
 
                 await PortalService.DeleteUserAsync(staleUser);
 
@@ -86,6 +90,8 @@
 
         public async Task ComputeGroupMembershipAsync(PerformContext performContext)
         {
+            Logger.Info(performContext, "Getting the group from Active Directory...");
+
             var groups = _activeDirectoryManager.GetAllGroupsList(performContext);
             foreach (var group in groups)
             {
@@ -107,7 +113,7 @@
                     Logger.Info($"User: {newMember.UserId} was added to Group: {group.Id} {group.Name}");
                 }
 
-                var staleMembers = userGroups.Except(groupMembers, _licenseUserGroupEqualityComparer);
+                var staleMembers = userGroups.Except(groupMembers, _licenseUserGroupEqualityComparer).ToList();
                 foreach (var staleMember in staleMembers)
                 {
                     performContext?.Cancel();
@@ -123,11 +129,11 @@
 
         public async Task ComputeGroups(PerformContext performContext)
         {
-            var adGroups = new HashSet<LicenseGroup>(
-                _activeDirectoryManager.GetAllGroupsList(performContext),
-                _licenseGroupEqualityComparer);
+            List<LicenseGroup> remoteGroups = (await PortalService.GetAllGroupsAsync()).ToList();
 
-            var remoteGroups = await PortalService.GetAllGroupsAsync();
+            Logger.Info(performContext, "Getting the groups from Active Directory...");
+
+            var adGroups = _activeDirectoryManager.GetAllGroupsList(performContext);
 
             foreach (var adGroup in adGroups)
             {
@@ -157,10 +163,15 @@
                 Logger.Debug($"{JsonConvert.SerializeObject(remoteGroup, Formatting.Indented)}");
             }
 
-            var staleGroups = remoteGroups.Except(adGroups, _licenseGroupEqualityComparer);
+            var staleGroups = remoteGroups.Except(adGroups, _licenseGroupEqualityComparer).ToList();
             foreach (var staleGroup in staleGroups)
             {
                 performContext?.Cancel();
+
+                if (staleGroup.IsDeleted)
+                {
+                    continue;
+                }
 
                 await PortalService.DeleteGroupAsync(staleGroup);
 
@@ -207,18 +218,18 @@
                 Logger.Info(performContext, "Upload details acquired!");
 
                 Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "---------- Uploading users begin ----------");
-
-                await ComputeUsers(performContext, managedServer.Id);
-
-                Logger.Info(performContext, "---------- Uploading users end ----------");
-
-                Console.WriteLine(Environment.NewLine);
                 Logger.Info(performContext, "---------- Uploading groups begin ----------");
 
                 await ComputeGroups(performContext);
 
                 Logger.Info(performContext, "---------- Uploading groups end ----------");
+
+                Console.WriteLine(Environment.NewLine);
+                Logger.Info(performContext, "---------- Uploading users begin ----------");
+
+                await ComputeUsers(performContext, managedServer.Id);
+
+                Logger.Info(performContext, "---------- Uploading users end ----------");
 
                 Console.WriteLine(Environment.NewLine);
                 Logger.Info(performContext, "Calculating group memberships. This could take some time...");

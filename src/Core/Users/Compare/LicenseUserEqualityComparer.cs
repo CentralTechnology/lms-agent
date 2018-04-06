@@ -7,12 +7,12 @@
     {
         public bool Equals(LicenseUser x, LicenseUser y)
         {
-            return y != null && x != null && x.Id == y.Id;
+            return y != null && (x != null && x.Id == y.Id);
         }
 
         public int GetHashCode(LicenseUser obj)
         {
-            return obj.GetHashCode();
+            return obj.Id.GetHashCode();
         }
     }
 }

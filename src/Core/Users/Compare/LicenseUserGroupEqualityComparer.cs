@@ -12,7 +12,7 @@
 
         public int GetHashCode(LicenseUserGroup obj)
         {
-            return obj.GetHashCode();
+            return new {obj.UserId, obj.GroupId}.GetHashCode();
         }
     }
 }

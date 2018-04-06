@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 05/04/2018 15:32:13
+// Generation date: 06/04/2018 13:10:34
 namespace Portal.LicenseMonitoringSystem.Users.Entities
 {
     /// <summary>

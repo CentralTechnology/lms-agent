@@ -45,8 +45,7 @@
 
         public DataServiceCollection<LicenseUser> GetUserById(Guid userId)
         {
-            var account = _authService.GetAccount();
-            return new DataServiceCollection<LicenseUser>(_context.Users.AddQueryOption("tenantId", account).Where(u => u.Id == userId));
+            return new DataServiceCollection<LicenseUser>(_context.Users.Where(u => u.Id == userId));
         }
 
         public async Task UpdateVeeamServerAsync(Veeam update)
@@ -75,93 +74,70 @@
             original[0].TenantId = update.TenantId;
             original[0].vSphere = update.vSphere;
 
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task AddUserAsync(LicenseUser user)
         {
             _context.AddToUsers(user);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task AddGroupAsync(LicenseGroup group)
         {
             _context.AddToGroups(group);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task UpdateUserAsync(LicenseUser user)
         {
             _context.UpdateObject(user);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task UpdateGroupAsync(LicenseGroup group)
         {
             _context.UpdateObject(group);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public List<LicenseUserGroup> GetAllGroupUsers(Guid group)
         {
-            var account = _authService.GetAccount();
-            return _context.UserGroups.AddQueryOption("tenantId", account).Where(g => g.GroupId == group).ToList();
+            return _context.UserGroups.GetAllPages().Where(ug => ug.GroupId == group).ToList();
         }
 
-        public async Task<List<LicenseUser>> GetAllUsersAsync()
+        public Task<IEnumerable<LicenseUser>> GetAllUsersAsync()
         {
-            var account = _authService.GetAccount();
-
-            DataServiceCollection<LicenseUser> users = new DataServiceCollection<LicenseUser>(_context.Users.AddQueryOption("tenantId", account));
-
-            while (users.Continuation != null)
-            {
-                users.Load(await _context.ExecuteAsync(users.Continuation));
-            }
-
-            return users.ToList();
+            return _context.Users.GetAllPagesAsync();
         }
 
-        public async Task<List<LicenseGroup>> GetAllGroupsAsync()
+        public Task<IEnumerable<LicenseGroup>> GetAllGroupsAsync()
         {
-            var account = _authService.GetAccount();
-
-            DataServiceCollection<LicenseGroup> groups = new DataServiceCollection<LicenseGroup>(_context.Groups.AddQueryOption("tenantId", account));
-
-            while (groups.Continuation != null)
-            {
-                groups.Load(await _context.ExecuteAsync(groups.Continuation));
-            }
-
-            return groups.ToList();
+            return _context.Groups.GetAllPagesAsync();
         }
 
         public async Task AddUserGroupAsync(LicenseUserGroup userGroup)
         {
-            var account = _authService.GetAccount();
-
             _context.AddToUserGroups(userGroup);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task DeleteUserGroupAsync(LicenseUserGroup userGroup)
         {
-            var account = _authService.GetAccount();
-
             _context.DeleteObject(userGroup);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task DeleteUserAsync(LicenseUser user)
         {
             _context.DeleteObject(user);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task DeleteGroupAsync(LicenseGroup group)
         {
             _context.DeleteObject(group);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public async Task AddManagedServerAsync(ManagedSupport managedSupport)
@@ -181,7 +157,7 @@
             update.CheckInTime = DateTimeOffset.UtcNow;
 
             _context.UpdateObject(update);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
         public void Initialize()
@@ -245,6 +221,7 @@
         private void ContextSendingRequest2(object sender, SendingRequest2EventArgs e)
         {
             e.RequestMessage.SetHeader("Authorization", $"Bearer {_authService.GetToken()}");
+            e.RequestMessage.SetHeader("Account", $"{_authService.GetAccount()}");
 
             if (e.RequestMessage is HttpWebRequestMessage message)
             {
