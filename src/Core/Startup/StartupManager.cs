@@ -3,27 +3,22 @@
     using System;
     using Abp.Configuration;
     using Abp.Logging;
-    using CentraStage;
     using Configuration;
-    using Core.Common.Extensions;
+    using Core.Extensions;
     using Core.Common.Managers;
     using global::Hangfire.Server;
-    using SharpRaven.Data;
     using Users.Managers;
     using Veeam.Managers;
 
     public class StartupManager : LMSManagerBase, IStartupManager
     {
         private readonly IActiveDirectoryManager _activeDirectoryManager;
-        private readonly ICentraStageManager _centraStageManager;
         private readonly IVeeamManager _veeamManager;
 
         public StartupManager(
-            ICentraStageManager centraStageManager,
             IActiveDirectoryManager activeDirectoryManager,
             IVeeamManager veeamManager)
         {
-            _centraStageManager = centraStageManager;
             _activeDirectoryManager = activeDirectoryManager;
             _veeamManager = veeamManager;
         }
@@ -31,16 +26,6 @@
         public bool Init(PerformContext performContext)
         {
             Logger.Log(LogSeverity.Info, performContext, "Running startup process");
-
-            //try
-            //{
-            //    ValidateCredentials(performContext);
-            //}
-            //catch (Exception ex)
-            //{
-            //    RavenClient.Capture(new SentryEvent(ex));
-            //    Logger.Log(LogSeverity.Error, performContext, ex.Message);
-            //}
 
             try
             {
@@ -171,13 +156,5 @@
                 return false;
             }
         }
-
-        //public bool ValidateCredentials(PerformContext performContext)
-        //{
-        //    Logger.Log(LogSeverity.Info, performContext, "Validating api credentials...");
-
-        //    bool centraStage = _centraStageManager.IsValid(performContext);
-        //    return centraStage && _autotaskManager.IsValid(performContext);
-        //}
     }
 }

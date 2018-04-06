@@ -28,4 +28,9 @@
       <Reference Include="System.Transactions" />
     </ItemGroup>
   
+    <ItemGroup>
+      <Folder Include="Core\Common\Managers\" />
+      <Folder Include="Core\Users\" />
+    </ItemGroup>
+  
 </Project>

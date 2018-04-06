@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Configuration
+﻿namespace LMS.Configuration
 {
     using Abp.Configuration;
 
     /// <summary>
-    /// Implements methods to convert objects between SettingInfo and Setting classes.
+    ///     Implements methods to convert objects between SettingInfo and Setting classes.
     /// </summary>
     internal static class SettingExtensions
     {
         /// <summary>
-        /// Creates new <see cref="Setting"/> object from given <see cref="SettingInfo"/> object.
+        ///     Creates new <see cref="Setting" /> object from given <see cref="SettingInfo" /> object.
         /// </summary>
         public static Setting ToSetting(this SettingInfo settingInfo)
         {
@@ -24,7 +18,7 @@ namespace LMS.Configuration
         }
 
         /// <summary>
-        /// Creates new <see cref="SettingInfo"/> object from given <see cref="Setting"/> object.
+        ///     Creates new <see cref="SettingInfo" /> object from given <see cref="Setting" /> object.
         /// </summary>
         public static SettingInfo ToSettingInfo(this Setting setting)
         {

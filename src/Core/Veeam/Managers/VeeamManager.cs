@@ -16,11 +16,10 @@
     using Abp.Domain.Services;
     using Abp.Timing;
     using Backup.Common;
-    using Common.Constants;
-    using Common.Extensions;
-    using Common.Helpers;
+    using Core.Extensions.Constants;
+    using Core.Extensions;
+    using Core.Extensions.Helpers;
     using Configuration;
-    using Core.Common.Extensions;
     using DBManager;
     using Enums;
     using global::Hangfire.Server;
@@ -104,11 +103,13 @@
 
         public int GetProtectedVmCount(PerformContext performContext)
         {
+            const int veeamProtectedVmCountDays = 31;
+
             try
             {
                 var localDbAccessor = new LocalDbAccessor(GetConnectionString());
 
-                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", Constants.VeeamProtectedVmCountDays)).CreateDataReader())
+                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", veeamProtectedVmCountDays)).CreateDataReader())
                 {
                     if (dataReader.Read())
                     {
@@ -171,9 +172,11 @@
 
         public bool IsInstalled(PerformContext performContext)
         {
+            const string veeamApplicationName = "Veeam Backup & Replication Server";
+
             try
             {
-                return CommonHelpers.IsApplictionInstalled(Constants.VeeamApplicationName);
+                return CommonHelpers.IsApplictionInstalled(veeamApplicationName);
             }
             catch (Exception ex)
             {

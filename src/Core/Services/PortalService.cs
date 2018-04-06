@@ -23,12 +23,11 @@
     [SuppressMessage("ReSharper", "ReplaceWithSingleCallToSingleOrDefault")]
     public class PortalService : LMSManagerBase, IPortalService, IShouldInitialize
     {
-        #if DEBUG
-        private const string ServiceUri = "http://localhost:64755//odata";       
-        #else
+#if DEBUG
+        private const string ServiceUri = "http://localhost:64755//odata";
+#else
          private const string ServiceUri = "https://api-v2.portal.ct.co.uk/odata";
     #endif
-
 
         private readonly IPortalAuthenticationService _authService;
         private Container _context;
@@ -47,7 +46,7 @@
         public DataServiceCollection<LicenseUser> GetUserById(Guid userId)
         {
             var account = _authService.GetAccount();
-            return new DataServiceCollection<LicenseUser>(_context.Users.AddQueryOption("tenantId",account).Where(u => u.Id == userId));
+            return new DataServiceCollection<LicenseUser>(_context.Users.AddQueryOption("tenantId", account).Where(u => u.Id == userId));
         }
 
         public async Task UpdateVeeamServerAsync(Veeam update)
@@ -103,7 +102,7 @@
             await _context.SaveChangesAsync();
         }
 
-        public List<LicenseUserGroup> GetAllGroupUsers(Guid @group)
+        public List<LicenseUserGroup> GetAllGroupUsers(Guid group)
         {
             var account = _authService.GetAccount();
             return _context.UserGroups.AddQueryOption("tenantId", account).Where(g => g.GroupId == group).ToList();
@@ -236,10 +235,10 @@
                 {
                     var error = JsonConvert.DeserializeObject<ODataErrorResponse>(reader.ReadToEnd());
 
-                    Logger.Error($"{response.StatusCode} ({((int) response.StatusCode)}) - {error.Message}");
+                    Logger.Error($"{response.StatusCode} ({(int) response.StatusCode}) - {error.Message}");
 
                     throw new UserFriendlyException((int) response.StatusCode, error.Message);
-                }               
+                }
             }
         }
 
@@ -264,6 +263,7 @@
     {
         [JsonProperty("@odata.context")]
         public string Context { get; set; }
+
         [JsonProperty("value")]
         public string Message { get; set; }
     }

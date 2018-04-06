@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Services.Authentication
+﻿namespace LMS.Core.Services.Authentication
 {
+    using System;
     using Abp.Configuration;
     using Abp.Dependency;
     using Abp.UI;
     using Common.Managers;
     using Configuration;
-    using LMS.Common.Extensions;
+    using Extensions;
     using Microsoft.Win32;
     using Newtonsoft.Json;
     using RestSharp;

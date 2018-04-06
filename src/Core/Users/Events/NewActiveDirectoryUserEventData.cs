@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Users.Events
+﻿namespace LMS.Users.Events
 {
     using System.Diagnostics;
     using Abp.Events.Bus;
@@ -13,13 +7,13 @@ namespace LMS.Users.Events
     {
         public NewActiveDirectoryUserEventData()
         {
-
         }
 
         public NewActiveDirectoryUserEventData(EventLogEntry entry)
         {
             Entry = entry;
         }
+
         public EventLogEntry Entry { get; set; }
     }
 }

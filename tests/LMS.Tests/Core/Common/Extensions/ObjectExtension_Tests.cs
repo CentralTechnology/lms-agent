@@ -2,7 +2,7 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using LMS.Common.Extensions;
+    using LMS.Core.Extensions;
     using Shouldly;
     using Xunit;
 

@@ -6,8 +6,8 @@
     using System.Security;
     using System.Text;
     using Abp;
-    using Common.Extensions;
-    using Common.Managers;
+    using Core.Extensions;
+    using Core.Extensions.Managers;
     using Core.Common.Managers;
     using Microsoft.Win32;
 

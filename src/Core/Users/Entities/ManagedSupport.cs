@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Portal.LicenseMonitoringSystem.Users.Entities
+﻿namespace Portal.LicenseMonitoringSystem.Users.Entities
 {
+    using System;
+
     public partial class ManagedSupport
     {
         public static ManagedSupport Create(string clientVersion, Guid deviceId, long accountId)

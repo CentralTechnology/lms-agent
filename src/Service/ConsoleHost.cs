@@ -9,7 +9,7 @@
     using Castle.Core.Logging;
     using Castle.MicroKernel.Registration;
     using Castle.Services.Logging.SerilogIntegration;
-    using Common.Helpers;
+    using Core.Extensions.Helpers;
     using Configuration;
     using Core.Veeam;
     using LMS.Startup;

@@ -6,7 +6,7 @@
     using System.Reflection;
     using Abp.Configuration;
     using Abp.Dependency;
-    using Common.Extensions;
+    using Core.Extensions;
     using global::Hangfire;
     using LMS.Startup;
     using Microsoft.Owin.Hosting;

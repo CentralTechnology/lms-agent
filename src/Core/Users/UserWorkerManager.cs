@@ -5,13 +5,12 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Abp.UI;
-    using Common.Helpers;
-    using Common.Managers;
-    using Core.Common.Extensions;
+    using Core.Extensions.Helpers;
+    using Core.Extensions.Managers;
+    using Core.Extensions;
     using Core.Services;
     using Core.Services.Authentication;
     using Core.Users.Compare;
-    using Dto;
     using global::Hangfire.Server;
     using Hangfire;
     using Managers;
@@ -21,8 +20,8 @@
     public class UserWorkerManager : WorkerManagerBase, IUserWorkerManager
     {
         private readonly IActiveDirectoryManager _activeDirectoryManager;
-        private readonly LicenseUserEqualityComparer _licenseUserEqualityComparer = new LicenseUserEqualityComparer();
         private readonly LicenseGroupEqualityComparer _licenseGroupEqualityComparer = new LicenseGroupEqualityComparer();
+        private readonly LicenseUserEqualityComparer _licenseUserEqualityComparer = new LicenseUserEqualityComparer();
         private readonly LicenseUserGroupEqualityComparer _licenseUserGroupEqualityComparer = new LicenseUserGroupEqualityComparer();
 
         public UserWorkerManager(
@@ -32,208 +31,6 @@
         ) : base(portalService, authService)
         {
             _activeDirectoryManager = activeDirectoryManager;
-        }
-
-        //public void ProcessGroups(PerformContext performContext, ManagedSupport managedSupport)
-        //{
-        //    Console.WriteLine(Environment.NewLine);
-        //    Logger.Info(performContext, "--------------- PROCESS GROUPS BEGIN ---------------");
-
-        //    IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetAllGroups(performContext);
-        //    List<LicenseGroupSummary> remoteGroups = _portalManager.ListAllGroupIds();
-        //    var localGroupIds = new List<Guid>();
-        //    foreach (LicenseGroupDto group in groups)
-        //    {
-        //        performContext?.Cancel();
-
-        //        localGroupIds.Add(group.Id);
-
-        //        bool existingGroup = remoteGroups.Any(ru => ru.Id == group.Id);
-        //        if (existingGroup)
-        //        {
-        //            _groupManager.Update(performContext, group);
-        //            continue;
-        //        }
-
-        //        _groupManager.Add(performContext, group, managedSupport.TenantId);
-        //    }
-
-        //    List<LicenseGroupSummary> activeRemoteGroups = _portalManager.ListAllGroupIds(g => !g.IsDeleted);
-        //    IEnumerable<LicenseGroupSummary> groupsToDelete = activeRemoteGroups.Where(ru => localGroupIds.All(u => u != ru.Id));
-        //    foreach (LicenseGroupSummary group in groupsToDelete)
-        //    {
-        //        performContext?.Cancel();
-
-        //        _groupManager.Delete(performContext, group.Id);
-        //    }
-
-        //    Logger.Info(performContext, "--------------- PROCESS GROUPS END ---------------");
-        //}
-
-        //public void ProcessUserGroups(PerformContext performContext)
-        //{
-        //    Console.WriteLine(Environment.NewLine);
-        //    Logger.Info(performContext, "--------------- PROCESS GROUP MEMBERSHIP BEGIN ---------------");
-
-        //    IEnumerable<LicenseGroupDto> groups = _activeDirectoryManager.GetAllGroups(performContext);
-        //    foreach (LicenseGroupDto group in groups)
-        //    {
-        //        performContext?.Cancel();
-
-        //        LicenseGroupUsersDto localMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
-
-        //        _userGroupManager.AddUsersToGroup(performContext, localMembers);
-        //        _userGroupManager.DeleteUsersFromGroup(performContext, localMembers);
-
-        //        Logger.Info(performContext, $"{group.Name} - Processed");
-        //    }
-
-        //    Logger.Info(performContext, "--------------- PROCESS GROUP MEMBERSHIP END ---------------");
-        //}
-
-        ///// <summary>
-        /////     Decides whether a License User object should be Added, Updated or Deleted from the API.
-        ///// </summary>
-        ///// <param name="performContext"></param>
-        ///// <param name="managedSupport"></param>
-        //public void ProcessUsers(PerformContext performContext, ManagedSupport managedSupport)
-        //{
-        //    Logger.Info(performContext, "--------------- PROCESS USERS BEGIN ---------------");
-
-        //    IEnumerable<LicenseUserDto> users = _activeDirectoryManager.GetAllUsers(performContext);
-        //    List<LicenseUserSummary> remoteUsers = _portalManager.ListAllUserIds();
-        //    var localUserIds = new List<Guid>();
-        //    foreach (LicenseUserDto user in users)
-        //    {
-        //        performContext?.Cancel();
-
-        //        localUserIds.Add(user.Id);
-
-        //        bool existingUser = remoteUsers.Any(ru => ru.Id == user.Id);
-        //        if (existingUser)
-        //        {
-        //            _userManager.Update(performContext, user);
-        //            continue;
-        //        }
-
-        //        _userManager.Add(performContext, user, managedSupport.Id, managedSupport.TenantId);
-        //    }
-
-        //    List<LicenseUserSummary> activeRemoteUsers = _portalManager.ListAllUserIds(u => !u.IsDeleted);
-        //    IEnumerable<LicenseUserSummary> usersToDelete = activeRemoteUsers.Where(ru => localUserIds.All(u => u != ru.Id));
-        //    foreach (LicenseUserSummary user in usersToDelete)
-        //    {
-        //        performContext?.Cancel();
-
-        //        _userManager.Delete(performContext, user.Id);
-        //    }
-
-        //    Logger.Info(performContext, " ---------------PROCESS USERS END ---------------");
-        //}
-
-
-
-        [Mutex("UserWorkerManager")]
-        public override void Start(PerformContext performContext)
-        {
-            //var stopWatch = new Stopwatch();
-            //stopWatch.Start();
-
-            //Execute(performContext, () =>
-            //{
-            //    _startupManager.ValidateCredentials(performContext);
-
-            //    Logger.Info(performContext, "Getting account details from the api.");
-            //    ManagedSupport managedSupport = _managedSupportManager.Get() ?? _managedSupportManager.Add(performContext);
-            //    _portalManager.Detach(managedSupport);
-
-            //    ProcessUsers(performContext, managedSupport);
-            //    ProcessGroups(performContext, managedSupport);
-            //    ProcessUserGroups(performContext);
-
-            //    // let the api know we have completed the task
-            //    _managedSupportManager.Update(managedSupport);
-            //});
-
-            //stopWatch.Stop();
-            //var timeTaken = stopWatch.Elapsed;
-
-            //try
-            //{
-            //    _operationManager.Add(timeTaken.Minutes);
-            //    var averageRunTime = _operationManager.Get();
-            //    SettingManager.ChangeSettingForApplication(AppSettingNames.UsersAverageRuntime, averageRunTime.ToString());
-            //    performContext?.WriteLine($"Average runtime (minutes): {averageRunTime}");
-            //}
-            //catch (Exception)
-            //{
-            //    Logger.Error("Failed to update the Average runtime.");
-            //    // ignored
-            //}
-        }
-
-        [Mutex("UserWorkerManager")]
-        public override async Task StartAsync(PerformContext performContext)
-        {
-            await ExecuteAsync(performContext, async () =>
-            {
-                Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "Acquiring the upload details from the api.");
-
-                var managedServer = PortalService.GetManagedServer();
-                if (managedServer == null)
-                {
-                    Logger.Info(performContext, "It appears this device hasn't logged in before. Generating the upload details.");
-
-                    try
-                    {
-                        var upload = ManagedSupport.Create(
-                            SettingManagerHelper.ClientVersion,
-                            AuthService.GetDevice(),
-                            AuthService.GetAccount());
-
-                        await PortalService.AddManagedServerAsync(upload);
-
-                        managedServer = PortalService.GetManagedServer();
-                        if (managedServer == null)
-                        {
-                            throw new UserFriendlyException("There was a problem creating the upload, please try again. If the problem persists, please raise a bug report.");
-                        }
-                    }
-                    catch (Exception ex) when (!(ex is UserFriendlyException))
-                    {
-                        throw new UserFriendlyException(ex.Message);
-                    }
-                }
-
-                Logger.Info(performContext, "Upload details acquired!");
-
-                Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "---------- Uploading users begin ----------");
-
-                await ComputeUsers(performContext, managedServer.Id);
-
-                Logger.Info(performContext, "---------- Uploading users end ----------");
-
-                Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "---------- Uploading groups begin ----------");
-
-                await ComputeGroups(performContext);
-
-                Logger.Info(performContext, "---------- Uploading groups end ----------");
-
-                Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "Calculating group memberships. This could take some time...");
-
-                await ComputeGroupMembershipAsync(performContext);
-
-                Logger.Info(performContext, "Group memberships are up to date.");
-
-                Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "Completing the upload.");
-
-                await PortalService.UpdateManagedServerAsync(managedServer);
-            });
         }
 
         public async Task ComputeUsers(PerformContext performContext, int managedSupportId)
@@ -294,9 +91,9 @@
             {
                 performContext?.Cancel();
 
-                var groupMembers = _activeDirectoryManager.GetGroupMembers(performContext, @group.Id);
+                var groupMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
 
-                var userGroups = PortalService.GetAllGroupUsers(@group.Id);
+                var userGroups = PortalService.GetAllGroupUsers(group.Id);
 
                 var newMembers = groupMembers.Except(userGroups, _licenseUserGroupEqualityComparer);
                 foreach (var newMember in newMembers)
@@ -304,7 +101,7 @@
                     performContext?.Cancel();
 
                     await PortalService.AddUserGroupAsync(
-                        LicenseUserGroup.Create(@group.Id, newMember.UserId));
+                        LicenseUserGroup.Create(group.Id, newMember.UserId));
 
                     performContext?.WriteSuccessLine($"+ {group.Name}  {newMember.UserId}");
                     Logger.Info($"User: {newMember.UserId} was added to Group: {group.Id} {group.Name}");
@@ -371,6 +168,70 @@
                 Logger.Info($"Delete: {staleGroup}");
                 Logger.Debug($"{JsonConvert.SerializeObject(staleGroup, Formatting.Indented)}");
             }
+        }
+
+        [Mutex("UserWorkerManager")]
+        public override async Task StartAsync(PerformContext performContext)
+        {
+            await ExecuteAsync(performContext, async () =>
+            {
+                Console.WriteLine(Environment.NewLine);
+                Logger.Info(performContext, "Acquiring the upload details from the api.");
+
+                var managedServer = PortalService.GetManagedServer();
+                if (managedServer == null)
+                {
+                    Logger.Info(performContext, "It appears this device hasn't logged in before. Generating the upload details.");
+
+                    try
+                    {
+                        var upload = ManagedSupport.Create(
+                            SettingManagerHelper.ClientVersion,
+                            AuthService.GetDevice(),
+                            AuthService.GetAccount());
+
+                        await PortalService.AddManagedServerAsync(upload);
+
+                        managedServer = PortalService.GetManagedServer();
+                        if (managedServer == null)
+                        {
+                            throw new UserFriendlyException("There was a problem creating the upload, please try again. If the problem persists, please raise a bug report.");
+                        }
+                    }
+                    catch (Exception ex) when (!(ex is UserFriendlyException))
+                    {
+                        throw new UserFriendlyException(ex.Message);
+                    }
+                }
+
+                Logger.Info(performContext, "Upload details acquired!");
+
+                Console.WriteLine(Environment.NewLine);
+                Logger.Info(performContext, "---------- Uploading users begin ----------");
+
+                await ComputeUsers(performContext, managedServer.Id);
+
+                Logger.Info(performContext, "---------- Uploading users end ----------");
+
+                Console.WriteLine(Environment.NewLine);
+                Logger.Info(performContext, "---------- Uploading groups begin ----------");
+
+                await ComputeGroups(performContext);
+
+                Logger.Info(performContext, "---------- Uploading groups end ----------");
+
+                Console.WriteLine(Environment.NewLine);
+                Logger.Info(performContext, "Calculating group memberships. This could take some time...");
+
+                await ComputeGroupMembershipAsync(performContext);
+
+                Logger.Info(performContext, "Group memberships are up to date.");
+
+                Console.WriteLine(Environment.NewLine);
+                Logger.Info(performContext, "Completing the upload.");
+
+                await PortalService.UpdateManagedServerAsync(managedServer);
+            });
         }
     }
 }

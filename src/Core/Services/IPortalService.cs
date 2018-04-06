@@ -18,11 +18,11 @@
         Task DeleteUserAsync(LicenseUser user);
         Task DeleteUserGroupAsync(LicenseUserGroup userGroup);
         Task<List<LicenseGroup>> GetAllGroupsAsync();
-        List<LicenseUserGroup> GetAllGroupUsers(Guid @group);
+        List<LicenseUserGroup> GetAllGroupUsers(Guid group);
         Task<List<LicenseUser>> GetAllUsersAsync();
         ManagedSupport GetManagedServer();
-        DataServiceCollection<Veeam> GetVeeamServer();
         DataServiceCollection<LicenseUser> GetUserById(Guid userId);
+        DataServiceCollection<Veeam> GetVeeamServer();
         Task UpdateGroupAsync(LicenseGroup group);
         Task UpdateManagedServerAsync(ManagedSupport update);
         Task UpdateUserAsync(LicenseUser user);

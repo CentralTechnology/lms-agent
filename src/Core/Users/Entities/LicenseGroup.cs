@@ -1,7 +1,6 @@
 ﻿namespace Portal.LicenseMonitoringSystem.Users.Entities
 {
     using System;
-    using LMS.Users.Dto;
 
     public partial class LicenseGroup
     {
@@ -16,12 +15,6 @@
             };
         }
 
-        public void UpdateValues(LicenseGroup group)
-        {
-            Name = group.Name;
-            WhenCreated = group.WhenCreated;
-        }
-
         public override string ToString()
         {
             if (!string.IsNullOrEmpty(Name))
@@ -30,6 +23,12 @@
             }
 
             return Id.ToString();
+        }
+
+        public void UpdateValues(LicenseGroup group)
+        {
+            Name = group.Name;
+            WhenCreated = group.WhenCreated;
         }
     }
 }

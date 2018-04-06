@@ -7,7 +7,7 @@
     using Serilog.Core;
     using Serilog.Events;
     using Topshelf;
-    using Constants = Common.Constants.Constants;
+    using Constants = Core.Extensions.Constants.Constants;
 
     class Program
     {

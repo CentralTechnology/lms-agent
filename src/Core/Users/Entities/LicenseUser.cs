@@ -1,7 +1,6 @@
 ﻿namespace Portal.LicenseMonitoringSystem.Users.Entities
 {
     using System;
-    using LMS.Users.Dto;
 
     public partial class LicenseUser
     {
@@ -23,18 +22,6 @@
             };
         }
 
-        public void UpdateValues(LicenseUser user)
-        {
-            DisplayName = user.DisplayName;
-            Email = user.Email;
-            Enabled = user.Enabled;
-            FirstName = user.FirstName;
-            IsDeleted = false; // cannot be deleted if its in ad!
-            LastLoginDate = user.LastLoginDate;
-            SamAccountName = user.SamAccountName;
-            Surname = user.Surname;           
-        }
-
         public override string ToString()
         {
             if (!string.IsNullOrEmpty(FirstName) && !string.IsNullOrEmpty(Surname))
@@ -53,6 +40,18 @@
             }
 
             return Id.ToString();
+        }
+
+        public void UpdateValues(LicenseUser user)
+        {
+            DisplayName = user.DisplayName;
+            Email = user.Email;
+            Enabled = user.Enabled;
+            FirstName = user.FirstName;
+            IsDeleted = false; // cannot be deleted if its in ad!
+            LastLoginDate = user.LastLoginDate;
+            SamAccountName = user.SamAccountName;
+            Surname = user.Surname;
         }
     }
 }

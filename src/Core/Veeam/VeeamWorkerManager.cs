@@ -1,11 +1,10 @@
 ﻿namespace LMS.Core.Veeam
 {
-    using System;
     using System.Threading.Tasks;
-    using Common.Extensions;
+    using Extensions;
     using global::Hangfire.Server;
     using Hangfire;
-    using LMS.Common.Managers;
+    using Extensions.Managers;
     using LMS.Veeam;
     using LMS.Veeam.Managers;
     using Newtonsoft.Json;
@@ -18,16 +17,13 @@
         private readonly IVeeamManager _veeamManager;
 
         public VeeamWorkerManager(
-            IPortalService portalService, 
+            IPortalService portalService,
             IPortalAuthenticationService authService,
-            IVeeamManager veeamManager) 
-            : base(portalService,authService)
+            IVeeamManager veeamManager)
+            : base(portalService, authService)
         {
             _veeamManager = veeamManager;
         }
-
-        [Mutex("VeeamWorkerManager")]
-        public override void Start(PerformContext performContext) => throw new NotImplementedException();
 
         [Mutex("VeeamWorkerManager")]
         public override async Task StartAsync(PerformContext performContext)

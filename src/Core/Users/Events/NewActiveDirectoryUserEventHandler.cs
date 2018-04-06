@@ -8,10 +8,9 @@
     using Abp.Extensions;
     using Abp.Threading;
     using Castle.Core.Logging;
-    using Common.Extensions;
+    using Core.Extensions;
     using Configuration;
     using Core.Services;
-    using Dto;
     using Managers;
     using Newtonsoft.Json;
     using Portal.LicenseMonitoringSystem.Users.Entities;
@@ -65,7 +64,7 @@
                     {
                         var newUser = LicenseUser.Create(
                             user,
-                                _settingManager.GetSettingValue<int>(AppSettingNames.ManagedSupportId),
+                            _settingManager.GetSettingValue<int>(AppSettingNames.ManagedSupportId),
                             _settingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId)
                         );
 
@@ -77,7 +76,6 @@
 
                     remoteUser[0].UpdateValues(user);
                     AsyncHelper.RunSync(() => _portalService.UpdateUserAsync(remoteUser[0]));
-
 
                     Logger.Info($"Updated:  {remoteUser}");
                     Logger.Debug($"{JsonConvert.SerializeObject(remoteUser, Formatting.Indented)}");
