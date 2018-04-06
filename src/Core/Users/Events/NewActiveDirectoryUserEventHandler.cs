@@ -53,7 +53,7 @@
 
                     Logger.Info($"User Principal Name extracted from the Event as {principalName}");
 
-                    LicenseUserDto user = _activeDirectoryManager.GetUserByPrincipalName(null, principalName);
+                    LicenseUser user = _activeDirectoryManager.GetUserByPrincipalName(null, principalName);
                     if (user == null)
                     {
                         Logger.Warn($"Unable to locate the User Principal Name {principalName} in Active Directory. The current Event will be discarded.");

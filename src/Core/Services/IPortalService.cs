@@ -20,11 +20,11 @@
         Task<List<LicenseGroup>> GetAllGroupsAsync();
         List<LicenseUserGroup> GetAllGroupUsers(Guid @group);
         Task<List<LicenseUser>> GetAllUsersAsync();
-        DataServiceCollection<ManagedSupport> GetManagedServer();
+        ManagedSupport GetManagedServer();
         DataServiceCollection<Veeam> GetVeeamServer();
         DataServiceCollection<LicenseUser> GetUserById(Guid userId);
         Task UpdateGroupAsync(LicenseGroup group);
-        Task UpdateManagedServerAsync(DataServiceCollection<ManagedSupport> update);
+        Task UpdateManagedServerAsync(ManagedSupport update);
         Task UpdateUserAsync(LicenseUser user);
         Task UpdateVeeamServerAsync(Veeam update);
     }

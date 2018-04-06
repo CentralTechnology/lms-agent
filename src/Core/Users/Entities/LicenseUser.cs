@@ -5,7 +5,7 @@
 
     public partial class LicenseUser
     {
-        public static LicenseUser Create(LicenseUserDto user, int managedSupportId, long tenantId)
+        public static LicenseUser Create(LicenseUser user, int managedSupportId, long tenantId)
         {
             return new LicenseUser
             {
@@ -23,7 +23,7 @@
             };
         }
 
-        public void UpdateValues(LicenseUserDto user)
+        public void UpdateValues(LicenseUser user)
         {
             DisplayName = user.DisplayName;
             Email = user.Email;

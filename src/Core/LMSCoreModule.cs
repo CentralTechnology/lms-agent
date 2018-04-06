@@ -7,10 +7,12 @@
     using Common.Extensions;
     using Configuration;
     using Core.Services;
+    using Serilog.Core;
 
     [DependsOn(typeof(AbpAutoMapperModule))]
     public class LMSCoreModule : AbpModule
     {
+        public static LoggingLevelSwitch CurrentLogLevel {get;set;}
         public override void PreInitialize()
         {
             Configuration.MultiTenancy.IsEnabled = false;

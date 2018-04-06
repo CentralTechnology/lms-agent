@@ -5,7 +5,7 @@
 
     public partial class LicenseGroup
     {
-        public static LicenseGroup Create(LicenseGroupDto group, long tenantId)
+        public static LicenseGroup Create(LicenseGroup group, long tenantId)
         {
             return new LicenseGroup
             {
@@ -16,7 +16,7 @@
             };
         }
 
-        public void UpdateValues(LicenseGroupDto group)
+        public void UpdateValues(LicenseGroup group)
         {
             Name = group.Name;
             WhenCreated = group.WhenCreated;

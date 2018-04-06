@@ -18,8 +18,16 @@ namespace LMS.Core.Services.Authentication
 
     public class PortalAuthenticationService : LMSManagerBase, IPortalAuthenticationService, ISingletonDependency
     {
+#if DEBUG
+        private const string AccountUri = "http://localhost:64755/auth/account";
+        private const string TokenUri = "http://localhost:64755/auth/token";
+#else
+        private const string AccountUri = "https://api-v1.portal.ct.co.uk/auth/account";
+    private const string TokenUri = "https://api-v1.portal.ct.co.uk/auth/token";
+#endif
+
         private readonly object _tokenLock = new object();
-        private PortalToken Token {get; set;}
+        private PortalToken Token { get; set; }
 
         public string GetToken()
         {
@@ -62,7 +70,7 @@ namespace LMS.Core.Services.Authentication
                 if (accountId != default(long))
                 {
                     return accountId;
-                }               
+                }
             }
 
             var id = GetAccountFromService(device);
@@ -74,7 +82,7 @@ namespace LMS.Core.Services.Authentication
         {
             Logger.Info("Requesting Account number from the api.");
 
-            var client = new RestClient("http://localhost:64755/auth/account");
+            var client = new RestClient(AccountUri);
             var request = new RestRequest(Method.POST);
             request.AddHeader("Cache-Control", "no-cache");
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -88,7 +96,7 @@ namespace LMS.Core.Services.Authentication
             {
                 Logger.Error(ex.Message, ex);
                 throw new UserFriendlyException("Unable to get the Account number from the api. Please manually enter the Account number through the CLI.");
-            }          
+            }
         }
 
         public Guid GetDevice()
@@ -108,7 +116,7 @@ namespace LMS.Core.Services.Authentication
                 if (deviceId != default(Guid))
                 {
                     return deviceId;
-                }               
+                }
             }
 
             Guid id = GetDeviceFromRegistry();
@@ -154,7 +162,7 @@ namespace LMS.Core.Services.Authentication
             long account = GetAccount();
             Guid device = GetDevice();
 
-            var client = new RestClient("http://localhost:64755/auth/account");
+            var client = new RestClient(TokenUri);
             var request = new RestRequest(Method.POST);
             request.AddHeader("Cache-Control", "no-cache");
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded");

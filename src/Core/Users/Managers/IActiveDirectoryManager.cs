@@ -6,19 +6,20 @@
     using Abp.Domain.Services;
     using Dto;
     using global::Hangfire.Server;
+    using Portal.LicenseMonitoringSystem.Users.Entities;
 
     public interface IActiveDirectoryManager : IDomainService
     {
-        LicenseGroupDto GetGroup(PerformContext performContext, Guid groupId);
-        LicenseGroupUsersDto GetGroupMembers(PerformContext performContext, Guid groupId);
-        IEnumerable<LicenseGroupDto> GetAllGroups(PerformContext performContext);
-        List<LicenseGroupDto> GetAllGroupsList(PerformContext performContext);
-        LicenseUserDto GetUserById(PerformContext performContext, Guid? userId);
-        LicenseUserDto GetUserByPrincipalName(PerformContext performContext, string principalName);
-        LicenseUserDto GetUser(PerformContext performContext, IdentityType type, string key);
+        LicenseGroup GetGroup(PerformContext performContext, Guid groupId);
+        List<LicenseUserGroup> GetGroupMembers(PerformContext performContext, Guid groupId);
+        IEnumerable<LicenseGroup> GetAllGroups(PerformContext performContext);
+        List<LicenseGroup> GetAllGroupsList(PerformContext performContext);
+        LicenseUser GetUserById(PerformContext performContext, Guid? userId);
+        LicenseUser GetUserByPrincipalName(PerformContext performContext, string principalName);
+        LicenseUser GetUser(PerformContext performContext, IdentityType type, string key);
 
-        IEnumerable<LicenseUserDto> GetAllUsers(PerformContext performContext);
-        List<LicenseUserDto> GetAllUsersList(PerformContext performContext);
+        IEnumerable<LicenseUser> GetAllUsers(PerformContext performContext);
+        List<LicenseUser> GetAllUsersList(PerformContext performContext);
         bool IsOnDomain(PerformContext performContext);
         bool IsPrimaryDomainController(PerformContext performContext);
     }

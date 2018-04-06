@@ -3,9 +3,11 @@
     using System;
     using Abp.Timing;
     using CommandLine;
-    using Common.Constants;
     using Serilog;
+    using Serilog.Core;
+    using Serilog.Events;
     using Topshelf;
+    using Constants = Common.Constants.Constants;
 
     class Program
     {
@@ -22,40 +24,35 @@
                 return 0;
             }
 
-            return (int) HostFactory.Run(x =>
-            {
-                Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Debug()
-                    .WriteTo.ColoredConsole()
-                    .CreateLogger();
+            return (int)HostFactory.Run(x =>
+           {
+               x.UseSerilog();
 
-                x.UseSerilog();
+               Clock.Provider = ClockProviders.Utc;
 
-                Clock.Provider = ClockProviders.Utc;
+               x.Service<LMSService>(service =>
+               {
+                   service.ConstructUsing<LMSService>(s => new LMSService());
 
-                x.Service<LMSService>(service =>
-                {
-                    service.ConstructUsing<LMSService>(s => new LMSService());
+                   service.WhenStarted((tc, hostControl) => tc.Start(hostControl));
+                   service.WhenStopped((tc, hostControl) => tc.Stop(hostControl));
+               });
 
-                    service.WhenStarted((tc, hostControl) => tc.Start(hostControl));
-                    service.WhenStopped((tc, hostControl) => tc.Stop(hostControl));
-                });
+               x.SetStartTimeout(TimeSpan.FromSeconds(15));
+               x.SetStopTimeout(TimeSpan.FromSeconds(60));
 
-                x.SetStartTimeout(TimeSpan.FromSeconds(15));
-                x.SetStopTimeout(TimeSpan.FromSeconds(60));
+               x.RunAsLocalSystem();
+               x.SetServiceName(Constants.ServiceName);
+               x.SetDisplayName(Constants.ServiceDisplayName);
+               x.SetDescription(Constants.ServiceDescription);
+               x.StartAutomatically();
 
-                x.RunAsLocalSystem();
-                x.SetServiceName(Constants.ServiceName);
-                x.SetDisplayName(Constants.ServiceDisplayName);
-                x.SetDescription(Constants.ServiceDescription);
-                x.StartAutomatically();
-
-                x.OnException(exception =>
-                {
-                    Console.WriteLine($@"Exception thrown - {exception.Message}");
-                    Console.ReadLine();
-                });
-            });
+               x.OnException(exception =>
+               {
+                   Console.WriteLine($@"Exception thrown - {exception.Message}");
+                   Console.ReadLine();
+               });
+           });
         }
     }
 }

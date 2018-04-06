@@ -15,15 +15,16 @@
     using Dto;
     using Extensions;
     using global::Hangfire.Server;
+    using Portal.LicenseMonitoringSystem.Users.Entities;
 
     public class ActiveDirectoryManager : DomainService, IActiveDirectoryManager
     {
-        public LicenseUserDto GetUserByPrincipalName(PerformContext performContext, string principalName)
+        public LicenseUser GetUserByPrincipalName(PerformContext performContext, string principalName)
         {
             return GetUser(performContext, IdentityType.UserPrincipalName, principalName);
         }
 
-        public LicenseUserDto GetUser(PerformContext performContext, IdentityType type, string key)
+        public LicenseUser GetUser(PerformContext performContext, IdentityType type, string key)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -43,7 +44,7 @@
 
                 if (user.Guid != null)
                 {
-                    return new LicenseUserDto
+                    return new LicenseUser
                     {
                         DisplayName = user.DisplayName,
                         Email = user.EmailAddress,
@@ -61,7 +62,7 @@
             }
         }
 
-        public IEnumerable<LicenseUserDto> GetAllUsers(PerformContext performContext)
+        public IEnumerable<LicenseUser> GetAllUsers(PerformContext performContext)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -73,7 +74,7 @@
                         {
                             foreach (Principal principal in results)
                             {
-                                LicenseUserDto localUser = GetUserById(performContext, principal.Guid);
+                                LicenseUser localUser = GetUserById(performContext, principal.Guid);
                                 if (localUser == null)
                                 {
                                     continue;
@@ -87,22 +88,22 @@
             }
         }
 
-        public List<LicenseUserDto> GetAllUsersList(PerformContext performContext)
+        public List<LicenseUser> GetAllUsersList(PerformContext performContext)
         {
             return GetAllUsers(performContext).ToList();
         }
 
-        public List<LicenseGroupDto> GetAllGroupsList(PerformContext performContext)
+        public List<LicenseGroup> GetAllGroupsList(PerformContext performContext)
         {
             return GetAllGroups(performContext).ToList();
         }
 
-        public LicenseUserDto GetUserById(PerformContext performContext, Guid? userId)
+        public LicenseUser GetUserById(PerformContext performContext, Guid? userId)
         {
             return GetUser(performContext, IdentityType.Guid, userId.ToString());
         }
 
-        public IEnumerable<LicenseGroupDto> GetAllGroups(PerformContext performContext)
+        public IEnumerable<LicenseGroup> GetAllGroups(PerformContext performContext)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -134,7 +135,7 @@
 
                                 Logger.Debug(performContext, $"Retrieving {group.GetDisplayText()} from Active Directory.");
 
-                                LicenseGroupDto localGroup = GetGroup(performContext, principalId);
+                                LicenseGroup localGroup = GetGroup(performContext, principalId);
                                 if (localGroup == null)
                                 {
                                     continue;
@@ -148,7 +149,7 @@
             }
         }
 
-        public LicenseGroupDto GetGroup(PerformContext performContext, Guid groupId)
+        public LicenseGroup GetGroup(PerformContext performContext, Guid groupId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -189,7 +190,7 @@
                     throw;
                 }
 
-                return new LicenseGroupDto
+                return new LicenseGroup
                 {
                     Id = groupId,
                     Name = group.Name,
@@ -198,13 +199,13 @@
             }
         }
 
-        public LicenseGroupUsersDto GetGroupMembers(PerformContext performContext, Guid groupId)
+        public List<LicenseUserGroup> GetGroupMembers(PerformContext performContext, Guid groupId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
                 GroupPrincipal group = GetGroupPrincipal(principalContext, groupId);
 
-                var licenseGroupUsers = new LicenseGroupUsersDto(groupId, group.Name);
+                var licenseGroupUsers = new List<LicenseUserGroup>();
 
                 try
                 {
@@ -223,13 +224,17 @@
                                 continue;
                             }
 
-                            LicenseUserDto localUser = GetUserById(performContext, user.Guid.Value);
+                            LicenseUser localUser = GetUserById(performContext, user.Guid.Value);
                             if (localUser == null)
                             {
                                 continue;
                             }
 
-                            licenseGroupUsers.Users.Add(localUser);
+                            licenseGroupUsers.Add(new LicenseUserGroup
+                            {
+                                GroupId = groupId,
+                                UserId = localUser.Id
+                            });
                         }
 
                         return licenseGroupUsers;

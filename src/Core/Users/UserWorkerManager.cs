@@ -10,6 +10,7 @@
     using Core.Common.Extensions;
     using Core.Services;
     using Core.Services.Authentication;
+    using Core.Users.Compare;
     using Dto;
     using global::Hangfire.Server;
     using Hangfire;
@@ -20,12 +21,15 @@
     public class UserWorkerManager : WorkerManagerBase, IUserWorkerManager
     {
         private readonly IActiveDirectoryManager _activeDirectoryManager;
+        private readonly LicenseUserEqualityComparer _licenseUserEqualityComparer = new LicenseUserEqualityComparer();
+        private readonly LicenseGroupEqualityComparer _licenseGroupEqualityComparer = new LicenseGroupEqualityComparer();
+        private readonly LicenseUserGroupEqualityComparer _licenseUserGroupEqualityComparer = new LicenseUserGroupEqualityComparer();
 
         public UserWorkerManager(
-            IPortalService portalService, 
+            IPortalService portalService,
             IPortalAuthenticationService authService,
             IActiveDirectoryManager activeDirectoryManager
-        ) : base(portalService,authService)
+        ) : base(portalService, authService)
         {
             _activeDirectoryManager = activeDirectoryManager;
         }
@@ -176,24 +180,28 @@
                 Console.WriteLine(Environment.NewLine);
                 Logger.Info(performContext, "Acquiring the upload details from the api.");
 
-                var managedSupport = PortalService.GetManagedServer();
-                if (managedSupport.Count != 1)
+                var managedServer = PortalService.GetManagedServer();
+                if (managedServer == null)
                 {
                     Logger.Info(performContext, "It appears this device hasn't logged in before. Generating the upload details.");
 
                     try
                     {
-                        var upload = ManagedSupport.Create(SettingManagerHelper.ClientVersion, AuthService.GetDevice());
+                        var upload = ManagedSupport.Create(
+                            SettingManagerHelper.ClientVersion,
+                            AuthService.GetDevice(),
+                            AuthService.GetAccount());
+
                         await PortalService.AddManagedServerAsync(upload);
-                        managedSupport = PortalService.GetManagedServer();
-                        if (managedSupport.Count != 1)
+
+                        managedServer = PortalService.GetManagedServer();
+                        if (managedServer == null)
                         {
                             throw new UserFriendlyException("There was a problem creating the upload, please try again. If the problem persists, please raise a bug report.");
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception ex) when (!(ex is UserFriendlyException))
                     {
-                        Logger.Error(ex.Message, ex);
                         throw new UserFriendlyException(ex.Message);
                     }
                 }
@@ -203,7 +211,7 @@
                 Console.WriteLine(Environment.NewLine);
                 Logger.Info(performContext, "---------- Uploading users begin ----------");
 
-                await ComputeUsers(performContext, managedSupport[0].Id);
+                await ComputeUsers(performContext, managedServer.Id);
 
                 Logger.Info(performContext, "---------- Uploading users end ----------");
 
@@ -215,7 +223,7 @@
                 Logger.Info(performContext, "---------- Uploading groups end ----------");
 
                 Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext,"Calculating group memberships. This could take some time...");
+                Logger.Info(performContext, "Calculating group memberships. This could take some time...");
 
                 await ComputeGroupMembershipAsync(performContext);
 
@@ -224,21 +232,18 @@
                 Console.WriteLine(Environment.NewLine);
                 Logger.Info(performContext, "Completing the upload.");
 
-                await PortalService.UpdateManagedServerAsync(managedSupport);
+                await PortalService.UpdateManagedServerAsync(managedServer);
             });
         }
 
         public async Task ComputeUsers(PerformContext performContext, int managedSupportId)
         {
-            var adUsers = _activeDirectoryManager
-                .GetAllUsersList(performContext)
-                .OrderBy(u => u.FirstName)
-                .ThenBy(u => u.Surname)
-                .ThenBy(u => u.DisplayName)
-                .ThenBy(u => u.SamAccountName)
-                .ToArray();
+            var adUsers = new HashSet<LicenseUser>(
+                _activeDirectoryManager.GetAllUsersList(performContext),
+                _licenseUserEqualityComparer
+            );
 
-            var remoteUsers = await PortalService.GetAllUsersAsync();
+            List<LicenseUser> remoteUsers = await PortalService.GetAllUsersAsync();
 
             foreach (var adUser in adUsers)
             {
@@ -265,11 +270,11 @@
                 await PortalService.UpdateUserAsync(remoteUser);
 
                 performContext?.WriteSuccessLine($"+ {remoteUser}");
-                Logger.Info($"Updated:  {remoteUser}");
+                Logger.Info($"Updated: {remoteUser}");
                 Logger.Debug($"{JsonConvert.SerializeObject(remoteUser, Formatting.Indented)}");
             }
 
-            var staleUsers = remoteUsers.Where(ru => adUsers.All(au => au.Id != ru.Id)).ToArray();
+            var staleUsers = remoteUsers.Except(adUsers, _licenseUserEqualityComparer);
             foreach (var staleUser in staleUsers)
             {
                 performContext?.Cancel();
@@ -289,23 +294,23 @@
             {
                 performContext?.Cancel();
 
-                var groupMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
+                var groupMembers = _activeDirectoryManager.GetGroupMembers(performContext, @group.Id);
 
                 var userGroups = PortalService.GetAllGroupUsers(@group.Id);
 
-                var newMembers = new HashSet<LicenseUserDto>(groupMembers.Users.Select(u => u).Where(u => userGroups.All(ug => u.Id != ug.UserId)));
+                var newMembers = groupMembers.Except(userGroups, _licenseUserGroupEqualityComparer);
                 foreach (var newMember in newMembers)
                 {
                     performContext?.Cancel();
 
                     await PortalService.AddUserGroupAsync(
-                        LicenseUserGroup.Create(@group.Id, newMember.Id));
+                        LicenseUserGroup.Create(@group.Id, newMember.UserId));
 
-                    performContext?.WriteSuccessLine($"+ {group.Name}  {newMember.DisplayName}");
-                    Logger.Info($"User: {newMember.Id} was added to Group: {group.Id} {group.Name}");
+                    performContext?.WriteSuccessLine($"+ {group.Name}  {newMember.UserId}");
+                    Logger.Info($"User: {newMember.UserId} was added to Group: {group.Id} {group.Name}");
                 }
 
-                var staleMembers = new HashSet<LicenseUserGroup>(userGroups.Where(ug => groupMembers.Users.All(u => ug.UserId != u.Id)));
+                var staleMembers = userGroups.Except(groupMembers, _licenseUserGroupEqualityComparer);
                 foreach (var staleMember in staleMembers)
                 {
                     performContext?.Cancel();
@@ -321,10 +326,9 @@
 
         public async Task ComputeGroups(PerformContext performContext)
         {
-            var adGroups = _activeDirectoryManager
-                .GetAllGroupsList(performContext)
-                .OrderBy(g => g.Name)
-                .ToList();
+            var adGroups = new HashSet<LicenseGroup>(
+                _activeDirectoryManager.GetAllGroupsList(performContext),
+                _licenseGroupEqualityComparer);
 
             var remoteGroups = await PortalService.GetAllGroupsAsync();
 
@@ -356,7 +360,7 @@
                 Logger.Debug($"{JsonConvert.SerializeObject(remoteGroup, Formatting.Indented)}");
             }
 
-            var staleGroups = new HashSet<LicenseGroup>(remoteGroups.Where(ru => adGroups.All(au => au.Id != ru.Id)));
+            var staleGroups = remoteGroups.Except(adGroups, _licenseGroupEqualityComparer);
             foreach (var staleGroup in staleGroups)
             {
                 performContext?.Cancel();

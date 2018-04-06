@@ -6,30 +6,50 @@
     using Abp.Dependency;
     using Abp.Logging;
     using Abp.Threading;
-    using Castle.Facilities.Logging;
+    using Castle.Core.Logging;
+    using Castle.MicroKernel.Registration;
     using Castle.Services.Logging.SerilogIntegration;
     using Common.Helpers;
     using Configuration;
     using Core.Veeam;
     using LMS.Startup;
+    using Serilog;
+    using Serilog.Core;
+    using Serilog.Events;
     using Users;
-    using Veeam;
 
     public static class ConsoleHost
     {
         public static void Run(RunOptions opts)
         {
+            LMSCoreModule.CurrentLogLevel = new LoggingLevelSwitch();
+
             using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
             {
                 bootstrapper.Initialize();
 
-                bootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(
-                    f => f.LogUsing<SerilogFactory>());
+                bootstrapper.IocManager.IocContainer.Register(
+                    Component.For<LoggerConfiguration>()
+                        .UsingFactoryMethod(
+                            () => new LoggerConfiguration().WriteTo.Console().MinimumLevel.Debug()
+                             //   .MinimumLevel.ControlledBy(LMSCoreModule.CurrentLogLevel)
+                                
+                               // .WriteTo.File("logs/log.txt", fileSizeLimitBytes: 5242880, rollOnFileSizeLimit: true, retainedFileCountLimit: 10)
+                            
+                        ).LifestyleSingleton(),
+                    Component.For<ILoggerFactory, SerilogFactory>()
+                        .ImplementedBy<SerilogFactory>()
+                        .LifestyleSingleton(),
+                    Component.For<Castle.Core.Logging.ILogger>()
+                        .UsingFactoryMethod(
+                            (kernel, componentModel, creationContext) => kernel.Resolve<ILoggerFactory>().Create(creationContext.Handler.ComponentModel.Name)
+                        ).LifestyleTransient()
+                );
 
                 if (opts.Verbose)
-                {            
-                    
-                    // serilog
+                {
+                    LMSCoreModule.CurrentLogLevel.MinimumLevel = LogEventLevel.Debug;
+                    LogHelper.Logger.Debug("Verbose logging enabled.");
                 }
 
                 LogHelper.Logger.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
