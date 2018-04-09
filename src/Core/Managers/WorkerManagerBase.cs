@@ -1,4 +1,4 @@
-﻿namespace LMS.Core.Extensions.Managers
+﻿namespace LMS.Core.Managers
 {
     using System;
     using System.Diagnostics;
@@ -6,12 +6,11 @@
     using System.Threading.Tasks;
     using Abp.UI;
     using Extensions;
-    using Core.Common.Managers;
-    using Core.Services;
-    using Core.Services.Authentication;
     using global::Hangfire.Console;
     using global::Hangfire.Server;
     using Microsoft.OData.Client;
+    using Services;
+    using Services.Authentication;
 
     public abstract class WorkerManagerBase : LMSManagerBase
     {

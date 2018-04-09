@@ -1,19 +1,25 @@
-﻿namespace LMS.Service
+﻿namespace LMS
 {
     using System;
+    using System.IO;
     using Abp.Timing;
     using CommandLine;
-    using Serilog;
-    using Serilog.Core;
-    using Serilog.Events;
     using Topshelf;
-    using Constants = Core.Extensions.Constants.Constants;
+    using Constants = Core.Constants.Constants;
 
     class Program
     {
         static int Main(string[] args)
         {
-            Console.SetWindowSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
+            if (!Directory.Exists("logs"))
+            {
+                Directory.CreateDirectory("logs");
+            }
+
+            if (Environment.UserInteractive)
+            {
+                Console.SetWindowSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
+            }
 
             if (args != null && args.Length > 0)
             {

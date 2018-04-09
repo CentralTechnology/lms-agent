@@ -1,4 +1,4 @@
-﻿namespace LMS.Core.Common.Managers
+﻿namespace LMS.Core.Managers
 {
     using Abp.Domain.Services;
     using SharpRaven;

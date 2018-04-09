@@ -41,21 +41,7 @@
                 return;
             }
 
-            switch (severity)
-            {
-                case LogSeverity.Info:
-                    performContext?.WriteLine(message);
-                    break;
-                case LogSeverity.Warn:
-                    performContext?.WriteWarnLine(message);
-                    break;
-                case LogSeverity.Error:
-                    performContext?.WriteErrorLine(message);
-                    break;
-                default:
-                    performContext?.WriteLine(message);
-                    break;
-            }
+            PerformContextLog(severity, performContext, message);
         }
 
         public static void Log(this ILogger logger, LogSeverity severity, PerformContext performContext, string message, Exception exception)
@@ -66,6 +52,11 @@
                 return;
             }
 
+            PerformContextLog(severity, performContext, message);
+        }
+
+        private static void PerformContextLog(LogSeverity severity, PerformContext performContext, string message)
+        {
             switch (severity)
             {
                 case LogSeverity.Info:

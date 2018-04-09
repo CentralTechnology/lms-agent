@@ -1,4 +1,4 @@
-﻿namespace LMS.Service
+﻿namespace LMS
 {
 
         public enum Monitor

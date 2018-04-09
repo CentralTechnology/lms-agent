@@ -1,4 +1,4 @@
-﻿namespace LMS.Users.Events
+﻿namespace LMS.Core.Users.Events
 {
     using System.Diagnostics;
     using Abp.Events.Bus;

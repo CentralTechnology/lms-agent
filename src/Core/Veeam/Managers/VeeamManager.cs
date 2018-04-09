@@ -1,4 +1,4 @@
-﻿namespace LMS.Veeam.Managers
+﻿namespace LMS.Core.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -16,13 +16,12 @@
     using Abp.Domain.Services;
     using Abp.Timing;
     using Backup.Common;
-    using Core.Extensions.Constants;
-    using Core.Extensions;
-    using Core.Extensions.Helpers;
     using Configuration;
     using DBManager;
     using Enums;
+    using Extensions;
     using global::Hangfire.Server;
+    using Helpers;
     using Mappings;
     using Microsoft.Win32;
     using Models;

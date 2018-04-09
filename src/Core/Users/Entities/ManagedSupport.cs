@@ -1,4 +1,5 @@
-﻿namespace Portal.LicenseMonitoringSystem.Users.Entities
+﻿// ReSharper disable CheckNamespace
+namespace Portal.LicenseMonitoringSystem.Users.Entities
 {
     using System;
 

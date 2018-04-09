@@ -1,4 +1,4 @@
-﻿namespace LMS.Core.Extensions.Helpers
+﻿namespace LMS.Core.Helpers
 {
     using System.Collections.Generic;
     using Abp.Logging;

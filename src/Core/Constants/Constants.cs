@@ -1,4 +1,4 @@
-﻿namespace LMS.Core.Extensions.Constants
+﻿namespace LMS.Core.Constants
 {
     using System.Diagnostics.CodeAnalysis;
 

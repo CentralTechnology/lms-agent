@@ -1,4 +1,4 @@
-﻿namespace LMS.Users.Managers
+﻿namespace LMS.Core.Users.Managers
 {
     using System;
     using System.Collections.Generic;

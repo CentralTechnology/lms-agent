@@ -2,7 +2,7 @@
 <Weavers>
   <Costura>
     <ExcludeAssemblies>
-        Assistant
+      Assistant
       LMS.Core
       LMS.EntityFramework
     </ExcludeAssemblies>

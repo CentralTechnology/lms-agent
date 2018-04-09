@@ -1,4 +1,4 @@
-﻿namespace LMS.Users.Events
+﻿namespace LMS.Core.Users.Events
 {
     using System;
     using System.Text.RegularExpressions;
@@ -8,12 +8,12 @@
     using Abp.Extensions;
     using Abp.Threading;
     using Castle.Core.Logging;
-    using Core.Extensions;
     using Configuration;
-    using Core.Services;
+    using Core.Extensions;
     using Managers;
     using Newtonsoft.Json;
     using Portal.LicenseMonitoringSystem.Users.Entities;
+    using Services;
 
     public class NewActiveDirectoryUserEventHandler : IEventHandler<NewActiveDirectoryUserEventData>, ITransientDependency
     {

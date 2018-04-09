@@ -1,6 +1,6 @@
 ﻿namespace LMS.Core.Extensions
 {
-    using LMS.Users.Enums;
+    using Users.Enums;
 
     public static class UserFlagExtensions
     {

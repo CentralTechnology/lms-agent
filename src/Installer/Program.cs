@@ -8,14 +8,26 @@
 
     class Script
     {
+#if DEBUG
+        private const string Configuration = "Debug";
+#else
+const string Configuration = "Release";
+#endif
+
         static string BuildMsi()
         {
+            Console.WriteLine("Project: %ProjectName%");
+          
+            var solutionDir = SolutionDirectoryFinder.CalculateContentRootFolder();
+
+            Console.WriteLine($"Service: {solutionDir}\\Service\\bin\\{Configuration}\\net452\\win-x86\\LMS.exe");
+
             File service;
             var project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
                     new DirPermission("LocalSystem", GenericPermission.All),
-                    service = new File(@"%SolutionDir%/Service/bin/%Configuration%/LMS.exe"),
-                    new DirFiles(@"%SolutionDir%/Service/bin/%Configuration%/*.*", f => !f.EndsWith("LMS.exe")))
+                    service = new File($"{solutionDir}\\Service\\bin\\{Configuration}\\net452\\win-x86\\LMS.exe"),
+                    new DirFiles($"{solutionDir}\\Service\\bin\\{Configuration}\\net452\\win-x86\\*.*", f => !f.EndsWith("LMS.exe")))
             )
             {
                 ControlPanelInfo = new ProductInfo
@@ -33,11 +45,11 @@
                     DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
                 },
                 Name = Constants.ServiceDisplayName,
-                OutDir = "bin/%Configuration%/",
+                OutDir =  $"bin\\{Configuration}\\net35\\win-x86",
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
                 UI = WUI.WixUI_Common
             };
-           
+
             project.ExtractVersionFrom("LMS.exe");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
             project.CustomIdAlgorithm = project.HashedTargetPathIdAlgorithm;
@@ -76,7 +88,7 @@
                 DisableModify = "yes",
                 DisableRollback = true,
                 IconFile = "app_icon.ico",
-                OutDir = "bin/%Configuration%/",
+                OutDir = $"bin\\{Configuration}\\net35\\win-x86",
                 OutFileName = "LMS.Setup",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
                 Version = new Version(version),

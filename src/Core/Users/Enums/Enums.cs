@@ -1,4 +1,4 @@
-﻿namespace LMS.Users.Enums
+﻿namespace LMS.Core.Users.Enums
 {
     using System;
 

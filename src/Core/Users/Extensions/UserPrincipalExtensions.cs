@@ -1,4 +1,4 @@
-﻿namespace LMS.Users.Extensions
+﻿namespace LMS.Core.Users.Extensions
 {
     using System.DirectoryServices.AccountManagement;
 

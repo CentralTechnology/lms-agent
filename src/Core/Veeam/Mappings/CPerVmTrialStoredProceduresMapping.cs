@@ -1,4 +1,4 @@
-﻿namespace LMS.Veeam.Mappings
+﻿namespace LMS.Core.Veeam.Mappings
 {
     internal class CPerVmTrialStoredProceduresMapping : IPerVmStoredProceduresMapping
     {

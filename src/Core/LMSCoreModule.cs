@@ -1,10 +1,10 @@
-﻿namespace LMS
+﻿namespace LMS.Core
 {
     using System.Reflection;
     using Abp.Modules;
     using Configuration;
-    using Core.Services;
     using Serilog.Core;
+    using Services;
 
     public class LMSCoreModule : AbpModule
     {

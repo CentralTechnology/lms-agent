@@ -1,4 +1,4 @@
-﻿namespace LMS.Startup
+﻿namespace LMS.Core.StartUp
 {
     using System;
     using System.Diagnostics;
@@ -7,12 +7,11 @@
     using Abp.Events.Bus;
     using Abp.Logging;
     using Abp.Timing;
-    using Core.Extensions.Helpers;
     using Configuration;
-    using Core.Veeam;
     using global::Hangfire;
     using global::Hangfire.Common;
     using Hangfire;
+    using Helpers;
     using Users;
     using Users.Events;
     using Veeam;

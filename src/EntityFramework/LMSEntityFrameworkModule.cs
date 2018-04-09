@@ -6,6 +6,7 @@
     using Abp.EntityFramework;
     using Abp.Logging;
     using Abp.Modules;
+    using Core;
 
     [DependsOn(typeof(AbpEntityFrameworkModule), typeof(LMSCoreModule))]
     public class LMSEntityFrameworkModule : AbpModule

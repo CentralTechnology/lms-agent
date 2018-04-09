@@ -3,7 +3,7 @@
     using System.Data.Common;
     using System.Data.Entity;
     using Abp.EntityFramework;
-    using Configuration;
+    using Core.Configuration;
     using Migrations;
 
     public class LMSDbContext : AbpDbContext

@@ -1,4 +1,4 @@
-﻿namespace LMS.Users
+﻿namespace LMS.Core.Users
 {
     using System.Threading.Tasks;
     using Abp.Domain.Services;

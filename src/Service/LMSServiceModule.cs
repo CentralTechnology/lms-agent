@@ -1,4 +1,4 @@
-﻿namespace LMS.Service
+﻿namespace LMS
 {
     using System;
     using System.Diagnostics.CodeAnalysis;

@@ -6,6 +6,7 @@
     using Hangfire;
     using Hangfire.MemoryStorage;
     using LMS;
+    using LMS.Core;
 
     [DependsOn(
         typeof(LMSCoreModule),

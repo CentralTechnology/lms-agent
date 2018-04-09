@@ -1,12 +1,12 @@
-﻿namespace LMS.Startup
+﻿namespace LMS.Core.StartUp
 {
     using System;
     using Abp.Configuration;
     using Abp.Logging;
     using Configuration;
-    using Core.Extensions;
-    using Core.Common.Managers;
+    using Extensions;
     using global::Hangfire.Server;
+    using Managers;
     using Users.Managers;
     using Veeam.Managers;
 

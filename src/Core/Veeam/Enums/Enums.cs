@@ -1,4 +1,4 @@
-﻿namespace LMS.Veeam.Enums
+﻿namespace LMS.Core.Veeam.Enums
 {
     public enum ELicenseGeneration
     {

@@ -1,22 +1,21 @@
-﻿namespace LMS.Service
+﻿namespace LMS
 {
     using System;
+    using System.IO;
     using Abp;
     using Abp.Configuration;
     using Abp.Dependency;
     using Abp.Logging;
     using Abp.Threading;
-    using Castle.Core.Logging;
-    using Castle.MicroKernel.Registration;
-    using Castle.Services.Logging.SerilogIntegration;
-    using Core.Extensions.Helpers;
-    using Configuration;
+    using Core;
+    using Core.Configuration;
+    using Core.Helpers;
+    using Core.Logging;
+    using Core.StartUp;
+    using Core.Users;
     using Core.Veeam;
-    using LMS.Startup;
-    using Serilog;
     using Serilog.Core;
     using Serilog.Events;
-    using Users;
 
     public static class ConsoleHost
     {
@@ -29,21 +28,7 @@
                 bootstrapper.Initialize();
 
                 bootstrapper.IocManager.IocContainer.Register(
-                    Component.For<LoggerConfiguration>()
-                        .UsingFactoryMethod(
-                            () => new LoggerConfiguration()
-                                .MinimumLevel.ControlledBy(LMSCoreModule.CurrentLogLevel)
-                                .WriteTo.ColoredConsole()                               
-                                .WriteTo.RollingFile("logs/log.txt", fileSizeLimitBytes: 5242880, retainedFileCountLimit: 10)
-                            
-                        ).LifestyleSingleton(),
-                    Component.For<ILoggerFactory, SerilogFactory>()
-                        .ImplementedBy<SerilogFactory>()
-                        .LifestyleSingleton(),
-                    Component.For<Castle.Core.Logging.ILogger>()
-                        .UsingFactoryMethod(
-                            (kernel, componentModel, creationContext) => kernel.Resolve<ILoggerFactory>().Create(creationContext.Handler.ComponentModel.Name)
-                        ).LifestyleTransient()
+                    LoggingConfiguration.GetConfiguration(LMSCoreModule.CurrentLogLevel)
                 );
 
                 if (opts.Verbose)

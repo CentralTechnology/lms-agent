@@ -1,21 +1,21 @@
-﻿namespace LMS.Users
+﻿namespace LMS.Core.Users
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Abp.UI;
+    using Compare;
     using Core.Extensions;
-    using Core.Extensions.Helpers;
-    using Core.Extensions.Managers;
-    using Core.Services;
-    using Core.Services.Authentication;
-    using Core.Users.Compare;
+    using Core.Managers;
     using global::Hangfire.Server;
     using Hangfire;
+    using Helpers;
     using Managers;
     using Newtonsoft.Json;
     using Portal.LicenseMonitoringSystem.Users.Entities;
+    using Services;
+    using Services.Authentication;
 
     public class UserWorkerManager : WorkerManagerBase, IUserWorkerManager
     {

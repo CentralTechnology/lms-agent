@@ -1,6 +1,7 @@
-﻿namespace LMS.Core.Extensions.Helpers
+﻿namespace LMS.Core.Helpers
 {
     using Abp;
+    using Extensions;
     using Microsoft.Win32;
 
     public static class CommonHelpers

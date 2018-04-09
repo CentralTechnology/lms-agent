@@ -1,4 +1,4 @@
-﻿namespace LMS.Startup
+﻿namespace LMS.Core.StartUp
 {
     using Abp.Domain.Services;
     using global::Hangfire.Server;

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Veeam.Managers
+﻿namespace LMS.Core.Veeam.Managers
 {
+    using System.Collections.Generic;
     using Abp.Domain.Services;
 
     public interface ILicenseManager : IDomainService

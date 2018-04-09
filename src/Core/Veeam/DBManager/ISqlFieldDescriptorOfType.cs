@@ -1,4 +1,4 @@
-﻿namespace LMS.Veeam.DBManager
+﻿namespace LMS.Core.Veeam.DBManager
 {
     using System.Data;
     using System.Data.SqlClient;

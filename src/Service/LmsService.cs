@@ -1,4 +1,4 @@
-﻿namespace LMS.Service
+﻿namespace LMS
 {
     using System;
     using System.Collections.Concurrent;
@@ -7,8 +7,8 @@
     using Abp.Configuration;
     using Abp.Dependency;
     using Core.Extensions;
+    using Core.StartUp;
     using global::Hangfire;
-    using LMS.Startup;
     using Microsoft.Owin.Hosting;
     using Topshelf;
 

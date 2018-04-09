@@ -22,8 +22,8 @@ ToolSettings.SetToolSettings(context: Context,
 							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/Core/Connected Services/**/*.cs"},
 							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]* -[*]Portal.* -[*]Core.Migrations.* -[*]Migrations.* -[*]Actions.*");
 
-var lmsSetup = BuildParameters.Paths.Directories.PublishedApplications.Combine("Installer");
-var lmsDeploy = BuildParameters.Paths.Directories.PublishedApplications.Combine("Deploy");
+var lmsSetup = BuildParameters.Paths.Directories.PublishedApplications.Combine("Installer/net35");
+var lmsDeploy = BuildParameters.Paths.Directories.PublishedApplications.Combine("Deploy/net45");
 var customArtifactsPath = BuildParameters.Paths.Directories.Build.Combine("Packages/Custom");
 
 Task("Copy-Custom-Files")
@@ -78,4 +78,4 @@ Task("Publish-GitHub-Release-Custom-Files")
     publishingError = true;
 });
 
-Build.Run();
+Build.RunDotNetCore();

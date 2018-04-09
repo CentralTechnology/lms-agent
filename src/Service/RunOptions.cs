@@ -1,11 +1,11 @@
-﻿namespace LMS.Service
+﻿namespace LMS
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using CommandLine;
     using CommandLine.Text;
 
-        [Verb("run", HelpText = "Run a monitor")]
+    [Verb("run", HelpText = "Run a monitor")]
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public class RunOptions

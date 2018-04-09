@@ -1,12 +1,11 @@
 ﻿namespace LMS.Core.Veeam
 {
     using System.Threading.Tasks;
+    using Core.Managers;
     using Extensions;
     using global::Hangfire.Server;
     using Hangfire;
-    using Extensions.Managers;
-    using LMS.Veeam;
-    using LMS.Veeam.Managers;
+    using Managers;
     using Newtonsoft.Json;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
     using Services;

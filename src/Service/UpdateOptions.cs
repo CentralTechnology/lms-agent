@@ -1,12 +1,11 @@
-﻿namespace LMS.Service
+﻿namespace LMS
 {
     using System;
     using System.Collections.Generic;
     using CommandLine;
     using CommandLine.Text;
 
-
-        [Verb("update", HelpText = "Update settings")]
+    [Verb("update", HelpText = "Update settings")]
         public class UpdateOptions
         {
             [Option('p', "pdc-override", HelpText = "Allows the users monitor to run from a member server")]

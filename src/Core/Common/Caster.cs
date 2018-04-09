@@ -1,4 +1,4 @@
-﻿namespace Core.Common
+﻿namespace LMS.Core.Common
 {
     using System;
     using System.Linq.Expressions;

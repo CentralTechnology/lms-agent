@@ -1,4 +1,4 @@
-﻿namespace LMS.Configuration
+﻿namespace LMS.Core.Configuration
 {
     using System;
     using System.Collections.Generic;
