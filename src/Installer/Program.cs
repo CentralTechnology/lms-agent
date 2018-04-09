@@ -8,26 +8,21 @@
 
     class Script
     {
-#if DEBUG
-        private const string Configuration = "Debug";
-#else
-const string Configuration = "Release";
-#endif
+        private static readonly string SolutionDir = Environment.GetEnvironmentVariable("SolutionDirectory");
+        private static readonly string Configuration = Environment.GetEnvironmentVariable("Configuration");
 
         static string BuildMsi()
         {
-            Console.WriteLine("Project: %ProjectName%");
-          
-            var solutionDir = SolutionDirectoryFinder.CalculateContentRootFolder();
-
-            Console.WriteLine($"Service: {solutionDir}\\Service\\bin\\{Configuration}\\net452\\win-x86\\LMS.exe");
+            Console.WriteLine($"Solution Directory: {SolutionDir}");
+            Console.WriteLine($"Configuration: {Configuration}");
+            Console.WriteLine($"Service: {SolutionDir}\\Service\\bin\\{Configuration}\\net452\\win-x86\\LMS.exe");
 
             File service;
             var project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
                     new DirPermission("LocalSystem", GenericPermission.All),
-                    service = new File($"{solutionDir}\\Service\\bin\\{Configuration}\\net452\\win-x86\\LMS.exe"),
-                    new DirFiles($"{solutionDir}\\Service\\bin\\{Configuration}\\net452\\win-x86\\*.*", f => !f.EndsWith("LMS.exe")))
+                    service = new File($"{SolutionDir}\\Service\\bin\\{Configuration}\\net452\\win-x86\\LMS.exe"),
+                    new DirFiles($"{SolutionDir}\\Service\\bin\\{Configuration}\\net452\\win-x86\\*.*", f => !f.EndsWith("LMS.exe")))
             )
             {
                 ControlPanelInfo = new ProductInfo
@@ -45,7 +40,7 @@ const string Configuration = "Release";
                     DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
                 },
                 Name = Constants.ServiceDisplayName,
-                OutDir =  $"bin\\{Configuration}\\net35\\win-x86",
+                OutDir = $"bin\\{Configuration}\\net35\\win-x86",
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
                 UI = WUI.WixUI_Common
             };

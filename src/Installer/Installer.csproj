@@ -12,20 +12,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <FrameworkPathOverride>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client</FrameworkPathOverride>
+    <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client</FrameworkPathOverride>
   </PropertyGroup>
-
-  <Target Name="MyCustomTask" BeforeTargets="CoreBuild">
-    <Message Text="$(NuGetPackageRoot)" Importance="high"></Message>
-    <SetEnvVar Values="ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);SolutionName=$(SolutionName);SolutionDir=$(SolutionDir);Configuration=$(Configuration)" />
-  </Target>
-
-  <Import Project="$(NuGetPackageRoot)\wixsharp\1.6.2.1\build\WixSharp.targets" Condition="Exists('$(NuGetPackageRoot)\wixsharp\1.6.2.1\WixSharp.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(NuGetPackageRoot)\wixsharp\1.6.2.1\build\WixSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(NuGetPackageRoot)\wixsharp\1.6.2.1\build\WixSharp.targets'))" />
-  </Target>
-  <UsingTask AssemblyFile="$(NuGetPackageRoot)\wixsharp\1.6.2.1\build\SetEnvVar.dll" TaskName="SetEnvVar" />
 </Project>

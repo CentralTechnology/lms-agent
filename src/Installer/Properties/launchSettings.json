@@ -1,7 +1,10 @@
 {
   "profiles": {
     "Installer": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "environmentVariables": {
+        "SolutionDir": "123"
+      }
     }
   }
 }
