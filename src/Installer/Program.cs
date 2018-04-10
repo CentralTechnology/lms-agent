@@ -2,9 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;
+    using File = WixSharp.File;
 
     internal class Script
     {
@@ -14,6 +16,11 @@
 
         private static string BuildMsi()
         {
+            if (!Directory.Exists("C:\\temp"))
+            {
+                Directory.CreateDirectory("C:\\temp");
+            }
+
             _solutionDir = GetSolutionDir();
             _configuration = GetConfiguration();
 

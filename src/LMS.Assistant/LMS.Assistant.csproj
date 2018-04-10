@@ -6,7 +6,6 @@
     <RuntimeIdentifier>win-x86</RuntimeIdentifier>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <IsPackable>false</IsPackable>
     <AssemblyName>Assistant</AssemblyName>
   </PropertyGroup>
 
