@@ -6,13 +6,15 @@
     <RuntimeIdentifier>win-x86</RuntimeIdentifier>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="WixSharp" Version="1.6.2.1" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="if not exist &quot;C:\temp&quot; mkdir C:\temp&#xD;&#xA;@echo off&#xD;&#xA;@echo SolutionDir=$(SolutionDir) &gt; C:\temp\configuration.txt&#xD;&#xA;@echo Configuration=$(Configuration) &gt;&gt; C:\temp\configuration.txt" />
+    <Exec Command="powershell.exe -ExecutionPolicy Unrestricted $(ProjectDir)BuildVariables.ps1 -ProjectDir $(ProjectDir) -Configuration $(Configuration) -OutDir $(OutDir)" />
   </Target>
 </Project>

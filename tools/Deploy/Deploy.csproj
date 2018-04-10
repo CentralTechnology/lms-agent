@@ -5,6 +5,8 @@
     <TargetFramework>net45</TargetFramework>
     <RuntimeIdentifier>win-x86</RuntimeIdentifier>
     <LangVersion>7.1</LangVersion>
+    <RootNamespace>LMS.Deploy</RootNamespace>
+    <AssemblyName>LMS.Deploy</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

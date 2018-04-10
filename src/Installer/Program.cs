@@ -2,31 +2,28 @@
 {
     using System;
     using System.Collections.Generic;
+    using Newtonsoft.Json;
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;
 
     internal class Script
     {
-        private static string[] _config;
-        private static string _configuration;
-        private static string _solutionDir;
+        private static CustomConfiguration Configuration => GetConfiguration();
 
         private static string BuildMsi()
         {
-            _solutionDir = GetSolutionDir();
-            _configuration = GetConfiguration();
-
-            Console.WriteLine($"Solution Directory: {_solutionDir}");
-            Console.WriteLine($"Configuration: {_configuration}");
-            Console.WriteLine($"Service: {_solutionDir}\\Service\\bin\\{_configuration}\\net452\\win-x86\\LMS.exe");
+            Console.WriteLine($"Solution Directory: {Configuration.SolutionDir}");
+            Console.WriteLine($"Output Directory: {Configuration.OutDir}");
+            Console.WriteLine($"Configuration: {Configuration.Configuration}");
+            Console.WriteLine($"Service: {Configuration.SolutionDir}\\Service\\bin\\{Configuration.Configuration}\\net452\\win-x86\\LMS.exe");
 
             File service;
             var project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
                     new DirPermission("LocalSystem", GenericPermission.All),
-                    service = new File($"{_solutionDir}\\Service\\bin\\{_configuration}\\net452\\win-x86\\LMS.exe"),
-                    new DirFiles($"{_solutionDir}\\Service\\bin\\{_configuration}\\net452\\win-x86\\*.*", f => !f.EndsWith("LMS.exe")))
+                    service = new File($"{Configuration.SolutionDir}\\Service\\bin\\{Configuration.Configuration}\\net452\\win-x86\\LMS.exe"),
+                    new DirFiles($"{Configuration.SolutionDir}\\Service\\bin\\{Configuration.Configuration}\\net452\\win-x86\\*.*", f => !f.EndsWith("LMS.exe")))
             )
             {
                 ControlPanelInfo = new ProductInfo
@@ -44,7 +41,7 @@
                     DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
                 },
                 Name = Constants.ServiceDisplayName,
-                OutDir = $"bin\\{_configuration}\\net40\\win-x86",
+                OutDir = Configuration.OutDir,
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
                 UI = WUI.WixUI_Common
             };
@@ -74,24 +71,10 @@
             return Compiler.BuildMsi(project);
         }
 
-        private static string GetConfiguration()
+        private static CustomConfiguration GetConfiguration()
         {
-            if (_config == null)
-            {
-                _config = System.IO.File.ReadAllLines("C:\\temp\\configuration.txt");
-            }
-
-            return _config[1].Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries)[1];
-        }
-
-        private static string GetSolutionDir()
-        {
-            if (_config == null)
-            {
-                _config = System.IO.File.ReadAllLines("C:\\temp\\configuration.txt");
-            }
-
-            return _config[0].Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries)[1];
+            var file = System.IO.File.ReadAllText("C:\\temp\\configuration.json");
+            return JsonConvert.DeserializeObject<CustomConfiguration>(file);
         }
 
         private static void Main(string[] args)
@@ -107,7 +90,7 @@
                 DisableModify = "yes",
                 DisableRollback = true,
                 IconFile = "app_icon.ico",
-                OutDir = $"bin\\{_configuration}\\net40\\win-x86",
+                OutDir = Configuration.OutDir,
                 OutFileName = "LMS.Setup",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
                 Version = new Version(version),

@@ -6,15 +6,9 @@
 
     public static class SolutionDirectoryFinder
     {
-        public static string CalculateContentRootFolder()
+        public static string CalculateContentRootFolder(string sourcePath)
         {
-            var coreAssemblyDirectoryPath = Path.GetDirectoryName(typeof(SolutionDirectoryFinder).GetAssembly().Location);
-            if (coreAssemblyDirectoryPath == null)
-            {
-                throw new Exception("Could not find location of this assembly!");
-            }
-
-            var directoryInfo = new DirectoryInfo(coreAssemblyDirectoryPath);
+            var directoryInfo = new DirectoryInfo(sourcePath);
             while (!DirectoryContains(directoryInfo.FullName, "LicenseMonitoringSystem.sln"))
             {
                 directoryInfo = directoryInfo.Parent ?? throw new Exception("Could not find content root folder!");
