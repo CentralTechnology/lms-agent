@@ -78,4 +78,4 @@ Task("Publish-GitHub-Release-Custom-Files")
     publishingError = true;
 });
 
-Build.RunDotNetCore();
+Build.Run();

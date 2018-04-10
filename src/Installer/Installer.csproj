@@ -14,7 +14,7 @@
     <PackageReference Include="WixSharp" Version="1.6.2.1" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" DependsOnTargets="ResolveProjectReferences">
     <Exec Command="powershell.exe -ExecutionPolicy Unrestricted $(ProjectDir)BuildVariables.ps1 -ProjectDir $(ProjectDir) -Configuration $(Configuration) -OutDir $(OutDir)" />
   </Target>
 </Project>
