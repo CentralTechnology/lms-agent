@@ -13,6 +13,6 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="@echo off&#xD;&#xA;@echo SolutionDir=$(SolutionDir) &gt; c:\temp\configuration.txt&#xD;&#xA;@echo Configuration=$(Configuration) &gt;&gt; c:\temp\configuration.txt" />
+    <Exec Command="if not exist &quot;C:\temp&quot; mkdir C:\temp&#xD;&#xA;@echo off&#xD;&#xA;@echo SolutionDir=$(SolutionDir) &gt; C:\temp\configuration.txt&#xD;&#xA;@echo Configuration=$(Configuration) &gt;&gt; C:\temp\configuration.txt" />
   </Target>
 </Project>
