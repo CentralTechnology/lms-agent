@@ -4,8 +4,10 @@
     using Abp.Configuration;
     using Abp.Dependency;
     using Abp.UI;
+    using Clients;
     using Configuration;
     using Extensions;
+    using Helpers;
     using Managers;
     using Microsoft.Win32;
     using Newtonsoft.Json;
@@ -13,32 +15,23 @@
 
     public class PortalAuthenticationService : LMSManagerBase, IPortalAuthenticationService, ISingletonDependency
     {
-#if DEBUG
-        private const string AccountUri = "http://localhost:64755/auth/account";
-        private const string TokenUri = "http://localhost:64755/auth/token";
-#else
-        private const string AccountUri = "https://api-v1.portal.ct.co.uk/auth/account";
-    private const string TokenUri = "https://api-v1.portal.ct.co.uk/auth/token";
-#endif
+        private PortalToken _token;
 
-        private readonly object _tokenLock = new object();
-        private PortalToken Token { get; set; }
-
-        public string GetToken()
+        public PortalToken Token
         {
-            lock (_tokenLock)
+            get
             {
-                if (Token == null)
+                if (_token == null)
                 {
-                    Token = RequestToken();
+                    _token = RequestToken();
                 }
 
-                if (Token.IsNearExpiry())
+                if (_token.IsNearExpiry())
                 {
-                    Token = RequestToken();
+                    _token = RequestToken();
                 }
 
-                return Token.access_token;
+                return _token;
             }
         }
 
@@ -73,27 +66,6 @@
             return id;
         }
 
-        private long GetAccountFromService(Guid device)
-        {
-            Logger.Info("Requesting Account number from the api.");
-
-            var client = new RestClient(AccountUri);
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("Cache-Control", "no-cache");
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddParameter("Device", device);
-
-            try
-            {
-                return Convert.ToInt64(client.Execute(request).Content);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.Message, ex);
-                throw new UserFriendlyException("Unable to get the Account number from the api. Please manually enter the Account number through the CLI.");
-            }
-        }
-
         public Guid GetDevice()
         {
             string device = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId);
@@ -119,11 +91,36 @@
             return id;
         }
 
-        private Guid GetDeviceFromRegistry()
+        private long GetAccountFromService(Guid device)
         {
-#if DEBUG
-            return new Guid("2a5d23dc-1b9a-9341-32c6-1160a5df7883");
-#endif
+            Logger.Info("Requesting Account number from the api.");
+
+            var client = new RestClientBase(GetAccountUri());
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Cache-Control", "no-cache");
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddParameter("Device", device);
+
+            try
+            {
+                return Convert.ToInt64(client.Execute(request).Content);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message, ex);
+                throw new UserFriendlyException("Unable to get the Account number from the api. Please manually enter the Account number through the CLI.");
+            }
+        }
+
+        private static string GetAccountUri() => DebuggingService.Debug ? "http://localhost:64755/auth/account" : "https://api-v2.portal.ct.co.uk/auth/account";
+
+        private static Guid GetDeviceFromRegistry()
+        {
+            if (DebuggingService.Debug)
+            {
+                return new Guid("2a5d23dc-1b9a-9341-32c6-1160a5df7883");
+            }
+            
             var keys = new[]
             {
                 RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE"),
@@ -152,12 +149,14 @@
             throw new UserFriendlyException("Unable to get the Device identifier from the registry. Please manually enter the Device identifier through the CLI.");
         }
 
+        private static string GetTokenUri() => DebuggingService.Debug ? "http://localhost:64755/auth/token" : "https://api-v2.portal.ct.co.uk/auth/token";
+
         private PortalToken RequestToken()
         {
             long account = GetAccount();
             Guid device = GetDevice();
 
-            var client = new RestClient(TokenUri);
+            var client = new RestClientBase(GetTokenUri());
             var request = new RestRequest(Method.POST);
             request.AddHeader("Cache-Control", "no-cache");
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded");

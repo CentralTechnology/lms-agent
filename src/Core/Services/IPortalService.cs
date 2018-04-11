@@ -17,9 +17,9 @@
         Task DeleteGroupAsync(LicenseGroup group);
         Task DeleteUserAsync(LicenseUser user);
         Task DeleteUserGroupAsync(LicenseUserGroup userGroup);
-        Task<IEnumerable<LicenseGroup>> GetAllGroupsAsync();
-        List<LicenseUserGroup> GetAllGroupUsers(Guid group);
-        Task<IEnumerable<LicenseUser>> GetAllUsersAsync();
+        IEnumerable<LicenseGroup> GetAllGroups();
+        IEnumerable<LicenseUserGroup> GetAllGroupUsers(Guid @group);
+        IEnumerable<LicenseUser> GetAllUsers();
         ManagedSupport GetManagedServer();
         DataServiceCollection<LicenseUser> GetUserById(Guid userId);
         DataServiceCollection<Veeam> GetVeeamServer();

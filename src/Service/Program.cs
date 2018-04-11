@@ -21,11 +21,14 @@
                 Console.SetWindowSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
             }
 
-            if (args != null && args.Length > 0)
+            if (Environment.UserInteractive && args != null)
             {
                 Parser.Default.ParseArguments<UpdateOptions, RunOptions>(args)
                     .WithParsed<UpdateOptions>(ConsoleHost.Update)
                     .WithParsed<RunOptions>(ConsoleHost.Run);
+
+                Console.WriteLine("Press [Enter] to exit.");
+                Console.ReadLine();
 
                 return 0;
             }

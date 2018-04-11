@@ -6,16 +6,11 @@ using Microsoft.Owin;
 namespace LMS
 {
     using System.Diagnostics.CodeAnalysis;
-    using System.IO;
     using Abp.Owin;
-    using Castle.Core.Logging;
-    using Castle.MicroKernel.Registration;
-    using Castle.Services.Logging.SerilogIntegration;
     using Core;
     using Core.Logging;
-    using global::Hangfire;
+    using Hangfire;
     using Owin;
-    using Serilog;
     using Serilog.Core;
 
     [SuppressMessage("ReSharper", "UnusedMember.Global")]

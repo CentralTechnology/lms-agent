@@ -46,9 +46,27 @@
                 payload.Validate();
 
                 Logger.Info(performContext, "Payload is valid!");
-                Logger.Info($"Payload details: {JsonConvert.SerializeObject(payload, Formatting.None)}");
+
+                var prettyPayload = new
+                {
+                    Hostname = payload.Hostname,
+                    Id = payload.Id,
+                    Agent = payload.ClientVersion,
+                    Tenant = payload.TenantId,
+                    Edition = payload.Edition.ToString(),
+                    LicenseType = payload.LicenseType.ToString(),
+                    HyperV = payload.HyperV,
+                    VMWare = payload.vSphere,
+                    ExpirationDate = payload.ExpirationDate.ToString("o"),
+                    Program = payload.ProgramVersion,
+                    SupportId = payload.SupportId
+                };
+
+                Logger.Info($"Payload details: {JsonConvert.SerializeObject(prettyPayload, Formatting.Indented)}");
 
                 await PortalService.UpdateVeeamServerAsync(payload);
+
+                Logger.Info(performContext,"Successfully checked in.");
             });
         }
     }

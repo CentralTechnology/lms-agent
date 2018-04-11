@@ -28,6 +28,7 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
 
         public void UpdateValues(LicenseGroup group)
         {
+            IsDeleted = false;
             Name = group.Name;
             WhenCreated = group.WhenCreated;
         }

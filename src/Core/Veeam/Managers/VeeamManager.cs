@@ -26,6 +26,7 @@
     using Microsoft.Win32;
     using Models;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
+    using Services.Authentication;
 
     public class VeeamManager : DomainService, IVeeamManager
     {
@@ -38,6 +39,12 @@
 
         public const string VeeamFilePath = @"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe";
         public const string Veeam90FilePath = @"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe";
+
+        private readonly IPortalAuthenticationService _authService;
+        public VeeamManager(IPortalAuthenticationService authService)
+        {
+            _authService = authService;
+        }
 
         private VmLicensingInfo FromReader(IDataReader reader)
         {
@@ -248,14 +255,13 @@
             veeam.vSphere = vsphere;
             veeam.HyperV = hyperv;
 
-            veeam.CheckInTime = new DateTimeOffset(Clock.Now);
             veeam.ClientVersion = SettingManagerHelper.ClientVersion;
             veeam.Edition = VeeamLicense.Edition;
             veeam.ExpirationDate = VeeamLicense.ExpirationDate;
-            veeam.Id = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>(); // auth service
+            veeam.Hostname = Environment.MachineName;
+            veeam.Id = _authService.GetDevice();
             veeam.SupportId = VeeamLicense.SupportId;
-            veeam.TenantId = SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId); // auth service
-
+            veeam.TenantId = Convert.ToInt32(_authService.GetAccount());
 
             return veeam;
         }

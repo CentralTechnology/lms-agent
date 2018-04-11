@@ -13,9 +13,12 @@
     using Abp.UI;
     using Authentication;
     using Default;
+    using Helpers;
+    using Json;
     using Managers;
     using Microsoft.OData.Client;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
@@ -23,14 +26,13 @@
     [SuppressMessage("ReSharper", "ReplaceWithSingleCallToSingleOrDefault")]
     public class PortalService : LMSManagerBase, IPortalService, IShouldInitialize
     {
-#if DEBUG
-        private const string ServiceUri = "http://localhost:64755//odata";
-#else
-         private const string ServiceUri = "https://api-v2.portal.ct.co.uk/odata";
-    #endif
-
         private readonly IPortalAuthenticationService _authService;
         private Container _context;
+
+        private string GetServiceUri()
+        {
+            return DebuggingService.Debug ? "http://localhost:64755/odata" : "https://api-v2.portal.ct.co.uk/odata";
+        }
 
         public PortalService(IPortalAuthenticationService authService)
         {
@@ -40,12 +42,12 @@
         public DataServiceCollection<Veeam> GetVeeamServer()
         {
             var device = _authService.GetDevice();
-            return new DataServiceCollection<Veeam>(_context.VeeamServers.Where(e => e.Id == device));
+            return new DataServiceCollection<Veeam>(_context.VeeamServers.ByKey(device));
         }
 
         public DataServiceCollection<LicenseUser> GetUserById(Guid userId)
-        {
-            return new DataServiceCollection<LicenseUser>(_context.Users.Where(u => u.Id == userId));
+        {            
+            return new DataServiceCollection<LicenseUser>(_context.Users.ByKey(userId));
         }
 
         public async Task UpdateVeeamServerAsync(Veeam update)
@@ -59,7 +61,6 @@
                 return;
             }
 
-            original[0].CheckInTime = Clock.Now;
             original[0].ClientVersion = update.ClientVersion;
             original[0].DeleterUserId = null;
             original[0].DeletionTime = null;
@@ -101,19 +102,19 @@
             await SaveChangesAsync();
         }
 
-        public List<LicenseUserGroup> GetAllGroupUsers(Guid group)
+        public IEnumerable<LicenseUserGroup> GetAllGroupUsers(Guid @group)
         {
-            return _context.UserGroups.GetAllPages().Where(ug => ug.GroupId == group).ToList();
+            return _context.UserGroups.Where(ug => ug.GroupId == group);
         }
 
-        public Task<IEnumerable<LicenseUser>> GetAllUsersAsync()
+        public IEnumerable<LicenseUser> GetAllUsers()
         {
-            return _context.Users.GetAllPagesAsync();
+            return _context.Users;
         }
 
-        public Task<IEnumerable<LicenseGroup>> GetAllGroupsAsync()
+        public IEnumerable<LicenseGroup> GetAllGroups()
         {
-            return _context.Groups.GetAllPagesAsync();
+            return _context.Groups;
         }
 
         public async Task AddUserGroupAsync(LicenseUserGroup userGroup)
@@ -154,8 +155,6 @@
 
         public async Task UpdateManagedServerAsync(ManagedSupport update)
         {
-            update.CheckInTime = DateTimeOffset.UtcNow;
-
             _context.UpdateObject(update);
             await SaveChangesAsync();
         }
@@ -169,12 +168,34 @@
         {
             Logger.Info("Configuring the api service.");
 
-            _context = new Container(new Uri(ServiceUri));
+            _context = new Container(new Uri(GetServiceUri()));
 
+            _context.BuildingRequest += _context_BuildingRequest;
             _context.ReceivingResponse += ContextReceivingResponse;
             _context.SendingRequest2 += ContextSendingRequest2;
 
+            Logger.Debug($"Base Uri: {_context.BaseUri}");
             Logger.Info("Configuration complete!");
+        }
+
+        private void _context_BuildingRequest(object sender, BuildingRequestEventArgs e)
+        {
+            if (!DebuggingService.Debug)
+            {
+                Logger.Debug($"Request Scheme: {e.RequestUri.Scheme}");
+                if (e.RequestUri.Scheme != Uri.UriSchemeHttps)
+                {
+                    UriBuilder ub = new UriBuilder(e.RequestUri)
+                    {
+                        Scheme = Uri.UriSchemeHttps,
+                        Port = 443
+                    };
+                    e.RequestUri = ub.Uri;
+                    Logger.Debug($"Updated Uri: {e.RequestUri}");
+                }
+
+            }
+
         }
 
         private Task SaveChangesAsync()
@@ -196,31 +217,39 @@
 
             if (!(e.ResponseMessage is HttpWebResponseMessage responseMessage))
             {
-                throw new UserFriendlyException();
+                throw new UserFriendlyException($"Request Failed: {e.ResponseMessage.StatusCode}");
             }
 
             if (!(responseMessage.Response is HttpWebResponse response))
             {
-                throw new UserFriendlyException();
+                throw new UserFriendlyException($"Request Failed: {responseMessage.Response.StatusCode} {responseMessage.Response.StatusDescription}");
             }
 
             if (response.StatusCode == HttpStatusCode.BadRequest ||
-                response.StatusCode == HttpStatusCode.InternalServerError)
+                response.StatusCode == HttpStatusCode.InternalServerError ||
+                response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
                 {
-                    var error = JsonConvert.DeserializeObject<ODataErrorResponse>(reader.ReadToEnd());
+                    Logger.Debug($"Content: {reader.ReadToEnd()}");
 
-                    Logger.Error($"{response.StatusCode} ({(int) response.StatusCode}) - {error.Message}");
+                    if (JsonValidationHelper.IsValidJson(reader.ReadToEnd()))
+                    {
+                        var error = JsonConvert.DeserializeObject<ODataErrorResponse>(reader.ReadToEnd());
 
-                    throw new UserFriendlyException((int) response.StatusCode, error.Message);
+                        Logger.Error($"{response.StatusCode} ({(int)response.StatusCode}) - {error.Message}");
+
+                        throw new UserFriendlyException((int)response.StatusCode, error.Message);
+                    }
+
+                    throw new UserFriendlyException((int)response.StatusCode, reader.ReadToEnd());
                 }
             }
         }
 
         private void ContextSendingRequest2(object sender, SendingRequest2EventArgs e)
         {
-            e.RequestMessage.SetHeader("Authorization", $"Bearer {_authService.GetToken()}");
+            e.RequestMessage.SetHeader("Authorization", $"Bearer {_authService.Token.access_token}");
             e.RequestMessage.SetHeader("Account", $"{_authService.GetAccount()}");
 
             if (e.RequestMessage is HttpWebRequestMessage message)

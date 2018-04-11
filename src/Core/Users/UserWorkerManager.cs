@@ -35,11 +35,11 @@
 
         public async Task ComputeUsers(PerformContext performContext, int managedSupportId)
         {
+            Logger.Info(performContext, "Getting the users from the Portal...");
+            var remoteUsers = PortalService.GetAllUsers().ToArray();
+
             Logger.Info(performContext, "Getting the users from Active Directory...");
-
-            var adUsers = _activeDirectoryManager.GetAllUsersList(performContext);
-
-            List<LicenseUser> remoteUsers = (await PortalService.GetAllUsersAsync()).ToList();
+            var adUsers = _activeDirectoryManager.GetAllUsers(performContext).ToList();                     
 
             foreach (var adUser in adUsers)
             {
@@ -70,7 +70,7 @@
                 Logger.Debug($"{JsonConvert.SerializeObject(remoteUser, Formatting.Indented)}");
             }
 
-            var staleUsers = remoteUsers.Except(adUsers, _licenseUserEqualityComparer).ToList();
+            var staleUsers = remoteUsers.Except(adUsers, _licenseUserEqualityComparer).ToArray();
             foreach (var staleUser in staleUsers)
             {
                 performContext?.Cancel();
@@ -90,18 +90,18 @@
 
         public async Task ComputeGroupMembershipAsync(PerformContext performContext)
         {
-            Logger.Info(performContext, "Getting the group from Active Directory...");
+            Logger.Info(performContext, "Getting the groups from Active Directory...");
 
-            var groups = _activeDirectoryManager.GetAllGroupsList(performContext);
+            var groups = _activeDirectoryManager.GetAllGroups(performContext).ToArray();
             foreach (var group in groups)
             {
                 performContext?.Cancel();
 
                 var groupMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
 
-                var userGroups = PortalService.GetAllGroupUsers(group.Id);
+                var userGroups = PortalService.GetAllGroupUsers(@group.Id).ToArray();
 
-                var newMembers = groupMembers.Except(userGroups, _licenseUserGroupEqualityComparer);
+                var newMembers = groupMembers.Except(userGroups, _licenseUserGroupEqualityComparer).ToArray();
                 foreach (var newMember in newMembers)
                 {
                     performContext?.Cancel();
@@ -113,7 +113,7 @@
                     Logger.Info($"User: {newMember.UserId} was added to Group: {group.Id} {group.Name}");
                 }
 
-                var staleMembers = userGroups.Except(groupMembers, _licenseUserGroupEqualityComparer).ToList();
+                var staleMembers = userGroups.Except(groupMembers, _licenseUserGroupEqualityComparer).ToArray();
                 foreach (var staleMember in staleMembers)
                 {
                     performContext?.Cancel();
@@ -124,16 +124,25 @@
                     performContext?.WriteWarnLine($"+ {group.Name}  {staleMember.UserId}");
                     Logger.Info($"User: {staleMember.UserId} was removed from Group: {group.Id} {group.Name}");
                 }
+
+                if (!newMembers.Any() && !staleMembers.Any())
+                {
+                    Logger.Info($"Group: {group.Id}  No changes have been made.");
+                }
+                else
+                {
+                    Logger.Info($"Group: {group.Id}  Added: {newMembers.Length}  Removed: {staleMembers.Length}");
+                }
             }
         }
 
         public async Task ComputeGroups(PerformContext performContext)
         {
-            List<LicenseGroup> remoteGroups = (await PortalService.GetAllGroupsAsync()).ToList();
+            Logger.Info(performContext, "Getting the groups from the Portal...");
+            var remoteGroups = PortalService.GetAllGroups().ToArray();
 
             Logger.Info(performContext, "Getting the groups from Active Directory...");
-
-            var adGroups = _activeDirectoryManager.GetAllGroupsList(performContext);
+            var adGroups = _activeDirectoryManager.GetAllGroups(performContext).ToArray();
 
             foreach (var adGroup in adGroups)
             {
@@ -163,7 +172,7 @@
                 Logger.Debug($"{JsonConvert.SerializeObject(remoteGroup, Formatting.Indented)}");
             }
 
-            var staleGroups = remoteGroups.Except(adGroups, _licenseGroupEqualityComparer).ToList();
+            var staleGroups = remoteGroups.Except(adGroups, _licenseGroupEqualityComparer).ToArray();
             foreach (var staleGroup in staleGroups)
             {
                 performContext?.Cancel();
@@ -213,6 +222,10 @@
                     {
                         throw new UserFriendlyException(ex.Message);
                     }
+                }
+                else
+                {
+                    managedServer.ClientVersion = SettingManagerHelper.ClientVersion;
                 }
 
                 Logger.Info(performContext, "Upload details acquired!");

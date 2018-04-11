@@ -5,9 +5,9 @@
 
     public interface IPortalAuthenticationService : IDomainService
     {
+        PortalToken Token { get; }
         long GetAccount();
         long GetAccount(Guid device);
         Guid GetDevice();
-        string GetToken();
     }
 }

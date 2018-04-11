@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 09/04/2018 08:45:17
+// Generation date: 11/04/2018 14:02:54
 namespace Portal.LicenseMonitoringSystem.Users.Entities
 {
     /// <summary>
@@ -701,15 +701,13 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         /// Create a new ManagedSupport object.
         /// </summary>
         /// <param name="deviceId">Initial value of DeviceId.</param>
-        /// <param name="checkInTime">Initial value of CheckInTime.</param>
         /// <param name="tenantId">Initial value of TenantId.</param>
         /// <param name="ID">Initial value of Id.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public static ManagedSupport CreateManagedSupport(global::System.Guid deviceId, global::System.DateTimeOffset checkInTime, int tenantId, int ID)
+        public static ManagedSupport CreateManagedSupport(global::System.Guid deviceId, int tenantId, int ID)
         {
             ManagedSupport managedSupport = new ManagedSupport();
             managedSupport.DeviceId = deviceId;
-            managedSupport.CheckInTime = checkInTime;
             managedSupport.TenantId = tenantId;
             managedSupport.Id = ID;
             return managedSupport;
@@ -780,28 +778,6 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
         private string _IpAddress;
         partial void OnIpAddressChanging(string value);
         partial void OnIpAddressChanged();
-        /// <summary>
-        /// There are no comments for Property CheckInTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.DateTimeOffset CheckInTime
-        {
-            get
-            {
-                return this._CheckInTime;
-            }
-            set
-            {
-                this.OnCheckInTimeChanging(value);
-                this._CheckInTime = value;
-                this.OnCheckInTimeChanged();
-                this.OnPropertyChanged("CheckInTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _CheckInTime;
-        partial void OnCheckInTimeChanging(global::System.DateTimeOffset value);
-        partial void OnCheckInTimeChanged();
         /// <summary>
         /// There are no comments for Property ClientVersion in the schema.
         /// </summary>
@@ -1048,7 +1024,6 @@ namespace Portal.LicenseMonitoringSystem.Veeam.Entities
         /// <param name="programVersion">Initial value of ProgramVersion.</param>
         /// <param name="vSphere">Initial value of vSphere.</param>
         /// <param name="isDeleted">Initial value of IsDeleted.</param>
-        /// <param name="checkInTime">Initial value of CheckInTime.</param>
         /// <param name="tenantId">Initial value of TenantId.</param>
         /// <param name="isActive">Initial value of IsActive.</param>
         /// <param name="ID">Initial value of Id.</param>
@@ -1060,7 +1035,6 @@ namespace Portal.LicenseMonitoringSystem.Veeam.Entities
                     string programVersion, 
                     int vSphere, 
                     bool isDeleted, 
-                    global::System.DateTimeOffset checkInTime, 
                     int tenantId, 
                     bool isActive, 
                     global::System.Guid ID)
@@ -1073,7 +1047,6 @@ namespace Portal.LicenseMonitoringSystem.Veeam.Entities
             veeam.ProgramVersion = programVersion;
             veeam.vSphere = vSphere;
             veeam.IsDeleted = isDeleted;
-            veeam.CheckInTime = checkInTime;
             veeam.TenantId = tenantId;
             veeam.IsActive = isActive;
             veeam.Id = ID;
@@ -1343,28 +1316,6 @@ namespace Portal.LicenseMonitoringSystem.Veeam.Entities
         private global::System.Nullable<long> _DeleterUserId;
         partial void OnDeleterUserIdChanging(global::System.Nullable<long> value);
         partial void OnDeleterUserIdChanged();
-        /// <summary>
-        /// There are no comments for Property CheckInTime in the schema.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        public global::System.DateTimeOffset CheckInTime
-        {
-            get
-            {
-                return this._CheckInTime;
-            }
-            set
-            {
-                this.OnCheckInTimeChanging(value);
-                this._CheckInTime = value;
-                this.OnCheckInTimeChanged();
-                this.OnPropertyChanged("CheckInTime");
-            }
-        }
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.OData.Client.Design.T4", "2.4.0")]
-        private global::System.DateTimeOffset _CheckInTime;
-        partial void OnCheckInTimeChanging(global::System.DateTimeOffset value);
-        partial void OnCheckInTimeChanged();
         /// <summary>
         /// There are no comments for Property ClientVersion in the schema.
         /// </summary>
@@ -1719,7 +1670,6 @@ namespace Default
         <Property Name=""DeviceId"" Type=""Edm.Guid"" Nullable=""false"" />
         <Property Name=""Hostname"" Type=""Edm.String"" MaxLength=""200"" />
         <Property Name=""IpAddress"" Type=""Edm.String"" MaxLength=""39"" />
-        <Property Name=""CheckInTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""ClientVersion"" Type=""Edm.String"" />
         <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""Id"" Type=""Edm.Int32"" Nullable=""false"" />
@@ -1752,7 +1702,6 @@ namespace Default
         <Property Name=""IsDeleted"" Type=""Edm.Boolean"" Nullable=""false"" />
         <Property Name=""DeletionTime"" Type=""Edm.DateTimeOffset"" />
         <Property Name=""DeleterUserId"" Type=""Edm.Int64"" />
-        <Property Name=""CheckInTime"" Type=""Edm.DateTimeOffset"" Nullable=""false"" />
         <Property Name=""ClientVersion"" Type=""Edm.String"" />
         <Property Name=""TenantId"" Type=""Edm.Int32"" Nullable=""false"" />
         <Property Name=""IsActive"" Type=""Edm.Boolean"" Nullable=""false"" />

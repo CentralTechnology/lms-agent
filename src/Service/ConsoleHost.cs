@@ -80,9 +80,6 @@
                         }
                     }
                 }
-
-                Console.WriteLine("Press [Enter] to continue.");
-                Console.ReadLine();
             }
         }
 
@@ -94,7 +91,7 @@
 
                 using (var settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
                 {
-                    if (opts.AccountId != default(int))
+                    if (opts.AccountId.HasValue && opts.AccountId != default(int))
                     {
                         settingsManager.Object.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, opts.AccountId.ToString());
                         Console.WriteLine($"Account ID: {opts.AccountId}");
