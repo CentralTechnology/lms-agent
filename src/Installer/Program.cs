@@ -82,27 +82,23 @@
 
         private static void Main(string[] args)
         {
-            Task.Factory.StartNew(() =>
+
+            string product = BuildMsi();
+
+            string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            var bootstrapper = new Bundle(Constants.ServiceDisplayName)
             {
-                Console.WriteLine("Putting thread to sleep while the build finishes.");
-                Thread.Sleep(60000);
-
-                string product = BuildMsi();
-
-                string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-                var bootstrapper = new Bundle(Constants.ServiceDisplayName)
-                {
-                    HelpTelephone = "0845 413 88 99",
-                    Manufacturer = "Central Technology Ltd",
-                    DisableModify = "yes",
-                    DisableRollback = true,
-                    IconFile = "app_icon.ico",
-                    OutDir = Configuration.OutDir,
-                    OutFileName = "LMS.Setup",
-                    UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
-                    Version = new Version(version),
-                    Chain = new List<ChainItem>
+                HelpTelephone = "0845 413 88 99",
+                Manufacturer = "Central Technology Ltd",
+                DisableModify = "yes",
+                DisableRollback = true,
+                IconFile = "app_icon.ico",
+                OutDir = Configuration.OutDir,
+                OutFileName = "LMS.Setup",
+                UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
+                Version = new Version(version),
+                Chain = new List<ChainItem>
                 {
                     new PackageGroupRef("NetFx452Redist"),
                     new ExePackage
@@ -141,13 +137,9 @@
                         DisplayInternalUI = true
                     }
                 }
-                };
+            };
 
-                bootstrapper.Build();
-
-
-
-            });
+            bootstrapper.Build();
         }
     }
 }
