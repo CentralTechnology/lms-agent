@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Threading;
+    using System.Threading.Tasks;
     using Newtonsoft.Json;
     using WixSharp;
     using WixSharp.Bootstrapper;
@@ -81,25 +82,27 @@
 
         private static void Main(string[] args)
         {
-            Console.WriteLine("Putting thread to sleep while the build finishes.");
-            Thread.Sleep(30000);
-
-            string product = BuildMsi();
-
-            string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
-            var bootstrapper = new Bundle(Constants.ServiceDisplayName)
+            Task.Factory.StartNew(() =>
             {
-                HelpTelephone = "0845 413 88 99",
-                Manufacturer = "Central Technology Ltd",
-                DisableModify = "yes",
-                DisableRollback = true,
-                IconFile = "app_icon.ico",
-                OutDir = Configuration.OutDir,
-                OutFileName = "LMS.Setup",
-                UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
-                Version = new Version(version),
-                Chain = new List<ChainItem>
+                Console.WriteLine("Putting thread to sleep while the build finishes.");
+                Thread.Sleep(30000);
+
+                string product = BuildMsi();
+
+                string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+                var bootstrapper = new Bundle(Constants.ServiceDisplayName)
+                {
+                    HelpTelephone = "0845 413 88 99",
+                    Manufacturer = "Central Technology Ltd",
+                    DisableModify = "yes",
+                    DisableRollback = true,
+                    IconFile = "app_icon.ico",
+                    OutDir = Configuration.OutDir,
+                    OutFileName = "LMS.Setup",
+                    UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
+                    Version = new Version(version),
+                    Chain = new List<ChainItem>
                 {
                     new PackageGroupRef("NetFx452Redist"),
                     new ExePackage
@@ -138,9 +141,13 @@
                         DisplayInternalUI = true
                     }
                 }
-            };
+                };
 
-            bootstrapper.Build();
+                bootstrapper.Build();
+
+
+
+            });
         }
     }
 }
