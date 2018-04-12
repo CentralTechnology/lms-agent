@@ -55,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMS.Service", "Service\LMS.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Deploy", "..\tools\Deploy\Deploy.csproj", "{8F6F6BEB-2365-4E6C-B4AE-9BC500F3C892}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xInstaller", "Installer\xInstaller.csproj", "{3E80687F-010B-4C6C-84A9-E08C4901826C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Installer", "Installer\Installer.csproj", "{3E80687F-010B-4C6C-84A9-E08C4901826C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
