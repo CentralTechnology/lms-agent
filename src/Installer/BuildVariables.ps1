@@ -12,12 +12,12 @@ $Config = @{}
 
 if([System.IO.File]::Exists($ConfigurationFile)){
 
-	Write-Host "Existing configuration found! Loading into memory.";
+	Write-Verbose -Message "Existing configuration found! Loading into memory.";
 
 	$FileContent = Get-Content -Path $ConfigurationFile -Raw
 	(ConvertFrom-Json $FileContent).PSObject.Properties | Foreach { $Config[$_.Name] = $_.Value }
 
-	Write-Host $Config | Format-Table -AutoSize
+	Write-Verbose -Message ($Config | Format-Table -AutoSize | Out-String)
 
 	$Config["ProjectDir"] = "$ProjectDir"
 	$Config["OutDir"] = "$OutDir"
@@ -29,10 +29,10 @@ $Config = @{ "ProjectDir" = "$ProjectDir"; "Configuration" = "$Configuration"; "
 
 }
 
-Write-Host $Config | Format-Table -AutoSize
+Write-Verbose -Message ($Config | Format-Table -AutoSize | Out-String)
 
 $Config | ConvertTo-Json | Out-File $ConfigurationFile 
 
-Write-Host "Configuration written back to disk!"
+Write-Verbose -Message "Configuration written back to disk!"
 
 Exit 0
