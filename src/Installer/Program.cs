@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Threading;
     using Newtonsoft.Json;
     using WixSharp;
@@ -81,7 +82,7 @@
         private static void Main(string[] args)
         {
             Console.WriteLine("Putting thread to sleep while the build finishes.");
-            Thread.Sleep(15000);
+            Thread.Sleep(30000);
 
             string product = BuildMsi();
 
