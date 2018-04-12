@@ -7,6 +7,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <AssemblyName>Installer</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
