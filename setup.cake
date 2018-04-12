@@ -17,7 +17,7 @@ BuildParameters.Tasks.DotNetCoreBuildTask
                             .WithProperty("AssemblyVersion", BuildParameters.Version.Version)
                             .WithProperty("FileVersion",  BuildParameters.Version.Version)
                             .WithProperty("AssemblyInformationalVersion", BuildParameters.Version.InformationalVersion)
-							.SetMaxCpuCount(null);
+							.SetMaxCpuCount(1);
 
         if(!IsRunningOnWindows())
         {
