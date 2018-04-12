@@ -85,7 +85,7 @@
             Task.Factory.StartNew(() =>
             {
                 Console.WriteLine("Putting thread to sleep while the build finishes.");
-                Thread.Sleep(30000);
+                Thread.Sleep(60000);
 
                 string product = BuildMsi();
 
