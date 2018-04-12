@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using Newtonsoft.Json;
     using WixSharp;
     using WixSharp.Bootstrapper;
@@ -79,6 +80,9 @@
 
         private static void Main(string[] args)
         {
+            Console.WriteLine("Putting thread to sleep while the build finishes.");
+            Thread.Sleep(15000);
+
             string product = BuildMsi();
 
             string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();

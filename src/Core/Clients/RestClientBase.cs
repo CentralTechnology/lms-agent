@@ -15,32 +15,31 @@
     {
         public RestClientBase()
         {
-            AddHandler("application/json", NewtonsoftJsonSerializer.Default);
-            AddHandler("text/json", NewtonsoftJsonSerializer.Default);
-            AddHandler("text/x-json", NewtonsoftJsonSerializer.Default);
-            AddHandler("application/x-www-form-urlencoded", NewtonsoftJsonSerializer.Default);
+            AddHandlers();
 
             Logger = NullLogger.Instance;
         }
 
         public RestClientBase(Uri baseUrl) : base(baseUrl)
         {
-            AddHandler("application/json", NewtonsoftJsonSerializer.Default);
-            AddHandler("text/json", NewtonsoftJsonSerializer.Default);
-            AddHandler("text/x-json", NewtonsoftJsonSerializer.Default);
-            AddHandler("application/x-www-form-urlencoded", NewtonsoftJsonSerializer.Default);
+            AddHandlers();
 
             Logger = NullLogger.Instance;
         }
 
         public RestClientBase(string baseUrl) : base(baseUrl)
         {
+            AddHandlers();
+            Logger = NullLogger.Instance;
+        }
+
+        protected void AddHandlers()
+        {           
             AddHandler("application/json", NewtonsoftJsonSerializer.Default);
             AddHandler("text/json", NewtonsoftJsonSerializer.Default);
             AddHandler("text/x-json", NewtonsoftJsonSerializer.Default);
             AddHandler("application/x-www-form-urlencoded", NewtonsoftJsonSerializer.Default);
 
-            Logger = NullLogger.Instance;
         }
 
         public ILogger Logger { get; set; }
