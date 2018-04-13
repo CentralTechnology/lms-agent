@@ -2,31 +2,21 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Newtonsoft.Json;
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;
 
     internal class Script
     {
-        private static CustomConfiguration Configuration => GetConfiguration();
 
         private static string BuildMsi()
         {
-            Console.WriteLine($"Solution Directory: {Configuration.SolutionDir}");
-            Console.WriteLine($"Output Directory: {Configuration.OutDir}");
-            Console.WriteLine($"Configuration: {Configuration.Configuration}");
-            Console.WriteLine($"Service: {Configuration.SolutionDir}\\Service\\bin\\{Configuration.Configuration}\\net452\\win-x86\\LMS.exe");
-
             File service;
             var project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
                     new DirPermission("LocalSystem", GenericPermission.All),
-                    service = new File($"{Configuration.SolutionDir}\\Service\\bin\\{Configuration.Configuration}\\net452\\win-x86\\LMS.exe"),
-                    new DirFiles($"{Configuration.SolutionDir}\\Service\\bin\\{Configuration.Configuration}\\net452\\win-x86\\*.*", f => !f.EndsWith("LMS.exe")))
+                    service = new File("%SolutionDir%\\LMS.Service\\bin\\%Configuration%\\LMS.exe"),
+                    new DirFiles("%SolutionDir%\\LMS.Service\\bin\\%Configuration%\\*.*", f => !f.EndsWith("LMS.exe")))
             )
             {
                 ControlPanelInfo = new ProductInfo
@@ -44,7 +34,7 @@
                     DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
                 },
                 Name = Constants.ServiceDisplayName,
-                OutDir = Configuration.OutDir,
+                OutDir = "bin\\%Configuration%",
                 UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
                 UI = WUI.WixUI_Common
             };
@@ -74,12 +64,6 @@
             return Compiler.BuildMsi(project);
         }
 
-        private static CustomConfiguration GetConfiguration()
-        {
-            var file = System.IO.File.ReadAllText("C:\\temp\\configuration.json");
-            return JsonConvert.DeserializeObject<CustomConfiguration>(file);
-        }
-
         private static void Main(string[] args)
         {
 
@@ -94,7 +78,7 @@
                 DisableModify = "yes",
                 DisableRollback = true,
                 IconFile = "app_icon.ico",
-                OutDir = Configuration.OutDir,
+                OutDir = "bin\\%Configuration%",
                 OutFileName = "LMS.Setup",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
                 Version = new Version(version),
