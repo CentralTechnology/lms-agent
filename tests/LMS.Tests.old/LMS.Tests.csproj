@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup>
+  <TargetFramework>net452</TargetFramework>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>LMS.Tests</AssemblyName>
+  </PropertyGroup>
+  
+    <ItemGroup>
+    <Compile Include="..\..\src\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
+  </ItemGroup>
+  
+    <ItemGroup>
+      <PackageReference Include="Abp.HangFire" Version="1.5.1" />
+      <PackageReference Include="Abp.TestBase" Version="1.5.1" />
+      <PackageReference Include="Hangfire.MemoryStorage" Version="1.5.2" />
+      <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+      <PackageReference Include="Shouldly" Version="3.0.0" />
+      <PackageReference Include="xunit" Version="2.3.1" />
+      <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    </ItemGroup>
+  
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Core\LMS.Core.csproj" />
+    </ItemGroup>
+  
+    <ItemGroup>
+      <Reference Include="System.Transactions" />
+    </ItemGroup>
+  
+    <ItemGroup>
+      <Folder Include="Core\Common\Managers\" />
+      <Folder Include="Core\Users\" />
+    </ItemGroup>
+  
+</Project>

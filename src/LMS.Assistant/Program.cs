@@ -1,16 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Assistant
+﻿namespace LMS.Assistant
 {
+    using System;
     using System.Diagnostics;
     using System.IO;
     using System.ServiceProcess;
 
     class Program
     {
+        static void Continue()
+        {
+            Console.WriteLine("Press [Enter] to coninue;");
+            Console.ReadLine();
+        }
+
+        static bool Launch()
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = @"lms.exe";
+            startInfo.Arguments = "run -m Users";
+
+            try
+            {
+                using (Process process = Process.Start(startInfo))
+                {
+                    process.WaitForExit();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex);
+                Console.ResetColor();
+                return false;
+            }
+        }
+
         static int Main(string[] args)
         {
             if (!File.Exists("lms.exe"))
@@ -69,12 +96,6 @@ namespace LMS.Assistant
             return 0;
         }
 
-        static void Continue()
-        {
-            Console.WriteLine("Press [Enter] to coninue;");
-            Console.ReadLine();
-        }
-
         static void WriteError(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -115,31 +136,6 @@ namespace LMS.Assistant
             Console.Write(status);
             Console.WriteLine();
             Console.ResetColor();
-        }
-
-        static bool Launch()
-        {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = @"lms.exe";
-            startInfo.Arguments = "run -m Users";
-
-            try
-            {
-                using (Process process = Process.Start(startInfo))
-                {
-                    process.WaitForExit();
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex);
-                Console.ResetColor();
-                return false;
-            }
         }
     }
 }

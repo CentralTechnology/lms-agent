@@ -161,7 +161,7 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
     if((!(Test-Path $PACKAGES_CONFIG_MD5)) -Or
       ($md5Hash -ne (Get-Content $PACKAGES_CONFIG_MD5 ))) {
         Write-Verbose -Message "Missing or changed package.config hash..."
-        Get-ChildItem -Exclude "Cake.Recipe", "Deploy", "Octokit", packages.config,nuget.exe, SolutionInfo.cs | Get-ChildItem -Recurse | foreach ($_) {
+        Get-ChildItem -Exclude "Cake.Recipe", "LMS.Deploy", packages.config,nuget.exe, SolutionInfo.cs | Get-ChildItem -Recurse | foreach ($_) {
     "CLEANING :" + $_.fullname
     Remove-Item $_.fullname -Force -Recurse
     "CLEANED... :" + $_.fullname
