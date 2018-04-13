@@ -5,6 +5,7 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.ServiceProcess;
     using System.Threading.Tasks;
     using Octokit;
     using Polly;
@@ -23,8 +24,8 @@
         static async Task Main()
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File("deploy.txt")
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Information)
+                .WriteTo.File("deploy.txt", Serilog.Events.LogEventLevel.Debug)
                 .CreateLogger();
 
             Log.Information("Starting deployment....");
@@ -82,7 +83,7 @@
             try
             {
                 FileVersionInfo x64Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files (x86)\License Monitoring System\LMS.exe");
-                return new Version(x64Info.FileVersion,true);
+                return new Version(x64Info.FileMajorPart,x64Info.FileMinorPart,x64Info.FileBuildPart);
             }
             catch (FileNotFoundException)
             {
@@ -92,7 +93,7 @@
             try
             {
                 FileVersionInfo x86Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files\License Monitoring System\LMS.exe");
-                return new Version(x86Info.FileVersion, true);
+                return new Version(x86Info.FileMajorPart,x86Info.FileMinorPart,x86Info.FileBuildPart);
             }
             catch (FileNotFoundException)
             {
@@ -242,6 +243,34 @@
 
                 Log.Information("Saving file to disk.");
                 SaveLatestRelease(response);
+
+                Log.Information("Making sure the service is stopped.");
+                try
+                {
+                    ServiceController service = new ServiceController("LicenseMonitoringSystem");
+                    Log.Information($"Service is currently {service.Status}");
+                    if (service.Status == ServiceControllerStatus.Running)
+                    {
+                        Log.Information("Attempting to stop the License Monitoring System service.");
+                        service.Stop();
+                        service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(15));
+
+                        if (service.Status != ServiceControllerStatus.Stopped)
+                        {
+                            Log.Information("Service has failed to stop in a reasonable amount of time.");
+                            Log.Information("Killing the process");
+                            foreach (var process in Process.GetProcessesByName("LMS"))
+                            {
+                                process.Kill();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug("License Monitoring System service was not found on this computer.");
+                    Log.Debug(ex, ex.Message);
+                }
 
                 Log.Information("Installation started.");
                 InstallLatestRelease();
