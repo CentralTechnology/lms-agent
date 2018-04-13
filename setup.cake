@@ -42,16 +42,6 @@ BuildParameters.Tasks.DotNetCoreBuildTask
         CopyBuildOutput();
     });
 
-
-
-
-
-
-
-
-
-
-
 BuildParameters.SetParameters(context: Context, 
                             buildSystem: BuildSystem,
                             sourceDirectoryPath: "./src",
@@ -123,5 +113,5 @@ Task("Publish-GitHub-Release-Custom-Files")
     publishingError = true;
 });
 
-Build.RunDotNetCore();
+Build.Run();
 
