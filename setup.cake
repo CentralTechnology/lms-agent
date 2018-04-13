@@ -7,41 +7,6 @@ BuildParameters.Tasks.PublishGitHubReleaseTask
 		Information("Ignore");
 	});
 
-BuildParameters.Tasks.DotNetCoreBuildTask.Task.Actions.Clear();
-BuildParameters.Tasks.DotNetCoreBuildTask
-    .Does(() => {
-        Information("Building {0}", BuildParameters.SolutionFilePath);
-
-        var msBuildSettings = new DotNetCoreMSBuildSettings()
-                            .WithProperty("Version", BuildParameters.Version.SemVersion)
-                            .WithProperty("AssemblyVersion", BuildParameters.Version.Version)
-                            .WithProperty("FileVersion",  BuildParameters.Version.Version)
-                            .WithProperty("AssemblyInformationalVersion", BuildParameters.Version.InformationalVersion)
-							.SetMaxCpuCount(1);
-
-        if(!IsRunningOnWindows())
-        {
-            var frameworkPathOverride = new FilePath(typeof(object).Assembly.Location).GetDirectory().FullPath + "/";
-
-            // Use FrameworkPathOverride when not running on Windows.
-            Information("Build will use FrameworkPathOverride={0} since not building on Windows.", frameworkPathOverride);
-            msBuildSettings.WithProperty("FrameworkPathOverride", frameworkPathOverride);
-        }
-
-        DotNetCoreBuild(BuildParameters.SolutionFilePath.FullPath, new DotNetCoreBuildSettings
-        {
-            Configuration = BuildParameters.Configuration,
-            MSBuildSettings = msBuildSettings
-        });
-
-        if(BuildParameters.ShouldExecuteGitLink)
-        {
-            ExecuteGitLink();
-        }
-
-        CopyBuildOutput();
-    });
-
 BuildParameters.SetParameters(context: Context, 
                             buildSystem: BuildSystem,
                             sourceDirectoryPath: "./src",
