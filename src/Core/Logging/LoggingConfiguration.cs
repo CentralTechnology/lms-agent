@@ -6,6 +6,7 @@
     using Castle.Services.Logging.SerilogIntegration;
     using Serilog;
     using Serilog.Core;
+    using Serilog.Sinks.RollingFileAlternate;
 
     public class LoggingConfiguration
     {
@@ -19,7 +20,7 @@
                             () => new LoggerConfiguration()
                                 .MinimumLevel.ControlledBy(LMSCoreModule.CurrentLogLevel)
                                 .WriteTo.ColoredConsole()
-                                .WriteTo.RollingFile("logs/log.txt", fileSizeLimitBytes: 5242880, retainedFileCountLimit: 10)
+                                .WriteTo.RollingFileAlternate(".\\logs", fileSizeLimitBytes: 5242880)
                         ).LifestyleSingleton()
                 },
                 {
