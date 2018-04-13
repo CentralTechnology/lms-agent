@@ -19,11 +19,11 @@ BuildParameters.SetParameters(context: Context,
 							shouldDownloadMilestoneReleaseNotes: true);
 
 ToolSettings.SetToolSettings(context: Context,
-							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/Core/Connected Services/**/*.cs"},
+							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/LMS.Core/Connected Services/**/*.cs"},
 							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]* -[*]Portal.* -[*]Core.Migrations.* -[*]Migrations.* -[*]Actions.*");
 
-var lmsSetup = BuildParameters.SourceDirectoryPath.Combine("Installer/bin/Release/net40/win-x86");
-var lmsDeploy = BuildParameters.Paths.Directories.PublishedApplications.Combine("LMS.Deploy/net45");
+var lmsSetup = BuildParameters.Paths.Directories.PublishedApplications.Combine("LMS.Installer/");
+var lmsDeploy = BuildParameters.Paths.Directories.PublishedApplications.Combine("LMS.Deploy/");
 var customArtifactsPath = BuildParameters.Paths.Directories.Build.Combine("Packages/Custom");
 
 Task("Copy-Custom-Files")
