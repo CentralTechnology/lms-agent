@@ -47,8 +47,8 @@
                    service.WhenStopped((tc, hostControl) => tc.Stop(hostControl));
                });
 
-               x.SetStartTimeout(TimeSpan.FromSeconds(15));
-               x.SetStopTimeout(TimeSpan.FromSeconds(60));
+               x.SetStartTimeout(TimeSpan.FromSeconds(30));
+               x.SetStopTimeout(TimeSpan.FromSeconds(120));
 
                x.RunAsLocalSystem();
                x.SetServiceName(Constants.ServiceName);
