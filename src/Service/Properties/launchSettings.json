@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "LMS.Service": {
-      "commandName": "Project",
-      "commandLineArgs": "run -m Users "
-    }
-  }
-}

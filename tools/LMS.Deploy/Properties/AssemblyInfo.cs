@@ -5,12 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LMS.Assistant")]
+[assembly: AssemblyTitle("LMS.Deploy")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-
-[assembly: AssemblyProduct("LMS.Assistant")]
-
+[assembly: AssemblyProduct("LMS.Deploy")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -18,6 +16,5 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6c453ad2-df40-458a-ac4b-059b005a4834")]
-
+[assembly: Guid("69ccafa7-0ee6-4260-ba09-e1d1bfd510d2")]
 

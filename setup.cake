@@ -7,51 +7,6 @@ BuildParameters.Tasks.PublishGitHubReleaseTask
 		Information("Ignore");
 	});
 
-BuildParameters.Tasks.DotNetCoreBuildTask.Task.Actions.Clear();
-BuildParameters.Tasks.DotNetCoreBuildTask
-    .Does(() => {
-        Information("Building {0}", BuildParameters.SolutionFilePath);
-
-        var msBuildSettings = new DotNetCoreMSBuildSettings()
-                            .WithProperty("Version", BuildParameters.Version.SemVersion)
-                            .WithProperty("AssemblyVersion", BuildParameters.Version.Version)
-                            .WithProperty("FileVersion",  BuildParameters.Version.Version)
-                            .WithProperty("AssemblyInformationalVersion", BuildParameters.Version.InformationalVersion)
-							.SetMaxCpuCount(1);
-
-        if(!IsRunningOnWindows())
-        {
-            var frameworkPathOverride = new FilePath(typeof(object).Assembly.Location).GetDirectory().FullPath + "/";
-
-            // Use FrameworkPathOverride when not running on Windows.
-            Information("Build will use FrameworkPathOverride={0} since not building on Windows.", frameworkPathOverride);
-            msBuildSettings.WithProperty("FrameworkPathOverride", frameworkPathOverride);
-        }
-
-        DotNetCoreBuild(BuildParameters.SolutionFilePath.FullPath, new DotNetCoreBuildSettings
-        {
-            Configuration = BuildParameters.Configuration,
-            MSBuildSettings = msBuildSettings
-        });
-
-        if(BuildParameters.ShouldExecuteGitLink)
-        {
-            ExecuteGitLink();
-        }
-
-        CopyBuildOutput();
-    });
-
-
-
-
-
-
-
-
-
-
-
 BuildParameters.SetParameters(context: Context, 
                             buildSystem: BuildSystem,
                             sourceDirectoryPath: "./src",
@@ -64,11 +19,11 @@ BuildParameters.SetParameters(context: Context,
 							shouldDownloadMilestoneReleaseNotes: true);
 
 ToolSettings.SetToolSettings(context: Context,
-							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/Core/Connected Services/**/*.cs"},
+							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/LMS.Core/Connected Services/**/*.cs"},
 							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]* -[*]Portal.* -[*]Core.Migrations.* -[*]Migrations.* -[*]Actions.*");
 
-var lmsSetup = BuildParameters.SourceDirectoryPath.Combine("Installer/bin/Release/net40/win-x86");
-var lmsDeploy = BuildParameters.Paths.Directories.PublishedApplications.Combine("LMS.Deploy/net45");
+var lmsSetup = BuildParameters.Paths.Directories.PublishedApplications.Combine("LMS.Installer/");
+var lmsDeploy = BuildParameters.Paths.Directories.PublishedApplications.Combine("LMS.Deploy/");
 var customArtifactsPath = BuildParameters.Paths.Directories.Build.Combine("Packages/Custom");
 
 Task("Copy-Custom-Files")
@@ -77,7 +32,7 @@ Task("Copy-Custom-Files")
 {	
 		CleanDirectory(customArtifactsPath);
 		CopyFiles(lmsSetup.CombineWithFilePath("LMS.Setup.exe").FullPath, customArtifactsPath);
-		CopyFiles(lmsDeploy.CombineWithFilePath("LMS.Deploy.exe").FullPath, customArtifactsPath);
+		CopyFiles(lmsDeploy.CombineWithFilePath("Deploy.exe").FullPath, customArtifactsPath);
 });
 
 Task("Upload-AppVeyor-Artifacts-Custom-Files")
@@ -123,5 +78,5 @@ Task("Publish-GitHub-Release-Custom-Files")
     publishingError = true;
 });
 
-Build.RunDotNetCore();
+Build.Run();
 

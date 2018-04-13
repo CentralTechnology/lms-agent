@@ -244,7 +244,7 @@ ModelManifest.xml
 # cake
 tools/*
 !tools/packages.config
-!tools/Deploy
+!tools/LMS.Deploy
 
 # build artifacts
 [Bb]uildArtifacts
