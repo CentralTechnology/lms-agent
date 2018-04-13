@@ -40,7 +40,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\LMS.Core.csproj" />
-    <ProjectReference Include="..\EntityFramework\LMS.EntityFramework.csproj" />
     <ProjectReference Include="..\LMS.Assistant\LMS.Assistant.csproj" />
   </ItemGroup>
 
