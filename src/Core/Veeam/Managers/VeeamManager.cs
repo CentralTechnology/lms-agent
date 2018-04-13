@@ -1,4 +1,4 @@
-﻿namespace LMS.Veeam.Managers
+﻿namespace LMS.Core.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -14,18 +14,19 @@
     using Abp;
     using Abp.Configuration;
     using Abp.Domain.Services;
+    using Abp.Timing;
     using Backup.Common;
-    using Common.Constants;
-    using Common.Extensions;
-    using Common.Helpers;
     using Configuration;
     using DBManager;
     using Enums;
+    using Extensions;
     using global::Hangfire.Server;
+    using Helpers;
     using Mappings;
     using Microsoft.Win32;
     using Models;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
+    using Services.Authentication;
 
     public class VeeamManager : DomainService, IVeeamManager
     {
@@ -38,6 +39,12 @@
 
         public const string VeeamFilePath = @"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe";
         public const string Veeam90FilePath = @"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe";
+
+        private readonly IPortalAuthenticationService _authService;
+        public VeeamManager(IPortalAuthenticationService authService)
+        {
+            _authService = authService;
+        }
 
         private VmLicensingInfo FromReader(IDataReader reader)
         {
@@ -102,11 +109,13 @@
 
         public int GetProtectedVmCount(PerformContext performContext)
         {
+            const int veeamProtectedVmCountDays = 31;
+
             try
             {
                 var localDbAccessor = new LocalDbAccessor(GetConnectionString());
 
-                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", Constants.VeeamProtectedVmCountDays)).CreateDataReader())
+                using (DataTableReader dataReader = localDbAccessor.GetDataTable("GetProtectedVmCount", DbAccessor.MakeParam("@days", veeamProtectedVmCountDays)).CreateDataReader())
                 {
                     if (dataReader.Read())
                     {
@@ -169,9 +178,11 @@
 
         public bool IsInstalled(PerformContext performContext)
         {
+            const string veeamApplicationName = "Veeam Backup & Replication Server";
+
             try
             {
-                return CommonHelpers.IsApplictionInstalled(Constants.VeeamApplicationName);
+                return CommonHelpers.IsApplictionInstalled(veeamApplicationName);
             }
             catch (Exception ex)
             {
@@ -220,8 +231,10 @@
         }
 
 
-        public Veeam GetLicensingInformation(PerformContext performContext, Veeam veeam)
+        public Veeam GetLicensingInformation(PerformContext performContext)
         {
+            Veeam veeam = new Veeam();
+
             try
             {
                 veeam.LicenseType = VeeamLicense.TypeEx;
@@ -230,6 +243,7 @@
             {
                 Logger.Error(performContext,"There was an error while getting the license information from the registry. We'll therefore assume its an evaluation license.");
                 Logger.Debug(performContext,ex.Message, ex);
+
                 veeam.LicenseType = LicenseTypeEx.Evaluation;
             }
 
@@ -237,16 +251,17 @@
 
             Version programVersion = Version.Parse(veeam.ProgramVersion);
 
-            var virtualMachines = GetVirtualMachineCount(performContext, programVersion, veeam.LicenseType);
-            veeam.vSphere = virtualMachines.vsphere;
-            veeam.HyperV = virtualMachines.hyperv;
+            var (vsphere, hyperv) = GetVirtualMachineCount(performContext, programVersion, veeam.LicenseType);
+            veeam.vSphere = vsphere;
+            veeam.HyperV = hyperv;
 
             veeam.ClientVersion = SettingManagerHelper.ClientVersion;
             veeam.Edition = VeeamLicense.Edition;
             veeam.ExpirationDate = VeeamLicense.ExpirationDate;
-            veeam.Id = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId).To<Guid>();
+            veeam.Hostname = Environment.MachineName;
+            veeam.Id = _authService.GetDevice();
             veeam.SupportId = VeeamLicense.SupportId;
-            veeam.TenantId = SettingManager.GetSettingValue<int>(AppSettingNames.AutotaskAccountId);
+            veeam.TenantId = Convert.ToInt32(_authService.GetAccount());
 
             return veeam;
         }

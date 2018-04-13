@@ -1,37 +1,26 @@
-﻿namespace LMS
+﻿namespace LMS.Core
 {
     using System.Reflection;
-    using Abp.AutoMapper;
-    using Abp.Dependency;
     using Abp.Modules;
-    using Abp.WebApi;
-    using Abp.WebApi.Client;
-    using AutoMapper;
-    using Common.Extensions;
     using Configuration;
+    using Serilog.Core;
+    using Services;
 
-    [DependsOn(typeof(AbpAutoMapperModule))]
     public class LMSCoreModule : AbpModule
     {
-        public override void PreInitialize()
-        {
-            IocManager.Register<IAbpWebApiClient,AbpWebApiClient>();
+        public static LoggingLevelSwitch CurrentLogLevel { get; set; }
 
-            Configuration.MultiTenancy.IsEnabled = false;
-            Configuration.Settings.Providers.Add<AppSettingProvider>();   
-        }
         public override void Initialize()
         {
-            var thisAssembly = typeof(LMSCoreModule).GetAssembly();
+            IocManager.Register<IPortalService, PortalService>();
 
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
-
-            Configuration.Modules.AbpAutoMapper().Configurators.Add(config =>
-            {
-                config.AddProfiles(thisAssembly);
-            });
         }
 
-        public override void PostInitialize() => Mapper.AssertConfigurationIsValid();
+        public override void PreInitialize()
+        {
+            Configuration.MultiTenancy.IsEnabled = false;
+            Configuration.Settings.Providers.Add<AppSettingProvider>();
+        }
     }
 }

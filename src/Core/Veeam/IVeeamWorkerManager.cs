@@ -1,4 +1,4 @@
-﻿namespace LMS.Veeam
+﻿namespace LMS.Core.Veeam
 {
     using Abp.Domain.Services;
 

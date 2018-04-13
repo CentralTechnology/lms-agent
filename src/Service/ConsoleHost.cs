@@ -1,27 +1,88 @@
-﻿namespace LMS.Service
+﻿namespace LMS
 {
     using System;
-    using System.Data.SqlClient;
     using System.IO;
-    using System.Net;
-    using System.Net.Http;
-    using System.Net.Sockets;
-    using System.Security;
     using Abp;
-    using Abp.Castle.Logging.Log4Net;
     using Abp.Configuration;
     using Abp.Dependency;
     using Abp.Logging;
-    using Castle.Facilities.Logging;
-    using Common.Helpers;
-    using Configuration;
-    using LMS.Startup;
-    using Microsoft.OData.Client;
-    using Users;
-    using Veeam;
+    using Abp.Threading;
+    using Core;
+    using Core.Configuration;
+    using Core.Helpers;
+    using Core.Logging;
+    using Core.StartUp;
+    using Core.Users;
+    using Core.Veeam;
+    using Serilog.Core;
+    using Serilog.Events;
 
     public static class ConsoleHost
     {
+        public static void Run(RunOptions opts)
+        {
+            LMSCoreModule.CurrentLogLevel = new LoggingLevelSwitch();
+
+            using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
+            {
+                bootstrapper.Initialize();
+
+                bootstrapper.IocManager.IocContainer.Register(
+                    LoggingConfiguration.GetConfiguration(LMSCoreModule.CurrentLogLevel)
+                );
+
+                if (opts.Verbose)
+                {
+                    LMSCoreModule.CurrentLogLevel.MinimumLevel = LogEventLevel.Debug;
+                    LogHelper.Logger.Debug("Verbose logging enabled.");
+                }
+
+                LogHelper.Logger.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
+
+                using (var iocResolver = bootstrapper.IocManager.ResolveAsDisposable<IIocResolver>())
+                {
+                    using (var scope = iocResolver.Object.CreateScope())
+                    {
+                        if (!opts.SkipStartup)
+                        {
+                            var startupManager = scope.Resolve<IStartupManager>();
+                            bool started = startupManager.Init(null);
+                            if (!started)
+                            {
+                                return;
+                            }
+                        }
+
+                        try
+                        {
+                            if (opts.Monitor == Monitor.Users)
+                            {
+                                var userWorkerManager = scope.Resolve<UserWorkerManager>();
+                                AsyncHelper.RunSync(() => userWorkerManager.StartAsync(null));
+                                return;
+                            }
+
+                            if (opts.Monitor == Monitor.Veeam)
+                            {
+                                var veeamWorkerManager = scope.Resolve<VeeamWorkerManager>();
+                                AsyncHelper.RunSync(() => veeamWorkerManager.StartAsync(null));
+                                return;
+                            }
+
+                            Console.WriteLine("Press [Enter] to continue.");
+                            Console.ReadLine();
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.LogException(ex);
+                            LogHelper.Logger.Debug(ex.Message, ex);
+                            LogHelper.Logger.Error("************ Failed ************");
+                        }
+                    }
+                }
+            }
+        }
+
         public static void Update(UpdateOptions opts)
         {
             using (var bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
@@ -30,7 +91,7 @@
 
                 using (var settingsManager = bootstrapper.IocManager.ResolveAsDisposable<ISettingManager>())
                 {
-                    if (opts.AccountId != default(int))
+                    if (opts.AccountId.HasValue && opts.AccountId != default(int))
                     {
                         settingsManager.Object.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, opts.AccountId.ToString());
                         Console.WriteLine($"Account ID: {opts.AccountId}");
@@ -63,79 +124,6 @@
                         Console.WriteLine($"Veeam Override: {opts.VeeamOverride.Value}");
                     }
                 }
-            }
-        }
-        public static void Run(RunOptions opts)
-        {
-            using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
-            {
-                bootstrapper.Initialize();
-
-
-                if (opts.Verbose)
-                {
-                    Log4NetHelper.EnableDebug();
-                }
-
-                LogHelper.Logger.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
-
-                if (!opts.SkipStartup)
-                {
-                    using (IDisposableDependencyObjectWrapper<StartupManager> startupManager = bootstrapper.IocManager.ResolveAsDisposable<StartupManager>())
-                    {
-                        bool started = startupManager.Object.Init(null);
-                        if (!started)
-                        {
-                            return;
-                        }
-                    }
-                }
-
-                try
-                {
-                    if (opts.Monitor == Monitor.Users)
-                    {
-                        using (IDisposableDependencyObjectWrapper<UserWorkerManager> userWorkerManager = bootstrapper.IocManager.ResolveAsDisposable<UserWorkerManager>())
-                        {
-                            userWorkerManager.Object.Start(null);
-                            return;
-                        }
-                    }
-
-                    if (opts.Monitor == Monitor.Veeam)
-                    {
-                        using (IDisposableDependencyObjectWrapper<VeeamWorkerManager> veeamWorkerManager = bootstrapper.IocManager.ResolveAsDisposable<VeeamWorkerManager>())
-                        {
-                            veeamWorkerManager.Object.Start(null);
-                        }
-                    }
-
-                    Console.WriteLine("Press [Enter] to continue.");
-                    Console.ReadLine();
-                }
-                catch (Exception ex) when (
-                    ex is DataServiceClientException
-                    || ex is SqlException
-                    || ex is HttpRequestException
-                    || ex is SocketException
-                    || ex is WebException
-                    || ex is SecurityException
-                    || ex is IOException)
-                {
-                    LogHelper.LogException(ex);
-                    LogHelper.Logger.Debug(ex.Message, ex);
-                    LogHelper.Logger.Error("************ Failed ************");
-                }
-                catch (Exception ex)
-                {
-                    // sentry
-                    LogHelper.LogException(ex);
-                    LogHelper.Logger.Debug(ex.Message, ex);
-                    LogHelper.Logger.Error("************ Failed ************");
-                }
-
-                Console.WriteLine("Press [Enter] to continue.");
-                Console.ReadLine();
             }
         }
     }

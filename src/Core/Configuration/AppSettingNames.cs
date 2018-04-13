@@ -1,4 +1,4 @@
-﻿namespace LMS.Configuration
+﻿namespace LMS.Core.Configuration
 {
     public class AppSettingNames
     {
@@ -13,7 +13,6 @@
         public const string CentrastageDeviceId = "Setting.Centrastage.Id";
 
         /// <summary>
-        /// 
         /// </summary>
         public const string ManagedSupportId = "Setting.Users.ManagedSupportId";
 
@@ -33,9 +32,13 @@
         public const string PrimaryDomainControllerOverride = "Setting.Users.PrimaryDomainControllerOverride";
 
         /// <summary>
-        ///     Caches the version of Veeam installed
+        ///     Override to disable User monitoring
         /// </summary>
-        public const string VeeamVersion = "Setting.Veeam.Version";
+        public const string UserMonitorEnabled = "Setting.Users.Override";
+
+        /// <summary>
+        /// </summary>
+        public const string UsersAverageRuntime = "Setting.Users.AverageRuntime";
 
         /// <summary>
         ///     Override to disable Veeam monitoring
@@ -43,13 +46,8 @@
         public const string VeeamMonitorEnabled = "Setting.Veeam.Override";
 
         /// <summary>
-        /// Override to disable User monitoring
+        ///     Caches the version of Veeam installed
         /// </summary>
-        public const string UserMonitorEnabled = "Setting.Users.Override";
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public const string UsersAverageRuntime = "Setting.Users.AverageRuntime";
+        public const string VeeamVersion = "Setting.Veeam.Version";
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace LMS.Veeam.Models
+﻿namespace LMS.Core.Veeam.Models
 {
     public class VmsCounterInfo
     {

@@ -1,4 +1,4 @@
-﻿namespace LMS.Startup
+﻿namespace LMS.Core.StartUp
 {
     using System;
     using System.Diagnostics;
@@ -7,11 +7,11 @@
     using Abp.Events.Bus;
     using Abp.Logging;
     using Abp.Timing;
-    using Common.Helpers;
     using Configuration;
     using global::Hangfire;
     using global::Hangfire.Common;
     using Hangfire;
+    using Helpers;
     using Users;
     using Users.Events;
     using Veeam;
@@ -57,7 +57,7 @@
 
                 string runtime = GetRunTime();
 
-                recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.Start(null)), runtime);
+                recurringJobManager.AddOrUpdate(BackgroundJobNames.Users, Job.FromExpression<UserWorkerManager>(j => j.StartAsync(null)), runtime);
             }
         }
 
@@ -67,7 +67,7 @@
             {
                 string runtime = GetRunTime();
 
-                recurringJobManager.AddOrUpdate(BackgroundJobNames.Veeam, Job.FromExpression<VeeamWorkerManager>(j => j.Start(null)), runtime);
+                recurringJobManager.AddOrUpdate(BackgroundJobNames.Veeam, Job.FromExpression<VeeamWorkerManager>(j => j.StartAsync(null)), runtime);
             }
         }
 

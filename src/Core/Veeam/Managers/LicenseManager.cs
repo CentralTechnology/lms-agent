@@ -1,4 +1,4 @@
-﻿namespace LMS.Veeam.Managers
+﻿namespace LMS.Core.Veeam.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +6,8 @@
     using System.Security;
     using System.Text;
     using Abp;
-    using Common.Extensions;
-    using Common.Managers;
+    using Core.Managers;
+    using Extensions;
     using Microsoft.Win32;
 
     public class LicenseManager : LMSManagerBase, ILicenseManager

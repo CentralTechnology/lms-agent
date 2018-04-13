@@ -1,4 +1,4 @@
-﻿namespace LMS.Hangfire
+﻿namespace LMS.Core.Hangfire
 {
     using System;
     using System.Collections.Generic;

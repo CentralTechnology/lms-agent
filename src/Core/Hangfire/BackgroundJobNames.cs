@@ -1,4 +1,4 @@
-﻿namespace LMS.Hangfire
+﻿namespace LMS.Core.Hangfire
 {
     public static class BackgroundJobNames
     {

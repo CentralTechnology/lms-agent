@@ -6,7 +6,6 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Win32;
     using Octokit;
     using Polly;
     using Serilog;
@@ -21,14 +20,7 @@
         private static readonly string LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
         private static readonly string SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
 
-        private static readonly RegistryKey[] UninstallKeys =
-        {
-            Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
-            RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
-            RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-        };
-
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()

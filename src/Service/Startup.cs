@@ -1,21 +1,31 @@
-﻿using LMS.Service;
+﻿using LMS;
 using Microsoft.Owin;
 
 [assembly: OwinStartup(typeof(Startup))]
 
-namespace LMS.Service
+namespace LMS
 {
     using System.Diagnostics.CodeAnalysis;
     using Abp.Owin;
-    using global::Hangfire;
+    using Core;
+    using Core.Logging;
+    using Hangfire;
     using Owin;
+    using Serilog.Core;
 
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class Startup
     {
         public void Configuration(IAppBuilder app)
         {
-            app.UseAbp<LMSServiceModule>();
+            LMSCoreModule.CurrentLogLevel = new LoggingLevelSwitch();
+
+            app.UseAbp<LMSServiceModule>(a =>
+            {
+                a.IocManager.IocContainer.Register(
+                    LoggingConfiguration.GetConfiguration(LMSCoreModule.CurrentLogLevel)
+                );
+            });
             app.UseHangfireDashboard("");
         }
     }

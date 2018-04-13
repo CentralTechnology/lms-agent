@@ -1,22 +1,24 @@
-﻿namespace LMS.Users.Managers
+﻿namespace LMS.Core.Users.Managers
 {
     using System;
     using System.Collections.Generic;
     using System.DirectoryServices.AccountManagement;
     using Abp.Domain.Services;
-    using Dto;
     using global::Hangfire.Server;
+    using Portal.LicenseMonitoringSystem.Users.Entities;
 
     public interface IActiveDirectoryManager : IDomainService
     {
-        LicenseGroupDto GetGroup(PerformContext performContext, Guid groupId);
-        LicenseGroupUsersDto GetGroupMembers(PerformContext performContext, Guid groupId);
-        IEnumerable<LicenseGroupDto> GetGroups(PerformContext performContext);
-        LicenseUserDto GetUserById(PerformContext performContext, Guid? userId);
-        LicenseUserDto GetUserByPrincipalName(PerformContext performContext, string principalName);
-        LicenseUserDto GetUser(PerformContext performContext, IdentityType type, string key);
+        IEnumerable<LicenseGroup> GetAllGroups(PerformContext performContext);
+        List<LicenseGroup> GetAllGroupsList(PerformContext performContext);
 
-        IEnumerable<LicenseUserDto> GetUsers(PerformContext performContext);
+        IEnumerable<LicenseUser> GetAllUsers(PerformContext performContext);
+        List<LicenseUser> GetAllUsersList(PerformContext performContext);
+        LicenseGroup GetGroup(PerformContext performContext, Guid groupId);
+        List<LicenseUserGroup> GetGroupMembers(PerformContext performContext, Guid groupId);
+        LicenseUser GetUser(PerformContext performContext, IdentityType type, string key);
+        LicenseUser GetUserById(PerformContext performContext, Guid? userId);
+        LicenseUser GetUserByPrincipalName(PerformContext performContext, string principalName);
         bool IsOnDomain(PerformContext performContext);
         bool IsPrimaryDomainController(PerformContext performContext);
     }

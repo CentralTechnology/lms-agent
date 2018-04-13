@@ -1,10 +1,10 @@
-﻿namespace LMS.Veeam.DBManager
+﻿namespace LMS.Core.Veeam.DBManager
 {
     using System;
     using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
-    using Common.Extensions;
+    using Extensions;
 
     [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     public sealed class SqlNullableTypeFieldDescriptor<TNullable, TStruct> : ISqlFieldDescriptor<TNullable>, ISqlFieldDescriptor where TStruct : struct

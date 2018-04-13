@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Veeam.Managers
+﻿namespace LMS.Core.Veeam.Managers
 {
     using Abp.Domain.Services;
     using global::Hangfire.Server;
@@ -12,7 +6,7 @@ namespace LMS.Veeam.Managers
 
     public interface IVeeamManager: IDomainService
     {
-        Veeam GetLicensingInformation(PerformContext performContext, Veeam veeam);
+        Veeam GetLicensingInformation(PerformContext performContext);
 
         bool IsInstalled(PerformContext performContext);
 

@@ -1,7 +1,7 @@
-﻿namespace Core.Sentry
+﻿namespace LMS.Core.Sentry
 {
-    using LMS.Common.Constants;
-    using LMS.Common.Helpers;
+    using Constants;
+    using Helpers;
 
     public static class RavenClient
     {
