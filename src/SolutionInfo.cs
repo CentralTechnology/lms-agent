@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 
 [assembly: AssemblyCompany("Central Technology Ltd")]
-[assembly: AssemblyCopyright("Copyright © Central Technology Ltd 2017")]
+[assembly: AssemblyCopyright("Copyright © Central Technology Ltd 2018")]
 [assembly: AssemblyTrademark("Central Technology Ltd")]
 [assembly: AssemblyCulture("")]
 

@@ -135,6 +135,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Clients\RestClientBase.cs" />
     <Compile Include="Common\Caster.cs" />
     <Compile Include="Configuration\AppSettingNames.cs" />

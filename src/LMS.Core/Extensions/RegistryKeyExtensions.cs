@@ -78,7 +78,7 @@ namespace LMS.Core.Extensions
                 }
             }
 
-            return (false, String.Empty);
+            return (false, string.Empty);
         }
     }
 }

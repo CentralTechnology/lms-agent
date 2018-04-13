@@ -115,6 +115,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="AbpIntegratedTestBase.cs" />
     <Compile Include="ConnectionStrings.cs" />
     <Compile Include="Core\Common\Extensions\ObjectExtension_Tests.cs" />

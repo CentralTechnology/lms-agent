@@ -108,6 +108,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="EntityFramework\LMSDbContext.cs" />
     <Compile Include="EntityFramework\LMSRepositoryBase.cs" />
     <Compile Include="LMSEntityFrameworkModule.cs" />
