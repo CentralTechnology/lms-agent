@@ -32,7 +32,7 @@ Task("Copy-Custom-Files")
 {	
 		CleanDirectory(customArtifactsPath);
 		CopyFiles(lmsSetup.CombineWithFilePath("LMS.Setup.exe").FullPath, customArtifactsPath);
-		CopyFiles(lmsDeploy.CombineWithFilePath("LMS.Deploy.exe").FullPath, customArtifactsPath);
+		CopyFiles(lmsDeploy.CombineWithFilePath("Deploy.exe").FullPath, customArtifactsPath);
 });
 
 Task("Upload-AppVeyor-Artifacts-Custom-Files")
