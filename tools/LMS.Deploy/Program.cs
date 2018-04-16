@@ -5,6 +5,7 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.ServiceProcess;
     using System.Threading.Tasks;
     using Octokit;
@@ -23,6 +24,8 @@
 
         static async Task Main()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console(Serilog.Events.LogEventLevel.Information)
                 .WriteTo.File("deploy.txt", Serilog.Events.LogEventLevel.Debug)
@@ -292,8 +295,17 @@
                     Arguments = "/uninstall /quiet"
                 }
             };
-            process.Start();
-            process.WaitForExit();
+
+            try
+            {
+                process.Start();
+                process.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(ex, ex.Message);
+                // dont worry about it
+            }
         }
 
        public static async Task UpdateRequired(GitHubClient client, Release latestRelease)
