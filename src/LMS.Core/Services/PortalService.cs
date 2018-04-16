@@ -9,7 +9,6 @@
     using System.Text;
     using System.Threading.Tasks;
     using Abp;
-    using Abp.Timing;
     using Abp.UI;
     using Authentication;
     using Default;
@@ -18,7 +17,6 @@
     using Managers;
     using Microsoft.OData.Client;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
 
@@ -29,52 +27,32 @@
         private readonly IPortalAuthenticationService _authService;
         private Container _context;
 
-        private string GetServiceUri()
-        {
-            return DebuggingService.Debug ? "http://localhost:64755/odata" : "https://api-v2.portal.ct.co.uk/odata";
-        }
-
         public PortalService(IPortalAuthenticationService authService)
         {
             _authService = authService;
         }
 
-        public DataServiceCollection<Veeam> GetVeeamServer()
+        public DataServiceCollection<Veeam> GetVeeamServerById(Guid id)
         {
-            var device = _authService.GetDevice();
-            return new DataServiceCollection<Veeam>(_context.VeeamServers.ByKey(device));
+            try
+            {
+                return new DataServiceCollection<Veeam>(_context.VeeamServers.ByKey(id));
+            }
+            catch (DataServiceQueryException ex) when (ex.Response.StatusCode == 404)
+            {
+                Logger.Debug(ex.Message, ex);
+                return new DataServiceCollection<Veeam>();
+            }
         }
 
-        public DataServiceCollection<LicenseUser> GetUserById(Guid userId)
-        {            
-            return new DataServiceCollection<LicenseUser>(_context.Users.ByKey(userId));
+        public DataServiceCollection<LicenseUser> GetUserById(Guid id)
+        {
+            return new DataServiceCollection<LicenseUser>(_context.Users.ByKey(id));
         }
 
         public async Task UpdateVeeamServerAsync(Veeam update)
         {
-            DataServiceCollection<Veeam> original = GetVeeamServer();
-            if (original.Count != 1)
-            {
-                _context.AddToVeeamServers(update);
-                await _context.SaveChangesAsync();
-
-                return;
-            }
-
-            original[0].ClientVersion = update.ClientVersion;
-            original[0].DeleterUserId = null;
-            original[0].DeletionTime = null;
-            original[0].Edition = update.Edition;
-            original[0].ExpirationDate = update.ExpirationDate;
-            original[0].Hostname = update.Hostname;
-            original[0].HyperV = update.HyperV;
-            original[0].IsDeleted = false;
-            original[0].LicenseType = update.LicenseType;
-            original[0].ProgramVersion = update.ProgramVersion;
-            original[0].SupportId = update.SupportId;
-            original[0].TenantId = update.TenantId;
-            original[0].vSphere = update.vSphere;
-
+            _context.UpdateObject(update);
             await SaveChangesAsync();
         }
 
@@ -102,7 +80,7 @@
             await SaveChangesAsync();
         }
 
-        public IEnumerable<LicenseUserGroup> GetAllGroupUsers(Guid @group)
+        public IEnumerable<LicenseUserGroup> GetAllGroupUsers(Guid group)
         {
             return _context.UserGroups.Where(ug => ug.GroupId == group);
         }
@@ -120,6 +98,12 @@
         public async Task AddUserGroupAsync(LicenseUserGroup userGroup)
         {
             _context.AddToUserGroups(userGroup);
+            await SaveChangesAsync();
+        }
+
+        public async Task AddVeeamServerAsync(Veeam veeam)
+        {
+            _context.AddToVeeamServers(veeam);
             await SaveChangesAsync();
         }
 
@@ -164,20 +148,6 @@
             ConfigureContainer();
         }
 
-        private void ConfigureContainer()
-        {
-            Logger.Info("Configuring the api service.");
-
-            _context = new Container(new Uri(GetServiceUri()));
-
-            _context.BuildingRequest += _context_BuildingRequest;
-            _context.ReceivingResponse += ContextReceivingResponse;
-            _context.SendingRequest2 += ContextSendingRequest2;
-
-            Logger.Debug($"Base Uri: {_context.BaseUri}");
-            Logger.Info("Configuration complete!");
-        }
-
         private void _context_BuildingRequest(object sender, BuildingRequestEventArgs e)
         {
             if (!DebuggingService.Debug)
@@ -193,22 +163,21 @@
                     e.RequestUri = ub.Uri;
                     Logger.Debug($"Updated Uri: {e.RequestUri}");
                 }
-
             }
-
         }
 
-        private Task SaveChangesAsync()
+        private void ConfigureContainer()
         {
-            try
-            {
-                return _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Logger.Debug(ex.Message, ex);
-                throw;
-            }
+            Logger.Info("Configuring the api service.");
+
+            _context = new Container(new Uri(GetServiceUri()));
+
+            _context.BuildingRequest += _context_BuildingRequest;
+            _context.ReceivingResponse += ContextReceivingResponse;
+            _context.SendingRequest2 += ContextSendingRequest2;
+
+            Logger.Debug($"Base Uri: {_context.BaseUri}");
+            Logger.Info("Configuration complete!");
         }
 
         private void ContextReceivingResponse(object sender, ReceivingResponseEventArgs e)
@@ -237,12 +206,12 @@
                     {
                         var error = JsonConvert.DeserializeObject<ODataErrorResponse>(reader.ReadToEnd());
 
-                        Logger.Error($"{response.StatusCode} ({(int)response.StatusCode}) - {error.Message}");
+                        Logger.Error($"{response.StatusCode} ({(int) response.StatusCode}) - {error.Message}");
 
-                        throw new UserFriendlyException((int)response.StatusCode, error.Message);
+                        throw new UserFriendlyException((int) response.StatusCode, error.Message);
                     }
 
-                    throw new UserFriendlyException((int)response.StatusCode, reader.ReadToEnd());
+                    throw new UserFriendlyException((int) response.StatusCode, reader.ReadToEnd());
                 }
             }
         }
@@ -261,6 +230,24 @@
             {
                 Logger.Debug($"Sending request: {e.RequestMessage.Method} {e.RequestMessage.Url}");
                 Logger.Debug($"Sending request: {JsonConvert.SerializeObject(e.RequestMessage, Formatting.Indented)}");
+            }
+        }
+
+        private string GetServiceUri()
+        {
+            return DebuggingService.Debug ? "http://localhost:64755/odata" : "https://api-v2.portal.ct.co.uk/odata";
+        }
+
+        private Task SaveChangesAsync()
+        {
+            try
+            {
+                return _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.Debug(ex.Message, ex);
+                throw;
             }
         }
     }

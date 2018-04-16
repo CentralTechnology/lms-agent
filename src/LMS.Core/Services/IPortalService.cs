@@ -14,6 +14,7 @@
         Task AddManagedServerAsync(ManagedSupport managedSupport);
         Task AddUserAsync(LicenseUser user);
         Task AddUserGroupAsync(LicenseUserGroup userGroup);
+        Task AddVeeamServerAsync(Veeam veeam);
         Task DeleteGroupAsync(LicenseGroup group);
         Task DeleteUserAsync(LicenseUser user);
         Task DeleteUserGroupAsync(LicenseUserGroup userGroup);
@@ -21,8 +22,8 @@
         IEnumerable<LicenseUserGroup> GetAllGroupUsers(Guid @group);
         IEnumerable<LicenseUser> GetAllUsers();
         ManagedSupport GetManagedServer();
-        DataServiceCollection<LicenseUser> GetUserById(Guid userId);
-        DataServiceCollection<Veeam> GetVeeamServer();
+        DataServiceCollection<LicenseUser> GetUserById(Guid id);
+        DataServiceCollection<Veeam> GetVeeamServerById(Guid id);
         Task UpdateGroupAsync(LicenseGroup group);
         Task UpdateManagedServerAsync(ManagedSupport update);
         Task UpdateUserAsync(LicenseUser user);
