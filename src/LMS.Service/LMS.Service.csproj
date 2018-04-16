@@ -174,6 +174,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LMS.Assistant\LMS.Assistant.csproj">
+      <Project>{6c453ad2-df40-458a-ac4b-059b005a4834}</Project>
+      <Name>LMS.Assistant</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LMS.Core\LMS.Core.csproj">
       <Project>{18205d90-caf5-4a13-b186-540f21221682}</Project>
       <Name>LMS.Core</Name>
