@@ -3,9 +3,7 @@
     using System;
     using System.DirectoryServices;
     using System.DirectoryServices.AccountManagement;
-    using Abp.Logging;
-    using Extensions;
-    using global::Hangfire.Server;
+    using Abp.UI;
 
     public static class PrincipleExtensions
     {
@@ -19,19 +17,17 @@
             return directoryEntry.Properties.Contains(property) ? directoryEntry.Properties[property].Value.ToString() : string.Empty;
         }
 
-        public static UserPrincipal Validate(this Principal principal, PerformContext performContext)
+        public static UserPrincipal Validate(this Principal principal)
         {
             if (!principal.Guid.HasValue)
             {
-                LogHelper.Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id doesn't contain a value. Please check this manually in Active Directory.");
-                return null;
+                throw new UserFriendlyException($"Cannot process {principal.Name} because the Id doesn't contain a value. Please check this manually in Active Directory.");
             }
 
             bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
             if (!validId)
             {
-                LogHelper.Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
-                return null;
+                throw new UserFriendlyException($"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
             }
 
             if (principal is UserPrincipal user)
@@ -39,7 +35,7 @@
                 return user;
             }
 
-            return null;
+            throw new UserFriendlyException($"User is not of type UserPrincipal.");
         }
     }
 }

@@ -33,6 +33,11 @@
             logger.Log(LogSeverity.Info, performContext, message);
         }
 
+        public static void Warn(this ILogger logger, PerformContext performContext, string message)
+        {
+            logger.Log(LogSeverity.Warn, performContext, message);
+        }
+
         public static void Log(this ILogger logger, LogSeverity severity, PerformContext performContext, string message)
         {
             logger.Log(severity, message);

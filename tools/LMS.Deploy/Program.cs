@@ -5,6 +5,8 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Net;
+    using System.ServiceProcess;
     using System.Threading.Tasks;
     using Octokit;
     using Polly;
@@ -22,9 +24,11 @@
 
         static async Task Main()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File("deploy.txt")
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Information)
+                .WriteTo.File("deploy.txt", Serilog.Events.LogEventLevel.Debug)
                 .CreateLogger();
 
             Log.Information("Starting deployment....");
@@ -44,6 +48,12 @@
             }
 
             Log.Information("************ Deployment  Successful ************");
+
+            if (Environment.UserInteractive)
+            {
+                Console.WriteLine("Press [Enter] to exit.");
+                Console.ReadLine();
+            }
         }
 
         public static GitHubClient BuildClient()
@@ -82,7 +92,7 @@
             try
             {
                 FileVersionInfo x64Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files (x86)\License Monitoring System\LMS.exe");
-                return new Version(x64Info.FileVersion,true);
+                return new Version(x64Info.FileMajorPart,x64Info.FileMinorPart,x64Info.FileBuildPart);
             }
             catch (FileNotFoundException)
             {
@@ -92,7 +102,7 @@
             try
             {
                 FileVersionInfo x86Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files\License Monitoring System\LMS.exe");
-                return new Version(x86Info.FileVersion, true);
+                return new Version(x86Info.FileMajorPart,x86Info.FileMinorPart,x86Info.FileBuildPart);
             }
             catch (FileNotFoundException)
             {
@@ -224,6 +234,12 @@
 
         public static async Task StartDeployment(GitHubClient client)
         {
+            if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(),"LMS.Setup.exe")))
+            {
+                Log.Debug("Setup file exists. let's go ahead and remove that.");
+                File.Delete("LMS.Setup.exe");
+            }
+            
             var latestRelease = await GetLatestRelease(client);
             var latestVersion = GetLatestVersion(latestRelease);
             var currentVersion = GetCurrentInstalledVersion();
@@ -232,6 +248,68 @@
 
             if (currentVersion.CompareTo(latestVersion) < 0)
             {
+                if (File.Exists(Path.Combine(ProgramFilesx86(), "License Monitoring System", "LMS.exe")))
+                {
+                    await UpdateRequired(client, latestRelease);
+                    return;
+                }
+
+                Log.Warning("Oh dear me, the executable does not appear to exist, even though the application is installed!");
+                Log.Warning("Let's uninstall it and see what happens.");
+                Uninstall();
+                await UpdateRequired(client, latestRelease);
+            }
+
+            if (currentVersion.CompareTo(latestVersion) > 0)
+            {
+                Log.Warning("The installed version is newer than what is currently available.");
+                Log.Warning("i'm going to uninstall the program.");
+                Uninstall();
+                await UpdateRequired(client, latestRelease);
+                return;
+            }
+
+            if (currentVersion.CompareTo(latestVersion) == 0)
+            {
+                Log.Information("No update is required at this time, but let's just make sure all the files are there.");
+                if (File.Exists(Path.Combine(ProgramFilesx86(), "License Monitoring System", "LMS.exe")))
+                {
+                    Log.Information("All looks good!");
+                    return;
+                }
+
+                Log.Warning("Oh dear me, the executable does not appear to exist, even though the application is installed!");
+                Log.Warning("Let's uninstall it and see what happens.");
+                Uninstall();
+                await UpdateRequired(client, latestRelease);
+            }
+        }
+
+        public static void Uninstall()
+        {
+            Process process = new Process
+            {
+                StartInfo =
+                {
+                    FileName = @"C:\ProgramData\Package Cache\{097afb2c-3985-4c01-8169-57ee425edc4b}\LMS.Setup.exe",
+                    Arguments = "/uninstall /quiet"
+                }
+            };
+
+            try
+            {
+                process.Start();
+                process.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(ex, ex.Message);
+                // dont worry about it
+            }
+        }
+
+       public static async Task UpdateRequired(GitHubClient client, Release latestRelease)
+        {
                 Log.Information("Update required!");
 
                 Log.Information("Getting the download url.");
@@ -243,21 +321,66 @@
                 Log.Information("Saving file to disk.");
                 SaveLatestRelease(response);
 
+                Log.Information("Making sure the service is stopped.");
+                try
+                {
+                    ServiceController service = new ServiceController("LicenseMonitoringSystem");
+                    Log.Information($"Service is currently {service.Status}");
+                    if (service.Status == ServiceControllerStatus.Running)
+                    {
+                        Log.Information("Attempting to stop the License Monitoring System service.");
+                        service.Stop();
+                        service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(15));
+
+                        if (service.Status != ServiceControllerStatus.Stopped)
+                        {
+                            Log.Information("Service has failed to stop in a reasonable amount of time.");
+                            Log.Information("Killing the process");
+                            foreach (var process in Process.GetProcessesByName("LMS"))
+                            {
+                                process.Kill();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug("License Monitoring System service was not found on this computer.");
+                    Log.Debug(ex, ex.Message);
+                }
+
                 Log.Information("Installation started.");
                 InstallLatestRelease();
+
+                Log.Information("Making sure the service is started.");
+                try
+                {
+                    ServiceController service = new ServiceController("LicenseMonitoringSystem");
+                    Log.Information($"Service is currently {service.Status}");
+                    if (service.Status != ServiceControllerStatus.Running && service.Status != ServiceControllerStatus.StartPending)
+                    {
+                        Log.Information("Attempting to start the License Monitoring System service.");
+                        service.Start();
+                        service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(15));
+                        Log.Information("Service successfully started.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug("License Monitoring System service was not found on this computer.");
+                    Log.Debug(ex, ex.Message);
+                }
+        }
+
+        static string ProgramFilesx86()
+        {
+            if( 8 == IntPtr.Size 
+                || (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432"))))
+            {
+                return Environment.GetEnvironmentVariable("ProgramFiles(x86)");
             }
 
-            if (currentVersion.CompareTo(latestVersion) > 0)
-            {
-                Log.Error("The installed version is newer than what is currently available.");
-                Log.Error("Please uninstall the current version and rerun the deploy utility.");
-                throw new Exception("Installed version is newer than what is currently available.");
-            }
-
-            if (currentVersion.CompareTo(latestVersion) == 0)
-            {
-                Log.Information("No update is required at this time.");
-            }
+            return Environment.GetEnvironmentVariable("ProgramFiles");
         }
     }
 }

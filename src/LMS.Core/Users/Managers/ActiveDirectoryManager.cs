@@ -7,9 +7,12 @@
     using System.DirectoryServices.ActiveDirectory;
     using System.Linq;
     using System.Net.NetworkInformation;
+    using System.Runtime.InteropServices;
+    using System.Security.Authentication;
     using Abp;
     using Abp.Domain.Services;
     using Abp.Extensions;
+    using Abp.UI;
     using Core.Extensions;
     using Extensions;
     using global::Hangfire.Server;
@@ -17,24 +20,24 @@
 
     public class ActiveDirectoryManager : DomainService, IActiveDirectoryManager
     {
-        public LicenseUser GetUserByPrincipalName(PerformContext performContext, string principalName)
+        public LicenseUser GetUserByPrincipalName(string principalName)
         {
-            return GetUser(performContext, IdentityType.UserPrincipalName, principalName);
+            return GetUser(IdentityType.UserPrincipalName, principalName);
         }
 
-        public LicenseUser GetUser(PerformContext performContext, IdentityType type, string key)
+        public LicenseUser GetUser(IdentityType type, string key)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
                 UserPrincipal user = UserPrincipal.FindByIdentity(principalContext, type, key);
                 if (user == null)
                 {
-                    throw new AbpException($"Cannot find User Principal with {type} {key}");
+                    throw new UserFriendlyException($"Cannot find User Principal with {type} {key}");
                 }
 
-                user.Validate(performContext);
+                user.Validate();
 
-                Logger.Debug(performContext, $"Retrieving {user.GetDisplayText()} from Active Directory.");
+                Logger.Debug($"Retrieving {user.GetDisplayText()} from Active Directory.");
 
                 bool enabled = GetUserStatus(user);
                 DateTimeOffset? lastLogon = GetLastLogonDate(user);
@@ -60,7 +63,7 @@
             }
         }
 
-        public IEnumerable<LicenseUser> GetAllUsers(PerformContext performContext)
+        public IEnumerable<LicenseUser> GetAllUsers()
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -72,7 +75,12 @@
                         {
                             foreach (Principal principal in results)
                             {
-                                LicenseUser localUser = GetUserById(performContext, principal.Guid);
+                                if (!principal.Guid.HasValue)
+                                {
+                                    continue;
+                                }
+
+                                LicenseUser localUser = GetUserById(principal.Guid.Value);
                                 if (localUser == null)
                                 {
                                     continue;
@@ -86,22 +94,22 @@
             }
         }
 
-        public List<LicenseUser> GetAllUsersList(PerformContext performContext)
+        public List<LicenseUser> GetAllUsersList()
         {
-            return GetAllUsers(performContext).ToList();
+            return GetAllUsers().ToList();
         }
 
-        public List<LicenseGroup> GetAllGroupsList(PerformContext performContext)
+        public List<LicenseGroup> GetAllGroupsList()
         {
-            return GetAllGroups(performContext).ToList();
+            return GetAllGroups().ToList();
         }
 
-        public LicenseUser GetUserById(PerformContext performContext, Guid? userId)
+        public LicenseUser GetUserById(Guid userId)
         {
-            return GetUser(performContext, IdentityType.Guid, userId.ToString());
+            return GetUser(IdentityType.Guid, userId.ToString());
         }
 
-        public IEnumerable<LicenseGroup> GetAllGroups(PerformContext performContext)
+        public IEnumerable<LicenseGroup> GetAllGroups()
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -115,14 +123,14 @@
                             {
                                 if (principal.Guid == null)
                                 {
-                                    Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
+                                    Logger.Debug($"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
                                     continue;
                                 }
 
                                 bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
                                 if (!validId)
                                 {
-                                    Logger.Debug(performContext, $"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
+                                    Logger.Debug($"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
                                     continue;
                                 }
 
@@ -131,9 +139,9 @@
                                     continue;
                                 }
 
-                                Logger.Debug(performContext, $"Retrieving {group.GetDisplayText()} from Active Directory.");
+                                Logger.Debug($"Retrieving {group.GetDisplayText()} from Active Directory.");
 
-                                LicenseGroup localGroup = GetGroup(performContext, principalId);
+                                LicenseGroup localGroup = GetGroup(principalId);
                                 if (localGroup == null)
                                 {
                                     continue;
@@ -147,7 +155,7 @@
             }
         }
 
-        public LicenseGroup GetGroup(PerformContext performContext, Guid groupId)
+        public LicenseGroup GetGroup(Guid groupId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -171,21 +179,16 @@
                     string getWhenCreated = group.GetProperty("whenCreated");
                     if (getWhenCreated.IsNullOrEmpty())
                     {
-                        throw new NullReferenceException($"WhenCreated property for {group.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
+                        throw new Exception($"WhenCreated property for {group.GetDisplayText()} is null or empty. Please make sure the service is running with correct permissions to access Active Directory.");
                     }
 
                     whenCreated = DateTimeOffset.Parse(getWhenCreated);
                 }
-                catch (NullReferenceException nullRef)
-                {
-                    Logger.Error(performContext, nullRef.Message);
-                    throw;
-                }
                 catch (Exception ex)
                 {
-                    Logger.Error(performContext, $"Failed to determine the when created date for {group.GetDisplayText()}. Task cannot continue.");
-                    Logger.Debug(performContext, "Exception getting WhenCreated GroupPrincipal property.", ex);
-                    throw;
+                    Logger.Error($"Failed to determine the when created date for {group.GetDisplayText()}.");
+                    Logger.Debug("Exception getting WhenCreated GroupPrincipal property.", ex);
+                    throw new UserFriendlyException(ex.Message);
                 }
 
                 return new LicenseGroup
@@ -197,7 +200,7 @@
             }
         }
 
-        public List<LicenseUserGroup> GetGroupMembers(PerformContext performContext, Guid groupId)
+        public List<LicenseUserGroup> GetGroupMembers(Guid groupId)
         {
             using (var principalContext = new PrincipalContext(ContextType.Domain))
             {
@@ -216,13 +219,23 @@
 
                         foreach (Principal principal in members)
                         {
-                            var user = principal.Validate(performContext);
-                            if (user?.Guid == null)
+                            UserPrincipal user;
+                            try
+                            {
+                                user = principal.Validate();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex.Message);
+                                continue;
+                            }
+
+                            if (!user.Guid.HasValue)
                             {
                                 continue;
                             }
 
-                            LicenseUser localUser = GetUserById(performContext, user.Guid.Value);
+                            LicenseUser localUser = GetUserById(user.Guid.Value);
                             if (localUser == null)
                             {
                                 continue;
@@ -237,6 +250,18 @@
 
                         return licenseGroupUsers;
                     }
+                }
+                catch (COMException ex)
+                {
+                    Logger.Warn($"There was a problem getting the members of group: {groupId}");
+                    Logger.Error(ex.Message, ex);
+                    return licenseGroupUsers;
+                }
+                catch (AuthenticationException ex)
+                {
+                    Logger.Warn($"There was a problem getting the members of group: {groupId}");
+                    Logger.Error(ex.Message, ex);
+                    return licenseGroupUsers;
                 }
                 catch (PrincipalOperationException ex)
                 {

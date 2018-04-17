@@ -9,16 +9,16 @@
 
     public interface IActiveDirectoryManager : IDomainService
     {
-        IEnumerable<LicenseGroup> GetAllGroups(PerformContext performContext);
-        List<LicenseGroup> GetAllGroupsList(PerformContext performContext);
+        IEnumerable<LicenseGroup> GetAllGroups();
+        List<LicenseGroup> GetAllGroupsList();
 
-        IEnumerable<LicenseUser> GetAllUsers(PerformContext performContext);
-        List<LicenseUser> GetAllUsersList(PerformContext performContext);
-        LicenseGroup GetGroup(PerformContext performContext, Guid groupId);
-        List<LicenseUserGroup> GetGroupMembers(PerformContext performContext, Guid groupId);
-        LicenseUser GetUser(PerformContext performContext, IdentityType type, string key);
-        LicenseUser GetUserById(PerformContext performContext, Guid? userId);
-        LicenseUser GetUserByPrincipalName(PerformContext performContext, string principalName);
+        IEnumerable<LicenseUser> GetAllUsers();
+        List<LicenseUser> GetAllUsersList();
+        LicenseGroup GetGroup(Guid groupId);
+        List<LicenseUserGroup> GetGroupMembers(Guid groupId);
+        LicenseUser GetUser(IdentityType type, string key);
+        LicenseUser GetUserById(Guid userId);
+        LicenseUser GetUserByPrincipalName(string principalName);
         bool IsOnDomain(PerformContext performContext);
         bool IsPrimaryDomainController(PerformContext performContext);
     }

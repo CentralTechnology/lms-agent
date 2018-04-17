@@ -39,35 +39,55 @@
                 Logger.Info(performContext, "Collecting information...this could take some time.");
 
                 Veeam payload = _veeamManager.GetLicensingInformation(performContext);
-
                 Logger.Info(performContext, "done");
-                Logger.Info(performContext, "Validating the payload...");
 
-                payload.Validate();
+                Logger.Info(performContext, "Validating the payload...");
+                var remoteVeeam = PortalService.GetVeeamServerById(AuthService.GetDevice());
+                if (remoteVeeam.Count != 1)
+                {
+                    payload.Validate();
+                    Logger.Info(performContext, "Payload is valid!");
+
+                    DumpPayload(payload);
+
+                    await PortalService.AddVeeamServerAsync(payload);
+
+                    Logger.Info(performContext,"Successfully checked in.");
+
+                    return;
+                }
+
+                remoteVeeam[0].UpdateValues(payload);
+                remoteVeeam[0].Validate();
 
                 Logger.Info(performContext, "Payload is valid!");
 
-                var prettyPayload = new
-                {
-                    Hostname = payload.Hostname,
-                    Id = payload.Id,
-                    Agent = payload.ClientVersion,
-                    Tenant = payload.TenantId,
-                    Edition = payload.Edition.ToString(),
-                    LicenseType = payload.LicenseType.ToString(),
-                    HyperV = payload.HyperV,
-                    VMWare = payload.vSphere,
-                    ExpirationDate = payload.ExpirationDate.ToString("o"),
-                    Program = payload.ProgramVersion,
-                    SupportId = payload.SupportId
-                };
+                DumpPayload(payload);
 
-                Logger.Info($"Payload details: {JsonConvert.SerializeObject(prettyPayload, Formatting.Indented)}");
-
-                await PortalService.UpdateVeeamServerAsync(payload);
+                await PortalService.UpdateVeeamServerAsync(remoteVeeam[0]);
 
                 Logger.Info(performContext,"Successfully checked in.");
             });
+        }
+
+        private void DumpPayload(Veeam payload)
+        {
+            var prettyPayload = new
+            {
+                Hostname = payload.Hostname,
+                Id = payload.Id,
+                Agent = payload.ClientVersion,
+                Tenant = payload.TenantId,
+                Edition = payload.Edition.ToString(),
+                LicenseType = payload.LicenseType.ToString(),
+                HyperV = payload.HyperV,
+                VMWare = payload.vSphere,
+                ExpirationDate = payload.ExpirationDate.ToString("o"),
+                Program = payload.ProgramVersion,
+                SupportId = payload.SupportId
+            };
+
+            Logger.Info($"Payload details: {JsonConvert.SerializeObject(prettyPayload, Formatting.Indented)}");
         }
     }
 }
