@@ -1,7 +1,6 @@
 ﻿namespace LMS.Core.Users
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Abp.UI;
@@ -39,7 +38,7 @@
             var remoteUsers = PortalService.GetAllUsers().ToArray();
 
             Logger.Info(performContext, "Getting the users from Active Directory...");
-            var adUsers = _activeDirectoryManager.GetAllUsers(performContext).ToList();                     
+            var adUsers = _activeDirectoryManager.GetAllUsers().ToList();
 
             foreach (var adUser in adUsers)
             {
@@ -65,7 +64,7 @@
                 remoteUser.UpdateValues(adUser);
                 await PortalService.UpdateUserAsync(remoteUser);
 
-                performContext?.WriteSuccessLine($"+ {remoteUser}");
+                performContext?.WriteSuccessLine($"^ {remoteUser}");
                 Logger.Info($"Updated: {remoteUser}");
                 Logger.Debug($"{JsonConvert.SerializeObject(remoteUser, Formatting.Indented)}");
             }
@@ -92,14 +91,14 @@
         {
             Logger.Info(performContext, "Getting the groups from Active Directory...");
 
-            var groups = _activeDirectoryManager.GetAllGroups(performContext).ToArray();
+            var groups = _activeDirectoryManager.GetAllGroups().ToArray();
             foreach (var group in groups)
             {
                 performContext?.Cancel();
 
-                var groupMembers = _activeDirectoryManager.GetGroupMembers(performContext, group.Id);
+                var groupMembers = _activeDirectoryManager.GetGroupMembers(group.Id);
 
-                var userGroups = PortalService.GetAllGroupUsers(@group.Id).ToArray();
+                var userGroups = PortalService.GetAllGroupUsers(group.Id).ToArray();
 
                 var newMembers = groupMembers.Except(userGroups, _licenseUserGroupEqualityComparer).ToArray();
                 foreach (var newMember in newMembers)
@@ -121,7 +120,7 @@
                     await PortalService.DeleteUserGroupAsync(
                         staleMember);
 
-                    performContext?.WriteWarnLine($"+ {group.Name}  {staleMember.UserId}");
+                    performContext?.WriteWarnLine($"- {group.Name}  {staleMember.UserId}");
                     Logger.Info($"User: {staleMember.UserId} was removed from Group: {group.Id} {group.Name}");
                 }
 
@@ -142,7 +141,7 @@
             var remoteGroups = PortalService.GetAllGroups().ToArray();
 
             Logger.Info(performContext, "Getting the groups from Active Directory...");
-            var adGroups = _activeDirectoryManager.GetAllGroups(performContext).ToArray();
+            var adGroups = _activeDirectoryManager.GetAllGroups().ToArray();
 
             foreach (var adGroup in adGroups)
             {
@@ -167,7 +166,7 @@
                 remoteGroup.UpdateValues(adGroup);
                 await PortalService.UpdateGroupAsync(remoteGroup);
 
-                performContext?.WriteSuccessLine($"+ {remoteGroup}");
+                performContext?.WriteSuccessLine($"^ {remoteGroup}");
                 Logger.Info($"Updated:  {remoteGroup}");
                 Logger.Debug($"{JsonConvert.SerializeObject(remoteGroup, Formatting.Indented)}");
             }
