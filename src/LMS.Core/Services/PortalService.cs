@@ -194,6 +194,16 @@
                 throw new UserFriendlyException($"Request Failed: {responseMessage.Response.StatusCode} {responseMessage.Response.StatusDescription}");
             }
 
+            if (response.StatusCode == HttpStatusCode.GatewayTimeout)
+            {
+                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    Logger.Debug($"Content: {reader.ReadToEnd()}");
+
+                    throw new UserFriendlyException((int) response.StatusCode, "Web server received an invalid response while acting as a gateway or proxy server.");
+                }
+            }
+
             if (response.StatusCode == HttpStatusCode.BadRequest ||
                 response.StatusCode == HttpStatusCode.InternalServerError ||
                 response.StatusCode == HttpStatusCode.Unauthorized)
