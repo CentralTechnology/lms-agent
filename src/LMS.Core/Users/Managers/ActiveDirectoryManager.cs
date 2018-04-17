@@ -7,9 +7,12 @@
     using System.DirectoryServices.ActiveDirectory;
     using System.Linq;
     using System.Net.NetworkInformation;
+    using System.Runtime.InteropServices;
+    using System.Security.Authentication;
     using Abp;
     using Abp.Domain.Services;
     using Abp.Extensions;
+    using Abp.Logging;
     using Core.Extensions;
     using Extensions;
     using global::Hangfire.Server;
@@ -238,6 +241,18 @@
                         return licenseGroupUsers;
                     }
                 }
+                catch (COMException ex)
+                {
+                    Logger.Warn(performContext, $"There was a problem getting the members of group: {groupId}");
+                    Logger.Error(ex.Message, ex);
+                    return licenseGroupUsers;
+                }
+                catch (AuthenticationException ex)
+                {
+                    Logger.Warn(performContext, $"There was a problem getting the members of group: {groupId}");
+                    Logger.Error(ex.Message, ex);
+                    return licenseGroupUsers;
+                }
                 catch (PrincipalOperationException ex)
                 {
                     Logger.Error($"Group: {group.Name} has some invalid members. This will need to be manually corrected in Active Directory.");
@@ -285,9 +300,9 @@
         {
             try
             {
-                var highPart = (int) adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
-                var lowPart = (int) adsLargeInteger.GetType().InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
-                return highPart * ((long) uint.MaxValue + 1) + lowPart;
+                var highPart = (int)adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+                var lowPart = (int)adsLargeInteger.GetType().InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+                return highPart * ((long)uint.MaxValue + 1) + lowPart;
             }
             catch (Exception ex)
             {
