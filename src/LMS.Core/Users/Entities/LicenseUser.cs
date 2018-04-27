@@ -19,7 +19,8 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
                 ManagedSupportId = managedSupportId,
                 SamAccountName = user.SamAccountName,
                 Surname = user.Surname,
-                TenantId = Convert.ToInt32(tenantId)
+                TenantId = Convert.ToInt32(tenantId),
+                WhenCreated = user.WhenCreated
             };
         }
 
@@ -53,6 +54,7 @@ namespace Portal.LicenseMonitoringSystem.Users.Entities
             LastLoginDate = user.LastLoginDate;
             SamAccountName = user.SamAccountName;
             Surname = user.Surname;
+            WhenCreated = WhenCreated;
         }
     }
 }
