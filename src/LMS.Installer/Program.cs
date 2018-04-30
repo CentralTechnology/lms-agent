@@ -29,14 +29,16 @@
                 },
                 InstallScope = InstallScope.perMachine,
                 MajorUpgrade = new MajorUpgrade
-                {
-                    Schedule = UpgradeSchedule.afterInstallInitialize,
+                {                    
+                    Schedule = UpgradeSchedule.afterInstallValidate,
                     DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
                 },
                 Name = Constants.ServiceDisplayName,
                 OutDir = "bin\\%Configuration%",
                 UI = WUI.WixUI_Common,
-                GUID = new Guid("ADAC7706-188B-42E7-922B-50786779042A")
+                GUID = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
+                RebootSupressing = RebootSupressing.ReallySuppress
+                
             };
             
             project.ExtractVersionFrom("LMS.exe");
@@ -82,7 +84,7 @@
                 OutDir = "bin\\%Configuration%",
                 OutFileName = "LMS.Setup",
                 UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
-                Version = new Version(version),
+                Version = new Version(version),               
                 Chain = new List<ChainItem>
                 {
                     new PackageGroupRef("NetFx452Redist"),
