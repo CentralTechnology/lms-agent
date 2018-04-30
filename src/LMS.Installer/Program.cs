@@ -28,11 +28,7 @@
                     ProductIcon = "app_icon.ico"
                 },
                 InstallScope = InstallScope.perMachine,
-                MajorUpgrade = new MajorUpgrade
-                {                    
-                    Schedule = UpgradeSchedule.afterInstallValidate,
-                    DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
-                },
+                MajorUpgradeStrategy = MajorUpgradeStrategy.Default,
                 Name = Constants.ServiceDisplayName,
                 OutDir = "bin\\%Configuration%",
                 UI = WUI.WixUI_Common,
