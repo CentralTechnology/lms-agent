@@ -35,10 +35,10 @@
                 },
                 Name = Constants.ServiceDisplayName,
                 OutDir = "bin\\%Configuration%",
-                UpgradeCode = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
-                UI = WUI.WixUI_Common
+                UI = WUI.WixUI_Common,
+                GUID = new Guid("ADAC7706-188B-42E7-922B-50786779042A")
             };
-
+            
             project.ExtractVersionFrom("LMS.exe");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
             project.CustomIdAlgorithm = project.HashedTargetPathIdAlgorithm;
@@ -73,6 +73,7 @@
 
             var bootstrapper = new Bundle(Constants.ServiceDisplayName)
             {
+                Compressed = true,
                 HelpTelephone = "0845 413 88 99",
                 Manufacturer = "Central Technology Ltd",
                 DisableModify = "yes",
@@ -118,11 +119,13 @@
                     },
                     new MsiPackage(product)
                     {
-                        DisplayInternalUI = true
+                        DisplayInternalUI = true,
+                        Compressed = true
                     }
-                }
+                }              
             };
 
+            bootstrapper.Validate();
             bootstrapper.Build();
         }
     }
