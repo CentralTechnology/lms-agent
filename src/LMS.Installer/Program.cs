@@ -17,7 +17,7 @@
             var project = new Project("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
                     new DirPermission("LocalSystem", GenericPermission.All),
-                    service = new File("%SolutionDir%\\LMS.Service\\bin\\%Configuration%\\LMS.exe"),
+                    service = new File(new Id("LMS_file"),"%SolutionDir%\\LMS.Service\\bin\\%Configuration%\\LMS.exe"),
                     new DirFiles("%SolutionDir%\\LMS.Service\\bin\\%Configuration%\\*.*", f => !f.EndsWith("LMS.exe")))
             )
             {
@@ -37,8 +37,8 @@
                 RebootSupressing = RebootSupressing.ReallySuppress
                 
             };
-            
-            project.ExtractVersionFrom("LMS.exe");
+
+            project.SetVersionFrom("LMS_file");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
             project.CustomIdAlgorithm = project.HashedTargetPathIdAlgorithm;
             service.ServiceInstaller = new ServiceInstaller
