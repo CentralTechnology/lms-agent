@@ -2,10 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using WixSharp;
     using WixSharp.Bootstrapper;
     using WixSharp.CommonTasks;
 
+    [SuppressMessage("ReSharper", "UseObjectOrCollectionInitializer")]
     internal class Script
     {
 
@@ -28,10 +30,6 @@
                     ProductIcon = "app_icon.ico"
                 },
                 InstallScope = InstallScope.perMachine,
-                MajorUpgrade = new MajorUpgrade
-                {
-                    DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
-                },
                 Name = Constants.ServiceDisplayName,
                 OutDir = "bin\\%Configuration%",
                 UI = WUI.WixUI_Minimal,
@@ -62,6 +60,12 @@
                 Vital = true
             };
 
+            project.MajorUpgrade = new MajorUpgrade
+            {
+                Schedule = UpgradeSchedule.afterInstallInitialize,
+                DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
+            };
+
             return Compiler.BuildMsi(project);
         }
 
@@ -72,59 +76,63 @@
 
             string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-            var bootstrapper = new Bundle(Constants.ServiceDisplayName)
-            {
-                Compressed = true,
-                HelpTelephone = "0845 413 88 99",
-                Manufacturer = "Central Technology Ltd",
-                DisableModify = "yes",
-                DisableRollback = true,
-                IconFile = "app_icon.ico",
-                OutDir = "bin\\%Configuration%",
-                OutFileName = "LMS.Setup",
-                UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c"),
-                Version = new Version(version),               
-                Chain = new List<ChainItem>
+#pragma warning disable IDE0017 // Simplify object initialization
+            var bootstrapper = new Bundle(Constants.ServiceDisplayName,
+                new PackageGroupRef("NetFx452Web"),
+                        new ExePackage
+                        {
+                            DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED",
+                            Id = "NetFx452WebExe",
+                            InstallCommand = "/q /norestart /ChainingPackage LMS.Setup.exe",
+                            Compressed = true,
+                            SourceFile = "../Resources/DotNetFramework/NDP452-KB2901954-Web.exe",
+                            PerMachine = true,
+                            Permanent = true,
+                            Vital = true
+                        },
+                        new ExePackage
+                        {
+                            Compressed = true,
+                            InstallCommand = "/i /qb",
+                            InstallCondition = "VersionNT64",
+                            PerMachine = true,
+                            Permanent = true,
+                            SourceFile = "../Resources/SQLCompact/SSCERuntime_x64-ENU.exe",
+                            Vital = true
+                        },
+                        new ExePackage
+                        {
+                            Compressed = true,
+                            InstallCommand = "/i /qb",
+                            InstallCondition = "NOT VersionNT64",
+                            PerMachine = true,
+                            Permanent = true,
+                            SourceFile = "../Resources/SQLCompact/SSCERuntime_x86-ENU.exe",
+                            Vital = true
+                        },
+                new MsiPackage(product)
                 {
-                    new PackageGroupRef("NetFx452Redist"),
-                    new ExePackage
-                    {
-                        DetectCondition = "NOT WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED",
-                        Id = "NetFx452WebExe",
-                        InstallCommand = "/q /norestart /ChainingPackage LMS.Setup.exe",
-                        Compressed = true,
-                        SourceFile = "../Resources/DotNetFramework/NDP452-KB2901954-Web.exe",
-                        PerMachine = true,
-                        Permanent = true,
-                        Vital = true
-                    },
-                    new ExePackage
-                    {
-                        Compressed = true,
-                        InstallCommand = "/i /qb",
-                        InstallCondition = "VersionNT64",
-                        PerMachine = true,
-                        Permanent = true,
-                        SourceFile = "../Resources/SQLCompact/SSCERuntime_x64-ENU.exe",
-                        Vital = true
-                    },
-                    new ExePackage
-                    {
-                        Compressed = true,
-                        InstallCommand = "/i /qb",
-                        InstallCondition = "NOT VersionNT64",
-                        PerMachine = true,
-                        Permanent = true,
-                        SourceFile = "../Resources/SQLCompact/SSCERuntime_x86-ENU.exe",
-                        Vital = true
-                    },
-                    new MsiPackage(product)
-                    {
-                        DisplayInternalUI = true,
-                        Compressed = true
-                    }
-                }              
-            };
+                    Compressed = true,
+                    DisplayInternalUI = true,
+                    Visible = true
+                }
+            );
+#pragma warning restore IDE0017 // Simplify object initialization
+
+            bootstrapper.SuppressWixMbaPrereqVars = true; // NetFx452Web also defines WixMbaPrereqVars
+            bootstrapper.Version = new Version(version);
+            bootstrapper.UpgradeCode = new Guid("dc9c2849-4c97-4f41-9174-d825ab335f9c");
+            bootstrapper.OutDir = "bin\\%Configuration%";
+            bootstrapper.OutFileName = "LMS.Setup";
+            bootstrapper.IconFile = "app_icon.ico";
+            bootstrapper.HelpTelephone = "0845 413 88 99";
+            bootstrapper.Manufacturer = "Central Technology Ltd";
+
+            // the following two assignments will hide Bundle entry form the Programs and Features (also known as Add/Remove Programs)
+            bootstrapper.DisableModify = "yes";
+            bootstrapper.DisableRemove = true;
+
+            bootstrapper.PreserveTempFiles = true;
 
             bootstrapper.Validate();
             bootstrapper.Build();
