@@ -28,10 +28,13 @@
                     ProductIcon = "app_icon.ico"
                 },
                 InstallScope = InstallScope.perMachine,
-                MajorUpgradeStrategy = MajorUpgradeStrategy.Default,
+                MajorUpgrade = new MajorUpgrade
+                {
+                    DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
+                },
                 Name = Constants.ServiceDisplayName,
                 OutDir = "bin\\%Configuration%",
-                UI = WUI.WixUI_Common,
+                UI = WUI.WixUI_Minimal,
                 GUID = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
                 RebootSupressing = RebootSupressing.ReallySuppress
                 
