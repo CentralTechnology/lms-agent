@@ -69,8 +69,11 @@
     <Compile Include="..\..\src\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="DeploymentOperations.cs" />
+    <Compile Include="GitHubOperations.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceOperations.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
