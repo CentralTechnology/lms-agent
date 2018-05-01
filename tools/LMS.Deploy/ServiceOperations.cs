@@ -17,21 +17,37 @@
                 return;
             }
 
+            ServiceController service;
+
             try
             {
-                ServiceController service = new ServiceController(ServiceName);
+                service = new ServiceController(ServiceName);
                 Log.Information($"Service is currently {service.Status}");
-                if (service.Status != ServiceControllerStatus.Running && service.Status != ServiceControllerStatus.StartPending)
-                {
-                    Log.Information("Attempting to start the License Monitoring System service.");
-                    service.Start();
-                    service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(15));
-                    Log.Information("Service successfully started.");
-                }
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 Log.Debug("License Monitoring System service was not found on this computer.");
+                Log.Debug(ex, ex.Message);
+                return;
+            }
+
+            try
+            {
+                if (service.Status == ServiceControllerStatus.Running)
+                {
+                    Log.Information("Service successfully started.");
+                    return;
+                }
+
+                Log.Information("Attempting to start the License Monitoring System service.");
+                service.Start();
+                service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(15));
+                Log.Information("Service successfully started.");
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Error($"License Monitoring System service cannot be started - {ex.Message}");
                 Log.Debug(ex, ex.Message);
             }
         }
@@ -49,15 +65,29 @@
                 return;
             }
 
+            ServiceController service;
+
             try
             {
-                ServiceController service = new ServiceController(ServiceName);
+                service = new ServiceController(ServiceName);
                 Log.Information($"Service is currently {service.Status}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Debug("License Monitoring System service was not found on this computer.");
+                Log.Debug(ex, ex.Message);
+                return;
+            }
+
+            try
+            {
+
                 if (service.Status == ServiceControllerStatus.Running)
                 {
                     Log.Information("Attempting to stop the License Monitoring System service.");
                     service.Stop();
                     service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(15));
+                    Log.Information($"Service is now {service.Status}");
 
                     if (service.Status != ServiceControllerStatus.Stopped)
                     {
@@ -70,10 +100,11 @@
                     }
                 }
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                Log.Debug("License Monitoring System service was not found on this computer.");
+                Log.Error($"License Monitoring System service cannot be stopped - {ex.Message}");
                 Log.Debug(ex, ex.Message);
+                throw;
             }
         }
     }

@@ -14,6 +14,8 @@
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
+            var logFile = Path.Combine(@"C:\Windows\temp", "lms-deploy.txt");
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.Logger(config => config
@@ -23,9 +25,10 @@
                 .WriteTo.Logger(config => config
                 .MinimumLevel.Verbose()
                 .Filter.ByExcluding(e => e.Level == LogEventLevel.Verbose)
-                .WriteTo.File("deploy.txt"))
+                .WriteTo.File(logFile))
                 .CreateLogger();
 
+            Log.Information($"Log Path: {logFile}");
             Log.Information("Starting deployment....");
 
             try
