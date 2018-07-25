@@ -1,11 +1,6 @@
 #load nuget:https://www.myget.org/F/cake-contrib/api/v2?package=Cake.Recipe&prerelease
 
 Environment.SetVariableNames();
-BuildParameters.Tasks.PublishGitHubReleaseTask.Task.Actions.Clear();
-BuildParameters.Tasks.PublishGitHubReleaseTask
-	.Does(() => {
-		Information("Ignore");
-	});
 
 BuildParameters.SetParameters(context: Context, 
                             buildSystem: BuildSystem,
@@ -13,18 +8,24 @@ BuildParameters.SetParameters(context: Context,
                             title: "LicenseMonitoringSystem",
                             repositoryOwner: "CentralTechnology",
                             repositoryName: "lms-agent",
-							isPublicRepository: false,
-                            appVeyorAccountName: "CentralTechnologyLtd",
+							shouldRunGitVersion: true,
 							shouldExecuteGitLink: false,
-							shouldDownloadMilestoneReleaseNotes: true);
+							shouldDownloadMilestoneReleaseNotes: true,
+							isPublicRepository: false);
+
+BuildParameters.PrintParameters(Context);
 
 ToolSettings.SetToolSettings(context: Context,
-							 dupFinderExcludePattern: new string[] { Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/LMS.Core/Connected Services/**/*.cs"},
-							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]* -[*]Portal.* -[*]Core.Migrations.* -[*]Migrations.* -[*]Actions.*");
+							 dupFinderExcludePattern: new string[] { 
+									Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  
+									Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", 
+									Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/LMS.Core/Connected Services/**/*.cs"},
+							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]* -[*]Portal.* -[*]Core.Migrations.* -[*]Migrations.* -[*]Actions.*"
+							 );
 
 var lmsSetup = BuildParameters.Paths.Directories.PublishedApplications.Combine("LMS.Installer/");
 var lmsDeploy = BuildParameters.Paths.Directories.PublishedApplications.Combine("LMS.Deploy/");
-var customArtifactsPath = BuildParameters.Paths.Directories.Build.Combine("Packages/Custom");
+var customArtifactsPath = BuildParameters.Paths.Directories.Build.Combine("Packages/");
 
 Task("Copy-Custom-Files")
 	.IsDependeeOf("Package")
@@ -39,6 +40,7 @@ Task("Upload-AppVeyor-Artifacts-Custom-Files")
     .IsDependentOn("Package")
     .IsDependeeOf("Upload-AppVeyor-Artifacts")
     .WithCriteria(() => BuildParameters.IsRunningOnAppVeyor)
+	.WithCriteria(() => DirectoryExists(BuildParameters.Paths.Directories.Packages))
     .Does(() =>
 {
     foreach(var package in GetFiles(customArtifactsPath + "/*"))
@@ -50,32 +52,6 @@ Task("Upload-AppVeyor-Artifacts-Custom-Files")
 				DeploymentName = package.GetFilenameWithoutExtension().ToString()
 			});
     }
-});
-
-Task("Publish-GitHub-Release-Custom-Files")
-    .IsDependentOn("Package")
-    .IsDependentOn("Copy-Custom-Files")
-    .IsDependeeOf("Publish-GitHub-Release")
-    .WithCriteria(() => BuildParameters.ShouldPublishGitHub)
-    .Does(() => RequireTool(GitReleaseManagerTool, () => {
-        if(BuildParameters.CanUseGitReleaseManager)
-        {
-            foreach(var package in GetFiles(customArtifactsPath + "/*"))
-            {
-                GitReleaseManagerAddAssets(BuildParameters.GitHub.UserName, BuildParameters.GitHub.Password, BuildParameters.RepositoryOwner, BuildParameters.RepositoryName, BuildParameters.Version.Milestone, package.ToString());
-            }
-        }
-        else
-        {
-            Warning("Unable to use GitReleaseManager, as necessary credentials are not available");
-        }
-    })
-)
-.OnError(exception =>
-{
-    Error(exception.Message);
-    Information("Publish-GitHub-Release Task failed, but continuing with next Task...");
-    publishingError = true;
 });
 
 Build.Run();

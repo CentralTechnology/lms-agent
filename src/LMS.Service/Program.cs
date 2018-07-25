@@ -4,6 +4,7 @@
     using System.IO;
     using Abp.Timing;
     using CommandLine;
+    using Serilog;
     using Topshelf;
     using Constants = Core.Constants.Constants;
 
@@ -16,22 +17,22 @@
                 Directory.CreateDirectory("logs");
             }
 
-            if (Environment.UserInteractive)
-            {
-                Console.SetWindowSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
-            }
+            //if (Environment.UserInteractive)
+            //{
+            //    Console.SetWindowSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
+            //}
 
-            if (Environment.UserInteractive && args != null)
-            {
-                Parser.Default.ParseArguments<UpdateOptions, RunOptions>(args)
-                    .WithParsed<UpdateOptions>(ConsoleHost.Update)
-                    .WithParsed<RunOptions>(ConsoleHost.Run);
+            //if (Environment.UserInteractive && args != null)
+            //{
+            //    Parser.Default.ParseArguments<UpdateOptions, RunOptions>(args)
+            //        .WithParsed<UpdateOptions>(ConsoleHost.Update)
+            //        .WithParsed<RunOptions>(ConsoleHost.Run);
 
-                Console.WriteLine("Press [Enter] to exit.");
-                Console.ReadLine();
+            //    Console.WriteLine("Press [Enter] to exit.");
+            //    Console.ReadLine();
 
-                return 0;
-            }
+            //    return 0;
+            //}
 
             return (int)HostFactory.Run(x =>
            {
@@ -56,11 +57,7 @@
                x.SetDescription(Constants.ServiceDescription);
                x.StartAutomatically();
 
-               x.OnException(exception =>
-               {
-                   Console.WriteLine($@"Exception thrown - {exception.Message}");
-                   Console.ReadLine();
-               });
+               x.OnException(exception => { Log.Logger.Error(exception, "An error has occurred."); });
            });
         }
     }
