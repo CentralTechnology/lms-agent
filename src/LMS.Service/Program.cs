@@ -17,22 +17,22 @@
                 Directory.CreateDirectory("logs");
             }
 
-            //if (Environment.UserInteractive)
-            //{
-            //    Console.SetWindowSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
-            //}
+            if (Environment.UserInteractive)
+            {
+                Console.SetWindowSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
+            }
 
-            //if (Environment.UserInteractive && args != null)
-            //{
-            //    Parser.Default.ParseArguments<UpdateOptions, RunOptions>(args)
-            //        .WithParsed<UpdateOptions>(ConsoleHost.Update)
-            //        .WithParsed<RunOptions>(ConsoleHost.Run);
+            if (Environment.UserInteractive && args != null)
+            {
+                Parser.Default.ParseArguments<UpdateOptions, RunOptions>(args)
+                    .WithParsed<UpdateOptions>(ConsoleHost.Update)
+                    .WithParsed<RunOptions>(ConsoleHost.Run);
 
-            //    Console.WriteLine("Press [Enter] to exit.");
-            //    Console.ReadLine();
+                Console.WriteLine("Press [Enter] to exit.");
+                Console.ReadLine();
 
-            //    return 0;
-            //}
+                return 0;
+            }
 
             return (int)HostFactory.Run(x =>
            {
