@@ -10,11 +10,20 @@
 
     class Program
     {
-        static async Task Main()
+        static async Task Main(string[] args)
         {
+            bool localInstall = args != null && args.Length == 1;
+            if (localInstall)
+            {
+                if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "LMS.Setup.exe")))
+                {
+                    throw new Exception("Setup file missing!");
+                }
+            } 
+
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var logFile = Path.Combine(@"C:\Windows\temp", "lms-deploy.txt");
+            var logFile = Path.Combine(localInstall ? Directory.GetCurrentDirectory() : @"C:\Windows\temp", "lms-deploy.txt");
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -33,7 +42,7 @@
 
             try
             {
-                var deploymentOperations = new DeploymentOperations();
+                var deploymentOperations = new DeploymentOperations(localInstall);
                 await deploymentOperations.StartAsync();
             }
             catch (Exception ex)

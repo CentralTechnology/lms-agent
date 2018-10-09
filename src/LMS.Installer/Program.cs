@@ -10,11 +10,11 @@
     [SuppressMessage("ReSharper", "UseObjectOrCollectionInitializer")]
     internal class Script
     {
-
-        private static string BuildMsi()
+        private static Version _version;
+        private static string BuildServiceMsi()
         {
             File service;
-            var project = new Project("LMS",
+            var project = new ManagedProject("LMS",
                 new Dir(@"%ProgramFiles%\License Monitoring System",
                     new DirPermission("LocalSystem", GenericPermission.All),
                     service = new File(new Id("LMS_file"),"%SolutionDir%\\LMS.Service\\bin\\%Configuration%\\LMS.exe"),
@@ -34,10 +34,10 @@
                 OutDir = "bin\\%Configuration%",
                 UI = WUI.WixUI_Minimal,
                 GUID = new Guid("ADAC7706-188B-42E7-922B-50786779042A"),
-                RebootSupressing = RebootSupressing.ReallySuppress
-                
+                RebootSupressing = RebootSupressing.ReallySuppress                
             };
 
+            project.BeforeInstall += Project_BeforeInstall;
             project.SetVersionFrom("LMS_file");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
             project.CustomIdAlgorithm = project.HashedTargetPathIdAlgorithm;
@@ -59,6 +59,65 @@
                 ThirdFailureActionType = FailureActionType.restart,
                 Vital = true
             };
+            
+            project.MajorUpgrade = new MajorUpgrade
+            {
+                Schedule = UpgradeSchedule.afterInstallInitialize,
+                DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
+            };
+
+            _version = project.Version;
+            return Compiler.BuildMsi(project);
+        }
+
+        private static void Project_BeforeInstall(SetupEventArgs e)
+        {
+            if (e.IsInstalling || e.IsUpgrading)
+            {
+                if (System.IO.File.Exists(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf")))
+                {
+                    if (!System.IO.Directory.Exists(System.IO.Path.Combine(e.InstallDir, "Data")))
+                    {
+                        System.IO.Directory.CreateDirectory(System.IO.Path.Combine(e.InstallDir, "Data"));
+                    }
+
+                    System.IO.File.Move(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"), System.IO.Path.Combine(System.IO.Path.Combine(e.InstallDir, "Data"), "Configuration.sdf"));
+                    System.IO.File.Delete(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"));
+                }
+            }
+        }
+
+        private static string BuildGuiMsi()
+    {
+        File gui;
+            var project = new Project("LMS Configuration",
+                new Dir(@"%ProgramFiles%\License Monitoring System\\Configuration",
+                    new DirPermission("LocalSystem", GenericPermission.All),
+                        gui = new File(new Id("LMS_UI_File"),"%SolutionDir%\\LMS.Gui\\bin\\%Configuration%\\Configuration.exe",
+                                 new FileShortcut("LMS Configuration", @"%Desktop%"){ IconFile = @"app_icon.ico", }),
+                    new DirFiles("%SolutionDir%\\LMS.Gui\\bin\\%Configuration%\\*.*", f => !f.EndsWith("Configuration.exe")))
+            )
+            {
+                ControlPanelInfo = new ProductInfo
+                {
+                    HelpTelephone = "0845 413 88 99",
+                    Manufacturer = "Central Technology Ltd",
+                    NoModify = true,
+                    NoRepair = true,
+                    ProductIcon = "app_icon.ico"
+                },
+                InstallScope = InstallScope.perMachine,
+                Name = Constants.ServiceDisplayName + " - Configuration",
+                OutDir = "bin\\%Configuration%",
+                UI = WUI.WixUI_Minimal,
+                GUID = new Guid("4bbed23e-c112-4e20-a4d0-eae29429d4d7"),
+                RebootSupressing = RebootSupressing.ReallySuppress
+                
+            };
+
+            project.SetVersionFrom("LMS_UI_file");
+            project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
+            project.CustomIdAlgorithm = project.HashedTargetPathIdAlgorithm;
 
             project.MajorUpgrade = new MajorUpgrade
             {
@@ -72,9 +131,11 @@
         private static void Main(string[] args)
         {
 
-            string product = BuildMsi();
+            string product = BuildServiceMsi();
+            string gui = BuildGuiMsi();
 
-            string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+         //   string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            string version = "5.0.0";
 
 #pragma warning disable IDE0017 // Simplify object initialization
             var bootstrapper = new Bundle(Constants.ServiceDisplayName,
@@ -114,7 +175,13 @@
                 {
                     Compressed = true,
                     DisplayInternalUI = true,
-                    Visible = true
+                    Visible = false
+                },
+                new MsiPackage(gui)
+                {
+                    Compressed = true,
+                    DisplayInternalUI = true,
+                    Visible = false
                 }
             );
 #pragma warning restore IDE0017 // Simplify object initialization
@@ -130,7 +197,7 @@
 
             // the following two assignments will hide Bundle entry form the Programs and Features (also known as Add/Remove Programs)
             bootstrapper.DisableModify = "yes";
-            bootstrapper.DisableRemove = true;
+          //  bootstrapper.DisableRemove = true;
 
             bootstrapper.PreserveTempFiles = true;
 
