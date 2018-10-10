@@ -138,8 +138,7 @@
             string product = BuildServiceMsi();
             string gui = BuildGuiMsi();
 
-         //   string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            string version = "5.0.0";
+            string version = Environment.GetEnvironmentVariable("GitVersion_AssemblySemVer") ?? System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
 #pragma warning disable IDE0017 // Simplify object initialization
             var bootstrapper = new Bundle(Constants.ServiceDisplayName,
