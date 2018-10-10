@@ -186,7 +186,7 @@
                     Log.Debug("New installation.");
                     if (_localInstall)
                     {
-                        await UpdateRequired();
+                        UpdateRequired();
                     }
                     else
                     {
@@ -200,7 +200,7 @@
                 Uninstall();
                 if (_localInstall)
                 {
-                    await UpdateRequired();
+                    UpdateRequired();
                 }
                 else
                 {
@@ -217,7 +217,7 @@
                 Uninstall();
                 if (_localInstall)
                 {
-                    await UpdateRequired();
+                    UpdateRequired();
                 }
                 else
                 {
@@ -242,7 +242,7 @@
                 Uninstall();
                 if (_localInstall)
                 {
-                    await UpdateRequired();
+                    UpdateRequired();
                 }
                 else
                 {
@@ -299,7 +299,7 @@
             }
         }
 
-        private async Task UpdateRequired()
+        private void UpdateRequired()
         {
             Log.Information("Update required!");
 
