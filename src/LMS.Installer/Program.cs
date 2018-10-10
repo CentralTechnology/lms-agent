@@ -93,8 +93,7 @@
             var project = new Project("LMS Configuration",
                 new Dir(@"%ProgramFiles%\License Monitoring System\\Configuration",
                     new DirPermission("LocalSystem", GenericPermission.All),
-                        gui = new File(new Id("LMS_UI_File"),"%SolutionDir%\\LMS.Gui\\bin\\%Configuration%\\Configuration.exe",
-                                 new FileShortcut("LMS Configuration", @"%Desktop%"){ IconFile = @"app_icon.ico", }),
+                        gui = new File(new Id("LMS_UI_File"),"%SolutionDir%\\LMS.Gui\\bin\\%Configuration%\\Configuration.exe"),
                     new DirFiles("%SolutionDir%\\LMS.Gui\\bin\\%Configuration%\\*.*", f => !f.EndsWith("Configuration.exe")))
             )
             {
@@ -114,6 +113,11 @@
                 RebootSupressing = RebootSupressing.ReallySuppress
                 
             };
+
+        gui.Shortcuts = new[]
+        {
+            new FileShortcut("LMS Configuration", @"%Desktop%"){ IconFile = @"app_icon.ico", Name = "LMS Configuration" }
+        };
 
             project.SetVersionFrom("LMS_UI_file");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
