@@ -10,7 +10,9 @@ BuildParameters.SetParameters(context: Context,
                             repositoryName: "lms-agent",
 							shouldRunGitVersion: true,
 							shouldExecuteGitLink: false,
-							isPublicRepository: false
+							isPublicRepository: false,
+							shouldRunDupFinder: false,
+							shouldRunInspectCode: false
 							);
 
 BuildParameters.PrintParameters(Context);
