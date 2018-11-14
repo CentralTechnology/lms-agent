@@ -11,8 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\GitHubReleaseManager.yaml = ..\GitHubReleaseManager.yaml
 		..\GitVersion.yml = ..\GitVersion.yml
 		..\README.md = ..\README.md
+		..\recipe.cake = ..\recipe.cake
 		..\ReleaseNotes.md = ..\ReleaseNotes.md
-		..\setup.cake = ..\setup.cake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4AB0291F-E60C-4168-9968-52BCD2369A65}"
