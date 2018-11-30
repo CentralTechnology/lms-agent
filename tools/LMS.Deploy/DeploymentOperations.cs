@@ -1,25 +1,30 @@
 ﻿namespace LMS.Deploy
 {
+    using Microsoft.Win32;
+    using Octokit;
+    using Serilog;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Win32;
-    using Octokit;
-    using Serilog;
 
     public class DeploymentOperations
     {
-        private static readonly string LogFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.log");
+        private readonly string _logFilename;
 
-        private static readonly string SetupFilename = Path.Combine(Path.GetTempPath(), "LMS.Setup.exe");
+        private readonly string _setupFilename;
 
-        public DeploymentOperations()
+        private readonly bool _localInstall;
+
+        public DeploymentOperations(bool localInstall = false)
         {
             GitHubOperations = new GitHubOperations();
             ServiceOperations = new ServiceOperations();
+            _localInstall = localInstall;
+            _logFilename = Path.Combine(localInstall ? Directory.GetCurrentDirectory() : Path.GetTempPath(), "LMS.Setup.log");
+            _setupFilename = Path.Combine(localInstall ? Directory.GetCurrentDirectory() : Path.GetTempPath(), "LMS.Setup.exe");
         }
 
         public GitHubOperations GitHubOperations { get; set; }
@@ -31,7 +36,7 @@
         {
             try
             {
-                FileVersionInfo x64Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files (x86)\License Monitoring System\LMS.exe");
+                var x64Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files (x86)\License Monitoring System\LMS.exe");
                 return new SemVer.Version(x64Info.FileMajorPart, x64Info.FileMinorPart, x64Info.FileBuildPart);
             }
             catch (FileNotFoundException ex)
@@ -41,7 +46,7 @@
 
             try
             {
-                FileVersionInfo x86Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files\License Monitoring System\LMS.exe");
+                var x86Info = FileVersionInfo.GetVersionInfo(@"C:\Program Files\License Monitoring System\LMS.exe");
                 return new SemVer.Version(x86Info.FileMajorPart, x86Info.FileMinorPart, x86Info.FileBuildPart);
             }
             catch (FileNotFoundException ex)
@@ -55,9 +60,9 @@
 
         private static IEnumerable<string> GetQuietUninstallPaths()
         {
-            List<string> paths = new List<string>();
+            var paths = new List<string>();
 
-            var keys = new[]
+            RegistryKey[] keys = new[]
             {
                 RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"),
                 RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
@@ -71,11 +76,11 @@
                     {
                         try
                         {
-                            var subKey = key.OpenSubKey(keyName);
-                            var displayName = subKey?.GetValue("DisplayName") as string;
+                            RegistryKey subKey = key.OpenSubKey(keyName);
+                            string displayName = subKey?.GetValue("DisplayName") as string;
                             if (!string.IsNullOrEmpty(displayName) && displayName.Equals("License Monitoring System"))
                             {
-                                var uninstallString = subKey.GetValue("QuietUninstallString") as string;
+                                string uninstallString = subKey.GetValue("QuietUninstallString") as string;
                                 if (!string.IsNullOrEmpty(uninstallString))
                                 {
                                     Log.Debug($"Found version {subKey.GetValue("DisplayVersion")}");
@@ -99,13 +104,13 @@
             return paths;
         }
 
-        private static void InstallLatestRelease()
+        private void InstallLatestRelease()
         {
             try
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo(SetupFilename, $"/install /quiet /norestart /log {LogFilename}");
+                var processStartInfo = new ProcessStartInfo(_setupFilename, $"/install /quiet /norestart /log {_logFilename}");
 
-                Process proc = Process.Start(processStartInfo);
+                var proc = Process.Start(processStartInfo);
                 if (proc == null)
                 {
                     throw new NullReferenceException("Unable to launch the installer process");
@@ -142,7 +147,7 @@
         {
             using (var streamReader = new MemoryStream(release.Body))
             {
-                using (FileStream output = File.OpenWrite(SetupFilename))
+                using (FileStream output = File.OpenWrite(_setupFilename))
                 {
                     CopyStream(streamReader, output);
                 }
@@ -151,15 +156,26 @@
 
         public async Task StartAsync()
         {
-            if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "LMS.Setup.exe")))
+            Release latestRelease = null;
+            SemVer.Version latestVersion;
+            if (!_localInstall)
             {
-                Log.Debug("Setup file exists. let's go ahead and remove that.");
-                File.Delete("LMS.Setup.exe");
+                if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "LMS.Setup.exe")))
+                {
+                    Log.Debug("Setup file exists. let's go ahead and remove that.");
+                    File.Delete("LMS.Setup.exe");
+                }
+
+                latestRelease = await GitHubOperations.GetLatestRelease();
+                latestVersion = GitHubOperations.GetLatestVersion(latestRelease);
+            }
+            else
+            {
+                latestVersion = new SemVer.Version(FileVersionInfo.GetVersionInfo(_setupFilename).ProductVersion);
             }
 
-            var latestRelease = await GitHubOperations.GetLatestRelease();
-            var latestVersion = GitHubOperations.GetLatestVersion(latestRelease);
-            var currentVersion = GetCurrentInstalledVersion();
+
+            SemVer.Version currentVersion = GetCurrentInstalledVersion();
 
             Log.Information($"Installed: {currentVersion}    Available: {latestVersion}");
 
@@ -168,13 +184,28 @@
                 if (currentVersion.Equals(new SemVer.Version(1, 0, 0)))
                 {
                     Log.Debug("New installation.");
-                    await UpdateRequired(latestRelease);
+                    if (_localInstall)
+                    {
+                        UpdateRequired();
+                    }
+                    else
+                    {
+                        await UpdateRequired(latestRelease);
+                    }
+
                     return;
                 }
 
                 Log.Debug("Existing installation.");
                 Uninstall();
-                await UpdateRequired(latestRelease);
+                if (_localInstall)
+                {
+                    UpdateRequired();
+                }
+                else
+                {
+                    await UpdateRequired(latestRelease);
+                }
                 return;
             }
 
@@ -184,7 +215,14 @@
                 Log.Warning("I'm going to uninstall the program.");
 
                 Uninstall();
-                await UpdateRequired(latestRelease);
+                if (_localInstall)
+                {
+                    UpdateRequired();
+                }
+                else
+                {
+                    await UpdateRequired(latestRelease);
+                }
                 return;
             }
 
@@ -202,24 +240,31 @@
                 Log.Warning("Attempting to reinstall the application.");
 
                 Uninstall();
-                await UpdateRequired(latestRelease);
+                if (_localInstall)
+                {
+                    UpdateRequired();
+                }
+                else
+                {
+                    await UpdateRequired(latestRelease);
+                }
             }
         }
 
         private static void Uninstall()
         {
-            var uninstallPaths = GetQuietUninstallPaths().ToArray();
+            string[] uninstallPaths = GetQuietUninstallPaths().ToArray();
             if (!uninstallPaths.Any())
             {
                 Log.Debug("No uninstall paths found in the registry.");
                 return;
             }
 
-            foreach (var uninstallPath in uninstallPaths)
+            foreach (string uninstallPath in uninstallPaths)
             {
-                var splitUninstallPath = uninstallPath.Split(new[] {"\" "}, StringSplitOptions.RemoveEmptyEntries);
-                var filename = splitUninstallPath[0].TrimStart('\"').Trim();
-                var arguments = splitUninstallPath[1].Trim();
+                string[] splitUninstallPath = uninstallPath.Split(new[] { "\" " }, StringSplitOptions.RemoveEmptyEntries);
+                string filename = splitUninstallPath[0].TrimStart('\"').Trim();
+                string arguments = splitUninstallPath[1].Trim();
 
                 Log.Debug($"Filename: {filename}");
                 Log.Debug($"Args: {arguments}");
@@ -230,7 +275,7 @@
                     continue;
                 }
 
-                Process process = new Process
+                var process = new Process
                 {
                     StartInfo =
                     {
@@ -254,15 +299,27 @@
             }
         }
 
+        private void UpdateRequired()
+        {
+            Log.Information("Update required!");
+
+            ServiceOperations.Stop();
+
+            Log.Information("Installation started.");
+            InstallLatestRelease();
+
+            ServiceOperations.Start();
+        }
+
         private async Task UpdateRequired(Release latestRelease)
         {
             Log.Information("Update required!");
 
             Log.Information("Getting the download url.");
-            var url = await GitHubOperations.GetDownloadUrlAsync(latestRelease);
+            string url = await GitHubOperations.GetDownloadUrlAsync(latestRelease);
 
             Log.Information("Download started. This could take some time...");
-            var response = await GitHubOperations.DownloadLatestRelease(url);
+            IApiResponse<byte[]> response = await GitHubOperations.DownloadLatestRelease(url);
 
             Log.Information("Saving file to disk.");
             SaveLatestRelease(response);

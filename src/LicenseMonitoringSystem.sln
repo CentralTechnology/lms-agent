@@ -11,8 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\GitHubReleaseManager.yaml = ..\GitHubReleaseManager.yaml
 		..\GitVersion.yml = ..\GitVersion.yml
 		..\README.md = ..\README.md
+		..\recipe.cake = ..\recipe.cake
 		..\ReleaseNotes.md = ..\ReleaseNotes.md
-		..\setup.cake = ..\setup.cake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4AB0291F-E60C-4168-9968-52BCD2369A65}"
@@ -51,11 +51,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMS.Installer", "LMS.Installer\LMS.Installer.csproj", "{44555887-C439-470C-944D-8866EC3D7067}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B214DFB9-448C-477B-A173-F1E29939271D} = {B214DFB9-448C-477B-A173-F1E29939271D}
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54} = {A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMS.Tests", "..\tests\LMS.Tests\LMS.Tests.csproj", "{8EA6219C-3A2B-4D2E-9705-ACB018D4C8ED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMS.Deploy", "..\tools\LMS.Deploy\LMS.Deploy.csproj", "{69CCAFA7-0EE6-4260-BA09-E1D1BFD510D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMS.Gui", "LMS.Gui\LMS.Gui.csproj", "{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -116,7 +119,6 @@ Global
 		{6C453AD2-DF40-458A-AC4B-059B005A4834}.Release|x86.ActiveCfg = Release|Any CPU
 		{6C453AD2-DF40-458A-AC4B-059B005A4834}.Release|x86.Build.0 = Release|Any CPU
 		{44555887-C439-470C-944D-8866EC3D7067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44555887-C439-470C-944D-8866EC3D7067}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44555887-C439-470C-944D-8866EC3D7067}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{44555887-C439-470C-944D-8866EC3D7067}.Debug|x64.Build.0 = Debug|Any CPU
 		{44555887-C439-470C-944D-8866EC3D7067}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -151,6 +153,17 @@ Global
 		{69CCAFA7-0EE6-4260-BA09-E1D1BFD510D2}.Release|x64.Build.0 = Release|Any CPU
 		{69CCAFA7-0EE6-4260-BA09-E1D1BFD510D2}.Release|x86.ActiveCfg = Release|Any CPU
 		{69CCAFA7-0EE6-4260-BA09-E1D1BFD510D2}.Release|x86.Build.0 = Release|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Debug|x64.Build.0 = Debug|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Debug|x86.Build.0 = Debug|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Release|x64.ActiveCfg = Release|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Release|x64.Build.0 = Release|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Release|x86.ActiveCfg = Release|Any CPU
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -166,6 +179,7 @@ Global
 		{44555887-C439-470C-944D-8866EC3D7067} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 		{8EA6219C-3A2B-4D2E-9705-ACB018D4C8ED} = {43F09060-A65A-4B48-B7E0-18CD8429A236}
 		{69CCAFA7-0EE6-4260-BA09-E1D1BFD510D2} = {17B86A6B-C865-4931-8154-E2CCB28DCC5F}
+		{A17FAFBD-D442-4B96-8DF1-7AB03ED3ED54} = {4AB0291F-E60C-4168-9968-52BCD2369A65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2A0F319B-C7F0-4746-B7C8-D9A461005AEF}

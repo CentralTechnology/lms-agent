@@ -10,8 +10,10 @@ BuildParameters.SetParameters(context: Context,
                             repositoryName: "lms-agent",
 							shouldRunGitVersion: true,
 							shouldExecuteGitLink: false,
-							shouldDownloadMilestoneReleaseNotes: true,
-							isPublicRepository: false);
+							isPublicRepository: false,
+							shouldRunDupFinder: false,
+							shouldRunInspectCode: false
+							);
 
 BuildParameters.PrintParameters(Context);
 
@@ -20,7 +22,7 @@ ToolSettings.SetToolSettings(context: Context,
 									Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tests/**/*.cs",  
 									Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/tools/**/*.cs", 
 									Context.MakeAbsolute(Context.Environment.WorkingDirectory) + "/src/LMS.Core/Connected Services/**/*.cs"},
-							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]* -[*]Portal.* -[*]Core.Migrations.* -[*]Migrations.* -[*]Actions.*"
+							 testCoverageFilter: "+[*]* -[xunit.*]* -[*.Tests]* -[SharpRaven]* -[*]Portal.* -[*]Core.Migrations.* -[*]Migrations.* -[*]Actions.* -[*]Serilog.*"
 							 );
 
 var lmsSetup = BuildParameters.Paths.Directories.PublishedApplications.Combine("LMS.Installer/");
