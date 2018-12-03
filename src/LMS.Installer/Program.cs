@@ -84,6 +84,13 @@
                     System.IO.File.Move(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"), System.IO.Path.Combine(System.IO.Path.Combine(e.InstallDir, "Data"), "Configuration.sdf"));
                     System.IO.File.Delete(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"));
                 }
+                else
+                {
+                    if (!System.IO.Directory.Exists(System.IO.Path.Combine(e.InstallDir, "Data")))
+                    {
+                        System.IO.Directory.CreateDirectory(System.IO.Path.Combine(e.InstallDir, "Data"));
+                    }
+                }
             }
         }
 
