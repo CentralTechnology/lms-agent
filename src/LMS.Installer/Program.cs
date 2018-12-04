@@ -74,27 +74,44 @@
         {
             if (e.IsInstalling || e.IsUpgrading)
             {
-                if (System.IO.File.Exists(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf")))
-                {
-                    if (!System.IO.Directory.Exists(System.IO.Path.Combine(e.InstallDir, "Data")))
-                    {
-                        System.IO.Directory.CreateDirectory(System.IO.Path.Combine(e.InstallDir, "Data"));
-                    }
+                MigrateDatabase(e.InstallDir);
+                RemoveDesktopShortcut();
+            }
+        }
 
-                    if (!System.IO.File.Exists(System.IO.Path.Combine(System.IO.Path.Combine(e.InstallDir, "Data"), "Configuration.sdf")))
-                    {
-                        System.IO.File.Move(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"), System.IO.Path.Combine(System.IO.Path.Combine(e.InstallDir, "Data"), "Configuration.sdf"));
-                    }
-                   
-                    System.IO.File.Delete(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"));
-                }
-                else
+        private static void MigrateDatabase(string installDir)
+        {
+            if (System.IO.File.Exists(System.IO.Path.Combine(installDir, "Configuration.sdf")))
+            {
+                if (!System.IO.Directory.Exists(System.IO.Path.Combine(installDir, "Data")))
                 {
-                    if (!System.IO.Directory.Exists(System.IO.Path.Combine(e.InstallDir, "Data")))
-                    {
-                        System.IO.Directory.CreateDirectory(System.IO.Path.Combine(e.InstallDir, "Data"));
-                    }
+                    System.IO.Directory.CreateDirectory(System.IO.Path.Combine(installDir, "Data"));
                 }
+
+                if (!System.IO.File.Exists(System.IO.Path.Combine(System.IO.Path.Combine(installDir, "Data"), "Configuration.sdf")))
+                {
+                    System.IO.File.Move(System.IO.Path.Combine(installDir, "Configuration.sdf"), System.IO.Path.Combine(System.IO.Path.Combine(installDir, "Data"), "Configuration.sdf"));
+                }
+                   
+                System.IO.File.Delete(System.IO.Path.Combine(installDir, "Configuration.sdf"));
+            }
+            else
+            {
+                if (!System.IO.Directory.Exists(System.IO.Path.Combine(installDir, "Data")))
+                {
+                    System.IO.Directory.CreateDirectory(System.IO.Path.Combine(installDir, "Data"));
+                }
+            }
+        }
+
+        /// <summary>
+        ///  present in version 4.1.0
+        /// </summary>
+        public static void RemoveDesktopShortcut()
+        {
+            if (System.IO.File.Exists(System.IO.Path.Combine(@"%Desktop%", "LMS Configuration.ink")))
+            {
+                System.IO.File.Delete(System.IO.Path.Combine(@"%Desktop%", "LMS Configuration.ink"));
             }
         }
 
