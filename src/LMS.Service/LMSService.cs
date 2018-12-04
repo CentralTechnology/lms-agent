@@ -4,6 +4,7 @@
     using System.Collections.Concurrent;
     using System.Configuration;
     using System.Reflection;
+    using System.Threading.Tasks;
     using Abp.Configuration;
     using Abp.Dependency;
     using Core.Extensions;
@@ -17,6 +18,14 @@
         private IDisposable _webapp;
         public bool Start(HostControl hostControl)
         {
+            Task.Run(() =>
+            {
+                if (System.IO.File.Exists(System.IO.Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.lnk")))
+                {
+                    System.IO.File.Delete(System.IO.Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.lnk"));
+                }
+            });
+
             int port = ConfigurationManager.AppSettings.Get("Port").To<int>();
             if (port == default(int))
             {
