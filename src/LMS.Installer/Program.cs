@@ -109,9 +109,9 @@
         /// </summary>
         public static void RemoveDesktopShortcut()
         {
-            if (System.IO.File.Exists(System.IO.Path.Combine(@"%Desktop%", "LMS Configuration.ink")))
+            if (System.IO.File.Exists(System.IO.Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.ink")))
             {
-                System.IO.File.Delete(System.IO.Path.Combine(@"%Desktop%", "LMS Configuration.ink"));
+                System.IO.File.Delete(System.IO.Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.ink"));
             }
         }
 
