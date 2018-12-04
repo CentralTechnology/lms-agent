@@ -1,42 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Gui
+﻿namespace LMS.Gui
 {
-    using System.ComponentModel;
+    using System;
     using System.Diagnostics;
     using System.Reactive.Disposables;
     using System.Reactive.Linq;
-    using System.Runtime.CompilerServices;
     using System.ServiceProcess;
     using Abp.Configuration;
     using Abp.Dependency;
-    using Annotations;
     using Core.Configuration;
     using Core.Services.Authentication;
     using Infrastructure;
+    using PropertyChanged;
 
-    [PropertyChanged.AddINotifyPropertyChangedInterface]
+    [AddINotifyPropertyChangedInterface]
     public class MainWindowViewModel : IDisposable
     {
-        private readonly ISettingManager _settingManager;
         private readonly IPortalAuthenticationService _authService;
-        private readonly ServiceController _serviceController;
-        public Guid DeviceId { get; set; }
-        public long AccountId { get; set; }
 
-        public bool IsBusy { get; set; }
-        public bool PendingChanges { get; set; }
-
-        public string ServiceStatus { get; set; }
-
-        public bool ServiceInstalled { get; set; }
+        private readonly CompositeDisposable _disposable = new CompositeDisposable();
+        private readonly ISettingManager _settingManager;
+        private bool _canChangeAccountId;
 
         private bool _canChangeDeviceId;
-        private bool _canChangeAccountId;
 
         public MainWindowViewModel()
         {
@@ -46,22 +31,17 @@ namespace LMS.Gui
 
             try
             {
-                _serviceController = new ServiceController("LicenseMonitoringSystem");
-                if (_serviceController == null)
-                {
-                    ServiceInstalled = false;
-                    ServiceStatus = "Program not installed.";
-                }
-                else
-                {
-                    ServiceInstalled = true;
-                    ServiceStatus = _serviceController.Status.ToString();
-                }
+                ServiceController serviceController = new ServiceController("LicenseMonitoringSystem");
+
+                ServiceInstalled = true;
+                ServiceStatus = serviceController.Status.ToString();
+                serviceController.DisposeWith(_disposable);
             }
             catch (Exception ex)
             {
                 ServiceInstalled = false;
                 ServiceStatus = ex.Message;
+                return;
             }
 
             // set initial values
@@ -75,14 +55,14 @@ namespace LMS.Gui
                 .Subscribe(accountId =>
                 {
                     IsBusy = true;
-                    
+
                     if (_canChangeAccountId)
                     {
                         var prev = _authService.GetAccount();
                         if (prev != AccountId)
                         {
                             PendingChanges = true;
-                        }                      
+                        }
                     }
 
                     Debug.WriteLine($"Account ID: {accountId}");
@@ -107,7 +87,7 @@ namespace LMS.Gui
                             PendingChanges = true;
                         }
                     }
-                    
+
                     Debug.WriteLine($"Device ID: {deviceId}");
                     _settingManager.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, deviceId.ToString());
 
@@ -119,7 +99,15 @@ namespace LMS.Gui
             PendingChanges = false;
         }
 
-        private readonly CompositeDisposable _disposable = new CompositeDisposable();
+        public long AccountId { get; set; }
+        public Guid DeviceId { get; set; }
+
+        public bool IsBusy { get; set; }
+        public bool PendingChanges { get; set; }
+
+        public bool ServiceInstalled { get; set; }
+
+        public string ServiceStatus { get; set; }
 
         public void Dispose()
         {

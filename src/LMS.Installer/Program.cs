@@ -74,16 +74,43 @@
         {
             if (e.IsInstalling || e.IsUpgrading)
             {
-                if (System.IO.File.Exists(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf")))
-                {
-                    if (!System.IO.Directory.Exists(System.IO.Path.Combine(e.InstallDir, "Data")))
-                    {
-                        System.IO.Directory.CreateDirectory(System.IO.Path.Combine(e.InstallDir, "Data"));
-                    }
+                MigrateDatabase(e.InstallDir);
+            }
+        }
 
-                    System.IO.File.Move(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"), System.IO.Path.Combine(System.IO.Path.Combine(e.InstallDir, "Data"), "Configuration.sdf"));
-                    System.IO.File.Delete(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"));
+        private static void MigrateDatabase(string installDir)
+        {
+            if (System.IO.File.Exists(System.IO.Path.Combine(installDir, "Configuration.sdf")))
+            {
+                if (!System.IO.Directory.Exists(System.IO.Path.Combine(installDir, "Data")))
+                {
+                    System.IO.Directory.CreateDirectory(System.IO.Path.Combine(installDir, "Data"));
                 }
+
+                if (!System.IO.File.Exists(System.IO.Path.Combine(System.IO.Path.Combine(installDir, "Data"), "Configuration.sdf")))
+                {
+                    System.IO.File.Move(System.IO.Path.Combine(installDir, "Configuration.sdf"), System.IO.Path.Combine(System.IO.Path.Combine(installDir, "Data"), "Configuration.sdf"));
+                }
+                   
+                System.IO.File.Delete(System.IO.Path.Combine(installDir, "Configuration.sdf"));
+            }
+            else
+            {
+                if (!System.IO.Directory.Exists(System.IO.Path.Combine(installDir, "Data")))
+                {
+                    System.IO.Directory.CreateDirectory(System.IO.Path.Combine(installDir, "Data"));
+                }
+            }
+        }
+
+        /// <summary>
+        ///  present in version 4.1.0
+        /// </summary>
+        public static void RemoveDesktopShortcut()
+        {
+            if (System.IO.File.Exists(System.IO.Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.lnk")))
+            {
+                System.IO.File.Delete(System.IO.Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.lnk"));
             }
         }
 
@@ -113,12 +140,7 @@
                 RebootSupressing = RebootSupressing.ReallySuppress
                 
             };
-
-        gui.Shortcuts = new[]
-        {
-            new FileShortcut("LMS Configuration", @"%Desktop%"){ IconFile = @"app_icon.ico", Name = "LMS Configuration" }
-        };
-
+            
             project.SetVersionFrom("LMS_UI_file");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
             project.CustomIdAlgorithm = project.HashedTargetPathIdAlgorithm;
