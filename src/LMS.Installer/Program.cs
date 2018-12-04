@@ -81,7 +81,11 @@
                         System.IO.Directory.CreateDirectory(System.IO.Path.Combine(e.InstallDir, "Data"));
                     }
 
-                    System.IO.File.Move(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"), System.IO.Path.Combine(System.IO.Path.Combine(e.InstallDir, "Data"), "Configuration.sdf"));
+                    if (!System.IO.File.Exists(System.IO.Path.Combine(System.IO.Path.Combine(e.InstallDir, "Data"), "Configuration.sdf")))
+                    {
+                        System.IO.File.Move(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"), System.IO.Path.Combine(System.IO.Path.Combine(e.InstallDir, "Data"), "Configuration.sdf"));
+                    }
+                   
                     System.IO.File.Delete(System.IO.Path.Combine(e.InstallDir, "Configuration.sdf"));
                 }
                 else
@@ -120,12 +124,7 @@
                 RebootSupressing = RebootSupressing.ReallySuppress
                 
             };
-
-        gui.Shortcuts = new[]
-        {
-            new FileShortcut("LMS Configuration", @"%Desktop%"){ IconFile = @"app_icon.ico", Name = "LMS Configuration" }
-        };
-
+            
             project.SetVersionFrom("LMS_UI_file");
             project.SetNetFxPrerequisite("WIX_IS_NETFRAMEWORK_452_OR_LATER_INSTALLED");
             project.CustomIdAlgorithm = project.HashedTargetPathIdAlgorithm;
