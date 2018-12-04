@@ -75,7 +75,6 @@
             if (e.IsInstalling || e.IsUpgrading)
             {
                 MigrateDatabase(e.InstallDir);
-                RemoveDesktopShortcut();
             }
         }
 
