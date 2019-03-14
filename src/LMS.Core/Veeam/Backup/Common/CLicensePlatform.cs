@@ -1,31 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using LMS.Core.Common;
 
-namespace LMS.Core.Veeam.Common
+namespace LMS.Core.Veeam.Backup.Common
 {
   [Serializable]
   public class CLicensePlatform : IEquatable<CLicensePlatform>, IComparable<CLicensePlatform>, IXmlSerializable
   {
-    public static readonly CLicensePlatform Vmware = SLicensePlatformController.Register(ELicensePlatform.VmWare);
-    public static readonly CLicensePlatform HyperV = SLicensePlatformController.Register(ELicensePlatform.HyperV);
-    public static readonly CLicensePlatform NutanixAHV = SLicensePlatformController.Register(ELicensePlatform.NutanixAHV);
-    public static readonly CLicensePlatform N2W = SLicensePlatformController.Register(ELicensePlatform.N2W);
-    public static readonly CLicensePlatform PluginServers = SLicensePlatformController.Register(ELicensePlatform.PluginServers);
-    public static readonly CLicensePlatform CloudBackup = SLicensePlatformController.Register(ELicensePlatform.CloudBackup);
-    public static readonly CLicensePlatform CloudBackupAgentWorkstations = SLicensePlatformController.Register(ELicensePlatform.CloudBackup, EEpLicenseMode.Workstation);
-    public static readonly CLicensePlatform CloudBackupAgentServers = SLicensePlatformController.Register(ELicensePlatform.CloudBackup, EEpLicenseMode.Server);
-    public static readonly CLicensePlatform CloudReplica = SLicensePlatformController.Register(ELicensePlatform.CloudReplica);
-    public static readonly CLicensePlatform AgentLinuxServer = SLicensePlatformController.Register(ELicensePlatform.EpLinux, EEpLicenseMode.Server);
-    public static readonly CLicensePlatform AgentLinuxWorkstation = SLicensePlatformController.Register(ELicensePlatform.EpLinux, EEpLicenseMode.Workstation);
-    public static readonly CLicensePlatform AgentWindowsServer = SLicensePlatformController.Register(ELicensePlatform.EpWindows, EEpLicenseMode.Server);
-    public static readonly CLicensePlatform AgentWindowsWorkstation = SLicensePlatformController.Register(ELicensePlatform.EpWindows, EEpLicenseMode.Workstation);
     private const string PlatformTag = "Platform";
     private const string ModeTag = "Mode";
 

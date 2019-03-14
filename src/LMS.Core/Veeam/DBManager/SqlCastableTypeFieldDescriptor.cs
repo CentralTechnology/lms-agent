@@ -1,8 +1,9 @@
-﻿namespace LMS.Core.Veeam.DBManager
+﻿using LMS.Core.Common;
+
+namespace LMS.Core.Veeam.DBManager
 {
     using System.Data;
     using System.Data.SqlClient;
-    using Common;
 
     public sealed class SqlCastableTypeFieldDescriptor<TExternal, TInternal> : ISqlFieldDescriptor<TExternal>, ISqlFieldDescriptor
     {

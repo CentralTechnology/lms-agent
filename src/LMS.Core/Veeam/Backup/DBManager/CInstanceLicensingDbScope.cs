@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LMS.Core.Veeam.Common;
+using LMS.Core.Veeam.Backup.Common;
+using LMS.Core.Veeam.Backup.Model;
 using LMS.Core.Veeam.DBManager;
 
 namespace LMS.Core.Veeam.Backup.DBManager

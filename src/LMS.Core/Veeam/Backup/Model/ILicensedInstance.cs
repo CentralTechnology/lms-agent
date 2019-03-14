@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LMS.Core.Veeam.Common;
+using LMS.Core.Veeam.Backup.Common;
 
 namespace LMS.Core.Veeam.Backup.Model
 {

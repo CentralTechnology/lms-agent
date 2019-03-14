@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LMS.Core.Veeam.Common;
+﻿using System.Collections.Generic;
+using LMS.Core.Veeam.Backup.Common;
+using LMS.Core.Veeam.Backup.DBManager;
+using LMS.Core.Veeam.DBManager;
 
-namespace LMS.Core.Veeam.Core
+namespace LMS.Core.Veeam.Backup.Core
 {
     public static class SInstancesLicenseCountersHelper
     {

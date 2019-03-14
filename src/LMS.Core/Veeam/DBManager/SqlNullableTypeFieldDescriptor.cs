@@ -1,4 +1,6 @@
-﻿namespace LMS.Core.Veeam.DBManager
+﻿using LMS.Core.Veeam.Backup.DBManager;
+
+namespace LMS.Core.Veeam.DBManager
 {
     using System;
     using System.Data;

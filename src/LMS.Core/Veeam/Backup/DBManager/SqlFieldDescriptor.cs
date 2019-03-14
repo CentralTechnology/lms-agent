@@ -1,9 +1,10 @@
-﻿namespace LMS.Core.Veeam.DBManager
-{
-    using System;
-    using System.Data;
+﻿using System;
+using System.Data;
+using LMS.Core.Veeam.DBManager;
 
-      public static class SqlFieldDescriptor
+namespace LMS.Core.Veeam.Backup.DBManager
+{
+    public static class SqlFieldDescriptor
   {
     public static ISqlFieldDescriptor<Guid> UniqueIdentifier(string fieldName)
     {
@@ -53,12 +54,6 @@
     public static ISqlFieldDescriptor<DateTime> DateTime(string fieldName)
     {
       return (ISqlFieldDescriptor<DateTime>) new SqlValueTypeFieldDescriptor<DateTime>(fieldName, SqlDbType.DateTime);
-    }
-
-    public static ISqlFieldDescriptor<DateTime> DateTimeUtc(
-      string fieldName)
-    {
-      return (ISqlFieldDescriptor<DateTime>) new SqlValueTypeFieldDescriptor<DateTime>(fieldName, SqlDbType.DateTime, (IValueIntercepter<DateTime>) DateTimeValueIntercepter.Utc);
     }
 
     public static ISqlFieldDescriptor<Guid?> UniqueIdentifierNullable(
