@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentResults;
 
 namespace LMS.Core.Veeam.Factory
 {
@@ -15,6 +16,6 @@ namespace LMS.Core.Veeam.Factory
             ApplicationVersion = applicationVersion;
         }
 
-        public abstract Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam Create();
+        public abstract Result<Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam> Create();
     }
 }
