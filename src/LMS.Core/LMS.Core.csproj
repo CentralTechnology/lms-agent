@@ -359,6 +359,7 @@
     <Compile Include="Veeam\Backup\Configuration\V65\ProductProcess.cs" />
     <Compile Include="Veeam\Backup\Configuration\V65\ProductProcesses.cs" />
     <Compile Include="Veeam\Backup\Configuration\V65\ProductProcessesParser.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductProcessNode.cs" />
     <Compile Include="Veeam\Backup\Configuration\V65\ProductProcessOwner.cs" />
     <Compile Include="Veeam\Backup\Configuration\V65\ProductRelease.cs" />
     <Compile Include="Veeam\Backup\Configuration\V65\ProductReleaseAttributes.cs" />

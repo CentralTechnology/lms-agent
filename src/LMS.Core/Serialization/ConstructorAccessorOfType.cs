@@ -20,8 +20,7 @@
 
         private static Func<T, object> CreateCreator(ConstructorInfo constructorInfo)
         {
-            ParameterExpression parameterExpression;
-            return Expression.Lambda<Func<T, object>>((Expression) Expression.Convert((Expression) Expression.New(constructorInfo, (Expression) parameterExpression), ReflectionTypes.Object), parameterExpression).Compile();
+            return Expression.Lambda<Func<T, object>>((Expression) Expression.Convert((Expression) Expression.New(constructorInfo, (Expression) null), ReflectionTypes.Object), (ParameterExpression) null).Compile();
         }
     }
 }

@@ -20,7 +20,10 @@
     {
       MemberExpression memberExpression = Expression.PropertyOrField((Expression) Expressions.UnboxInstanceFromObjectRef(Expression.Parameter(ReflectionTypes.ObjectRef), instanceType), memberName);
       UnaryExpression unaryExpression = Expression.Convert((Expression) Expression.Parameter(ReflectionTypes.Object), valueType);
-      return ((Expression<SetValue>) ((parameterExpression1, parameterExpression2) => Expression.Assign((Expression) memberExpression, (Expression) unaryExpression))).Compile();
+      Expression<Expression<SetValue>> x = Expression.Lambda<Expression<SetValue>>(Expression.Assign(memberExpression, unaryExpression));
+      return x.Compile().Compile();
+
+      //return (((Expression<SetValue>) ((parameterExpression1, parameterExpression2) => Expression.Assign((Expression) memberExpression, (Expression) unaryExpression))).Compile());
     }
 
     public static SetValue CreateFieldSetter(FieldInfo fieldInfo)
