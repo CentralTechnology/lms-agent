@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
+    using System;
+    using System.Collections.Generic;
+
     internal sealed class SerializationBindingsBuilder
     {
         private readonly HashSet<ushort> _indexToBinding = new HashSet<ushort>();

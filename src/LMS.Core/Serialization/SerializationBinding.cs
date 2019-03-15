@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
     internal sealed class SerializationBinding
     {

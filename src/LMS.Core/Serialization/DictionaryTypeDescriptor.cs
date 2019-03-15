@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
+    using System;
+    using System.Collections;
+    using System.Reflection;
+
     internal sealed class DictionaryTypeDescriptor : TypeDescriptor
     {
         private readonly ConstructorAccessor<int> _constructorAccessor;

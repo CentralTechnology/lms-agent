@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
+    using System;
+    using System.Collections;
+
     internal abstract class IListTypeDescriptor : TypeDescriptor
     {
         protected IListTypeDescriptor(

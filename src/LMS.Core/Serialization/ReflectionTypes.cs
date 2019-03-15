@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
+    using System;
+
     internal static class ReflectionTypes
     {
         public static readonly Type Object = typeof (object);

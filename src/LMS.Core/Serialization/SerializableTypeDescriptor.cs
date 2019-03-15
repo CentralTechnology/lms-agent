@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
-  internal sealed class SerializableTypeDescriptor : TypeDescriptor
+    using System;
+    using System.Reflection;
+    using System.Runtime.Serialization;
+
+    internal sealed class SerializableTypeDescriptor : TypeDescriptor
   {
     public const ushort Version = 1;
     public const ushort StopCode = 65535;

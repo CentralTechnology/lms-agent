@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization.Xml
+﻿namespace LMS.Core.Serialization.Xml
 {
-  internal static class XmlData
+    using System;
+    using System.Text;
+
+    internal static class XmlData
   {
     public const string SystemNamespace = "vxs";
     public const string NullElementTag = "Null";

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
+    using System.Collections.Generic;
+
     internal sealed class SerializationContext
     {
         private readonly Dictionary<object, int> _serializedObjects;

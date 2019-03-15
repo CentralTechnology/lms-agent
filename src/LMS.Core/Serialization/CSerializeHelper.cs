@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
+    using System.IO;
+    using System.Text;
+    using System.Xml;
+
     public static class CSerializeHelper
     {
         public static string Serialize<T>(T objectToWrite)

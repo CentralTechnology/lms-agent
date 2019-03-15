@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
-  internal static class SerializableTypeDescriptorFactory
+    using System;
+    using System.Collections.Concurrent;
+    using System.Reflection;
+
+    internal static class SerializableTypeDescriptorFactory
   {
     private static readonly ConcurrentDictionary<string, Type> NameToType = new ConcurrentDictionary<string, Type>();
     private static readonly ConcurrentDictionary<Type, TypeDescriptor> TypeToDescriptor = new ConcurrentDictionary<Type, TypeDescriptor>();

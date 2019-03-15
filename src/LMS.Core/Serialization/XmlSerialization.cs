@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using LMS.Core.Serialization;
-using LMS.Core.Serialization.Xml;
-using LMS.Core.Serilization.Xml;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
-  public static class XmlSerialization
+    using System;
+    using System.Xml;
+    using Xml;
+
+    public static class XmlSerialization
   {
     public static void SerializeObject<T>(this XmlWriter writer, T instance)
     {

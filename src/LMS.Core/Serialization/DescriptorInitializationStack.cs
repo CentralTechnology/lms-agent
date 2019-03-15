@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.Core.Serilization
+﻿namespace LMS.Core.Serialization
 {
+    using System;
+    using System.Collections.Generic;
+
     internal sealed class DescriptorInitializationStack
     {
         private readonly Dictionary<Type, SerializableTypeDescriptor> _typeDescriptors = new Dictionary<Type, SerializableTypeDescriptor>();

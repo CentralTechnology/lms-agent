@@ -4,11 +4,12 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using LMS.Core.Serilization;
 
 namespace LMS.Core.Veeam.Backup.Common
 {
-  public static class CXmlHelper2
+    using Serialization;
+
+    public static class CXmlHelper2
   {
     public static bool UseStringInterning { get; set; }
 

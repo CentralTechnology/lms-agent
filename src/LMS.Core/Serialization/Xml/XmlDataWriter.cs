@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using LMS.Core.Serialization;
-using LMS.Core.Serialization.Xml;
-
-namespace LMS.Core.Serilization.Xml
+﻿namespace LMS.Core.Serialization.Xml
 {
-  internal sealed class XmlDataWriter : IDataWriter
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Text;
+    using System.Xml;
+
+    internal sealed class XmlDataWriter : IDataWriter
   {
     private readonly Stack<XmlWriter> _writers;
 
