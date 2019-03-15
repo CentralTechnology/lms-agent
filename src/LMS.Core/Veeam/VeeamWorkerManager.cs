@@ -1,11 +1,7 @@
 ﻿namespace LMS.Core.Veeam
 {
     using System;
-    using System.Diagnostics;
-    using System.IO;
     using System.Threading.Tasks;
-    using Abp.Configuration;
-    using Configuration;
     using Core.Managers;
     using Extensions;
     using Factory;
@@ -13,13 +9,13 @@
     using global::Hangfire.Server;
     using Hangfire;
     using Managers;
-    using Newtonsoft.Json;
-    using Portal.LicenseMonitoringSystem.Veeam.Entities;
+    using Serilog;
     using Services;
     using Services.Authentication;
 
     public class VeeamWorkerManager : WorkerManagerBase, IVeeamWorkerManager
     {
+        private readonly ILogger _logger = Log.ForContext<VeeamWorkerManager>();
         private readonly IVeeamManager _veeamManager;
 
         public VeeamWorkerManager(
@@ -38,15 +34,14 @@
                 if (!_veeamManager.IsOnline())
                 {
                     performContext?.WriteErrorLine("The Veeam server does not appear to be online. Please make sure all Veeam services are started before retrying this operation again.");
-                    Logger.Error("Veeam server not online.");
+                    _logger.Error("Veeam server not online.");
                     return;
                 }
-                
-                Logger.Info(performContext, "Collecting information...this could take some time.");
+
+                performContext?.WriteLine("Collecting information...this could take some time.");
                 var veeamVersion = _veeamManager.GetInstalledVeeamVersion();
 
                 performContext?.WriteLine($"Veeam Backup & Replication {veeamVersion} detected!");
-
 
                 var factory = new VeeamCreatorFactory(veeamVersion);
                 var creator = factory.GetCreator();
@@ -59,24 +54,25 @@
                         performContext?.WriteErrorLine(error.Message);
                     }
 
+                    _logger.Error("{Errors}", result.Errors);
+
                     throw new Exception(result.Errors.ToString());
                 }
 
-               // Veeam payload = _veeamManager.GetLicensingInformation(performContext);
-                Logger.Info(performContext, "done");
+                performContext?.WriteLine("done");
 
-                Logger.Info(performContext, "Validating the payload...");
+                performContext?.WriteLine("Validating the payload...");
                 var remoteVeeam = PortalService.GetVeeamServerById(PortalAuthenticationService.Instance.GetDevice());
                 if (remoteVeeam.Count != 1)
                 {
                     result.Value.Validate();
-                    Logger.Info(performContext, "Payload is valid!");
+                    performContext?.WriteSuccessLine("Payload is valid!");
 
-                    DumpPayload(result.Value);
+                    _logger.Information("Payload: {@Payload}", result.Value);
 
                     await PortalService.AddVeeamServerAsync(result.Value);
 
-                    Logger.Info(performContext,"Successfully checked in.");
+                    performContext?.WriteSuccessLine("Successfully checked in.");
 
                     return;
                 }
@@ -84,34 +80,14 @@
                 remoteVeeam[0].UpdateValues(result.Value);
                 remoteVeeam[0].Validate();
 
-                Logger.Info(performContext, "Payload is valid!");
+                performContext?.WriteLine("Payload is valid!");
 
-                DumpPayload(result.Value);
+                _logger.Information("Payload: {@Payload}", result.Value);
 
                 await PortalService.UpdateVeeamServerAsync(remoteVeeam[0]);
 
-                Logger.Info(performContext,"Successfully checked in.");
+                performContext?.WriteSuccessLine("Successfully checked in.");
             });
-        }
-
-        private void DumpPayload(Veeam payload)
-        {
-            var prettyPayload = new
-            {
-                Hostname = payload.Hostname,
-                Id = payload.Id,
-                Agent = payload.ClientVersion,
-                Tenant = payload.TenantId,
-                Edition = payload.Edition.ToString(),
-                LicenseType = payload.LicenseType.ToString(),
-                HyperV = payload.HyperV,
-                VMWare = payload.vSphere,
-                ExpirationDate = payload.ExpirationDate.ToString("o"),
-                Program = payload.ProgramVersion,
-                SupportId = payload.SupportId
-            };
-
-            Logger.Info($"Payload details: {JsonConvert.SerializeObject(prettyPayload, Formatting.Indented)}");
         }
     }
 }

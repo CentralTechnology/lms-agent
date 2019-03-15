@@ -7,12 +7,13 @@
     using Compare;
     using Core.Extensions;
     using Core.Managers;
+    using global::Hangfire.Console;
     using global::Hangfire.Server;
     using Hangfire;
     using Helpers;
     using Managers;
-    using Newtonsoft.Json;
     using Portal.LicenseMonitoringSystem.Users.Entities;
+    using Serilog;
     using Services;
     using Services.Authentication;
 
@@ -22,6 +23,8 @@
         private readonly LicenseGroupEqualityComparer _licenseGroupEqualityComparer = new LicenseGroupEqualityComparer();
         private readonly LicenseUserEqualityComparer _licenseUserEqualityComparer = new LicenseUserEqualityComparer();
         private readonly LicenseUserGroupEqualityComparer _licenseUserGroupEqualityComparer = new LicenseUserGroupEqualityComparer();
+
+        private readonly ILogger _logger = Log.ForContext<UserWorkerManager>();
 
         public UserWorkerManager(
             IPortalService portalService,
@@ -33,10 +36,10 @@
 
         public async Task ComputeUsers(PerformContext performContext, int managedSupportId)
         {
-            Logger.Info(performContext, "Getting the users from the Portal...");
+            performContext?.WriteLine("Getting the users from the Portal...");
             var remoteUsers = PortalService.GetAllUsers().ToArray();
 
-            Logger.Info(performContext, "Getting the users from Active Directory...");
+            performContext?.WriteLine("Getting the users from Active Directory...");
             var adUsers = _activeDirectoryManager.GetAllUsers().ToList();
 
             foreach (var adUser in adUsers)
@@ -54,8 +57,7 @@
                     await PortalService.AddUserAsync(newUser);
 
                     performContext?.WriteSuccessLine($"+ {newUser}");
-                    Logger.Info($"Created: {newUser}");
-                    Logger.Debug($"{JsonConvert.SerializeObject(newUser, Formatting.Indented)}");
+                    _logger.Information("Created: {@User}", newUser);
 
                     continue;
                 }
@@ -64,8 +66,7 @@
                 await PortalService.UpdateUserAsync(remoteUser);
 
                 performContext?.WriteSuccessLine($"^ {remoteUser}");
-                Logger.Info($"Updated: {remoteUser}");
-                Logger.Debug($"{JsonConvert.SerializeObject(remoteUser, Formatting.Indented)}");
+                _logger.Information("Updated: {@User}", remoteUser);
             }
 
             var staleUsers = remoteUsers.Except(adUsers, _licenseUserEqualityComparer).ToArray();
@@ -81,14 +82,13 @@
                 await PortalService.DeleteUserAsync(staleUser);
 
                 performContext?.WriteWarnLine($"- {staleUser}");
-                Logger.Info($"Delete: {staleUser}");
-                Logger.Debug($"{JsonConvert.SerializeObject(staleUser, Formatting.Indented)}");
+                _logger.Information("Delete: {@staleUser}");
             }
         }
 
         public async Task ComputeGroupMembershipAsync(PerformContext performContext)
         {
-            Logger.Info(performContext, "Getting the groups from Active Directory...");
+            performContext?.WriteLine("Getting the groups from Active Directory...");
 
             var groups = _activeDirectoryManager.GetAllGroups().ToArray();
             foreach (var group in groups)
@@ -108,7 +108,7 @@
                         LicenseUserGroup.Create(group.Id, newMember.UserId));
 
                     performContext?.WriteSuccessLine($"+ {group.Name}  {newMember.UserId}");
-                    Logger.Info($"User: {newMember.UserId} was added to Group: {group.Id} {group.Name}");
+                    _logger.Information("User: {UserId} was added to Group: {GroupId} {GroupName}", newMember.UserId, group.Id, group.Name);
                 }
 
                 var staleMembers = userGroups.Except(groupMembers, _licenseUserGroupEqualityComparer).ToArray();
@@ -120,26 +120,26 @@
                         staleMember);
 
                     performContext?.WriteWarnLine($"- {group.Name}  {staleMember.UserId}");
-                    Logger.Info($"User: {staleMember.UserId} was removed from Group: {group.Id} {group.Name}");
+                    _logger.Information("User: {UserId} was removed from Group: {GroupId} {GroupName}", staleMember.UserId, group.Id, group.Name);
                 }
 
                 if (!newMembers.Any() && !staleMembers.Any())
                 {
-                    Logger.Info($"Group: {group.Id}  No changes have been made.");
+                    _logger.Information("Group: {GroupId}  No changes have been made.", group.Id);
                 }
                 else
                 {
-                    Logger.Info($"Group: {group.Id}  Added: {newMembers.Length}  Removed: {staleMembers.Length}");
+                    _logger.Information("Group: {GroupId}  Added: {NewMembersCount}  Removed: {StaleMembersCount}", group.Id, newMembers.Length, staleMembers.Length);
                 }
             }
         }
 
         public async Task ComputeGroups(PerformContext performContext)
         {
-            Logger.Info(performContext, "Getting the groups from the Portal...");
+            performContext?.WriteLine("Getting the groups from the Portal...");
             var remoteGroups = PortalService.GetAllGroups().ToArray();
 
-            Logger.Info(performContext, "Getting the groups from Active Directory...");
+            performContext?.WriteLine("Getting the groups from Active Directory...");
             var adGroups = _activeDirectoryManager.GetAllGroups().ToArray();
 
             foreach (var adGroup in adGroups)
@@ -156,8 +156,7 @@
                     await PortalService.AddGroupAsync(newGroup);
 
                     performContext?.WriteSuccessLine($"+ {newGroup}");
-                    Logger.Info($"Created: {newGroup}");
-                    Logger.Debug($"{JsonConvert.SerializeObject(newGroup, Formatting.Indented)}");
+                    _logger.Information("Created: {@Group}", newGroup);
 
                     continue;
                 }
@@ -166,8 +165,7 @@
                 await PortalService.UpdateGroupAsync(remoteGroup);
 
                 performContext?.WriteSuccessLine($"^ {remoteGroup}");
-                Logger.Info($"Updated:  {remoteGroup}");
-                Logger.Debug($"{JsonConvert.SerializeObject(remoteGroup, Formatting.Indented)}");
+                _logger.Information("Updated:  {@Group}", remoteGroup);
             }
 
             var staleGroups = remoteGroups.Except(adGroups, _licenseGroupEqualityComparer).ToArray();
@@ -183,8 +181,7 @@
                 await PortalService.DeleteGroupAsync(staleGroup);
 
                 performContext?.WriteWarnLine($"- {staleGroup}");
-                Logger.Info($"Delete: {staleGroup}");
-                Logger.Debug($"{JsonConvert.SerializeObject(staleGroup, Formatting.Indented)}");
+                _logger.Information("Delete: {@Group}", staleGroup);
             }
         }
 
@@ -194,12 +191,13 @@
             await ExecuteAsync(performContext, async () =>
             {
                 Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "Acquiring the upload details from the api.");
+                performContext?.WriteLine("Acquiring the upload details from the api.");
 
                 var managedServer = PortalService.GetManagedServer();
                 if (managedServer == null)
                 {
-                    Logger.Info(performContext, "It appears this device hasn't logged in before. Generating the upload details.");
+                    performContext?.WriteLine("It appears this device hasn't logged in before. Generating the upload details.");
+                    _logger.Information("New LMS Agent detected.");
 
                     try
                     {
@@ -226,31 +224,31 @@
                     managedServer.ClientVersion = SettingManagerHelper.ClientVersion;
                 }
 
-                Logger.Info(performContext, "Upload details acquired!");
+                performContext.WriteLine("Upload details acquired!");
 
                 Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "---------- Uploading groups begin ----------");
+                performContext.WriteLine("---------- Uploading groups begin ----------");
 
                 await ComputeGroups(performContext);
 
-                Logger.Info(performContext, "---------- Uploading groups end ----------");
+                performContext.WriteLine("---------- Uploading groups end ----------");
 
                 Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "---------- Uploading users begin ----------");
+                performContext.WriteLine("---------- Uploading users begin ----------");
 
                 await ComputeUsers(performContext, managedServer.Id);
 
-                Logger.Info(performContext, "---------- Uploading users end ----------");
+                performContext.WriteLine("---------- Uploading users end ----------");
 
                 Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "Calculating group memberships. This could take some time...");
+                performContext.WriteLine("Calculating group memberships. This could take some time...");
 
                 await ComputeGroupMembershipAsync(performContext);
 
-                Logger.Info(performContext, "Group memberships are up to date.");
+                performContext.WriteLine("Group memberships are up to date.");
 
                 Console.WriteLine(Environment.NewLine);
-                Logger.Info(performContext, "Completing the upload.");
+                performContext.WriteLine("Completing the upload.");
 
                 await PortalService.UpdateManagedServerAsync(managedServer);
             });

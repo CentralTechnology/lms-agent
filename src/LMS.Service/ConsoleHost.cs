@@ -39,7 +39,7 @@
                         if (!opts.SkipStartup)
                         {
                             var startupManager = scope.Resolve<IStartupManager>();
-                            bool started = startupManager.Init(null);
+                            bool started = startupManager.Init();
                             if (!started)
                             {
                                 return;

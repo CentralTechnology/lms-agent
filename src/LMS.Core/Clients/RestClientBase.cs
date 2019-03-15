@@ -6,31 +6,27 @@
     using System.Net;
     using Abp;
     using Abp.Dependency;
-    using Castle.Core.Logging;
     using Json;
     using Newtonsoft.Json;
     using RestSharp;
+    using Serilog;
 
     public class RestClientBase : RestClient, ITransientDependency
     {
         public RestClientBase()
         {
             AddHandlers();
-
-            Logger = NullLogger.Instance;
         }
 
         public RestClientBase(Uri baseUrl) : base(baseUrl)
         {
             AddHandlers();
 
-            Logger = NullLogger.Instance;
         }
 
         public RestClientBase(string baseUrl) : base(baseUrl)
         {
             AddHandlers();
-            Logger = NullLogger.Instance;
         }
 
         protected void AddHandlers()
@@ -42,7 +38,7 @@
 
         }
 
-        public ILogger Logger { get; set; }
+        private readonly ILogger _logger = Log.ForContext<RestClientBase>();
 
         public override IRestResponse<T> Execute<T>(IRestRequest request)
         {
@@ -107,7 +103,7 @@
             }
 
             //Log the exception and info message
-            Logger.Error(info, ex);
+            _logger.Error(ex,"Request to {AbsoluteUri} failed with status code {StatusCode}, parameters: {@Parameters}, and content: {Content}", baseUrl.AbsoluteUri,request.Resource,response.StatusCode,parameters,response.Content);
             throw new AbpException(info, ex);
         }
 
@@ -140,7 +136,7 @@
                 errorMessage = response.ErrorMessage
             };
 
-            Logger.Info($"Request completed in {durationMs} ms, Request: {JsonConvert.SerializeObject(requestToLog, Formatting.Indented)}, Response: {JsonConvert.SerializeObject(responseToLog, Formatting.Indented)}");
+            _logger.Information("Request completed in {durationMs} ms, Request: {@Request}, Response: {@Response}", durationMs,requestToLog, responseToLog);
         }
 
         private void TimeoutCheck(IRestRequest request, IRestResponse response)

@@ -6,11 +6,12 @@
     using System.Security;
     using System.Text;
     using Abp;
+    using Abp.Domain.Services;
     using Core.Managers;
     using Extensions;
     using Microsoft.Win32;
 
-    public class LicenseManager : LMSManagerBase, ILicenseManager
+    public class LicenseManager : DomainService, ILicenseManager
     {
         private static Dictionary<string, string> _lic;
         public string LicenseFile { get; private set; }

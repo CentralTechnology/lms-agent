@@ -9,6 +9,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using Abp;
+    using Abp.Domain.Services;
     using Abp.UI;
     using Authentication;
     using Default;
@@ -22,7 +23,7 @@
 
     [SuppressMessage("ReSharper", "ReplaceWithSingleCallToFirstOrDefault")]
     [SuppressMessage("ReSharper", "ReplaceWithSingleCallToSingleOrDefault")]
-    public class PortalService : LMSManagerBase, IPortalService, IShouldInitialize
+    public class PortalService : DomainService, IPortalService, IShouldInitialize
     {
         private Container _context;
 

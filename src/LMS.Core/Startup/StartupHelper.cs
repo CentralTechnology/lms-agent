@@ -78,7 +78,7 @@
 
         public static void Initiliaze(IStartupManager startupManager)
         {
-            startupManager.Init(null);
+            startupManager.Init();
         }
 
         private static void ListenForNewUsers(object source, EntryWrittenEventArgs e)
