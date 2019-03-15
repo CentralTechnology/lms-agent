@@ -1,43 +1,36 @@
 ﻿namespace LMS
 {
     using System;
-    using System.IO;
     using Abp;
     using Abp.Configuration;
     using Abp.Dependency;
-    using Abp.Logging;
-    using Abp.Threading;
     using Core;
     using Core.Configuration;
     using Core.Helpers;
-    using Core.Logging;
     using Core.StartUp;
     using Core.Users;
     using Core.Veeam;
+    using Serilog;
     using Serilog.Core;
     using Serilog.Events;
 
     public static class ConsoleHost
     {
+        private static readonly ILogger Logger = Log.Logger;
+
         public static void Run(RunOptions opts)
         {
-            LMSCoreModule.CurrentLogLevel = new LoggingLevelSwitch();
-
             using (AbpBootstrapper bootstrapper = AbpBootstrapper.Create<LMSServiceModule>())
             {
                 bootstrapper.Initialize();
 
-                bootstrapper.IocManager.IocContainer.Register(
-                    LoggingConfiguration.GetConfiguration(LMSCoreModule.CurrentLogLevel)
-                );
-
                 if (opts.Verbose)
                 {
-                    LMSCoreModule.CurrentLogLevel.MinimumLevel = LogEventLevel.Debug;
-                    LogHelper.Logger.Debug("Verbose logging enabled.");
+                    Program.CurrentLogLevel.MinimumLevel = LogEventLevel.Debug;
+                    Log.Debug("Verbose logging enabled.");
                 }
 
-                LogHelper.Logger.Info($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
+                Logger.Information($"Version: {AppVersionHelper.Version}  Release: {AppVersionHelper.ReleaseDate}");
 
                 using (var iocResolver = bootstrapper.IocManager.ResolveAsDisposable<IIocResolver>())
                 {
@@ -58,25 +51,30 @@
                             if (opts.Monitor == Monitor.Users)
                             {
                                 var userWorkerManager = scope.Resolve<UserWorkerManager>();
-                                AsyncHelper.RunSync(() => userWorkerManager.StartAsync(null));
+                                var userWorkerTask = userWorkerManager.StartAsync(null);
+                                userWorkerTask.Wait();
+
                                 return;
                             }
 
                             if (opts.Monitor == Monitor.Veeam)
                             {
                                 var veeamWorkerManager = scope.Resolve<VeeamWorkerManager>();
-                                AsyncHelper.RunSync(() => veeamWorkerManager.StartAsync(null));
+                                var veeamWorkerTask = veeamWorkerManager.StartAsync(null);
+                                veeamWorkerTask.Wait();
+
                                 return;
                             }
 
+                            Log.CloseAndFlush();
                             Console.WriteLine("Press [Enter] to continue.");
                             Console.ReadLine();
                         }
                         catch (Exception ex)
                         {
-                            LogHelper.LogException(ex);
-                            LogHelper.Logger.Debug(ex.Message, ex);
-                            LogHelper.Logger.Error("************ Failed ************");
+                            Logger.Debug(ex, ex.Message);
+                            Logger.Error(ex.Message);
+                            Logger.Error("************ Failed ************");
                         }
                     }
                 }
