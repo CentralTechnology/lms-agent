@@ -3,13 +3,13 @@ using System;
 
 namespace LMS.Core.Veeam.Factory
 {
-    public class VeeamFactoryCreator
+    public class VeeamCreatorFactory
     {
-        private VeeamFactoryCreator() { }
+        private VeeamCreatorFactory() { }
 
         private readonly Version _applicationVersion;
 
-        public VeeamFactoryCreator(Version applicationVersion) => _applicationVersion = applicationVersion;
+        public VeeamCreatorFactory(Version applicationVersion) => _applicationVersion = applicationVersion;
 
         public VeeamCreator GetCreator()
         {

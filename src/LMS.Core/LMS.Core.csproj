@@ -465,7 +465,7 @@
     <Compile Include="Veeam\Factory\Veeam9542615Creator.cs" />
     <Compile Include="Veeam\Factory\Veeam95Creator.cs" />
     <Compile Include="Veeam\Factory\VeeamCreator.cs" />
-    <Compile Include="Veeam\Factory\VeeamFactoryCreator.cs" />
+    <Compile Include="Veeam\Factory\VeeamCreatorFactory.cs" />
     <Compile Include="Veeam\IVeeamWorkerManager.cs" />
     <Compile Include="Veeam\Managers\ILicenseManager.cs" />
     <Compile Include="Veeam\Managers\IVeeamManager.cs" />

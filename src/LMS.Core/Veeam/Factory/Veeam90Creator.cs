@@ -1,43 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Abp;
-using FluentResults;
-using Hangfire.Server;
-using LMS.Core.Extensions;
-using LMS.Core.Helpers;
-using LMS.Core.Services.Authentication;
-using LMS.Core.Veeam.Backup.Common;
-using LMS.Core.Veeam.Backup.DBManager;
-using LMS.Core.Veeam.DBManager;
-using LMS.Core.Veeam.Enums;
-using LMS.Core.Veeam.Models;
-using Microsoft.Win32;
-using Portal.LicenseMonitoringSystem.Veeam.Entities;
-using Serilog;
-using ILogger = Serilog.ILogger;
-using LocalDbAccessor = LMS.Core.Veeam.DBManager.LocalDbAccessor;
-
-namespace LMS.Core.Veeam.Factory
+﻿namespace LMS.Core.Veeam.Factory
 {
-    class Veeam90Creator : VeeamCreator
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using Abp;
+    using Backup.Common;
+    using Backup.DBManager;
+    using DBManager;
+    using Enums;
+    using Extensions;
+    using FluentResults;
+    using Helpers;
+    using Microsoft.Win32;
+    using Models;
+    using Portal.LicenseMonitoringSystem.Veeam.Entities;
+    using Serilog;
+    using Services.Authentication;
+    using ILogger = Serilog.ILogger;
+    using LocalDbAccessor = DBManager.LocalDbAccessor;
+
+    internal class Veeam90Creator : VeeamCreator
     {
+        private static readonly ISqlFieldDescriptor<DateTime?> FirstStartTimeField = SqlFieldDescriptor.DateTimeNullable("first_start_time");
+        private static readonly ISqlFieldDescriptor<DateTime?> LastStartTimeField = SqlFieldDescriptor.DateTimeNullable("last_start_time");
+        private static readonly ISqlFieldDescriptor<Guid> ObjectIdField = SqlFieldDescriptor.UniqueIdentifier("object_id");
+        private static readonly ISqlFieldDescriptor<int> PlatformField = SqlFieldDescriptor.Int("platform");
         private readonly ILogger _logger = Log.ForContext<Veeam90Creator>();
 
-        public Veeam90Creator(Version applicationVersion) 
+        public Veeam90Creator(Version applicationVersion)
             : base(applicationVersion)
         {
         }
 
-        public override Result<Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam> Create()
+        public override Result<Veeam> Create()
         {
-            var payload = new Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam();
-            var result = new Result<Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam>();
+            var payload = new Veeam();
+            var result = new Result<Veeam>();
 
             try
             {
@@ -66,30 +66,26 @@ namespace LMS.Core.Veeam.Factory
             return Results.Ok(payload);
         }
 
-        private List<VmLicensingInfo> GetAllVmInfos( EPlatform platform)
+        private static VmLicensingInfo FromReader(IDataReader reader)
         {
+            return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform) PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
+        }
 
-                var vmLicensingInfoList = new List<VmLicensingInfo>();
-                using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int)platform)).CreateDataReader())
+        private List<VmLicensingInfo> GetAllVmInfos(EPlatform platform)
+        {
+            var vmLicensingInfoList = new List<VmLicensingInfo>();
+            using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
+            {
+                while (dataReader.Read())
                 {
-                    while (dataReader.Read())
-                    {
-                        vmLicensingInfoList.Add(FromReader(dataReader));
-                    }
+                    vmLicensingInfoList.Add(FromReader(dataReader));
                 }
+            }
 
-                return vmLicensingInfoList;
-        }
-        private static readonly ISqlFieldDescriptor<DateTime?> FirstStartTimeField = SqlFieldDescriptor.DateTimeNullable("first_start_time");
-        private static readonly ISqlFieldDescriptor<DateTime?> LastStartTimeField = SqlFieldDescriptor.DateTimeNullable("last_start_time");
-        private static readonly ISqlFieldDescriptor<Guid> ObjectIdField = SqlFieldDescriptor.UniqueIdentifier("object_id");
-        private static readonly ISqlFieldDescriptor<int> PlatformField = SqlFieldDescriptor.Int("platform");
-        private VmLicensingInfo FromReader(IDataReader reader)
-        {
-            return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform)PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
+            return vmLicensingInfoList;
         }
 
-        public string GetConnectionString()
+        private static string GetConnectionString()
         {
             RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Veeam");
             if (key == null)
