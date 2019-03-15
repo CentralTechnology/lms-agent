@@ -1,8 +1,15 @@
 ﻿namespace LMS.Core.Veeam
 {
+    using System;
+    using System.Diagnostics;
+    using System.IO;
     using System.Threading.Tasks;
+    using Abp.Configuration;
+    using Configuration;
     using Core.Managers;
     using Extensions;
+    using Factory;
+    using global::Hangfire.Console;
     using global::Hangfire.Server;
     using Hangfire;
     using Managers;
@@ -35,39 +42,80 @@
                     Logger.Error("Veeam server not online.");
                     return;
                 }
-
+                
                 Logger.Info(performContext, "Collecting information...this could take some time.");
+                var veeamVersion = GetInstalledVeeamVersion();
 
-                Veeam payload = _veeamManager.GetLicensingInformation(performContext);
+                performContext?.WriteLine($"Veeam Backup & Replication {veeamVersion} detected!");
+
+
+                var factory = new VeeamCreatorFactory(veeamVersion);
+                var creator = factory.GetCreator();
+                var result = creator.Create();
+                if (result.IsFailed)
+                {
+                    // log
+                    foreach (var error in result.Errors)
+                    {
+                        performContext?.WriteErrorLine(error.Message);
+                    }
+
+                    throw new Exception(result.Errors.ToString());
+                }
+
+               // Veeam payload = _veeamManager.GetLicensingInformation(performContext);
                 Logger.Info(performContext, "done");
 
                 Logger.Info(performContext, "Validating the payload...");
                 var remoteVeeam = PortalService.GetVeeamServerById(AuthService.GetDevice());
                 if (remoteVeeam.Count != 1)
                 {
-                    payload.Validate();
+                    result.Value.Validate();
                     Logger.Info(performContext, "Payload is valid!");
 
-                    DumpPayload(payload);
+                    DumpPayload(result.Value);
 
-                    await PortalService.AddVeeamServerAsync(payload);
+                    await PortalService.AddVeeamServerAsync(result.Value);
 
                     Logger.Info(performContext,"Successfully checked in.");
 
                     return;
                 }
 
-                remoteVeeam[0].UpdateValues(payload);
+                remoteVeeam[0].UpdateValues(result.Value);
                 remoteVeeam[0].Validate();
 
                 Logger.Info(performContext, "Payload is valid!");
 
-                DumpPayload(payload);
+                DumpPayload(result.Value);
 
                 await PortalService.UpdateVeeamServerAsync(remoteVeeam[0]);
 
                 Logger.Info(performContext,"Successfully checked in.");
             });
+        }
+
+        public const string VeeamFilePath = @"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe";
+        public const string Veeam90FilePath = @"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe";
+
+        public Version GetInstalledVeeamVersion()
+        {
+            if (File.Exists(VeeamFilePath))
+            {
+                FileVersionInfo version = FileVersionInfo.GetVersionInfo(VeeamFilePath);
+                SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, version.FileVersion);
+                return Version.Parse(version.FileVersion);
+            }
+
+            if (File.Exists(Veeam90FilePath))
+            {
+                FileVersionInfo version = FileVersionInfo.GetVersionInfo(Veeam90FilePath);
+                SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, version.FileVersion);
+                return Version.Parse(version.FileVersion);
+            }
+
+            SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, string.Empty);
+            return null;
         }
 
         private void DumpPayload(Veeam payload)

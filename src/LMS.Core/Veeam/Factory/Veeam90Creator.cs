@@ -71,7 +71,7 @@
             return new VmLicensingInfo(ObjectIdField.Read(reader), FirstStartTimeField.Read(reader), LastStartTimeField.Read(reader), (EPlatform) PlatformField.Read(reader), reader.GetClass<string>("host_name"), string.Empty, reader.GetClass<string>("object_name"));
         }
 
-        private List<VmLicensingInfo> GetAllVmInfos(EPlatform platform)
+        private static IEnumerable<VmLicensingInfo> GetAllVmInfos(EPlatform platform)
         {
             var vmLicensingInfoList = new List<VmLicensingInfo>();
             using (DataTableReader dataReader = new LocalDbAccessor(GetConnectionString()).GetDataTable("[dbo].[GetVmLicensing]", DbAccessor.MakeParam("@platform", (int) platform)).CreateDataReader())
