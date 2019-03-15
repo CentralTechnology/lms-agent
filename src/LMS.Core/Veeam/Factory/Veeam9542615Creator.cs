@@ -40,13 +40,12 @@
 
             payload.ProgramVersion = ApplicationVersion.ToString();
             payload.vSphere = SInstancesLicenseCountersHelper.GetProtectedVmsCount(CLicensePlatform.Vmware);
-            payload.HyperV = SInstancesLicenseCountersHelper.GetProtectedVmsCount(CLicensePlatform.HyperV);
+            payload.HyperV = 0;
             payload.ClientVersion = SettingManagerHelper.ClientVersion;
             payload.Edition = VeeamLicense.Edition;
             payload.ExpirationDate = VeeamLicense.ExpirationDate;
             payload.Hostname = Environment.MachineName;
             payload.Id = PortalAuthenticationService.Instance.GetDevice();
-            payload.SupportId = VeeamLicense.SupportId;
             payload.TenantId = Convert.ToInt32(PortalAuthenticationService.Instance.GetAccount());
 
             return Results.Ok(payload);

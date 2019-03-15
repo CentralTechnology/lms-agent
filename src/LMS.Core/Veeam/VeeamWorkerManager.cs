@@ -24,9 +24,8 @@
 
         public VeeamWorkerManager(
             IPortalService portalService,
-            IPortalAuthenticationService authService,
             IVeeamManager veeamManager)
-            : base(portalService, authService)
+            : base(portalService)
         {
             _veeamManager = veeamManager;
         }
@@ -44,7 +43,7 @@
                 }
                 
                 Logger.Info(performContext, "Collecting information...this could take some time.");
-                var veeamVersion = GetInstalledVeeamVersion();
+                var veeamVersion = _veeamManager.GetInstalledVeeamVersion();
 
                 performContext?.WriteLine($"Veeam Backup & Replication {veeamVersion} detected!");
 
@@ -67,7 +66,7 @@
                 Logger.Info(performContext, "done");
 
                 Logger.Info(performContext, "Validating the payload...");
-                var remoteVeeam = PortalService.GetVeeamServerById(AuthService.GetDevice());
+                var remoteVeeam = PortalService.GetVeeamServerById(PortalAuthenticationService.Instance.GetDevice());
                 if (remoteVeeam.Count != 1)
                 {
                     result.Value.Validate();
@@ -93,29 +92,6 @@
 
                 Logger.Info(performContext,"Successfully checked in.");
             });
-        }
-
-        public const string VeeamFilePath = @"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe";
-        public const string Veeam90FilePath = @"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe";
-
-        public Version GetInstalledVeeamVersion()
-        {
-            if (File.Exists(VeeamFilePath))
-            {
-                FileVersionInfo version = FileVersionInfo.GetVersionInfo(VeeamFilePath);
-                SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, version.FileVersion);
-                return Version.Parse(version.FileVersion);
-            }
-
-            if (File.Exists(Veeam90FilePath))
-            {
-                FileVersionInfo version = FileVersionInfo.GetVersionInfo(Veeam90FilePath);
-                SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, version.FileVersion);
-                return Version.Parse(version.FileVersion);
-            }
-
-            SettingManager.ChangeSettingForApplication(AppSettingNames.VeeamVersion, string.Empty);
-            return null;
         }
 
         private void DumpPayload(Veeam payload)

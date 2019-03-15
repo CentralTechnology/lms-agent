@@ -18,13 +18,11 @@
         private const string StartMessage = "Action Start.";
         private const string SuccessMessage = "Action Success.";
 
-        protected WorkerManagerBase(IPortalService portalService, IPortalAuthenticationService authService)
+        protected WorkerManagerBase(IPortalService portalService)
         {
             PortalService = portalService;
-            AuthService = authService;
         }
 
-        public IPortalAuthenticationService AuthService { get; set; }
 
         private static bool InProgress { get; set; }
 

@@ -1,15 +1,20 @@
-﻿using LMS.Core.Common;
-using System;
-
-namespace LMS.Core.Veeam.Factory
+﻿namespace LMS.Core.Veeam.Factory
 {
+    using System;
+    using Common;
+
     public class VeeamCreatorFactory
     {
-        private VeeamCreatorFactory() { }
-
         private readonly Version _applicationVersion;
 
-        public VeeamCreatorFactory(Version applicationVersion) => _applicationVersion = applicationVersion;
+        private VeeamCreatorFactory()
+        {
+        }
+
+        public VeeamCreatorFactory(Version applicationVersion)
+        {
+            _applicationVersion = applicationVersion;
+        }
 
         public VeeamCreator GetCreator()
         {

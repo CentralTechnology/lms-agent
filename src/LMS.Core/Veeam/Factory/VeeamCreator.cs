@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentResults;
-
-namespace LMS.Core.Veeam.Factory
+﻿namespace LMS.Core.Veeam.Factory
 {
+    using System;
+    using FluentResults;
+    using Portal.LicenseMonitoringSystem.Veeam.Entities;
+
     public abstract class VeeamCreator
     {
         protected readonly Version ApplicationVersion;
@@ -16,6 +13,6 @@ namespace LMS.Core.Veeam.Factory
             ApplicationVersion = applicationVersion;
         }
 
-        public abstract Result<Portal.LicenseMonitoringSystem.Veeam.Entities.Veeam> Create();
+        public abstract Result<Veeam> Create();
     }
 }

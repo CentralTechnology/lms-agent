@@ -22,6 +22,7 @@
         public LMSDbContext(string nameOrConnectionString)
             : base(nameOrConnectionString)
         {
+            Database.SetInitializer(new CreateDatabaseIfNotExists<LMSDbContext>());
         }
 
         public LMSDbContext(DbConnection existingConnection)

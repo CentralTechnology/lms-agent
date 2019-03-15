@@ -12,7 +12,9 @@ using Microsoft.Win32;
 
 namespace LMS.Core.Veeam.Backup.Common
 {
-  public sealed class RegistryOptionsWatcher : IDisposable
+    using Serilog;
+
+    public sealed class RegistryOptionsWatcher : IDisposable
   {
     private static readonly StringComparer NameComparer = StringComparer.OrdinalIgnoreCase;
     private static readonly HashSet<string> _noLog = new HashSet<string>((IEqualityComparer<string>) RegistryOptionsWatcher.NameComparer)
@@ -29,7 +31,7 @@ namespace LMS.Core.Veeam.Backup.Common
     private readonly ConcurrentDictionary<string, object> _values = new ConcurrentDictionary<string, object>((IEqualityComparer<string>) RegistryOptionsWatcher.NameComparer);
     private readonly HashSet<string> _previousInvalidNames = new HashSet<string>((IEqualityComparer<string>) RegistryOptionsWatcher.NameComparer);
     private readonly RegistryWatcher _watcher;
-    private readonly IRegistryOptionsLogger _logger;
+    private readonly ILogger _logger = Log.ForContext<RegistryOptionsWatcher>();
     private long _pendingChanges;
 
     public long Version { get; private set; }
@@ -43,7 +45,7 @@ namespace LMS.Core.Veeam.Backup.Common
         object obj = clonableKey.GetValue("DisableRegistryWatching");
         if (obj is int && (int) obj == 1)
         {
-          this._logger.Message("[Options] Cannot start a registry watching because it disabled by key [DisableRegistryWatching].");
+          this._logger.Information("[Options] Cannot start a registry watching because it disabled by key [DisableRegistryWatching].");
           this.Failover();
         }
         else
@@ -58,7 +60,7 @@ namespace LMS.Core.Veeam.Backup.Common
       }
       catch (Exception ex)
       {
-        this._logger.Exception(ex, "[Options] Cannot start a registry watching.");
+        this._logger.Error(ex, "[Options] Cannot start a registry watching.");
         this.Failover();
       }
     }
@@ -67,9 +69,6 @@ namespace LMS.Core.Veeam.Backup.Common
     {
       if (this._watcher != null)
         this._watcher.Dispose();
-      if (this._logger == null)
-        return;
-      this._logger.Dispose();
     }
 
     public IOptionsReader GetReader(RegistryKey failoverKey)
@@ -119,13 +118,13 @@ namespace LMS.Core.Veeam.Backup.Common
         this.FillInvalidNames(invalidNames);
         if (self.Length <= 0)
           return;
-        this._logger.Message("[Options] The following options are loaded from the registry:");
-        this._logger.Message(self.ToString());
-        this._logger.Message("[Options]");
+        this._logger.Information("[Options] The following options are loaded from the registry:");
+        this._logger.Information(self.ToString());
+        this._logger.Information("[Options]");
       }
       catch (Exception ex)
       {
-        this._logger.Exception(ex, "[Options] Cannot get registry options.");
+        this._logger.Error(ex, "[Options] Cannot get registry options.");
         this.Failover();
       }
     }
@@ -149,7 +148,7 @@ namespace LMS.Core.Veeam.Backup.Common
       }
       catch (Exception ex)
       {
-        this._logger.Exception(ex, "[Options] Cannot handle registry changes.");
+        this._logger.Error(ex, "[Options] Cannot handle registry changes.");
         this.Failover();
       }
     }
@@ -169,14 +168,14 @@ namespace LMS.Core.Veeam.Backup.Common
       }
       catch (Exception ex)
       {
-        this._logger.Exception(ex, "[Options] Cannot handle registry changes.");
+        this._logger.Error(ex, "[Options] Cannot handle registry changes.");
         this.Failover();
       }
     }
 
     private void OnTerminated(Exception ex)
     {
-      this._logger.Exception(ex, "[Options] Registry watcher was unexpectedly terminated.");
+      this._logger.Error(ex, "[Options] Registry watcher was unexpectedly terminated.");
       this.Failover();
     }
 
@@ -258,11 +257,11 @@ namespace LMS.Core.Veeam.Backup.Common
               }
             }
             if (str == null)
-              this._logger.Message("[Options] The option [{0}] has removed. Old value: {1}.", (object) knownName, (object) RegistryOptionsWatcher.FormatValue(objA));
+              this._logger.Information("[Options] The option [{0}] has removed. Old value: {1}.", (object) knownName, (object) RegistryOptionsWatcher.FormatValue(objA));
             else if (this.IsDefaultKeyName(knownName))
               this.ProcessNewValue(str, objA);
             else
-              this._logger.Message("[Options] The option [{0}] renamed to [{1}]. Value: {2}.", (object) knownName, (object) str, (object) RegistryOptionsWatcher.FormatValue(objA));
+              this._logger.Information("[Options] The option [{0}] renamed to [{1}]. Value: {2}.", (object) knownName, (object) str, (object) RegistryOptionsWatcher.FormatValue(objA));
           }
           else
             this._logger.Error("[Options] Cannot find removed option [{0}] in the cache. Possible the race condition.", (object) knownName);
@@ -322,7 +321,7 @@ namespace LMS.Core.Veeam.Backup.Common
     {
       if (!RegistryOptionsWatcher.CanLog(name) || this.IsDefaultKeyName(name))
         return;
-      this._logger.Message("[Options] The new option [{0}] has appeared. Value: {1}.", (object) name, (object) RegistryOptionsWatcher.FormatValue(value));
+      this._logger.Information("[Options] The new option [{0}] has appeared. Value: {1}.", (object) name, (object) RegistryOptionsWatcher.FormatValue(value));
     }
 
     private void ProcessChangedValue(string name, object value)
@@ -335,7 +334,7 @@ namespace LMS.Core.Veeam.Backup.Common
           if (object.ReferenceEquals(obj, (object) null))
             return;
           if (RegistryOptionsWatcher.CanLog(name))
-            this._logger.Message("[Options] The option [{0}] has changed {1} -> {2}.", (object) name, (object) RegistryOptionsWatcher.FormatValue(obj), (object) RegistryOptionsWatcher.FormatValue((object) null));
+            this._logger.Information("[Options] The option [{0}] has changed {1} -> {2}.", (object) name, (object) RegistryOptionsWatcher.FormatValue(obj), (object) RegistryOptionsWatcher.FormatValue((object) null));
           this._values[name] = (object) null;
         }
         else
@@ -343,7 +342,7 @@ namespace LMS.Core.Veeam.Backup.Common
           if (value.Equals(obj) || RegistryOptionsWatcher.IsSequenceEqual(value, obj))
             return;
           if (RegistryOptionsWatcher.CanLog(name))
-            this._logger.Message("[Options] The option [{0}] has changed {1} -> {2}.", (object) name, (object) RegistryOptionsWatcher.FormatValue(obj), (object) RegistryOptionsWatcher.FormatValue(value));
+            this._logger.Information("[Options] The option [{0}] has changed {1} -> {2}.", (object) name, (object) RegistryOptionsWatcher.FormatValue(obj), (object) RegistryOptionsWatcher.FormatValue(value));
           this._values[name] = value;
         }
       }

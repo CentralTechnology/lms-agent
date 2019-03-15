@@ -51,7 +51,6 @@
             payload.ExpirationDate = VeeamLicense.ExpirationDate;
             payload.Hostname = Environment.MachineName;
             payload.Id = PortalAuthenticationService.Instance.GetDevice();
-            payload.SupportId = VeeamLicense.SupportId;
             payload.TenantId = Convert.ToInt32(PortalAuthenticationService.Instance.GetAccount());
 
             return Results.Ok(payload);

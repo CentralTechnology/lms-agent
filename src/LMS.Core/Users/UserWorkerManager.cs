@@ -25,9 +25,8 @@
 
         public UserWorkerManager(
             IPortalService portalService,
-            IPortalAuthenticationService authService,
             IActiveDirectoryManager activeDirectoryManager
-        ) : base(portalService, authService)
+        ) : base(portalService)
         {
             _activeDirectoryManager = activeDirectoryManager;
         }
@@ -50,7 +49,7 @@
                     var newUser = LicenseUser.Create(
                         adUser,
                         managedSupportId,
-                        AuthService.GetAccount());
+                        PortalAuthenticationService.Instance.GetAccount());
 
                     await PortalService.AddUserAsync(newUser);
 
@@ -152,7 +151,7 @@
                 {
                     var newGroup = LicenseGroup.Create(
                         adGroup,
-                        AuthService.GetAccount());
+                        PortalAuthenticationService.Instance.GetAccount());
 
                     await PortalService.AddGroupAsync(newGroup);
 
@@ -206,8 +205,8 @@
                     {
                         var upload = ManagedSupport.Create(
                             SettingManagerHelper.ClientVersion,
-                            AuthService.GetDevice(),
-                            AuthService.GetAccount());
+                            PortalAuthenticationService.Instance.GetDevice(),
+                            PortalAuthenticationService.Instance.GetAccount());
 
                         await PortalService.AddManagedServerAsync(upload);
 
