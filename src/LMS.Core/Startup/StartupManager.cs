@@ -138,7 +138,7 @@
                 Logger.Log(LogSeverity.Info, performContext, "Check Veeam Installed: OK");
 
                 // check the veeam version
-                string veeamVersion = _veeamManager.GetVersion();
+                Version veeamVersion = _veeamManager.GetInstalledVeeamVersion();
                 if (veeamVersion == null)
                 {
                     Logger.Log(LogSeverity.Warn, performContext, "Check Veeam Version: FAIL");

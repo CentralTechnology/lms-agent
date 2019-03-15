@@ -24,13 +24,7 @@
     [SuppressMessage("ReSharper", "ReplaceWithSingleCallToSingleOrDefault")]
     public class PortalService : LMSManagerBase, IPortalService, IShouldInitialize
     {
-        private readonly IPortalAuthenticationService _authService;
         private Container _context;
-
-        public PortalService(IPortalAuthenticationService authService)
-        {
-            _authService = authService;
-        }
 
         public DataServiceCollection<Veeam> GetVeeamServerById(Guid id)
         {
@@ -133,7 +127,7 @@
 
         public ManagedSupport GetManagedServer()
         {
-            var device = _authService.GetDevice();
+            var device = PortalAuthenticationService.Instance.GetDevice();
             return _context.ManagedServers.Where(e => e.DeviceId == device).SingleOrDefault();
         }
 
@@ -228,8 +222,8 @@
 
         private void ContextSendingRequest2(object sender, SendingRequest2EventArgs e)
         {
-            e.RequestMessage.SetHeader("Authorization", $"Bearer {_authService.Token.access_token}");
-            e.RequestMessage.SetHeader("Account", $"{_authService.GetAccount()}");
+            e.RequestMessage.SetHeader("Authorization", $"Bearer {PortalAuthenticationService.Instance.Token.access_token}");
+            e.RequestMessage.SetHeader("Account", $"{PortalAuthenticationService.Instance.GetAccount()}");
 
             if (e.RequestMessage is HttpWebRequestMessage message)
             {

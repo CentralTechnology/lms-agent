@@ -1,0 +1,31 @@
+﻿namespace LMS.Core.Serialization
+{
+    internal enum SerializationRoute
+    {
+        Array,
+        List,
+        Dictionary,
+        Nullable,
+        Enum,
+        Boolean,
+        Byte,
+        Char,
+        DateTime,
+        DBNull,
+        Decimal,
+        Double,
+        Int16,
+        Int32,
+        Int64,
+        SByte,
+        Single,
+        String,
+        UInt16,
+        UInt32,
+        UInt64,
+        Guid,
+        TimeSpan,
+        SerializableObject,
+        Convertable,
+    }
+}

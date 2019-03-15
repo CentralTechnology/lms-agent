@@ -1,4 +1,6 @@
-﻿namespace LMS.Core.Services.Authentication
+﻿using Serilog;
+
+namespace LMS.Core.Services.Authentication
 {
     using System;
     using Abp.Configuration;
@@ -13,8 +15,23 @@
     using Newtonsoft.Json;
     using RestSharp;
 
-    public class PortalAuthenticationService : LMSManagerBase, IPortalAuthenticationService, ISingletonDependency
+    public class PortalAuthenticationService
     {
+        private PortalAuthenticationService()
+        {
+            SettingManager = IocManager.Instance.Resolve<SettingManager>();
+        }
+
+        private static readonly Lazy<PortalAuthenticationService> _instance =
+            new Lazy<PortalAuthenticationService>(() => new PortalAuthenticationService());
+
+        public static PortalAuthenticationService Instance => _instance.Value;
+
+        private static SettingManager SettingManager;
+
+        private static readonly ILogger Logger = Log.ForContext<PortalAuthenticationService>();
+
+
         private PortalToken _token;
 
         public PortalToken Token
@@ -46,7 +63,7 @@
             string account = SettingManager.GetSettingValue(AppSettingNames.AutotaskAccountId);
             if (string.IsNullOrEmpty(account))
             {
-                Logger.Info("Account number not found in the local database.");
+                Logger.Information("Account number not found in the local database.");
 
                 long idFromService = GetAccountFromService(device);
                 SettingManager.ChangeSettingForApplication(AppSettingNames.AutotaskAccountId, idFromService.ToString());
@@ -71,7 +88,7 @@
             string device = SettingManager.GetSettingValue(AppSettingNames.CentrastageDeviceId);
             if (string.IsNullOrEmpty(device))
             {
-                Logger.Info("Account identifier not found in the local database.");
+                Logger.Information("Account identifier not found in the local database.");
 
                 Guid deviceFromRegistry = GetDeviceFromRegistry();
                 SettingManager.ChangeSettingForApplication(AppSettingNames.CentrastageDeviceId, deviceFromRegistry.ToString());
@@ -93,7 +110,7 @@
 
         private long GetAccountFromService(Guid device)
         {
-            Logger.Info("Requesting Account number from the api.");
+            Logger.Information("Requesting Account number from the api.");
 
             var client = new RestClientBase(GetAccountUri());
             var request = new RestRequest(Method.POST);
