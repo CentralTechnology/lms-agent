@@ -314,6 +314,7 @@
     <Compile Include="Veeam\Backup\Common\SArrayExtensions.cs" />
     <Compile Include="Veeam\Backup\Common\SDatabaseAccessorExtensions.cs" />
     <Compile Include="Veeam\Backup\Common\SDebugTimeShiftHolder.cs" />
+    <Compile Include="Veeam\Backup\Common\SLicensePlatformController.cs" />
     <Compile Include="Veeam\Backup\Common\SManagedDateTime.cs" />
     <Compile Include="Veeam\Backup\Common\SOptions.cs" />
     <Compile Include="Veeam\Backup\Common\SOptionsLoader.cs" />

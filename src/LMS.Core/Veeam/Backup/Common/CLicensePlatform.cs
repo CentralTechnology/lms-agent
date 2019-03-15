@@ -10,6 +10,8 @@ namespace LMS.Core.Veeam.Backup.Common
   [Serializable]
   public class CLicensePlatform : IEquatable<CLicensePlatform>, IComparable<CLicensePlatform>, IXmlSerializable
   {
+      public static readonly CLicensePlatform Vmware = SLicensePlatformController.Register(ELicensePlatform.VmWare);
+      public static readonly CLicensePlatform HyperV = SLicensePlatformController.Register(ELicensePlatform.HyperV);
     private const string PlatformTag = "Platform";
     private const string ModeTag = "Mode";
 
