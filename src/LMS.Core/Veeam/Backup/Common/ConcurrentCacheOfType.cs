@@ -12,6 +12,7 @@ namespace LMS.Core.Veeam.Backup.Common
 {
   public sealed class ConcurrentCache<TKey, TValue> : ConcurrentCache, IEnumerable<TValue>, IEnumerable, IDisposable
   {
+      private static readonly ILogger _logger = Log.ForContext<ConcurrentCache<TKey, TValue> >();
     private readonly ConcurrentCacheFactory<TKey, TValue> _factory;
     private readonly ConcurrentDictionary<TKey, ConcurrentCache<TKey, TValue>.Item> _dic;
     private volatile ConcurrentLockProvider<TKey> _locks;
@@ -308,6 +309,9 @@ namespace LMS.Core.Veeam.Backup.Common
         }
         catch (Exception ex)
         {
+            _logger.Error(ex.Message);
+            _logger.Debug(ex, ex.Message);
+
         }
         finally
         {

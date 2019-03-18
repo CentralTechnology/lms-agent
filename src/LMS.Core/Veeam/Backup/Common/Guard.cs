@@ -153,7 +153,7 @@ namespace LMS.Core.Veeam.Backup.Common
       {
         return assignmentInstance.GetType().FullName;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return string.Empty;
       }

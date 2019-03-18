@@ -51,7 +51,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
           return (IDataReader) scope.Commit<CLazyDataReader>(new CLazyDataReader(connectionRef, commandRef));
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         this.SafeReconnect();
         throw;
@@ -79,7 +79,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         this.SafeReconnect();
         throw;
@@ -106,7 +106,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         this.SafeReconnect();
         throw;
@@ -123,7 +123,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
         this.ExecuteStoredProc(trgTable, procedureName, arguments);
         return trgTable;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         this.SafeReconnect();
         throw;
@@ -152,7 +152,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         this.SafeReconnect();
         throw;
@@ -203,7 +203,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         this.SafeReconnect();
         throw;
@@ -228,7 +228,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         this.SafeReconnect();
         throw;

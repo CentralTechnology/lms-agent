@@ -66,11 +66,11 @@ namespace LMS.Core.Veeam.Backup.Common
       {
         return Dns.GetHostName();
       }
-      catch (SocketException ex)
+      catch (SocketException)
       {
         return returnLocalhostIfError ? "localhost" : "UnknownHost";
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return returnLocalhostIfError ? "localhost" : "UnknownHost";
       }

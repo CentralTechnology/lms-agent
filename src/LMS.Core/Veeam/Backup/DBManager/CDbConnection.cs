@@ -55,7 +55,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
         Log.Information("Connection state: [{0}].", (object) sqlConnection.State);
         throw new CAppException("SQL server is not available", new object[0]);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         sqlConnection.SafeDispose();
         throw;

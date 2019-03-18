@@ -230,7 +230,7 @@ namespace LMS.Core.Veeam.Backup.Common
         secureString.MakeReadOnly();
         return secureString;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         secureString.Dispose();
         throw;
