@@ -41,7 +41,7 @@ namespace LMS.Core.Veeam.Backup.Common
                         SOptions.Reset();
                     return SOptions._instance.Value;
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
                     SOptions.Reset();
                     return SOptions._instance.Value;

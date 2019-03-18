@@ -8,13 +8,18 @@
     using Abp.Configuration;
     using Abp.Domain.Services;
     using Configuration;
-    using Extensions;
-    using global::Hangfire.Server;
     using Helpers;
+    using Serilog;
 
     public class VeeamManager : DomainService, IVeeamManager
     {
-        public bool IsInstalled(PerformContext performContext)
+        public const string Veeam90FilePath = @"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe";
+
+        public const string VeeamFilePath = @"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe";
+
+        private readonly ILogger _logger = Log.ForContext<VeeamManager>();
+
+        public bool IsInstalled()
         {
             const string veeamApplicationName = "Veeam Backup & Replication Server";
 
@@ -24,8 +29,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Error(performContext, ex.Message);
-                Logger.Debug(performContext, ex.Message, ex);
+                _logger.Error(ex.Message);
+                _logger.Debug(ex, ex.Message);
                 return false;
             }
         }
@@ -47,9 +52,6 @@
                 }
             }
         }
-
-        public const string VeeamFilePath = @"C:\Program Files\Veeam\Backup and Replication\Backup\Veeam.Backup.Service.exe";
-        public const string Veeam90FilePath = @"C:\Program Files\Veeam\Backup and Replication\Veeam.Backup.Service.exe";
 
         public Version GetInstalledVeeamVersion()
         {

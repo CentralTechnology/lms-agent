@@ -10,8 +10,11 @@ using Microsoft.Win32;
 
 namespace LMS.Core.Veeam.Backup.Configuration.V65
 {
-  internal class RegistryConfigurationAccessController
-  {
+    using Serilog;
+
+    internal class RegistryConfigurationAccessController
+    {
+        private readonly ILogger _logger = Log.ForContext<RegistryConfigurationAccessController>();
     private readonly RegistryKey _rootRegistryKey;
     private SecurityIdentifier[] _identities;
 
@@ -86,6 +89,8 @@ namespace LMS.Core.Veeam.Backup.Configuration.V65
             }
             catch (Exception ex)
             {
+                _logger.Error(ex.Message);
+                _logger.Debug(ex,ex.Message);
             }
           }
         }

@@ -10,7 +10,6 @@ namespace LMS
     using Abp.Owin;
     using Core;
     using Core.Extensions;
-    using Core.Logging;
     using Hangfire;
     using Owin;
     using Serilog.Core;
@@ -21,19 +20,14 @@ namespace LMS
     {
         public void Configuration(IAppBuilder app)
         {
-            LMSCoreModule.CurrentLogLevel = new LoggingLevelSwitch();
+            Program.CurrentLogLevel = new LoggingLevelSwitch();
             bool debug = ConfigurationManager.AppSettings.Get("Debug").To<bool>();
             if (debug)
             {
-                LMSCoreModule.CurrentLogLevel.MinimumLevel = LogEventLevel.Verbose;
+                Program.CurrentLogLevel.MinimumLevel = LogEventLevel.Verbose;
             }
 
-            app.UseAbp<LMSServiceModule>(a =>
-            {
-                a.IocManager.IocContainer.Register(
-                    LoggingConfiguration.GetConfiguration(LMSCoreModule.CurrentLogLevel)
-                );
-            });
+            app.UseAbp<LMSServiceModule>();
             app.UseHangfireDashboard("");
         }
     }

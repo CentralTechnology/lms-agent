@@ -3,26 +3,31 @@
     using System;
     using System.Collections.Concurrent;
     using System.Configuration;
+    using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
     using Abp.Configuration;
     using Abp.Dependency;
     using Core.Extensions;
     using Core.StartUp;
-    using global::Hangfire;
+    using Hangfire;
     using Microsoft.Owin.Hosting;
+    using Serilog;
     using Topshelf;
 
     public class LMSService : ServiceControl
     {
+        private readonly ILogger Logger = Log.ForContext<LMSService>();
         private IDisposable _webapp;
+
         public bool Start(HostControl hostControl)
         {
+            Logger.Information("Starting service.");
             Task.Run(() =>
             {
-                if (System.IO.File.Exists(System.IO.Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.lnk")))
+                if (File.Exists(Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.lnk")))
                 {
-                    System.IO.File.Delete(System.IO.Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.lnk"));
+                    File.Delete(Path.Combine(@"C:\Users\Public\Desktop\", "LMS Configuration.lnk"));
                 }
             });
 
@@ -44,18 +49,21 @@
                     StartupHelper.Initiliaze(startupManager);
                     StartupHelper.ConfigureBackgroundJobs(settingManager);
                 }
-            }                      
-           
+            }
+
+            Logger.Information($"Start complete. You can now access the agent on http://localhost:{port}");
+
             return true;
         }
 
         public bool Stop(HostControl hostControl)
         {
+            Logger.Information("Stopping service");
             _webapp.Dispose();
             return DisposeServers();
         }
 
-        private static bool DisposeServers()
+        private bool DisposeServers()
         {
             try
             {
@@ -92,8 +100,9 @@
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger.Debug(ex, ex.Message);
                 return false;
             }
         }

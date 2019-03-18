@@ -92,7 +92,7 @@ namespace LMS.Core.Veeam.Backup.Common
           return false;
         return CIpAddress.TryGetHostAddresses(serverName.Substring(0, length), ipAddresses);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return false;
       }
@@ -108,7 +108,7 @@ namespace LMS.Core.Veeam.Backup.Common
         ipAddresses.AddRange((IEnumerable<IPAddress>) hostAddresses);
         return true;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return false;
       }

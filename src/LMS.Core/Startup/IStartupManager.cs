@@ -5,8 +5,8 @@
 
     public interface IStartupManager : IDomainService
     {
-        bool Init(PerformContext performContext);
-        bool ShouldMonitorUsers(PerformContext performContext);
-        bool MonitorVeeam(PerformContext performContext);
+        bool Init();
+        bool ShouldMonitorUsers();
+        bool MonitorVeeam();
     }
 }

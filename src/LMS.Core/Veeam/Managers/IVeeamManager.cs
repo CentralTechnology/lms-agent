@@ -7,7 +7,7 @@
 
     public interface IVeeamManager: IDomainService
     {
-        bool IsInstalled(PerformContext performContext);
+        bool IsInstalled();
         bool IsOnline();
         Version GetInstalledVeeamVersion();
     }

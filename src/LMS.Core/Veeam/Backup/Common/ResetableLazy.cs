@@ -67,7 +67,8 @@ namespace LMS.Core.Veeam.Backup.Common
                     if (value)
                     {
                         if ((object) this._lazy.Value == null)
-                            ;
+                        {
+                        }
                     }
                     else
                         this.Reset();

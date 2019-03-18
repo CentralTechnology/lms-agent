@@ -4,12 +4,18 @@
     using System.IO;
     using Abp.Timing;
     using CommandLine;
+    using Core;
     using Serilog;
+    using Serilog.Core;
+    using Serilog.Exceptions;
+    using Serilog.Formatting.Json;
     using Topshelf;
     using Constants = Core.Constants.Constants;
 
-    class Program
+    public class Program
     {
+        public static LoggingLevelSwitch CurrentLogLevel { get; set; } = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Error);
+
         static int Main(string[] args)
         {
             if (!Directory.Exists("logs"))
@@ -21,6 +27,14 @@
             {
                 Console.SetWindowSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
             }
+            
+            Log.Logger = new LoggerConfiguration()
+                         .Enrich.WithMachineName()
+                         .Enrich.WithExceptionDetails()
+                         .MinimumLevel.ControlledBy(CurrentLogLevel)
+                         .WriteTo.Console(outputTemplate: "[{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                         .WriteTo.File(formatter: new JsonFormatter(renderMessage: true), path:"logs/log.txt", fileSizeLimitBytes: 8388608, rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
+                         .CreateLogger();
 
             if (Environment.UserInteractive && args != null)
             {
@@ -36,7 +50,7 @@
 
             return (int)HostFactory.Run(x =>
            {
-               x.UseSerilog();
+               x.UseSerilog(Log.Logger);
 
                Clock.Provider = ClockProviders.Utc;
 

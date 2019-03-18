@@ -1369,7 +1369,7 @@ namespace LMS.Core.Veeam.Backup.Common
           ((IEnumerable<string>) optionalString2.Split(',')).Select<string, int>((Func<string, int>) (n => Convert.ToInt32(n))).ToArray<int>();
           this.SobrLogTimeScheme = optionalString2;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           this.HandleError("Exception at parsing SobrLogTimeScheme");
         }

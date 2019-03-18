@@ -30,7 +30,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
         if (!this.DoTryToObtainConnection())
           throw new CAppException("SQL server is not available", new object[0]);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         this._disposableObjects.Dispose();
         throw;

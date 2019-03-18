@@ -8,7 +8,7 @@
 
     public class LMSCoreModule : AbpModule
     {
-        public static LoggingLevelSwitch CurrentLogLevel { get; set; }
+        
 
         public override void Initialize()
         {

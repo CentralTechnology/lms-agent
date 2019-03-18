@@ -31,7 +31,7 @@ namespace LMS.Core.Veeam.Backup.DBManager
                 disposableObject.BeginTransaction(transactionName, level);
                 this.m_dbConnection = (IDbConnection) disposableObject;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.m_disposableObjects.Dispose();
                 throw;
