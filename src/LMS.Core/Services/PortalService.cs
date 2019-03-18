@@ -223,7 +223,7 @@
 
         private void ContextSendingRequest2(object sender, SendingRequest2EventArgs e)
         {
-            e.RequestMessage.SetHeader("Authorization", $"Bearer {PortalAuthenticationService.Instance.Token.access_token}");
+            e.RequestMessage.SetHeader("Authorization", $"Bearer {PortalAuthenticationService.Instance.GetAccessToken()}");
             e.RequestMessage.SetHeader("Account", $"{PortalAuthenticationService.Instance.GetAccount()}");
 
             if (e.RequestMessage is HttpWebRequestMessage message)
@@ -238,7 +238,7 @@
             }
         }
 
-        private string GetServiceUri()
+        private static string GetServiceUri()
         {
             return DebuggingService.Debug ? "http://localhost:64755/odata" : "https://api-v2.portal.ct.co.uk/odata";
         }

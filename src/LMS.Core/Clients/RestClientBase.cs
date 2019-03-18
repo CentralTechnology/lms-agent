@@ -103,7 +103,8 @@
             }
 
             //Log the exception and info message
-            _logger.Error(ex,"Request to {AbsoluteUri} failed with status code {StatusCode}, parameters: {@Parameters}, and content: {Content}", baseUrl.AbsoluteUri,request.Resource,response.StatusCode,parameters,response.Content);
+            _logger.Error("Request to {AbsoluteUri} failed with status code {StatusCode}, parameters: {@Parameters}, and content: {Content}", baseUrl.AbsoluteUri,request.Resource,response.StatusCode,parameters,response.Content);
+            _logger.Debug(ex, ex.Message);
             throw new AbpException(info, ex);
         }
 

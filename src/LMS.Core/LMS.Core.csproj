@@ -214,6 +214,7 @@
     <Compile Include="Serialization\Xml\XmlExtensionMethods.cs" />
     <Compile Include="Serialization\Xml\XmlSerializer.cs" />
     <Compile Include="Serialization\Xml\XmlTypeFeature.cs" />
+    <Compile Include="Services\Authentication\AuthenticationException.cs" />
     <Compile Include="Services\Authentication\IPortalAuthenticationService.cs" />
     <Compile Include="Services\Authentication\PortalAuthenticationService.cs" />
     <Compile Include="Services\Authentication\PortalToken.cs" />
@@ -473,7 +474,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EntityFramework\" />
-    <Folder Include="Sentry\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
