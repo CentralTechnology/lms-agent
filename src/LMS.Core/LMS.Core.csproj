@@ -218,6 +218,7 @@
     <Compile Include="Services\Authentication\IPortalAuthenticationService.cs" />
     <Compile Include="Services\Authentication\PortalAuthenticationService.cs" />
     <Compile Include="Services\Authentication\PortalToken.cs" />
+    <Compile Include="Services\Authentication\PortalTokenResponse.cs" />
     <Compile Include="Services\IPortalService.cs" />
     <Compile Include="Services\PortalService.cs" />
     <Compile Include="Startup\IStartupManager.cs" />

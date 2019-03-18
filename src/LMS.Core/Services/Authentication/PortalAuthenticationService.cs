@@ -43,15 +43,15 @@
             {
                 if (_token == null)
                 {
-                    dynamic token = RequestToken();
-                    _token = PortalToken.Create(token.access_token, token.expires_in, token.request_time);
+                    PortalTokenResponse token = RequestToken();
+                    _token = PortalToken.Create(token.AccessToken, token.ExpiresIn, token.RequestTime);
                     return _token.AccessToken;
                 }
 
                 if (_token.IsNearExpiry)
                 {
-                    dynamic token = RequestToken();
-                    _token.Update(token.access_token, token.expires_in, token.request_time);
+                    PortalTokenResponse token = RequestToken();
+                    _token.Update(token.AccessToken, token.ExpiresIn, token.RequestTime);
                     return _token.AccessToken;
                 }
 
@@ -185,7 +185,7 @@
             return DebuggingService.Debug ? "http://localhost:64755/auth/token" : "https://api-v2.portal.ct.co.uk/auth/token";
         }
 
-        private dynamic RequestToken()
+        private PortalTokenResponse RequestToken()
         {
             long account = GetAccount();
             Guid device = GetDevice();
@@ -203,7 +203,7 @@
                 throw new AuthenticationException(string.Format("Authentication Failed: {0}", response.Content), response.ErrorException);
             }
 
-            return JsonConvert.DeserializeObject<dynamic>(response.Content);
+            return JsonConvert.DeserializeObject<PortalTokenResponse>(response.Content);
         }
     }
 }

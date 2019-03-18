@@ -232,12 +232,12 @@
                 if (e.RequestMessage is HttpWebRequestMessage message)
                 {
                     _logger.Debug("Sending request: {Method} {Url}", message.Method, message.Url);
-                    _logger.Debug("Sending request: {Message}", message);
+                    _logger.Debug("Sending request: {@Message}", message);
                 }
                 else
                 {
                     _logger.Debug("Sending request: {Method} {Url}", e.RequestMessage.Method, e.RequestMessage.Url);
-                    _logger.Debug("Sending request: {Message}", e.RequestMessage);
+                    _logger.Debug("Sending request: {@Message}", e.RequestMessage);
                 }
             }
             catch (Exception)
@@ -259,6 +259,7 @@
             }
             catch (Exception ex)
             {
+                _logger.Error(ex.Message);
                 _logger.Debug(ex.Message, ex);
                 throw;
             }
