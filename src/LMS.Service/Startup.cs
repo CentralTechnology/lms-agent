@@ -8,7 +8,6 @@ namespace LMS
     using System.Configuration;
     using System.Diagnostics.CodeAnalysis;
     using Abp.Owin;
-    using Core;
     using Core.Extensions;
     using Hangfire;
     using Owin;

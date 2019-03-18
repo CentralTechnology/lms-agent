@@ -4,14 +4,12 @@
     using Abp;
     using Abp.Configuration;
     using Abp.Dependency;
-    using Core;
     using Core.Configuration;
     using Core.Helpers;
     using Core.StartUp;
     using Core.Users;
     using Core.Veeam;
     using Serilog;
-    using Serilog.Core;
     using Serilog.Events;
 
     public static class ConsoleHost

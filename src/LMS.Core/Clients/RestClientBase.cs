@@ -103,7 +103,8 @@
             }
 
             //Log the exception and info message
-            _logger.Error(ex,"Request to {AbsoluteUri} failed with status code {StatusCode}, parameters: {@Parameters}, and content: {Content}", baseUrl.AbsoluteUri,request.Resource,response.StatusCode,parameters,response.Content);
+            _logger.Error("Request to {AbsoluteUri} failed with status code {StatusCode}, parameters: {@Parameters}, and content: {Content}", baseUrl.AbsoluteUri,request.Resource,response.StatusCode,parameters,response.Content);
+            _logger.Debug(ex, ex.Message);
             throw new AbpException(info, ex);
         }
 
@@ -136,7 +137,8 @@
                 errorMessage = response.ErrorMessage
             };
 
-            _logger.Information("Request completed in {durationMs} ms, Request: {@Request}, Response: {@Response}", durationMs,requestToLog, responseToLog);
+            _logger.Information("Request completed in {Duration} ms, Request: ({Method}) - ({Url}) - {StatusCode}", durationMs, request.Method, BuildUri(request), response.StatusCode.ToString());
+            _logger.Debug("Request completed in {durationMs} ms, Request: {@Request}, Response: {@Response}", durationMs,requestToLog, responseToLog);
         }
 
         private void TimeoutCheck(IRestRequest request, IRestResponse response)
