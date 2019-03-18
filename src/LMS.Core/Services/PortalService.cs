@@ -20,11 +20,13 @@
     using Newtonsoft.Json;
     using Portal.LicenseMonitoringSystem.Users.Entities;
     using Portal.LicenseMonitoringSystem.Veeam.Entities;
+    using Serilog;
 
     [SuppressMessage("ReSharper", "ReplaceWithSingleCallToFirstOrDefault")]
     [SuppressMessage("ReSharper", "ReplaceWithSingleCallToSingleOrDefault")]
     public class PortalService : DomainService, IPortalService, IShouldInitialize
     {
+        private readonly ILogger _logger = Log.ForContext<PortalService>();
         private Container _context;
 
         public DataServiceCollection<Veeam> GetVeeamServerById(Guid id)
@@ -35,7 +37,7 @@
             }
             catch (DataServiceQueryException ex) when (ex.Response.StatusCode == 404)
             {
-                Logger.Debug(ex.Message, ex);
+                _logger.Debug(ex.Message, ex);
                 return new DataServiceCollection<Veeam>();
             }
         }
@@ -147,7 +149,7 @@
         {
             if (!DebuggingService.Debug)
             {
-                Logger.Debug($"Request Scheme: {e.RequestUri.Scheme}");
+                _logger.Debug("Request Scheme: {Scheme}",e.RequestUri.Scheme);
                 if (e.RequestUri.Scheme != Uri.UriSchemeHttps)
                 {
                     UriBuilder ub = new UriBuilder(e.RequestUri)
@@ -156,14 +158,14 @@
                         Port = 443
                     };
                     e.RequestUri = ub.Uri;
-                    Logger.Debug($"Updated Uri: {e.RequestUri}");
+                    _logger.Debug("Updated Uri: {RequestUri}",e.RequestUri);
                 }
             }
         }
 
         private void ConfigureContainer()
         {
-            Logger.Info("Configuring the api service.");
+            _logger.Information("Configuring the api service.");
 
             _context = new Container(new Uri(GetServiceUri()));
 
@@ -171,13 +173,13 @@
             _context.ReceivingResponse += ContextReceivingResponse;
             _context.SendingRequest2 += ContextSendingRequest2;
 
-            Logger.Debug($"Base Uri: {_context.BaseUri}");
-            Logger.Info("Configuration complete!");
+            _logger.Debug("Base Uri: {BaseUri}",_context.BaseUri);
+            _logger.Information("Configuration complete!");
         }
 
         private void ContextReceivingResponse(object sender, ReceivingResponseEventArgs e)
         {
-            Logger.Debug($"Recieving response: {JsonConvert.SerializeObject(e.ResponseMessage, Formatting.Indented)}");
+            _logger.Debug("Receiving response: {@Response}", e.ResponseMessage);
 
             if (!(e.ResponseMessage is HttpWebResponseMessage responseMessage))
             {
@@ -191,9 +193,9 @@
 
             if (response.StatusCode == HttpStatusCode.GatewayTimeout)
             {
-                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                using (var reader = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException(), Encoding.UTF8))
                 {
-                    Logger.Debug($"Content: {reader.ReadToEnd()}");
+                    _logger.Debug("{@Content}", reader.ReadToEnd());
 
                     throw new UserFriendlyException((int) response.StatusCode, "Web server received an invalid response while acting as a gateway or proxy server.");
                 }
@@ -203,15 +205,15 @@
                 response.StatusCode == HttpStatusCode.InternalServerError ||
                 response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                using (var reader = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException(), Encoding.UTF8))
                 {
-                    Logger.Debug($"Content: {reader.ReadToEnd()}");
+                    _logger.Debug("{@Content}", reader.ReadToEnd());
 
                     if (JsonValidationHelper.IsValidJson(reader.ReadToEnd()))
                     {
                         var error = JsonConvert.DeserializeObject<ODataErrorResponse>(reader.ReadToEnd());
 
-                        Logger.Error($"{response.StatusCode} ({(int) response.StatusCode}) - {error.Message}");
+                        _logger.Error("{StatusCodeText} ({StatusCode}) - {Error}", response.StatusCode, (int) response.StatusCode, error.Message);
 
                         throw new UserFriendlyException((int) response.StatusCode, error.Message);
                     }
@@ -225,16 +227,22 @@
         {
             e.RequestMessage.SetHeader("Authorization", $"Bearer {PortalAuthenticationService.Instance.GetAccessToken()}");
             e.RequestMessage.SetHeader("Account", $"{PortalAuthenticationService.Instance.GetAccount()}");
-
-            if (e.RequestMessage is HttpWebRequestMessage message)
+            try
             {
-                Logger.Debug($"Sending request: {message.Method} {message.Url}");
-                Logger.Debug($"Sending request: {JsonConvert.SerializeObject(message, Formatting.Indented)}");
+                if (e.RequestMessage is HttpWebRequestMessage message)
+                {
+                    _logger.Debug("Sending request: {Method} {Url}", message.Method, message.Url);
+                    _logger.Debug("Sending request: {Message}", message);
+                }
+                else
+                {
+                    _logger.Debug("Sending request: {Method} {Url}", e.RequestMessage.Method, e.RequestMessage.Url);
+                    _logger.Debug("Sending request: {Message}", e.RequestMessage);
+                }
             }
-            else
+            catch (Exception)
             {
-                Logger.Debug($"Sending request: {e.RequestMessage.Method} {e.RequestMessage.Url}");
-                Logger.Debug($"Sending request: {JsonConvert.SerializeObject(e.RequestMessage, Formatting.Indented)}");
+                // ignored
             }
         }
 
@@ -251,7 +259,7 @@
             }
             catch (Exception ex)
             {
-                Logger.Debug(ex.Message, ex);
+                _logger.Debug(ex.Message, ex);
                 throw;
             }
         }
