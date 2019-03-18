@@ -57,7 +57,8 @@
                     await PortalService.AddUserAsync(newUser);
 
                     performContext?.WriteSuccessLine($"+ {newUser}");
-                    _logger.Information("Created: {@User}", newUser);
+                    _logger.Information("Created: {User}", newUser.ToString());
+                    _logger.Debug("Created: {@User}", newUser);
 
                     continue;
                 }
@@ -66,7 +67,8 @@
                 await PortalService.UpdateUserAsync(remoteUser);
 
                 performContext?.WriteSuccessLine($"^ {remoteUser}");
-                _logger.Information("Updated: {@User}", remoteUser);
+                _logger.Information("Updated: {User}", remoteUser.ToString());
+                _logger.Debug("Updated: {@User}", remoteUser);
             }
 
             var staleUsers = remoteUsers.Except(adUsers, _licenseUserEqualityComparer).ToArray();
@@ -82,7 +84,8 @@
                 await PortalService.DeleteUserAsync(staleUser);
 
                 performContext?.WriteWarnLine($"- {staleUser}");
-                _logger.Information("Delete: {@staleUser}");
+                _logger.Information("Delete: {staleUser}", staleUser.ToString());
+                _logger.Debug("Delete: {@staleUser}", staleUser);
             }
         }
 
@@ -156,7 +159,8 @@
                     await PortalService.AddGroupAsync(newGroup);
 
                     performContext?.WriteSuccessLine($"+ {newGroup}");
-                    _logger.Information("Created: {@Group}", newGroup);
+                    _logger.Information("Created: {Group}", newGroup.ToString());
+                    _logger.Debug("Created: {@Group}", newGroup);
 
                     continue;
                 }
@@ -165,7 +169,8 @@
                 await PortalService.UpdateGroupAsync(remoteGroup);
 
                 performContext?.WriteSuccessLine($"^ {remoteGroup}");
-                _logger.Information("Updated:  {@Group}", remoteGroup);
+                _logger.Information("Updated:  {Group}", remoteGroup.ToString());
+                _logger.Debug("Updated:  {@Group}", remoteGroup);
             }
 
             var staleGroups = remoteGroups.Except(adGroups, _licenseGroupEqualityComparer).ToArray();
@@ -181,7 +186,8 @@
                 await PortalService.DeleteGroupAsync(staleGroup);
 
                 performContext?.WriteWarnLine($"- {staleGroup}");
-                _logger.Information("Delete: {@Group}", staleGroup);
+                _logger.Information("Delete: {Group}", staleGroup.ToString());
+                _logger.Debug("Delete: {@Group}", staleGroup);
             }
         }
 

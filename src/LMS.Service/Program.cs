@@ -4,17 +4,16 @@
     using System.IO;
     using Abp.Timing;
     using CommandLine;
-    using Core;
     using Serilog;
     using Serilog.Core;
     using Serilog.Exceptions;
-    using Serilog.Formatting.Json;
+    using Serilog.Formatting.Compact;
     using Topshelf;
     using Constants = Core.Constants.Constants;
 
     public class Program
     {
-        public static LoggingLevelSwitch CurrentLogLevel { get; set; } = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Error);
+        public static LoggingLevelSwitch CurrentLogLevel { get; set; } = new LoggingLevelSwitch();
 
         static int Main(string[] args)
         {
@@ -29,11 +28,10 @@
             }
             
             Log.Logger = new LoggerConfiguration()
-                         .Enrich.WithMachineName()
                          .Enrich.WithExceptionDetails()
                          .MinimumLevel.ControlledBy(CurrentLogLevel)
                          .WriteTo.Console(outputTemplate: "[{Level:u3}] {Message:lj}{NewLine}{Exception}")
-                         .WriteTo.File(formatter: new JsonFormatter(renderMessage: true), path:"logs/log.txt", fileSizeLimitBytes: 8388608, rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
+                         .WriteTo.Async(a => a.File(formatter: new RenderedCompactJsonFormatter(), path:"logs/log.txt", fileSizeLimitBytes: 8388608, rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true))
                          .CreateLogger();
 
             if (Environment.UserInteractive && args != null)

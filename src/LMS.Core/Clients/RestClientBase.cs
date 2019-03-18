@@ -137,7 +137,8 @@
                 errorMessage = response.ErrorMessage
             };
 
-            _logger.Information("Request completed in {durationMs} ms, Request: {@Request}, Response: {@Response}", durationMs,requestToLog, responseToLog);
+            _logger.Information("Request completed in {Duration} ms, Request: ({Method}) - ({Url}) - {StatusCode}", durationMs, request.Method, BuildUri(request), response.StatusCode.ToString());
+            _logger.Debug("Request completed in {durationMs} ms, Request: {@Request}, Response: {@Response}", durationMs,requestToLog, responseToLog);
         }
 
         private void TimeoutCheck(IRestRequest request, IRestResponse response)

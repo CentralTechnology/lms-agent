@@ -228,7 +228,6 @@
                             }
                             catch (Exception ex)
                             {
-                                _logger.Error(ex.Message);
                                 _logger.Debug(ex, ex.Message);
                                 continue;
                             }
