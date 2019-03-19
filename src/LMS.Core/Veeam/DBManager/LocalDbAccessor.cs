@@ -3,18 +3,16 @@
     using System;
     using System.Data;
     using System.Data.SqlClient;
-    using SharpRaven;
-    using SharpRaven.Data;
+    using Serilog;
 
     public class LocalDbAccessor
     {
         private readonly string _connectionString;
-        protected RavenClient RavenClient;
+
+        private readonly ILogger _logger = Log.ForContext<LocalDbAccessor>();
 
         public LocalDbAccessor(string connectionString)
         {
-            RavenClient = Core.Sentry.RavenClient.Instance;
-
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new ArgumentNullException(nameof(connectionString));
@@ -23,7 +21,7 @@
             _connectionString = connectionString;
         }
 
-        public DataTable GetDataTable(string spName, CommandBehavior commandBehavior, int timoutSeconds, bool retryable, params SqlParameter[] spParams)
+        public DataTable GetDataTable(string spName, CommandBehavior commandBehavior, int timeoutSeconds, bool retryable, params SqlParameter[] spParams)
         {
             try
             {
@@ -40,7 +38,7 @@
                             {
                                 selectCommand.Parameters.AddRange(spParams);
                                 selectCommand.CommandType = CommandType.StoredProcedure;
-                                selectCommand.CommandTimeout = timoutSeconds;
+                                selectCommand.CommandTimeout = timeoutSeconds;
                                 dataTable.BeginLoadData();
                                 sqlDataAdapter.Fill(dataTable);
                                 dataTable.EndLoadData();
@@ -61,14 +59,8 @@
             }            
             catch (Exception ex)
             {
-                if (ex is SqlException sqlException)
-                {
-
-                }
-                else
-                {
-                    RavenClient.Capture(new SentryEvent(ex));
-                }
+                _logger.Error(ex.Message);
+                _logger.Debug(ex, ex.Message);
                 
                 throw;
             }

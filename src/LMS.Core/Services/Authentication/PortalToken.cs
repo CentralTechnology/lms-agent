@@ -5,16 +5,40 @@
 
     public class PortalToken
     {
-        public string access_token { get; set; }
+        private PortalToken(){}
 
-        public long expires_in {get;set;}
-
-        public DateTime request_time { get; set; }
-        public bool IsNearExpiry()
+        public static PortalToken Create(string accessToken, long expiresIn, DateTime requestTime)
         {
-            var now = DateTime.UtcNow;
-            var expires = request_time.AddSeconds(expires_in).AddMinutes(-5);
-            return now >= expires;
+            return new PortalToken
+            {
+                AccessToken = accessToken,
+                ExpiresIn = expiresIn,
+                RequestTime = requestTime
+            };
+        }
+
+        public void Update(string accessToken, long expiresIn, DateTime requestTime)
+        {
+            AccessToken = accessToken;
+            ExpiresIn = expiresIn;
+            RequestTime = requestTime;
+        }
+
+
+        public string AccessToken { get; set; }
+
+        public long ExpiresIn {get;set;}
+
+        public DateTime RequestTime { get; set; }
+
+        public bool IsNearExpiry
+        {
+            get
+            {
+                var now = DateTime.Now;
+                var expires = RequestTime.AddSeconds(ExpiresIn).AddMinutes(-5);
+                return now >= expires;
+            }
         }
     }
 }

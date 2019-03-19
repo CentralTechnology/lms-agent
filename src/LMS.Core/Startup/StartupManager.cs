@@ -3,19 +3,24 @@
     using System;
     using System.Configuration;
     using Abp.Configuration;
+    using Abp.Domain.Services;
     using Abp.Logging;
     using Configuration;
     using Extensions;
     using global::Hangfire.Server;
     using Managers;
+    using Serilog;
     using Serilog.Events;
     using Users.Managers;
     using Veeam.Managers;
 
-    public class StartupManager : LMSManagerBase, IStartupManager
+    public class StartupManager : DomainService, IStartupManager
     {
         private readonly IActiveDirectoryManager _activeDirectoryManager;
         private readonly IVeeamManager _veeamManager;
+
+        private readonly ILogger _logger = Log.ForContext<StartupManager>();
+
 
         public StartupManager(
             IActiveDirectoryManager activeDirectoryManager,
@@ -25,87 +30,89 @@
             _veeamManager = veeamManager;
         }
 
-        public bool Init(PerformContext performContext)
+        public bool Init()
         {
-            Logger.Log(LogSeverity.Info, performContext, "Running startup process");
+            _logger.Information("Running startup process");
 
             try
             {
-                bool monUsers = ShouldMonitorUsers(performContext);
+                bool monUsers = ShouldMonitorUsers();
                 SettingManager.ChangeSettingForApplication(AppSettingNames.MonitorUsers, monUsers.ToString());
 
-                Logger.Log(LogSeverity.Info, performContext, monUsers ? "Monitoring Users" : "Not Monitoring Users");
+                _logger.Information(monUsers ? "Monitoring Users" : "Not Monitoring Users");
             }
             catch (Exception ex)
             {
-                Logger.Log(LogSeverity.Error, performContext, ex.Message);
+                _logger.Error(ex.Message);
+                _logger.Debug(ex, ex.Message);
             }
 
             try
             {
-                bool monVeeam = MonitorVeeam(performContext);
+                bool monVeeam = MonitorVeeam();
                 SettingManager.ChangeSettingForApplication(AppSettingNames.MonitorVeeam, monVeeam.ToString());
 
-                Logger.Log(LogSeverity.Info, performContext, monVeeam ? "Monitoring Veeam" : "Not Monitoring Veeam");
+                _logger.Information( monVeeam ? "Monitoring Veeam" : "Not Monitoring Veeam");
             }
             catch (Exception ex)
             {
-                Logger.Log(LogSeverity.Error, performContext, ex.Message);
+                _logger.Error(ex.Message);
+                _logger.Debug(ex, ex.Message);
             }
 
-            Logger.Log(LogSeverity.Info, performContext, "************ Initialisation  Successful ************");
+            _logger.Information( "************ Initialisation  Successful ************");
 
             return true;
         }
 
-        public bool ShouldMonitorUsers(PerformContext performContext)
+        public bool ShouldMonitorUsers()
         {
-            Logger.Log(LogSeverity.Info, performContext, "Dermining whether to monitor users...");
+            _logger.Information( "Dermining whether to monitor users...");
 
             try
             {
                 bool userMonitorEnabled = SettingManager.GetSettingValue<bool>(AppSettingNames.UserMonitorEnabled);
                 if (!userMonitorEnabled)
                 {
-                    Logger.Log(LogSeverity.Warn, performContext, "User monitoring has been manually disabled.");
+                    _logger.Warning( "User monitoring has been manually disabled.");
 
                     return false;
                 }
 
                 // check if a domain exists
-                bool domainExists = _activeDirectoryManager.IsOnDomain(performContext);
+                bool domainExists = _activeDirectoryManager.IsOnDomain();
                 if (!domainExists)
                 {
-                    Logger.Log(LogSeverity.Warn, performContext, "Check Domain: FAIL");
+                    _logger.Warning( "Check Domain: FAIL");
 
                     return false;
                 }
 
-                Logger.Log(LogSeverity.Info, performContext, "Check Domain: OK");
+                _logger.Information( "Check Domain: OK");
 
                 // check if this is a primary domain controller
-                bool pdc = _activeDirectoryManager.IsPrimaryDomainController(performContext);
+                bool pdc = _activeDirectoryManager.IsPrimaryDomainController();
                 if (!pdc)
                 {
-                    Logger.Log(LogSeverity.Warn, performContext, "Check PDC: FAIL");
+                    _logger.Warning( "Check PDC: FAIL");
 
                     // check override is enabled
                     bool pdcOverride = SettingManager.GetSettingValue<bool>(AppSettingNames.PrimaryDomainControllerOverride);
                     if (!pdcOverride)
                     {
-                        Logger.Log(LogSeverity.Warn, performContext, "Check PDC Override: FAIL");
+                        _logger.Warning( "Check PDC Override: FAIL");
                         return false;
                     }
 
-                    Logger.Log(LogSeverity.Info, performContext, "Check PDC Override: OK");
+                    _logger.Information("Check PDC Override: OK");
                 }
 
-                Logger.Log(LogSeverity.Info, performContext, "Check PDC: OK");
+                _logger.Information( "Check PDC: OK");
             }
             catch (Exception ex)
             {
-                Logger.Log(LogSeverity.Error, performContext, ex.Message);
-                Logger.Log(LogSeverity.Debug, performContext, ex.Message, ex);
+                _logger.Error(ex.Message);
+                _logger.Debug(ex, ex.Message);
 
                 return false;
             }
@@ -113,47 +120,47 @@
             return true;
         }
 
-        public bool MonitorVeeam(PerformContext performContext)
+        public bool MonitorVeeam()
         {
-            Logger.Log(LogSeverity.Info, performContext, "Dermining whether to monitor veeam...");
+            _logger.Information("Dermining whether to monitor veeam...");
 
             try
             {
                 bool veeamMonitorEnabled = SettingManager.GetSettingValue<bool>(AppSettingNames.VeeamMonitorEnabled);
                 if (!veeamMonitorEnabled)
                 {
-                    Logger.Log(LogSeverity.Warn, performContext, "Veeam monitoring has been manually disabled.");
+                    _logger.Warning("Veeam monitoring has been manually disabled.");
 
                     return false;
                 }
 
-                bool veeamInstalled = _veeamManager.IsInstalled(performContext);
+                bool veeamInstalled = _veeamManager.IsInstalled();
                 if (!veeamInstalled)
                 {
-                    Logger.Log(LogSeverity.Warn, performContext, "Check Veeam Installed: FAIL");
+                    _logger.Warning( "Check Veeam Installed: FAIL");
 
                     return false;
                 }
 
-                Logger.Log(LogSeverity.Info, performContext, "Check Veeam Installed: OK");
+                _logger.Information( "Check Veeam Installed: OK");
 
                 // check the veeam version
-                string veeamVersion = _veeamManager.GetVersion();
+                Version veeamVersion = _veeamManager.GetInstalledVeeamVersion();
                 if (veeamVersion == null)
                 {
-                    Logger.Log(LogSeverity.Warn, performContext, "Check Veeam Version: FAIL");
+                    _logger.Warning( "Check Veeam Version: FAIL");
 
                     return false;
                 }
 
-                Logger.Log(LogSeverity.Info, performContext, "Check Veeam Version: OK");
+                _logger.Information( "Check Veeam Version: OK");
 
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.Log(LogSeverity.Error, performContext, ex.Message);
-                Logger.Log(LogSeverity.Info, performContext, ex.Message, ex);
+                _logger.Error(ex.Message);
+                _logger.Debug(ex, ex.Message);
 
                 return false;
             }

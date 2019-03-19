@@ -11,8 +11,9 @@
     <AssemblyName>LMS.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+	<LangVersion>latest</LangVersion>
+	<ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,16 +21,12 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Abp, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -41,11 +38,11 @@
     <Reference Include="Castle.Facilities.Logging, Version=3.4.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.LoggingFacility.3.4.0\lib\net45\Castle.Facilities.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Services.Logging.SerilogIntegration, Version=0.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core-Serilog.3.3.3\lib\net45\Castle.Services.Logging.SerilogIntegration.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.Windsor, Version=3.4.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Windsor.3.4.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentResults, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentResults.1.1.1\lib\net45\FluentResults.dll</HintPath>
     </Reference>
     <Reference Include="Hangfire.Console, Version=1.3.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Hangfire.Console.1.3.10\lib\net45\Hangfire.Console.dll</HintPath>
@@ -95,20 +92,8 @@
     <Reference Include="RestSharp, Version=106.2.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.106.2.1\lib\net452\RestSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.FullNetFx, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.FullNetFx.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.RollingFileAlternate, Version=0.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.RollingFileAlternate.MultiPlatform.1.0.0\lib\net45\Serilog.Sinks.RollingFileAlternate.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.RollingFileAlternate.Portable, Version=0.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.RollingFileAlternate.MultiPlatform.1.0.0\lib\net45\Serilog.Sinks.RollingFileAlternate.Portable.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpRaven, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpRaven.2.3.2\lib\net45\SharpRaven.dll</HintPath>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.8.0\lib\net45\Serilog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -123,6 +108,7 @@
       <HintPath>..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
     </Reference>
     <Reference Include="System.Net" />
+    <Reference Include="System.Security" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -140,6 +126,8 @@
     </Compile>
     <Compile Include="Clients\RestClientBase.cs" />
     <Compile Include="Common\Caster.cs" />
+    <Compile Include="Common\ExceptionFactory.cs" />
+    <Compile Include="Common\UnsupportedVersionException.cs" />
     <Compile Include="Configuration\AppSettingNames.cs" />
     <Compile Include="Configuration\AppSettingProvider.cs" />
     <Compile Include="Configuration\Setting.cs" />
@@ -149,7 +137,6 @@
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Extensions\DirectoryEntryExtensions.cs" />
     <Compile Include="Extensions\IDataReaderExtensions.cs" />
-    <Compile Include="Extensions\LoggerExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\PerformContextExtensions.cs" />
     <Compile Include="Extensions\PrincipleExtensions.cs" />
@@ -168,14 +155,64 @@
     <Compile Include="Json\JsonValidationHelper.cs" />
     <Compile Include="Json\NewtonsoftJsonSerializer.cs" />
     <Compile Include="LMSCoreModule.cs" />
-    <Compile Include="Logging\LoggingConfiguration.cs" />
-    <Compile Include="Managers\LMSManagerBase.cs" />
     <Compile Include="Managers\WorkerManagerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sentry\RavenClient.cs" />
+    <Compile Include="Serialization\ArrayTypeDescriptor.cs" />
+    <Compile Include="Serialization\ConstructorAccessor.cs" />
+    <Compile Include="Serialization\ConstructorAccessorOfType.cs" />
+    <Compile Include="Serialization\CSerializeHelper.cs" />
+    <Compile Include="Serialization\DescriptorGenerationRules.cs" />
+    <Compile Include="Serialization\DescriptorInitializationStack.cs" />
+    <Compile Include="Serialization\DeserializationContext.cs" />
+    <Compile Include="Serialization\DictionaryTypeDescriptor.cs" />
+    <Compile Include="Serialization\Expressions.cs" />
+    <Compile Include="Serialization\FieldAccessor.cs" />
+    <Compile Include="Serialization\GetValue.cs" />
+    <Compile Include="Serialization\IDataReader.cs" />
+    <Compile Include="Serialization\IDataReaderExtensionMethods.cs" />
+    <Compile Include="Serialization\IDataWriter.cs" />
+    <Compile Include="Serialization\IDataWriterExtensionMethods.cs" />
+    <Compile Include="Serialization\IExpressionAccessor.cs" />
+    <Compile Include="Serialization\IListTypeDescriptor.cs" />
+    <Compile Include="Serialization\ISerializationRoutine.cs" />
+    <Compile Include="Serialization\ListTypeDescriptor.cs" />
+    <Compile Include="Serialization\PropertyAccessor.cs" />
+    <Compile Include="Serialization\PropertyReader.cs" />
+    <Compile Include="Serialization\PropertyWriter.cs" />
+    <Compile Include="Serialization\ReflectionTypes.cs" />
+    <Compile Include="Serialization\SerializableDataAttribute.cs" />
+    <Compile Include="Serialization\SerializableTypeAttribute.cs" />
+    <Compile Include="Serialization\SerializableTypeDescriptor.cs" />
+    <Compile Include="Serialization\SerializableTypeDescriptorFactory.cs" />
+    <Compile Include="Serialization\SerializationBinding.cs" />
+    <Compile Include="Serialization\SerializationBindings.cs" />
+    <Compile Include="Serialization\SerializationBindingsBuilder.cs" />
+    <Compile Include="Serialization\SerializationContext.cs" />
+    <Compile Include="Serialization\SerializationOptions.cs" />
+    <Compile Include="Serialization\SerializationRoute.cs" />
+    <Compile Include="Serialization\SerializationRoutine.cs" />
+    <Compile Include="Serialization\SetValue.cs" />
+    <Compile Include="Serialization\TypeDescriptor.cs" />
+    <Compile Include="Serialization\TypeFeature.cs" />
+    <Compile Include="Serialization\Unwrapper.cs" />
+    <Compile Include="Serialization\WellKnownTypes.cs" />
+    <Compile Include="Serialization\XmlSerialization.cs" />
+    <Compile Include="Serialization\Xml\ArrayStringSequenceXmlReader.cs" />
+    <Compile Include="Serialization\Xml\ArrayStringSequenceXmlWriter.cs" />
+    <Compile Include="Serialization\Xml\VirtualXmlReader.cs" />
+    <Compile Include="Serialization\Xml\VirtualXmlWriter.cs" />
+    <Compile Include="Serialization\Xml\XmlData.cs" />
+    <Compile Include="Serialization\Xml\XmlDataReader.cs" />
+    <Compile Include="Serialization\Xml\XmlDataWriter.cs" />
+    <Compile Include="Serialization\Xml\XmlDeserializer.cs" />
+    <Compile Include="Serialization\Xml\XmlExtensionMethods.cs" />
+    <Compile Include="Serialization\Xml\XmlSerializer.cs" />
+    <Compile Include="Serialization\Xml\XmlTypeFeature.cs" />
+    <Compile Include="Services\Authentication\AuthenticationException.cs" />
     <Compile Include="Services\Authentication\IPortalAuthenticationService.cs" />
     <Compile Include="Services\Authentication\PortalAuthenticationService.cs" />
     <Compile Include="Services\Authentication\PortalToken.cs" />
+    <Compile Include="Services\Authentication\PortalTokenResponse.cs" />
     <Compile Include="Services\IPortalService.cs" />
     <Compile Include="Services\PortalService.cs" />
     <Compile Include="Startup\IStartupManager.cs" />
@@ -197,19 +234,220 @@
     <Compile Include="Users\Managers\ActiveDirectoryManager.cs" />
     <Compile Include="Users\Managers\IActiveDirectoryManager.cs" />
     <Compile Include="Users\UserWorkerManager.cs" />
+    <Compile Include="Veeam\Backup\Common\ActionExm.cs" />
+    <Compile Include="Veeam\Backup\Common\BitConverterEx.cs" />
+    <Compile Include="Veeam\Backup\Common\CAutoRefOfType.cs" />
+    <Compile Include="Veeam\Backup\Common\CAutoRefScope.cs" />
+    <Compile Include="Veeam\Backup\Common\CCloudBinOptionsScope.cs" />
+    <Compile Include="Veeam\Backup\Common\CCloudConnectOptionsScope.cs" />
+    <Compile Include="Veeam\Backup\Common\CCoreException.cs" />
+    <Compile Include="Veeam\Backup\Common\CDisposableList.cs" />
+    <Compile Include="Veeam\Backup\Common\CHostName.cs" />
+    <Compile Include="Veeam\Backup\Common\CIpAddress.cs" />
+    <Compile Include="Veeam\Backup\Common\CIPPort.cs" />
+    <Compile Include="Veeam\Backup\Common\CLoggingOptionsScope.cs" />
+    <Compile Include="Veeam\Backup\Common\ConcurrentCache.cs" />
+    <Compile Include="Veeam\Backup\Common\ConcurrentCacheFactoryOfType.cs" />
+    <Compile Include="Veeam\Backup\Common\ConcurrentCacheOfType.cs" />
+    <Compile Include="Veeam\Backup\Common\ConcurrentDictionaryExm.cs" />
+    <Compile Include="Veeam\Backup\Common\ConcurrentLockProviderOfType.cs" />
+    <Compile Include="Veeam\Backup\Common\ConcurrentSetOfType.cs" />
+    <Compile Include="Veeam\Backup\Common\COptions.cs" />
+    <Compile Include="Veeam\Backup\Common\COptionsScopeAttribute.cs" />
+    <Compile Include="Veeam\Backup\Common\COptionsTimeSpanAttribute.cs" />
+    <Compile Include="Veeam\Backup\Common\COptionsValueAttribute.cs" />
+    <Compile Include="Veeam\Backup\Common\CRegOptionsReader.cs" />
+    <Compile Include="Veeam\Backup\Common\CRetriableQueryExecuter.cs" />
+    <Compile Include="Veeam\Backup\Common\CSobrOptionsScope.cs" />
+    <Compile Include="Veeam\Backup\Common\CTapeChangerRegValue.cs" />
+    <Compile Include="Veeam\Backup\Common\CTapeDevicesRegistryValue.cs" />
+    <Compile Include="Veeam\Backup\Common\CTapeDriveRegValue.cs" />
+    <Compile Include="Veeam\Backup\Common\CTapeProxyRegInfo.cs" />
+    <Compile Include="Veeam\Backup\Common\CVeeamZipOptionsScope.cs" />
+    <Compile Include="Veeam\Backup\Common\CXmlReaderExm.cs" />
+    <Compile Include="Veeam\Backup\Common\CXmlWriterExm.cs" />
+    <Compile Include="Veeam\Backup\Common\DateTimeEx.cs" />
+    <Compile Include="Veeam\Backup\Common\DbQueryOptions.cs" />
+    <Compile Include="Veeam\Backup\Common\DisposableAction.cs" />
+    <Compile Include="Veeam\Backup\Common\EDatabaseLoggingLevel.cs" />
+    <Compile Include="Veeam\Backup\Common\EnumCache.cs" />
+    <Compile Include="Veeam\Backup\Common\EnumeratorEx.cs" />
+    <Compile Include="Veeam\Backup\Common\EOptionsTimeSpanFormat.cs" />
     <Compile Include="Veeam\Backup\Common\EPlatform.cs" />
+    <Compile Include="Veeam\Backup\Common\ERetryableDatabaseError.cs" />
+    <Compile Include="Veeam\Backup\Common\ESameHostDirectNFS.cs" />
+    <Compile Include="Veeam\Backup\Common\ESameHostHotAdd.cs" />
+    <Compile Include="Veeam\Backup\Common\EViNbdCompressionType.cs" />
+    <Compile Include="Veeam\Backup\Common\GenericIListExm.cs" />
+    <Compile Include="Veeam\Backup\Common\Guard.cs" />
+    <Compile Include="Veeam\Backup\Common\ICollectionExm.cs" />
+    <Compile Include="Veeam\Backup\Common\IDisposableExm.cs" />
+    <Compile Include="Veeam\Backup\Common\IEnumeratorEx.cs" />
+    <Compile Include="Veeam\Backup\Common\IOptionsProvider.cs" />
+    <Compile Include="Veeam\Backup\Common\IOptionsReader.cs" />
+    <Compile Include="Veeam\Backup\Common\IRegistryOptionsLogger.cs" />
+    <Compile Include="Veeam\Backup\Common\ITapeDevicesRegistryValue.cs" />
+    <Compile Include="Veeam\Backup\Common\ReadableTable.cs" />
+    <Compile Include="Veeam\Backup\Common\RegistryKeyOptionsProvider.cs" />
+    <Compile Include="Veeam\Backup\Common\RegistryOptionsWatcher.cs" />
+    <Compile Include="Veeam\Backup\Common\ResetableLazy.cs" />
+    <Compile Include="Veeam\Backup\Common\SArrayExtensions.cs" />
+    <Compile Include="Veeam\Backup\Common\SDatabaseAccessorExtensions.cs" />
+    <Compile Include="Veeam\Backup\Common\SDebugTimeShiftHolder.cs" />
+    <Compile Include="Veeam\Backup\Common\SLicensePlatformController.cs" />
+    <Compile Include="Veeam\Backup\Common\SManagedDateTime.cs" />
+    <Compile Include="Veeam\Backup\Common\SOptions.cs" />
+    <Compile Include="Veeam\Backup\Common\SOptionsLoader.cs" />
+    <Compile Include="Veeam\Backup\Common\SOptionsLoaderOfType.cs" />
+    <Compile Include="Veeam\Backup\Common\Sources\IDisposeThrowable.cs" />
+    <Compile Include="Veeam\Backup\Common\SProduct.cs" />
+    <Compile Include="Veeam\Backup\Common\StringBuilderExm.cs" />
+    <Compile Include="Veeam\Backup\Common\StringExm.cs" />
+    <Compile Include="Veeam\Backup\Common\StringHelper.cs" />
+    <Compile Include="Veeam\Backup\Common\TapeBackupImportPolicy.cs" />
+    <Compile Include="Veeam\Backup\Common\TapeSerialNumberFilterPolicyType.cs" />
+    <Compile Include="Veeam\Backup\Common\ThreadSafeRandom.cs" />
+    <Compile Include="Veeam\Backup\Configuration\CorruptedConfigurationException.cs" />
+    <Compile Include="Veeam\Backup\Configuration\CryptoString.cs" />
+    <Compile Include="Veeam\Backup\Configuration\DataProtection.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\BackupDatabaseConfiguration.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\BackupProduct.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ConnectionStringBuilder.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\DatabaseConfiguration.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\DatabaseConfigurationInfo.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\DatabaseConfigurationInfoSerializer.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\DatabaseVersionParser.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\DatabaseVersionType.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ExtensionMethodsRegistryKey.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IConfiguration.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IDatabaseConfiguration.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IDatabaseConfigurationInfo.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IDatabaseVersion.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IProduct.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IProductProcess.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IProductProcesses.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IProductProcessNode.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IProductRelease.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IProductServer.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IProductService.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IProductSetup.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\IRegistryConfigurationController.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProcessPlatform.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProcessType.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductDatabaseVersion.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductMode.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductProcess.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductProcesses.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductProcessesParser.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductProcessNode.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductProcessOwner.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductRelease.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductReleaseAttributes.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductReleases.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductReleasesParser.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductServer.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductServerFamilyName.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductServerName.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductServers.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductServersParser.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductService.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductSetup.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductSetups.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ProductSetupsParser.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\RegistryConfigurationAccessController.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\RegistryConfigurationController.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\RegistryControllerValueOption.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\RegistryKeyState.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\RegistryWatcher.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\ServerFamily.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\VersionExtension.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\VersionExtractor.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\XmlLoader.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V65\XmlNamespaceCreator.cs" />
+    <Compile Include="Veeam\Backup\Configuration\V80\EventLogSource.cs" />
+    <Compile Include="Veeam\Backup\Core\SLicenseInstancesDbHelper.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CDbConnection.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CDbConnectionImpl.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CDbExecutor.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CDbExecutorImpl.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CDBManager.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CDbTransaction.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CInstanceLicensingDbScope.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CLazyDataReader.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CLicensingDbScope.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CNotRetryableDbConnection.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CPersistentDbConnection.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CRetryableConnect.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CSqlExecErrorEventArgs.cs" />
+    <Compile Include="Veeam\Backup\DBManager\IDbConnection.cs" />
+    <Compile Include="Veeam\Backup\DBManager\IDbExecutor.cs" />
+    <Compile Include="Veeam\Backup\DBManager\IDBManager.cs" />
+    <Compile Include="Veeam\Backup\DBManager\LocalDbAccessor.cs" />
+    <Compile Include="Veeam\Backup\Model\ILicensedInstance.cs" />
+    <Compile Include="Veeam\Backup\Common\ArgumentEmptyException.cs" />
+    <Compile Include="Veeam\Backup\Common\CAppException.cs" />
+    <Compile Include="Veeam\Backup\Common\CCppCOMException.cs" />
+    <Compile Include="Veeam\Backup\Common\CCppComponentException.cs" />
+    <Compile Include="Veeam\Backup\Common\CCppComponentExceptionBuilder.cs" />
+    <Compile Include="Veeam\Backup\Common\CCppTraceEventContainer.cs" />
+    <Compile Include="Veeam\Backup\Common\CExceptionUtil.cs" />
+    <Compile Include="Veeam\Backup\Common\CMethodReconnectException.cs" />
+    <Compile Include="Veeam\Backup\Common\CMethodRetryException.cs" />
+    <Compile Include="Veeam\Backup\Common\CNotFoundException.cs" />
+    <Compile Include="Veeam\Backup\Common\CRegeneratedTraceException.cs" />
+    <Compile Include="Veeam\Backup\Common\CRegeneratedUserException.cs" />
+    <Compile Include="Veeam\Backup\Common\CSatelliteCriticalFaultException.cs" />
+    <Compile Include="Veeam\Backup\Common\CScalarRetValue.cs" />
+    <Compile Include="Veeam\Backup\Common\CSqlException.cs" />
+    <Compile Include="Veeam\Backup\Common\CStoredProcedureData.cs" />
+    <Compile Include="Veeam\Backup\Common\CTraceEventInfo.cs" />
+    <Compile Include="Veeam\Backup\Common\CTraceProperty.cs" />
+    <Compile Include="Veeam\Backup\Common\CTransaction.cs" />
+    <Compile Include="Veeam\Backup\Common\CTransactionScopeIdentifier.cs" />
+    <Compile Include="Veeam\Backup\Common\CVbrServiceMaintainceException.cs" />
+    <Compile Include="Veeam\Backup\Common\CXmlHelper.cs" />
+    <Compile Include="Veeam\Backup\Common\CXmlHelper2.cs" />
+    <Compile Include="Veeam\Backup\Common\EDatabaseAccessorType.cs" />
+    <Compile Include="Veeam\Backup\Common\ETraceEvent.cs" />
+    <Compile Include="Veeam\Backup\Common\Exceptions.cs" />
+    <Compile Include="Veeam\Backup\Common\ExceptionTraversingOptions.cs" />
+    <Compile Include="Veeam\Backup\Common\GenericIReadonlyCollectionExm.cs" />
+    <Compile Include="Veeam\Backup\Common\ICppComponentException.cs" />
+    <Compile Include="Veeam\Backup\Common\IDbAccessor.cs" />
+    <Compile Include="Veeam\Backup\Common\ITransactionProvider.cs" />
+    <Compile Include="Veeam\Backup\Common\CLicensePlatform.cs" />
+    <Compile Include="Veeam\Backup\Common\EEpLicenseMode.cs" />
+    <Compile Include="Veeam\Backup\Common\ELicensePlatform.cs" />
+    <Compile Include="Veeam\Backup\Common\IDatabaseAccessor.cs" />
+    <Compile Include="Veeam\Backup\Common\SCollectionExtensions.cs" />
+    <Compile Include="Veeam\Backup\Common\SEnumExtensions.cs" />
+    <Compile Include="Veeam\Backup\Common\SExceptionExtensions.cs" />
+    <Compile Include="Veeam\Backup\Common\TerminatedException.cs" />
+    <Compile Include="Veeam\Backup\Common\TypeCache.cs" />
+    <Compile Include="Veeam\Backup\Common\XmlNodeExm.cs" />
+    <Compile Include="Veeam\Backup\Core\CProxyBinaryFormatter.cs" />
+    <Compile Include="Veeam\Backup\Core\SInstancesLicenseCountersHelper.cs" />
+    <Compile Include="Veeam\Backup\DBManager\CDbAccessor.cs" />
     <Compile Include="Veeam\DBManager\DbAccessor.cs" />
     <Compile Include="Veeam\DBManager\ISqlFieldDescriptor.cs" />
     <Compile Include="Veeam\DBManager\ISqlFieldDescriptorOfType.cs" />
+    <Compile Include="Veeam\DBManager\ISqlTableType.cs" />
     <Compile Include="Veeam\DBManager\LocalDbAccessor.cs" />
     <Compile Include="Veeam\DBManager\SqlCastableTypeFieldDescriptor.cs" />
     <Compile Include="Veeam\DBManager\SqlExtendableReferenceTypeFieldDescriptor.cs" />
-    <Compile Include="Veeam\DBManager\SqlFieldDescriptor.cs" />
+    <Compile Include="Veeam\Backup\DBManager\SqlFieldDescriptor.cs" />
+    <Compile Include="Veeam\DBManager\SqlLicensePlatformTableType.cs" />
     <Compile Include="Veeam\DBManager\SqlNullableTypeFieldDescriptor.cs" />
     <Compile Include="Veeam\DBManager\SqlReferenceTypeFieldDescriptor.cs" />
     <Compile Include="Veeam\DBManager\SqlValueTypeFieldDescriptor.cs" />
     <Compile Include="Veeam\Entities\Veeam.cs" />
     <Compile Include="Veeam\Enums\Enums.cs" />
+    <Compile Include="Veeam\Factory\Veeam90Creator.cs" />
+    <Compile Include="Veeam\Factory\Veeam9501038Creator.cs" />
+    <Compile Include="Veeam\Factory\Veeam9542615Creator.cs" />
+    <Compile Include="Veeam\Factory\Veeam95Creator.cs" />
+    <Compile Include="Veeam\Factory\VeeamCreator.cs" />
+    <Compile Include="Veeam\Factory\VeeamCreatorFactory.cs" />
     <Compile Include="Veeam\IVeeamWorkerManager.cs" />
     <Compile Include="Veeam\Managers\ILicenseManager.cs" />
     <Compile Include="Veeam\Managers\IVeeamManager.cs" />
@@ -227,6 +465,7 @@
     <None Include="app.config" />
     <None Include="Connected Services\PortalService\ConnectedService.json" />
     <None Include="packages.config" />
+    <Compile Include="Serialization\ISerializationRoutineOfType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EntityFramework\" />

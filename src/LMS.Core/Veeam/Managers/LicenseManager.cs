@@ -6,19 +6,22 @@
     using System.Security;
     using System.Text;
     using Abp;
+    using Abp.Domain.Services;
     using Core.Managers;
     using Extensions;
     using Microsoft.Win32;
 
-    public class LicenseManager : LMSManagerBase, ILicenseManager
+    public class LicenseManager : DomainService, ILicenseManager
     {
-        private Dictionary<string, string> _lic;
+        private static Dictionary<string, string> _lic;
         public string LicenseFile { get; private set; }
 
 
         public  Dictionary<string, string> ExtractPropertiesFromLicense()
         {
-            string[] licenseArray = LicenseFile.Split(new[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            var licenseArray = LicenseFile.Split(new[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            licenseArray.RemoveAll(x => x.Contains("?xml") || x.Contains("![CDATA") || x.Contains("</License>"));      
 
             return licenseArray.Select(x => x.Split('=')).ToDictionary(x => x[0], x => x[1]);
         }
@@ -95,7 +98,10 @@
         {
             if (licenseFile == null)
             {
-                LicenseFile = LoadFromRegistry();
+                if (LicenseFile == null)
+                {
+                    LicenseFile = LoadFromRegistry();
+                }
             }
             else
             {

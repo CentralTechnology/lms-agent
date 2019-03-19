@@ -19,7 +19,7 @@
         LicenseUser GetUser(IdentityType type, string key);
         LicenseUser GetUserById(Guid userId);
         LicenseUser GetUserByPrincipalName(string principalName);
-        bool IsOnDomain(PerformContext performContext);
-        bool IsPrimaryDomainController(PerformContext performContext);
+        bool IsOnDomain();
+        bool IsPrimaryDomainController();
     }
 }

@@ -17,9 +17,11 @@
     using Extensions;
     using global::Hangfire.Server;
     using Portal.LicenseMonitoringSystem.Users.Entities;
+    using Serilog;
 
     public class ActiveDirectoryManager : DomainService, IActiveDirectoryManager
     {
+        private readonly ILogger _logger = Log.ForContext<ActiveDirectoryManager>();
         public LicenseUser GetUserByPrincipalName(string principalName)
         {
             return GetUser(IdentityType.UserPrincipalName, principalName);
@@ -37,7 +39,7 @@
 
                 user.Validate();
 
-                Logger.Debug($"Retrieving {user.GetDisplayText()} from Active Directory.");
+                _logger.Debug("Retrieving {User} from Active Directory.", user.GetDisplayText());
 
                 bool enabled = GetUserStatus(user);
                 DateTimeOffset? lastLogon = GetLastLogonDate(user);
@@ -123,14 +125,14 @@
                             {
                                 if (principal.Guid == null)
                                 {
-                                    Logger.Debug($"Cannot process {principal.Name} because the Id is null. Please check this manually in Active Directory.");
+                                    _logger.Debug("Cannot process {User} because the Id is null. Please check this manually in Active Directory.", principal.Name);
                                     continue;
                                 }
 
                                 bool validId = Guid.TryParse(principal.Guid.ToString(), out Guid principalId);
                                 if (!validId)
                                 {
-                                    Logger.Debug($"Cannot process {principal.Name} because the Id is not valid. Please check this manually in Active Directory.");
+                                    _logger.Debug("Cannot process {User} because the Id is not valid. Please check this manually in Active Directory.", principal.Name);
                                     continue;
                                 }
 
@@ -139,7 +141,7 @@
                                     continue;
                                 }
 
-                                Logger.Debug($"Retrieving {group.GetDisplayText()} from Active Directory.");
+                                _logger.Debug("Retrieving {User} from Active Directory.",group.GetDisplayText());
 
                                 LicenseGroup localGroup = GetGroup(principalId);
                                 if (localGroup == null)
@@ -163,13 +165,13 @@
 
                 if (group.IsSecurityGroup == null)
                 {
-                    Logger.Warn($"Cannot tell if {group.GetDisplayText()} is a security group or not.");
+                    _logger.Warning("unable to determine if {Group} is a security group or not.", group.GetDisplayText());
                     return null;
                 }
 
                 if (!bool.TryParse(group.IsSecurityGroup.ToString(), out bool _))
                 {
-                    Logger.Warn($"Cannot process {group.GetDisplayText()} because the IsSecurityGroup value is not valid");
+                    _logger.Warning("Cannot process {Group} because the IsSecurityGroup value is not valid", group.GetDisplayText());
                     return null;
                 }
 
@@ -186,8 +188,8 @@
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"Failed to determine the when created date for {group.GetDisplayText()}.");
-                    Logger.Debug("Exception getting WhenCreated GroupPrincipal property.", ex);
+                    _logger.Error("Failed to determine the when created date for {Group}.", group.GetDisplayText());
+                    _logger.Debug(ex, ex.Message);
                     throw new UserFriendlyException(ex.Message);
                 }
 
@@ -226,7 +228,7 @@
                             }
                             catch (Exception ex)
                             {
-                                Logger.Error(ex.Message);
+                                _logger.Debug(ex, ex.Message);
                                 continue;
                             }
 
@@ -253,26 +255,28 @@
                 }
                 catch (COMException ex)
                 {
-                    Logger.Warn($"There was a problem getting the members of group: {groupId}");
-                    Logger.Error(ex.Message, ex);
+                    _logger.Warning("There was a problem getting the members of group: {GroupId}", groupId);
+                    _logger.Error(ex.Message);
+                    _logger.Debug(ex, ex.Message);
                     return licenseGroupUsers;
                 }
                 catch (AuthenticationException ex)
                 {
-                    Logger.Warn($"There was a problem getting the members of group: {groupId}");
-                    Logger.Error(ex.Message, ex);
+                    _logger.Warning("There was a problem getting the members of group: {GroupId}", groupId);
+                    _logger.Error(ex.Message);
+                    _logger.Debug(ex, ex.Message);
                     return licenseGroupUsers;
                 }
                 catch (PrincipalOperationException ex)
                 {
-                    Logger.Error($"Group: {group.Name} has some invalid members. This will need to be manually corrected in Active Directory.");
-                    Logger.Debug(ex.Message, ex);
+                    _logger.Error("Group: {Group} has some invalid members. This will need to be manually corrected in Active Directory.", group.Name);
+                    _logger.Debug(ex,ex.Message);
                     return licenseGroupUsers;
                 }
             }
         }
 
-        public bool IsOnDomain(PerformContext performContext)
+        public bool IsOnDomain()
         {
             try
             {
@@ -283,12 +287,13 @@
             }
             catch (ActiveDirectoryOperationException ex)
             {
-                Logger.Debug(performContext, ex.Message, ex);
+                _logger.Error(ex.Message);
+                _logger.Debug(ex,ex.Message);
                 return false;
             }
         }
 
-        public bool IsPrimaryDomainController(PerformContext performContext)
+        public bool IsPrimaryDomainController()
         {
             try
             {
@@ -301,7 +306,8 @@
             }
             catch (ActiveDirectoryOperationException ex)
             {
-                Logger.Debug(performContext, ex.Message, ex);
+                _logger.Error(ex.Message);
+                _logger.Debug(ex,ex.Message);
                 return false;
             }
         }
@@ -316,7 +322,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Debug("Error converting active directory DateTime to Epoch Time.", ex);
+                _logger.Error("Error converting active directory DateTime to Epoch Time.");
+                _logger.Debug(ex, ex.Message);
                 return default(long);
             }
         }
@@ -355,12 +362,13 @@
                     return lastLogonValue;
                 }
 
-                Logger.Debug($"Failed to determine the last logon date for {user.GetDisplayText()}. Therefore we have to assume they have never logged on.");
+                _logger.Debug("Failed to determine the last logon date for {User}. Therefore we have to assume they have never logged on.", user.GetDisplayText());
                 return null;
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message, ex);
+                _logger.Error(ex.Message);
+                _logger.Debug(ex, ex.Message);
                 return null;
             }
         }
@@ -378,7 +386,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Debug($"Failed to determine the account status for {user.GetDisplayText()}. Therefore we have to assume they are Enabled.", ex);
+                _logger.Warning("Failed to determine the account status for {User}. Therefore we have to assume they are Enabled.", user.GetDisplayText());
+                _logger.Debug(ex,ex.Message);
 
                 // always assume they are enabled
                 return true;
@@ -406,7 +415,8 @@
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message, ex);
+                _logger.Error(ex.Message);
+                _logger.Debug(ex, ex.Message);
                 throw;
             }
         }
